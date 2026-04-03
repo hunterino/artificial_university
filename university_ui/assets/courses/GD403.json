@@ -1,0 +1,488 @@
+{
+  "course_info": {
+    "course_id": "GD403",
+    "title": "Virtual Reality and Augmented Reality",
+    "credit_hours": 4,
+    "duration": "15 weeks",
+    "meeting_schedule": "Monday, Wednesday, Friday - 4 hours per week",
+    "prerequisites": [
+      "GD401 - 3D Game Development",
+      "GD301 - Game Programming"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "date": "2024-01-15",
+      "topic": "Introduction to VR/AR Hardware and Platforms",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Survey the current landscape of VR and AR hardware",
+        "Understand the rendering requirements that distinguish VR from traditional 3D",
+        "Compare standalone, tethered, and passthrough VR/AR architectures"
+      ],
+      "readings": [
+        "VR Developer Gems Ch. 1-2",
+        "Meta Quest Developer Documentation - Getting Started",
+        "Apple visionOS Developer Documentation - Fundamentals"
+      ],
+      "lecture_notes": {
+        "introduction": "Virtual and augmented reality represent a fundamental shift in how humans interact with digital content. Instead of looking at a screen, the user is inside the experience. This changes everything about how we design, render, and think about interactive applications.",
+        "key_concepts": [
+          "VR headset architectures: standalone (Quest 3), tethered (Valve Index), hybrid (PSVR2)",
+          "AR device spectrum: phone-based (ARKit/ARCore), headset-based (HoloLens, Vision Pro)",
+          "Stereoscopic rendering pipeline: two viewpoints, lens distortion correction",
+          "Display technologies: LCD, OLED, micro-OLED, pancake lenses, fresnel lenses",
+          "Tracking systems: inside-out (camera-based), outside-in (base stations), hybrid"
+        ],
+        "demonstration": "Setting up a Unity XR project targeting Meta Quest, configuring the XR Interaction Toolkit, and deploying a basic scene to a headset with head tracking and passthrough",
+        "setup_requirements": [
+          "Unity 2023.2 LTS with XR Plugin Management",
+          "Meta Quest 3 or Quest Pro headset in developer mode",
+          "Meta XR SDK and XR Interaction Toolkit packages",
+          "USB-C cable for deployment and debugging"
+        ],
+        "review": [
+          {
+            "key": "Stereoscopic Rendering",
+            "value": "Rendering the scene twice from slightly offset eye positions to create depth perception; each eye gets a separate render target that is then corrected for lens distortion before display"
+          },
+          {
+            "key": "Inside-Out Tracking",
+            "value": "Headset cameras observe the environment to determine position and orientation without external sensors; uses visual-inertial odometry combining camera data with IMU readings"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 1,
+      "session_number": 2,
+      "date": "2024-01-17",
+      "topic": "Spatial Interaction Design and Hand Tracking",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Design interaction systems for 3D spatial input",
+        "Implement hand tracking with gesture recognition",
+        "Apply direct and indirect manipulation paradigms in VR"
+      ],
+      "readings": [
+        "Designing Immersive Experiences Ch. 4-6",
+        "Meta Hand Tracking SDK Documentation",
+        "Unity XR Interaction Toolkit - Interactables Guide"
+      ],
+      "lecture_notes": {
+        "introduction": "In VR, the user's hands are the primary interface. Unlike a mouse with 2D coordinates, hands exist in 3D space with full articulation. Designing interactions that feel natural while remaining precise and discoverable is one of the hardest problems in VR development.",
+        "key_concepts": [
+          "Controller-based input: buttons, triggers, thumbsticks, 6DoF tracking",
+          "Hand tracking joint data: 26 joints per hand with position and rotation",
+          "Gesture recognition: pinch, grab, point, thumbs up, custom gestures",
+          "Direct manipulation: grabbing, pushing, rotating objects with virtual hands",
+          "Ray-based interaction: far-field selection using pointer rays from hands or controllers"
+        ],
+        "demonstration": "Implementing a hand tracking system that supports both pinch-to-grab for nearby objects and ray-based pointing for distant UI panels, with visual feedback showing grab radius and ray intersection",
+        "setup_requirements": [
+          "Meta Quest headset with hand tracking enabled",
+          "XR Interaction Toolkit configured for hand tracking",
+          "Sample scene with grabbable objects and UI panels",
+          "Hand mesh visualization assets"
+        ],
+        "review": [
+          {
+            "key": "Pinch Gesture",
+            "value": "Bringing the thumb and index finger together; the standard selection gesture in hand tracking because it has clear start/end states, works reliably across hand sizes, and mimics a natural grasping motion"
+          },
+          {
+            "key": "Interaction Affordances",
+            "value": "Visual cues that communicate how objects can be manipulated: glow on hover, outline on grab readiness, size pulse on valid targets; critical in VR where there is no cursor to indicate interactability"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 4,
+      "date": "2024-01-22",
+      "topic": "VR Locomotion Systems and Motion Sickness Mitigation",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Implement multiple VR locomotion techniques",
+        "Understand the physiological causes of VR-induced motion sickness",
+        "Apply evidence-based comfort techniques to reduce nausea"
+      ],
+      "readings": [
+        "VR Locomotion Research Survey (Boletsis, 2017)",
+        "Oculus VR Best Practices Guide - Comfort and Health",
+        "The VR Book Ch. 9 - Locomotion"
+      ],
+      "lecture_notes": {
+        "introduction": "Moving through virtual space without physically walking creates a sensory conflict between your visual system and vestibular system. This conflict causes motion sickness in many users. Every locomotion choice is a tradeoff between freedom of movement and user comfort.",
+        "key_concepts": [
+          "Teleportation locomotion: arc pointer, blink transition, boundary preview",
+          "Continuous locomotion: thumbstick-based, head-directed vs hand-directed",
+          "Room-scale movement: guardian boundaries, redirected walking",
+          "Comfort techniques: vignetting during movement, snap turning, stable reference frames",
+          "Vestibular conflict: why visual motion without physical motion causes nausea"
+        ],
+        "demonstration": "Building a locomotion system that offers both teleportation and continuous movement with configurable comfort settings: adjustable vignette intensity, snap turn vs smooth turn toggle, and speed-dependent field-of-view reduction",
+        "setup_requirements": [
+          "Unity XR project with locomotion providers configured",
+          "Large virtual environment for testing different locomotion methods",
+          "Quest headset with guardian boundary set up",
+          "Comfort preference survey form for playtesting"
+        ],
+        "review": [
+          {
+            "key": "Vignetting",
+            "value": "Dynamically reducing the peripheral field of view during artificial locomotion by fading edges to black; reduces motion sickness because peripheral vision is most sensitive to optic flow that conflicts with vestibular input"
+          },
+          {
+            "key": "Snap Turning",
+            "value": "Rotating the viewpoint in discrete increments (typically 30-45 degrees) rather than smoothly; eliminates the continuous rotational optic flow that is a primary trigger for VR nausea"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 7,
+      "date": "2024-02-02",
+      "topic": "3D User Interfaces in VR and Spatial Audio",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Design and implement user interfaces that exist in 3D virtual space",
+        "Apply spatial audio techniques to enhance immersion and provide navigational cues",
+        "Integrate HRTF-based audio rendering for accurate sound spatialization"
+      ],
+      "readings": [
+        "3D User Interfaces: Theory and Practice Ch. 7-9",
+        "Meta Spatial Audio SDK Documentation",
+        "Resonance Audio Developer Guide"
+      ],
+      "lecture_notes": {
+        "introduction": "Traditional 2D UI paradigms break down in VR. Menus cannot hover in screen space because there is no screen. Text must be readable at varying distances. And audio is no longer stereo output - it must exist in 3D space just like visual elements, because your ears are as important as your eyes for spatial presence.",
+        "key_concepts": [
+          "World-space UI panels: curved canvases, follow-head vs fixed-position menus",
+          "Text rendering in VR: SDF fonts, minimum angular size for readability",
+          "Diegetic UI: interfaces embedded in the game world (wrist watch, clipboard)",
+          "HRTF (Head-Related Transfer Function): modeling how ears perceive sound direction",
+          "Spatial audio techniques: distance attenuation, occlusion, room reverb simulation"
+        ],
+        "demonstration": "Building a diegetic inventory system attached to the player's wrist that opens on forearm inspection, with spatial audio cues that play from item positions in 3D space using Meta Spatial Audio SDK",
+        "setup_requirements": [
+          "Unity project with XR Interaction Toolkit",
+          "Meta Spatial Audio SDK installed",
+          "TextMeshPro with SDF font assets",
+          "Sample audio files for spatialization testing"
+        ],
+        "review": [
+          {
+            "key": "HRTF",
+            "value": "A function describing how sound is filtered by the shape of the ears, head, and torso before reaching the eardrums; enables headphone audio to be perceived as coming from specific 3D positions by applying the correct frequency-dependent delays and amplitude differences"
+          },
+          {
+            "key": "Diegetic UI",
+            "value": "User interface elements that exist as objects within the game world rather than as overlaid HUD elements; examples include a wrist-mounted health display or a physical map the character holds; preferred in VR because they maintain immersion and have a natural depth position"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 10,
+      "date": "2024-02-07",
+      "topic": "AR Marker Tracking and Mixed Reality",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Implement AR marker detection and image tracking",
+        "Build mixed reality experiences that blend virtual and physical environments",
+        "Use scene understanding APIs to anchor virtual content to real-world surfaces"
+      ],
+      "readings": [
+        "ARCore Developer Guide - Augmented Images",
+        "ARKit Documentation - Image Detection and Tracking",
+        "Meta Quest Mixed Reality Developer Guide"
+      ],
+      "lecture_notes": {
+        "introduction": "Augmented reality bridges the gap between virtual and physical worlds. Marker tracking gives us precise anchor points to attach virtual content to the real world, while scene understanding lets us place content on surfaces, behind furniture, and interacting with the physical environment.",
+        "key_concepts": [
+          "Image marker detection: reference image databases, tracking quality and distance limits",
+          "Plane detection: horizontal and vertical surface recognition and boundary estimation",
+          "Scene mesh: real-time 3D reconstruction of the physical environment",
+          "Occlusion: virtual objects hidden behind real-world surfaces for realism",
+          "Spatial anchors: persistent placement of virtual content that survives across sessions"
+        ],
+        "demonstration": "Building a mixed reality application on Quest 3 that uses passthrough to show the real room, detects a physical poster as an image marker to spawn a 3D character, uses scene mesh for occlusion so the character can hide behind real furniture, and persists the character's position using spatial anchors",
+        "setup_requirements": [
+          "Meta Quest 3 with passthrough enabled",
+          "Meta Scene API and Spatial Anchor API configured",
+          "Printed image markers for tracking",
+          "Room with Scene API room setup completed"
+        ],
+        "review": [
+          {
+            "key": "Spatial Anchors",
+            "value": "Persistent coordinate references tied to physical locations that survive app restarts and can be shared between devices; the anchor stores the spatial relationship to tracked environmental features so virtual content stays in place even after the device is turned off"
+          },
+          {
+            "key": "Scene Mesh Occlusion",
+            "value": "Using the real-time 3D mesh of the physical environment as an invisible depth layer so virtual objects are correctly hidden when behind real furniture or walls; requires rendering the scene mesh to the depth buffer without writing to the color buffer"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 13,
+      "date": "2024-02-14",
+      "topic": "VR/AR Performance Optimization and Platform Deployment",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Optimize VR/AR applications to meet the strict performance requirements of immersive rendering",
+        "Apply foveated rendering and other VR-specific optimization techniques",
+        "Prepare and submit applications to VR/AR distribution platforms"
+      ],
+      "readings": [
+        "Meta Quest Performance Optimization Guide",
+        "Unity XR Performance Best Practices",
+        "VR Developer Gems Ch. 14-15 - Optimization"
+      ],
+      "lecture_notes": {
+        "introduction": "VR has the strictest performance requirements of any real-time application. You must render the scene twice at 72-120Hz with under 20ms total frame time, or the user gets sick. There is no acceptable frame drop in VR - every missed frame is a comfort violation.",
+        "key_concepts": [
+          "VR frame budgets: 13.9ms at 72Hz, 11.1ms at 90Hz, 8.3ms at 120Hz per eye",
+          "Fixed foveated rendering: reducing resolution in the peripheral vision of each eye",
+          "Application SpaceWarp: generating intermediate frames using motion vectors",
+          "Single-pass stereo rendering: rendering both eyes in one draw call",
+          "VR-specific profiling: OVR Metrics Tool, GPU-bound vs CPU-bound diagnosis"
+        ],
+        "demonstration": "Taking a VR scene from 45fps to a stable 90fps by enabling single-pass stereo rendering, configuring fixed foveated rendering levels, optimizing draw calls, and using Application SpaceWarp as a safety net for occasional frame drops",
+        "setup_requirements": [
+          "Quest headset with OVR Metrics Tool overlay enabled",
+          "Unity project with performance-heavy VR scene",
+          "Unity Profiler configured for XR remote profiling",
+          "Oculus Developer Hub for sideloading and monitoring"
+        ],
+        "review": [
+          {
+            "key": "Fixed Foveated Rendering",
+            "value": "Rendering the center of each eye at full resolution while reducing peripheral resolution in 2-3 concentric zones; exploits the fact that human vision has much lower acuity in the periphery; can save 20-40% of GPU fragment shading cost with minimal perceived quality loss"
+          },
+          {
+            "key": "Application SpaceWarp",
+            "value": "A technique where the application renders at half the display refresh rate and the runtime generates intermediate frames by reprojecting using color and depth data with motion vectors; reduces rendering cost by 50% but introduces artifacts on fast-moving objects and disocclusion edges"
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 3,
+        "topic": "VR Hardware, Interaction Design, and Locomotion",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "A VR developer is building a game that requires the player to explore large outdoor environments. They choose continuous thumbstick locomotion for movement. During playtesting, 60% of testers report moderate nausea within 15 minutes. Describe three specific comfort techniques the developer should implement, explain the physiological reason each one reduces nausea, and discuss any gameplay tradeoffs each introduces.",
+            "type": "short_answer",
+            "points": 15,
+            "answer": "Three comfort techniques: (1) Dynamic vignetting - darken the peripheral field of view during movement. This works because peripheral vision is most sensitive to optic flow mismatch with the vestibular system. Tradeoff: reduces visual immersion and sense of speed. (2) Snap turning - replace smooth rotation with discrete angular jumps of 30-45 degrees. This eliminates continuous rotational optic flow, which is one of the strongest nausea triggers because the semicircular canals detect no corresponding rotation. Tradeoff: feels less natural and can be disorienting in fast-paced gameplay. (3) Add a stable visual reference frame such as a visible cockpit, nose bridge, or fixed horizon line. This provides the visual system with a stationary reference that matches the vestibular system's report of no movement. Tradeoff: restricts art direction and may not fit all game settings.",
+            "rubric": [
+              {
+                "key": "Three distinct comfort techniques described",
+                "value": 5
+              },
+              {
+                "key": "Physiological explanation for each technique",
+                "value": 5
+              },
+              {
+                "key": "Gameplay tradeoffs discussed for each",
+                "value": 5
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between direct manipulation and ray-based interaction in VR hand tracking, and describe a specific scenario where each is the better choice.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Direct manipulation means the user physically reaches out and touches or grabs virtual objects with their tracked hands, like picking up a cup. Ray-based interaction projects an invisible or visible ray from the hand to interact with distant objects, like pointing a laser pointer. Direct manipulation is better for near-field tasks like arranging items on a virtual table, assembling parts in a training simulation, or playing a virtual instrument, because it leverages proprioception and feels natural for objects within arm's reach. Ray-based interaction is better for far-field tasks like selecting items on a distant UI menu, pointing at a location on a virtual map across the room, or choosing an object in a large warehouse scene, because the user cannot physically reach distant objects and walking closer breaks workflow.",
+            "rubric": [
+              {
+                "key": "Clear distinction between the two interaction paradigms",
+                "value": 4
+              },
+              {
+                "key": "Appropriate scenario for direct manipulation with reasoning",
+                "value": 3
+              },
+              {
+                "key": "Appropriate scenario for ray-based interaction with reasoning",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 25
+      },
+      {
+        "quiz": 2,
+        "week": 5,
+        "topic": "AR Tracking, Mixed Reality, and VR Performance",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "A mixed reality application places a virtual pet on the user's real-world coffee table. When the user walks around the table, the pet sometimes appears to slide on the surface or float above it. Identify two distinct technical causes for this behavior and describe how to fix each one.",
+            "type": "short_answer",
+            "points": 12,
+            "answer": "Cause 1: Inaccurate plane detection boundary. The detected horizontal plane may not precisely match the table surface, causing a height offset. Fix: Use spatial anchors instead of relying solely on the plane's reported position. Place a spatial anchor at the exact point where the user confirms the pet's position, and update the anchor using scene mesh data for higher geometric accuracy. Cause 2: Tracking drift in the headset's SLAM system. As the user moves, accumulated error in visual-inertial odometry shifts the world coordinate frame. Fix: Enable relocalization by ensuring the environment has sufficient visual features (textured surfaces, varied lighting), and implement anchor persistence so the runtime can correct drift when it re-observes previously seen features. Additionally, snapping the pet's Y position to the scene mesh every frame compensates for small drift amounts.",
+            "rubric": [
+              {
+                "key": "Identifies plane detection inaccuracy as a cause with valid fix",
+                "value": 4
+              },
+              {
+                "key": "Identifies tracking drift as a cause with valid fix",
+                "value": 4
+              },
+              {
+                "key": "Technical depth and specificity of solutions",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "A VR game targeting Quest 3 at 90Hz must complete all rendering in 11.1ms per frame. The developer's scene currently takes 16ms. It is GPU-bound with 350 draw calls and no foveated rendering enabled. Describe a prioritized optimization plan, estimating the millisecond savings from each step.",
+            "type": "short_answer",
+            "points": 13,
+            "answer": "Prioritized plan: (1) Enable single-pass stereo rendering. This renders both eyes in one pass instead of two, saving nearly all the CPU overhead of duplicated draw calls and reducing GPU vertex processing by up to 30%. Estimated savings: 3-4ms. (2) Enable fixed foveated rendering at medium level. Reduces fragment shading in peripheral zones by approximately 25-30%. Estimated savings: 2-3ms. (3) Reduce draw calls from 350 to under 150 using static batching for non-moving objects and GPU instancing for repeated meshes. This reduces CPU-side draw call overhead and improves GPU state-change efficiency. Estimated savings: 1-2ms. Combined estimated savings: 6-9ms, bringing the frame time from 16ms to approximately 7-10ms, within the 11.1ms budget with headroom for gameplay logic. If still over budget, enable Application SpaceWarp to halve the rendering rate to 45fps with ASW-generated intermediate frames.",
+            "rubric": [
+              {
+                "key": "Prioritizes single-pass stereo as highest-impact change",
+                "value": 4
+              },
+              {
+                "key": "Includes foveated rendering with reasonable savings estimate",
+                "value": 3
+              },
+              {
+                "key": "Addresses draw call reduction with specific techniques",
+                "value": 3
+              },
+              {
+                "key": "Overall plan is realistic and totals to budget compliance",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 25
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Immersive VR Interaction Experience",
+        "week_assigned": 2,
+        "week_due": 4,
+        "points": 100,
+        "description": "Design and build a VR experience that demonstrates mastery of spatial interaction design, hand tracking, locomotion, and VR UI. The experience must include at least three distinct interaction mechanics (e.g., grab, point, gesture-triggered action), implement two locomotion options with comfort settings, and feature a diegetic UI element. Must run at 72Hz minimum on Quest hardware.",
+        "objectives": [
+          "Implement hand tracking with reliable gesture recognition for at least two custom gestures",
+          "Build a locomotion system with both teleport and continuous options and configurable comfort settings",
+          "Design a diegetic UI that conveys information without breaking immersion",
+          "Integrate spatial audio for at least three in-world sound sources"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Unity project deployable to Meta Quest via sideload",
+          "APK file tested on physical Quest hardware",
+          "Video walkthrough demonstrating all interaction mechanics (3-5 minutes)",
+          "Design document explaining interaction design decisions and comfort rationale (3-4 pages)"
+        ],
+        "grading_rubric": {
+          "interaction_design": {
+            "points": 35,
+            "criteria": [
+              "Hand tracking gestures are recognized reliably",
+              "Grab and release mechanics feel natural",
+              "Ray-based interaction provides clear visual feedback",
+              "Interaction affordances clearly communicate object interactability"
+            ]
+          },
+          "locomotion_and_comfort": {
+            "points": 25,
+            "criteria": [
+              "Teleportation works with arc visualization and valid-area feedback",
+              "Continuous movement includes configurable vignette and speed options",
+              "Snap and smooth turn options are both available",
+              "Comfort settings are accessible from an in-VR menu"
+            ]
+          },
+          "spatial_audio_and_ui": {
+            "points": 25,
+            "criteria": [
+              "Audio sources are correctly spatialized in 3D",
+              "Diegetic UI is readable and functional",
+              "UI interaction uses appropriate input method (hand or ray)",
+              "Sound occlusion works when sources are behind objects"
+            ]
+          },
+          "performance": {
+            "points": 15,
+            "criteria": [
+              "Maintains 72Hz on Quest hardware",
+              "No visible tracking glitches or hand jitter",
+              "Frame time profiling data provided",
+              "No loading hitches during gameplay"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Polished hand tracking interactions that feel natural and reliable",
+                "Thoughtful locomotion with real comfort options",
+                "Immersive spatial audio and diegetic UI design",
+                "Stable performance on standalone VR hardware"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 15,
+      "description": "Regular assessment of VR/AR theory, hardware knowledge, and interaction design principles"
+    },
+    "lab_assignments": {
+      "percentage": 25,
+      "description": "Hands-on exercises in hand tracking, locomotion, spatial audio, and AR tracking"
+    },
+    "major_assignments": {
+      "percentage": 20,
+      "description": "Comprehensive VR interaction experience demonstrating mastery of core immersive technologies"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Comprehensive assessment covering VR/AR hardware, interaction design, comfort, and spatial concepts"
+    },
+    "final_project": {
+      "percentage": 25,
+      "description": "Capstone mixed reality application integrating VR interaction, AR tracking, and spatial computing"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is mandatory for all lab sessions involving VR/AR hardware. Headset time is limited and shared; missing a lab session cannot be made up without prior arrangement.",
+    "late_submissions": "Late assignments are penalized 10% per day. No submissions accepted more than 5 days late without prior arrangement. All VR/AR submissions must include a video walkthrough as the instructor may not have immediate headset access for grading.",
+    "collaboration": "Individual assignments must be completed independently. VR headsets may be shared for testing but all code and design work must be original. Peer playtesting is encouraged and should be documented.",
+    "academic_integrity": "All code must be original or properly attributed. Use of XR template projects must be disclosed and substantially modified. Submitting unmodified SDK samples as original work will result in course failure.",
+    "technology_requirements": "The department provides Meta Quest headsets for lab use. Students with personal headsets may use them for at-home development. All submissions must target Meta Quest 3 as the reference platform."
+  }
+}

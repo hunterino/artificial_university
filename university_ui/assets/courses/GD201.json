@@ -1,0 +1,554 @@
+{
+  "course_info": {
+    "course_id": "GD201",
+    "title": "2D Game Development",
+    "credit_hours": 4,
+    "duration": "15 weeks",
+    "meeting_schedule": "Monday, Wednesday, Friday - 4 hours per week",
+    "prerequisites": [
+      "CS115 - Programming for Games",
+      "GD101 - Introduction to Game Design"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "date": "2024-01-15",
+      "topic": "Introduction to 2D Game Engines and Project Setup",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Compare 2D game engine options and their trade-offs",
+        "Set up a Godot 4 project with proper directory structure",
+        "Understand the scene tree architecture and node system"
+      ],
+      "readings": [
+        "Godot Engine Documentation: Introduction to Godot",
+        "Game Programming Patterns by Robert Nystrom, Ch. 1 (Architecture)"
+      ],
+      "lecture_notes": {
+        "introduction": "Welcome to 2D Game Development. This course takes your programming and design foundations and applies them to building complete, polished 2D games using professional tools and workflows.",
+        "key_concepts": [
+          "Engine comparison: Godot 4 vs Unity 2D vs GameMaker -- strengths, licensing, community",
+          "Godot's scene tree: nodes as building blocks, scenes as reusable prefabs",
+          "GDScript basics for students with programming background: duck-typed, Python-like syntax",
+          "Project structure: res:// filesystem, resource management, import settings",
+          "Version control for game projects: .gitignore for Godot, LFS for binary assets"
+        ],
+        "demonstration": "Creating a new Godot 4 project: configuring viewport resolution (320x180 with 4x stretch for pixel art), setting up a player scene with Sprite2D and CharacterBody2D, writing basic movement in GDScript",
+        "setup_requirements": [
+          "Godot 4.2+ installed (standard or .NET version)",
+          "Git with LFS configured",
+          "Aseprite or Piskel for sprite editing",
+          "VS Code with GDScript extension (optional, Godot has built-in editor)"
+        ],
+        "review": [
+          {
+            "key": "Scene Tree",
+            "value": "Godot's hierarchical node system where each game object is a tree of nodes, and scenes can be instantiated as nodes within other scenes"
+          },
+          {
+            "key": "CharacterBody2D",
+            "value": "Godot's physics body type for player-controlled characters, providing move_and_slide() for built-in collision response"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 1,
+      "session_number": 2,
+      "date": "2024-01-17",
+      "topic": "Sprite Animation and State Machines",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Create sprite sheets and configure AnimatedSprite2D nodes",
+        "Implement a finite state machine for character animation states",
+        "Handle animation transitions based on player input and physics state"
+      ],
+      "readings": [
+        "The Animator's Survival Kit by Richard Williams, Ch. 3-5 (Timing and Spacing)",
+        "Godot Documentation: AnimatedSprite2D and AnimationPlayer"
+      ],
+      "lecture_notes": {
+        "introduction": "Animation breathes life into 2D games. Today we learn how to organize sprites, drive animations from game state, and build the state machine pattern that will underpin all character behavior.",
+        "key_concepts": [
+          "Sprite sheets vs individual frames: atlas packing and memory implications",
+          "AnimatedSprite2D vs AnimationPlayer: when to use each",
+          "Finite state machine pattern: states, transitions, enter/exit callbacks",
+          "Animation states: idle, run, jump_rise, jump_fall, land, attack, hurt",
+          "Squash and stretch: applying animation principles to game sprites"
+        ],
+        "demonstration": "Building a character animation state machine: creating a 6-frame run cycle in AnimatedSprite2D, wiring state transitions to velocity and is_on_floor() checks, adding squash on landing",
+        "setup_requirements": [
+          "Sprite sheet assets (provided in course repository)",
+          "Godot project from session 1",
+          "Basic understanding of enums and match statements in GDScript"
+        ],
+        "review": [
+          {
+            "key": "Finite State Machine",
+            "value": "A design pattern where an object can be in exactly one state at a time, with defined transitions between states triggered by conditions or events"
+          },
+          {
+            "key": "Sprite Sheet",
+            "value": "A single image containing multiple animation frames arranged in a grid, reducing draw calls and enabling efficient GPU texture sampling"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 4,
+      "date": "2024-01-22",
+      "topic": "Tile Maps and Level Design",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Configure TileMap nodes with autotiling and terrain systems",
+        "Design levels using tile-based collision layers",
+        "Implement one-way platforms and moving platforms"
+      ],
+      "readings": [
+        "Godot Documentation: TileMap and TileSet",
+        "Level Design: Processes and Experiences by Christopher Totten, Ch. 2"
+      ],
+      "lecture_notes": {
+        "introduction": "Tile maps are the backbone of 2D level construction. They provide efficient rendering of large levels and a structured workflow for level design iteration.",
+        "key_concepts": [
+          "TileSet configuration: tile size, physics layers, navigation layers, custom data layers",
+          "Autotiling with terrains: bitmask-based automatic tile selection for seamless environments",
+          "Collision layers and masks: separating player, enemies, projectiles, and environment",
+          "One-way platforms: using platform collision property on specific tiles",
+          "Scene tiles: embedding full scenes (moving platforms, hazards) into the tile map"
+        ],
+        "demonstration": "Building a platformer level: creating a TileSet from a tileset sprite sheet, configuring terrain autotiling for ground and walls, adding physics collision shapes, placing one-way platform tiles, and adding a moving platform as a scene tile",
+        "setup_requirements": [
+          "Tileset sprite sheet (provided: 16x16 pixel tiles)",
+          "Godot project with player character from previous sessions",
+          "Level design sketch on grid paper"
+        ],
+        "review": [
+          {
+            "key": "Autotiling / Terrains",
+            "value": "A system where the engine automatically selects the correct tile variant based on neighboring tiles, using bitmask patterns to handle corners, edges, and transitions"
+          },
+          {
+            "key": "Collision Layers and Masks",
+            "value": "Layer defines what physics group an object belongs to; Mask defines what groups the object checks for collisions against, enabling selective collision"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 7,
+      "date": "2024-01-29",
+      "topic": "2D Physics and Collision Systems",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Configure RigidBody2D nodes for physics-driven gameplay",
+        "Implement Area2D detection zones for triggers, pickups, and hazards",
+        "Tune physics parameters for responsive game feel"
+      ],
+      "readings": [
+        "Game Feel by Steve Swink, Ch. 4-5",
+        "Godot Documentation: Physics Introduction (2D)"
+      ],
+      "lecture_notes": {
+        "introduction": "Physics in 2D games is rarely about realism. It is about feel. Today we learn how to configure and tune physics systems so that movement, collisions, and interactions feel responsive and satisfying.",
+        "key_concepts": [
+          "CharacterBody2D vs RigidBody2D vs StaticBody2D: choosing the right body type",
+          "Area2D for detection without physics response: hitboxes, pickups, triggers",
+          "Physics material properties: friction, bounce, and their effect on game feel",
+          "Coyote time and input buffering: forgiving platformer physics",
+          "Raycasting for ground detection, wall detection, and line-of-sight checks"
+        ],
+        "demonstration": "Implementing platformer polish: adding coyote time (150ms grace period after leaving a ledge), input buffering (100ms jump press memory), variable jump height (release to cut jump short), and wall sliding with reduced gravity",
+        "setup_requirements": [
+          "Godot project with TileMap level from previous session",
+          "Timer nodes or frame counter utility",
+          "Physics debug visualization enabled"
+        ],
+        "review": [
+          {
+            "key": "Coyote Time",
+            "value": "A short grace period (typically 100-200ms) after a player walks off a ledge during which they can still jump, named after Wile E. Coyote's delayed falls"
+          },
+          {
+            "key": "Input Buffering",
+            "value": "Storing player input for a short window so that a jump press slightly before landing still registers, reducing frustration from strict timing requirements"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 10,
+      "date": "2024-02-05",
+      "topic": "Camera Systems and Parallax Scrolling",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Implement a camera system with smooth following and look-ahead",
+        "Create parallax scrolling backgrounds for depth perception",
+        "Design camera behaviors for different gameplay contexts"
+      ],
+      "readings": [
+        "Scroll Back: The Theory and Practice of Cameras in Side-Scrollers by Itay Keren",
+        "Godot Documentation: Camera2D and ParallaxBackground"
+      ],
+      "lecture_notes": {
+        "introduction": "The camera is the player's window into your game world. A bad camera ruins a good game. Today we study how to make the camera feel invisible by anticipating what the player needs to see.",
+        "key_concepts": [
+          "Camera2D: smoothing, drag margins, and position offsets",
+          "Look-ahead: shifting camera toward player's facing direction or movement velocity",
+          "Camera zones: different behaviors in combat areas, cutscenes, and exploration",
+          "ParallaxBackground and ParallaxLayer: depth ratios for convincing depth",
+          "Screen shake: using camera offset with decay for impact feedback"
+        ],
+        "demonstration": "Building a complete camera system: smooth follow with adjustable smoothing speed, horizontal look-ahead based on facing direction, camera limits at room boundaries, parallax background with 3 layers (0.2, 0.5, 0.8 scroll ratios), and screen shake on enemy hit",
+        "setup_requirements": [
+          "Godot project with playable character and TileMap level",
+          "Parallax background art layers (provided: sky, mountains, trees)",
+          "Tween or AnimationPlayer for camera effects"
+        ],
+        "review": [
+          {
+            "key": "Parallax Scrolling",
+            "value": "A technique where background layers move at different speeds relative to the camera, creating an illusion of depth; slower layers appear more distant"
+          },
+          {
+            "key": "Camera Look-Ahead",
+            "value": "Offsetting the camera position in the direction the player is moving or facing, revealing more of the upcoming terrain and reducing reactive surprises"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 13,
+      "date": "2024-02-12",
+      "topic": "Particle Systems and Save/Load Architecture",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Create GPU-accelerated particle effects for visual feedback",
+        "Design a resource-based save/load system using Godot's Resource class",
+        "Implement persistent game state across sessions"
+      ],
+      "readings": [
+        "Godot Documentation: GPUParticles2D",
+        "Game Programming Patterns by Robert Nystrom, Ch. 11 (Serialization)"
+      ],
+      "lecture_notes": {
+        "introduction": "Particle systems add visual juice that makes actions feel impactful. Save systems ensure players never lose progress. Both are essential for a shippable game.",
+        "key_concepts": [
+          "GPUParticles2D: emitter shapes, velocity, acceleration, color gradients over lifetime",
+          "Common particle effects: dust on landing, sparks on hit, trail behind projectiles",
+          "One-shot vs continuous particles: explosion vs ambient effects",
+          "Save architecture: Godot Resource serialization vs JSON vs binary formats",
+          "What to save: player position, inventory, quest state, world modifications, settings"
+        ],
+        "demonstration": "Part 1: Creating a dust-kick particle effect triggered on player landing and direction change. Part 2: Building a SaveManager autoload that serializes player data and level state to a Resource file, with versioned save format for future compatibility",
+        "setup_requirements": [
+          "Godot project with playable platformer",
+          "Particle texture atlas (provided: basic shapes)",
+          "FileAccess and ResourceSaver/ResourceLoader documentation open"
+        ],
+        "review": [
+          {
+            "key": "GPUParticles2D",
+            "value": "Hardware-accelerated particle system where emission, movement, and rendering are computed on the GPU, enabling thousands of particles with minimal CPU overhead"
+          },
+          {
+            "key": "Save Data Serialization",
+            "value": "The process of converting game state objects into a storable format (Resource, JSON, binary) and reconstructing them on load, requiring careful versioning for backward compatibility"
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "Game Engines, Sprites, and Tile Maps",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Explain the difference between a CharacterBody2D and a RigidBody2D in Godot 4. For a player-controlled platformer character, which would you choose and why? Describe a scenario where the other type would be more appropriate.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "CharacterBody2D is a kinematic body that moves only through code (move_and_slide), giving the developer full control over movement. RigidBody2D is a physics-simulated body affected by gravity, forces, and collisions automatically. For a platformer character, CharacterBody2D is preferred because platformer movement requires tight, responsive control -- precise jump heights, instant direction changes, and custom gravity curves that physics simulation cannot easily provide. RigidBody2D would be more appropriate for objects like a physics puzzle game where crates, balls, or ragdolls need realistic physical behavior driven by forces and collisions rather than direct position control.",
+            "rubric": [
+              {
+                "key": "Correctly describes both body types",
+                "value": 3
+              },
+              {
+                "key": "Chooses CharacterBody2D with valid justification about control",
+                "value": 4
+              },
+              {
+                "key": "Provides appropriate RigidBody2D use case",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Describe how Godot's terrain autotiling system works. What is a bitmask in this context, and how does it determine which tile variant to display?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Godot's terrain autotiling examines the neighboring tiles around each placed tile and uses bitmask values to determine which variant to display. Each neighboring cell (up to 8 in a 3x3 grid centered on the tile) is assigned a bit in a bitmask. If a neighbor contains the same terrain type, that bit is set to 1; otherwise 0. The resulting bitmask value maps to a specific tile variant in the TileSet. For example, a tile with ground on all sides gets a full bitmask and displays as a solid fill, while a tile with ground only below and to the sides displays as a top edge. This automates the tedious process of manually selecting correct corner, edge, and transition tiles.",
+            "rubric": [
+              {
+                "key": "Explains neighbor checking and bitmask generation",
+                "value": 4
+              },
+              {
+                "key": "Describes how bitmask maps to tile variant",
+                "value": 3
+              },
+              {
+                "key": "Gives concrete example of different bitmask results",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 4,
+        "topic": "Physics, Camera Systems, and Game Feel",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Define 'coyote time' and 'input buffering' in the context of 2D platformer design. For each, specify a typical duration value and explain why these techniques improve the player experience despite being technically 'inaccurate.'",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Coyote time is a grace period (typically 80-150ms) after a player walks off a ledge edge during which they can still execute a jump. Without it, players who press jump one frame after leaving a platform fall to their death, which feels unfair because visually they appeared to still be on the ledge. Input buffering stores a jump press for a short window (typically 80-120ms) before landing, so if a player presses jump slightly early, the jump executes when they touch the ground. Without it, players must time their jump press to the exact frame of landing. Both techniques bridge the gap between human reaction time and frame-perfect input requirements, making the game feel responsive rather than punishing.",
+            "rubric": [
+              {
+                "key": "Correctly defines both terms",
+                "value": 3
+              },
+              {
+                "key": "Provides appropriate duration values for each",
+                "value": 3
+              },
+              {
+                "key": "Explains why inaccuracy improves player experience",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "A parallax background has three layers with motion scale values of 0.2, 0.5, and 0.8. If the camera moves 100 pixels to the right, how far does each layer move? Which layer appears closest to the viewer and why?",
+            "type": "calculation",
+            "points": 10,
+            "answer": "Layer 0.2 moves 20 pixels, layer 0.5 moves 50 pixels, and layer 0.8 moves 80 pixels. The 0.8 layer appears closest to the viewer because it moves the most relative to camera movement. This mirrors real-world parallax where nearby objects appear to move faster across your field of view than distant objects. The 0.2 layer (sky or distant mountains) barely moves, suggesting great distance, while the 0.8 layer (foreground foliage) moves nearly with the gameplay layer, suggesting proximity.",
+            "rubric": [
+              {
+                "key": "Correct pixel calculations for all three layers",
+                "value": 4
+              },
+              {
+                "key": "Correctly identifies 0.8 as closest layer",
+                "value": 3
+              },
+              {
+                "key": "Explains real-world parallax principle",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "2D Platformer Prototype",
+        "week_assigned": 2,
+        "week_due": 4,
+        "points": 100,
+        "description": "Build a playable 2D platformer level in Godot 4 featuring a player character with polished movement, animated sprites, tile-based level design, physics interactions, and camera work. The level must be completable in 2-3 minutes and demonstrate mastery of core 2D game development techniques.",
+        "objectives": [
+          "Implement responsive player movement with animation state machine",
+          "Design a tile-based level with varied terrain and hazards",
+          "Apply game feel principles: coyote time, input buffering, screen shake",
+          "Create a camera system with smooth following and parallax background"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Godot 4 project with all source files and assets",
+          "Exported build (Windows and/or HTML5)",
+          "Level design document with annotated map showing intended player path and pacing",
+          "Technical write-up (2 pages) explaining state machine design and physics tuning decisions"
+        ],
+        "grading_rubric": {
+          "player_character": {
+            "points": 30,
+            "criteria": [
+              "Smooth, responsive movement with appropriate acceleration and deceleration",
+              "Animation state machine with correct transitions for all movement states",
+              "Coyote time and input buffering implemented and tuned",
+              "Variable jump height with appropriate gravity curves"
+            ]
+          },
+          "level_design": {
+            "points": 25,
+            "criteria": [
+              "TileMap with autotiling and collision layers configured correctly",
+              "Level teaches mechanics through design (not text instructions)",
+              "Appropriate difficulty curve over 2-3 minutes of gameplay",
+              "At least one hazard type and one collectible type"
+            ]
+          },
+          "camera_and_visuals": {
+            "points": 25,
+            "criteria": [
+              "Camera follows player smoothly with appropriate look-ahead",
+              "Parallax background with at least 2 layers at different scroll speeds",
+              "Consistent pixel art style at chosen resolution",
+              "Screen shake or other camera juice on impacts"
+            ]
+          },
+          "code_quality": {
+            "points": 20,
+            "criteria": [
+              "Clean scene tree organization with descriptive node names",
+              "GDScript follows style guide with type hints and documentation",
+              "State machine is properly structured and extensible",
+              "No errors or warnings in the Godot debugger"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Polished, playable platformer with responsive controls",
+                "Well-designed level that teaches through play",
+                "Professional camera work and visual presentation",
+                "Clean, well-documented codebase"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Complete 2D Game Vertical Slice",
+        "week_assigned": 4,
+        "week_due": 5,
+        "points": 150,
+        "description": "Expand your platformer prototype into a vertical slice featuring at least 2 levels, enemy AI, a particle effects system, and a save/load system. The vertical slice must represent a polished, shippable sample of a larger game, demonstrating all major systems working together.",
+        "objectives": [
+          "Implement enemy AI with patrol, chase, and attack behaviors",
+          "Create particle effects for player actions and environmental ambiance",
+          "Build a save/load system that persists progress between sessions",
+          "Design multiple levels with distinct visual themes and gameplay focus"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Godot 4 project with all source files and assets",
+          "Exported builds (Windows and HTML5)",
+          "Game design document covering enemy behavior, level flow, and save system architecture",
+          "Playtest report: have 3 people play your game and document their feedback with your responses"
+        ],
+        "grading_rubric": {
+          "enemy_ai_and_gameplay": {
+            "points": 40,
+            "criteria": [
+              "At least 2 enemy types with distinct behaviors",
+              "Enemy state machine with patrol, detect, chase, and attack states",
+              "Player-enemy interactions feel fair and readable",
+              "Hitbox and hurtbox system properly separated"
+            ]
+          },
+          "particle_and_visual_effects": {
+            "points": 30,
+            "criteria": [
+              "Particle effects on player actions (jump dust, landing impact, attack slash)",
+              "Environmental particles (ambient dust, water drips, torch sparks)",
+              "Particles use appropriate blend modes and lifetime curves",
+              "Effects enhance game feel without obscuring gameplay"
+            ]
+          },
+          "save_load_system": {
+            "points": 30,
+            "criteria": [
+              "Player progress persists across application restarts",
+              "Save file includes player position, collected items, and current level",
+              "Save format is versioned for future compatibility",
+              "Error handling for corrupted or missing save files"
+            ]
+          },
+          "level_design_and_polish": {
+            "points": 30,
+            "criteria": [
+              "Two or more levels with distinct visual themes",
+              "Level transitions work smoothly",
+              "Difficulty progression across levels is intentional",
+              "Playtest feedback has been incorporated"
+            ]
+          },
+          "documentation_and_playtesting": {
+            "points": 20,
+            "criteria": [
+              "Game design document is thorough and accurate to implementation",
+              "Playtest report includes real feedback from 3 players",
+              "Developer responses show critical thinking about feedback",
+              "Changes based on feedback are documented"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Feature-complete vertical slice demonstrating all major systems",
+                "Enemy AI provides engaging gameplay challenge",
+                "Visual effects enhance game feel and communicate game state",
+                "Save system works reliably with proper error handling"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 10,
+      "description": "Regular assessment of engine knowledge, design patterns, and technical concepts"
+    },
+    "lab_exercises": {
+      "percentage": 20,
+      "description": "Weekly hands-on coding exercises building specific game systems"
+    },
+    "platformer_prototype": {
+      "percentage": 20,
+      "description": "First major assignment: polished single-level platformer prototype"
+    },
+    "vertical_slice": {
+      "percentage": 30,
+      "description": "Second major assignment: expanded game with AI, particles, and save system"
+    },
+    "final_portfolio_and_postmortem": {
+      "percentage": 20,
+      "description": "Final presentation of completed game with written post-mortem analysis"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is mandatory for all lab sessions and playtesting days. More than 2 unexcused absences from labs may result in a full letter grade reduction.",
+    "late_submissions": "Late assignments are penalized 10% per day. Builds that do not compile or run receive an automatic 50% penalty. Test your exports before submitting.",
+    "collaboration": "Individual projects must be your own code and assets. You may use free assets from itch.io or OpenGameArt with proper attribution. Sharing code solutions between students is prohibited.",
+    "academic_integrity": "All code must be written by you or properly attributed. Using AI code generation tools is permitted for boilerplate only and must be disclosed. Submitting tutorial code without modification is plagiarism.",
+    "technology_requirements": "Students must have a computer capable of running Godot 4 (Windows, macOS, or Linux). A dedicated GPU is recommended but not required for 2D work. All required software is free and open source."
+  }
+}

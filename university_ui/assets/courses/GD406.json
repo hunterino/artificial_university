@@ -1,0 +1,559 @@
+{
+  "course_info": {
+    "course_id": "GD406",
+    "title": "Multiplayer Game Design",
+    "credit_hours": 3,
+    "duration": "15 weeks",
+    "meeting_schedule": "Tuesday, Thursday - 3 hours per week",
+    "prerequisites": [
+      "GD301 - Game Programming",
+      "GD302 - Level Design"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "date": "2024-01-16",
+      "topic": "Introduction to Multiplayer Game Architecture",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Understand the fundamental network architectures used in multiplayer games",
+        "Compare client-server and peer-to-peer topologies with their trade-offs",
+        "Identify which architecture suits different game genres"
+      ],
+      "readings": [
+        "Multiplayer Game Programming Ch. 1-2 by Joshua Glazer and Sanjay Madhav",
+        "Gaffer on Games: What Every Programmer Needs to Know About Game Networking"
+      ],
+      "lecture_notes": {
+        "introduction": "Multiplayer games are among the most technically demanding software projects in existence. This course covers the design and engineering challenges of building games that connect players across networks.",
+        "key_concepts": [
+          "Client-server architecture: authoritative server, thin vs. thick clients",
+          "Peer-to-peer architecture: mesh, star, and hybrid topologies",
+          "Dedicated servers vs. listen servers vs. relay servers",
+          "Bandwidth, latency, and packet loss as fundamental constraints",
+          "The CAP theorem applied to game state: consistency, availability, partition tolerance"
+        ],
+        "demonstration": "Network topology visualization showing packet flow in client-server vs. P2P for a 4-player game",
+        "setup_requirements": [
+          "Unity 2023.2+ with Netcode for GameObjects installed",
+          "Wireshark for network packet analysis",
+          "Local network test environment (two machines or virtual network)"
+        ],
+        "review": [
+          {
+            "key": "Client-Server",
+            "value": "Server is authoritative over game state; prevents most cheating; scales with server hardware; single point of failure"
+          },
+          {
+            "key": "Peer-to-Peer",
+            "value": "No dedicated server cost; lower latency between nearby peers; difficult to prevent cheating; scales poorly beyond 8-16 players"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 1,
+      "session_number": 2,
+      "date": "2024-01-18",
+      "topic": "Network State Synchronization",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Implement reliable and unreliable state synchronization methods",
+        "Understand the difference between state transfer and input transfer models",
+        "Apply snapshot interpolation and delta compression techniques"
+      ],
+      "readings": [
+        "Gaffer on Games: Snapshot Interpolation",
+        "Valve Developer Community: Source Multiplayer Networking"
+      ],
+      "lecture_notes": {
+        "introduction": "The core challenge of multiplayer game development is keeping game state synchronized across multiple machines connected by an unreliable, high-latency network. Every design decision in this course flows from this fundamental problem.",
+        "key_concepts": [
+          "State synchronization vs. input synchronization (lockstep)",
+          "Snapshot interpolation: buffering server snapshots and interpolating between them",
+          "Delta compression: sending only what changed since the last acknowledged snapshot",
+          "Reliable vs. unreliable delivery: when to use each and why",
+          "Object relevancy and interest management: don't send what the client doesn't need"
+        ],
+        "demonstration": "Implementing basic snapshot interpolation in Unity Netcode, visualizing the interpolation buffer",
+        "setup_requirements": [
+          "Unity Netcode for GameObjects project from session 1",
+          "Network simulation tools for adding artificial latency"
+        ],
+        "review": [
+          {
+            "key": "Snapshot Interpolation",
+            "value": "Client renders state from the past (typically 100ms behind server), interpolating between two buffered snapshots for smooth visuals"
+          },
+          {
+            "key": "Delta Compression",
+            "value": "Instead of sending full game state each tick, only transmit fields that changed since the client's last acknowledged state, reducing bandwidth by 80-95%"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 3,
+      "date": "2024-01-23",
+      "topic": "Latency Compensation and Client-Side Prediction",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Implement client-side prediction with server reconciliation",
+        "Understand and implement lag compensation for hit detection",
+        "Analyze the trade-offs between responsiveness and fairness"
+      ],
+      "readings": [
+        "Gaffer on Games: Networked Physics",
+        "Overwatch GDC Talk: Netcode and Latency Compensation"
+      ],
+      "lecture_notes": {
+        "introduction": "Players expect instant feedback from their inputs, but network latency means the server cannot confirm actions for tens or hundreds of milliseconds. Latency compensation techniques bridge this gap to create the illusion of responsiveness.",
+        "key_concepts": [
+          "Client-side prediction: simulate locally, reconcile with server authority",
+          "Server reconciliation: when the server corrects your prediction, replay unacknowledged inputs",
+          "Lag compensation for hit detection: rewinding server state to the shooter's perspective",
+          "The peekers advantage problem and how different games handle it",
+          "Jitter buffers and adaptive interpolation delay"
+        ],
+        "demonstration": "Building a client-side predicted character controller with server reconciliation and misprediction correction",
+        "setup_requirements": [
+          "Unity Netcode project with basic movement synchronized",
+          "Network simulation tool configured for 50ms, 100ms, and 200ms round-trip latency"
+        ],
+        "review": [
+          {
+            "key": "Client-Side Prediction",
+            "value": "Client simulates input locally for instant feedback, stores input history, and replays from the last server-confirmed state when corrections arrive"
+          },
+          {
+            "key": "Lag Compensation",
+            "value": "Server rewinds world state to the time the shooting client perceived when they fired, then performs hit detection against that historical state"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 5,
+      "date": "2024-01-30",
+      "topic": "Matchmaking Systems and Competitive Balance",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Design matchmaking systems that produce fair and enjoyable matches",
+        "Understand Elo, Glicko-2, and TrueSkill rating systems",
+        "Implement queue management and match quality optimization"
+      ],
+      "readings": [
+        "Microsoft Research: TrueSkill Ranking System",
+        "Riot Games Engineering: Under the Hood of League of Legends Matchmaking"
+      ],
+      "lecture_notes": {
+        "introduction": "Matchmaking determines who plays with and against whom. A great matchmaking system makes every match feel competitive and fair. A poor one drives players away faster than any bug.",
+        "key_concepts": [
+          "Rating systems: Elo (chess-derived, 1v1), Glicko-2 (adds confidence intervals), TrueSkill (supports teams)",
+          "Match quality metrics: skill gap, queue time, ping, party size balance",
+          "Queue management: balancing wait time against match quality",
+          "Placement matches and confidence intervals for new players",
+          "Smurf detection and rank manipulation prevention"
+        ],
+        "demonstration": "Simulating 1000 matches with TrueSkill ratings and analyzing convergence speed and match quality distribution",
+        "setup_requirements": [
+          "Python environment with numpy for rating simulations",
+          "Spreadsheet for analyzing match quality distributions"
+        ],
+        "review": [
+          {
+            "key": "TrueSkill",
+            "value": "Models each player as a Gaussian distribution (mu = skill estimate, sigma = uncertainty). Updates both after each match. Supports team-based games natively."
+          },
+          {
+            "key": "Queue Time vs. Quality",
+            "value": "As queue time increases, progressively widen acceptable skill range. Typical target: 95% of matches start within 2 minutes with skill gap under 1 standard deviation."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 7,
+      "date": "2024-02-06",
+      "topic": "Anti-Cheat Design and Security",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Identify common cheating vectors in multiplayer games",
+        "Design server-authoritative systems that prevent client-side manipulation",
+        "Understand the role and limitations of anti-cheat middleware"
+      ],
+      "readings": [
+        "Game Security: Naughty Dog GDC Talk on The Last of Us Multiplayer",
+        "EasyAntiCheat and BattlEye Architecture Documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Cheating destroys competitive integrity and drives honest players away. Anti-cheat is not a single system but a design philosophy that must be embedded into every layer of your multiplayer architecture.",
+        "key_concepts": [
+          "Client-side cheats: wallhacks, aimbots, speed hacks, memory manipulation",
+          "Server authority as the primary defense: never trust the client",
+          "Server-side validation: movement speed checks, fire rate limits, impossible action detection",
+          "Statistical detection: identifying aim patterns, reaction times, and win rates that deviate from human norms",
+          "Anti-cheat middleware: kernel-level (EasyAntiCheat, Vanguard) vs. user-level (BattlEye) and privacy trade-offs"
+        ],
+        "demonstration": "Implementing server-side movement validation that detects speed hacks and teleportation while tolerating legitimate network jitter",
+        "setup_requirements": [
+          "Networked Unity project with client-server movement",
+          "Cheat simulation scripts for testing detection",
+          "Logging framework for recording suspicious actions"
+        ],
+        "review": [
+          {
+            "key": "Server Authority",
+            "value": "The server must validate every client action against game rules. The client is a rendering terminal, not a trusted participant in game logic."
+          },
+          {
+            "key": "Statistical Detection",
+            "value": "Track per-player metrics (headshot %, reaction time distribution, movement patterns) and flag statistical outliers for review. Avoids false positives from single-event detection."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 9,
+      "date": "2024-02-13",
+      "topic": "Live Operations and Server Infrastructure",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Design server infrastructure that scales with player demand",
+        "Plan live operations including content updates, events, and maintenance windows",
+        "Implement monitoring, alerting, and incident response procedures"
+      ],
+      "readings": [
+        "AWS Game Tech: Scaling Game Servers with Amazon GameLift",
+        "Bungie GDC Talk: Destiny 2 Live Service Operations"
+      ],
+      "lecture_notes": {
+        "introduction": "Shipping a multiplayer game is the beginning, not the end. Live operations keep the game healthy, the servers running, and the players engaged over months and years.",
+        "key_concepts": [
+          "Server infrastructure: dedicated vs. cloud (AWS GameLift, Azure PlayFab, GCP Agones)",
+          "Auto-scaling: scaling server fleet based on player count, time of day, and geographic demand",
+          "Zero-downtime deployments: rolling updates, blue-green deployment, feature flags",
+          "Monitoring and alerting: server health, player count, error rates, latency percentiles",
+          "Incident response: runbooks, on-call rotations, communication to players during outages"
+        ],
+        "demonstration": "Setting up a basic auto-scaling game server fleet on AWS GameLift with CloudWatch monitoring and alerts",
+        "setup_requirements": [
+          "AWS free tier account or simulated environment",
+          "Docker for containerized game server builds",
+          "Grafana or equivalent dashboarding tool"
+        ],
+        "review": [
+          {
+            "key": "Auto-Scaling",
+            "value": "Scale based on active match count vs. available capacity. Target 70-80% utilization. Pre-scale for known events (launches, tournaments, weekends)."
+          },
+          {
+            "key": "Zero-Downtime Deployment",
+            "value": "Run new version alongside old version. Route new matches to new servers. Let existing matches finish on old servers. Drain and terminate old fleet."
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "Network Architecture and State Synchronization",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "A multiplayer FPS game uses client-side prediction with server reconciliation. The client sends input at tick 100 and immediately simulates the result locally. The server processes tick 100 and sends back a correction at tick 105 (50ms later). Describe step-by-step what happens on the client when the correction arrives and the predicted position differs from the server position by 0.5 units.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "When the correction arrives, the client: (1) Receives the authoritative server state for tick 100. (2) Compares it to the predicted state at tick 100 and detects a 0.5-unit discrepancy. (3) Snaps the authoritative state to tick 100 as the new base state. (4) Replays all unacknowledged inputs from ticks 101-105 on top of the corrected state. (5) The resulting position after replay is the new predicted position, which should be close to but slightly different from the original prediction. (6) Optionally smooths the visual correction over several frames to avoid visual popping.",
+            "rubric": [
+              {
+                "key": "Identifies server state as authoritative starting point",
+                "value": 3
+              },
+              {
+                "key": "Describes input replay from corrected state",
+                "value": 3
+              },
+              {
+                "key": "Mentions visual smoothing or snap correction",
+                "value": 2
+              },
+              {
+                "key": "Correctly identifies which ticks need replay (101-105)",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain why delta compression is essential for a 64-player battle royale game and calculate the approximate bandwidth savings. Assume the full game state snapshot is 50KB and typically only 5% of fields change between ticks at 20 ticks per second.",
+            "type": "calculation",
+            "points": 10,
+            "answer": "Without delta compression: 50KB * 20 ticks/sec = 1000KB/sec = 1MB/sec per client. With 64 clients: 64MB/sec total server upload bandwidth. With delta compression (5% change rate): 50KB * 0.05 = 2.5KB per delta * 20 ticks/sec = 50KB/sec per client. With 64 clients: 3.2MB/sec total. Savings: 95% bandwidth reduction, from 64MB/sec to 3.2MB/sec. This makes the game viable on both server and client connections. Without delta compression, most home internet connections could not handle the downstream bandwidth.",
+            "rubric": [
+              {
+                "key": "Correct full-state bandwidth calculation",
+                "value": 3
+              },
+              {
+                "key": "Correct delta-compressed bandwidth calculation",
+                "value": 3
+              },
+              {
+                "key": "Identifies the percentage savings correctly (95%)",
+                "value": 2
+              },
+              {
+                "key": "Explains why this matters for feasibility",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 4,
+        "topic": "Matchmaking, Anti-Cheat, and Competitive Systems",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Design a matchmaking system for a 5v5 team-based competitive game. Specify: (a) which rating system you would use and why, (b) how you handle parties of mixed skill levels queuing together, (c) your strategy for balancing queue time against match quality, and (d) how you handle placement matches for new players.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "(a) TrueSkill 2 or Glicko-2 adapted for teams, because they model uncertainty (sigma) which is critical for new players and returning players. (b) For mixed-skill parties, use the highest-rated player's MMR weighted upward (e.g., party MMR = avg + 0.5 * (max - avg)) to prevent boosting. (c) Start with tight skill bounds (within 200 MMR) and widen by 50 MMR every 30 seconds of queue time, capping at 500 MMR difference. (d) New players start with high sigma (uncertainty). First 10 matches are placement matches with accelerated sigma updates. Match them against a mix of established players to quickly calibrate.",
+            "rubric": [
+              {
+                "key": "Chooses appropriate rating system with valid justification",
+                "value": 3
+              },
+              {
+                "key": "Addresses mixed-skill party handling with anti-boosting measures",
+                "value": 3
+              },
+              {
+                "key": "Describes progressive skill bound widening with specific numbers",
+                "value": 2
+              },
+              {
+                "key": "Explains placement match system using uncertainty/sigma",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A player reports that an opponent in your competitive FPS game is using an aimbot. Describe three different layers of anti-cheat detection your game should have that could catch this cheat, and explain why relying on only one layer is insufficient.",
+            "type": "short_answer",
+            "points": 15,
+            "answer": "Layer 1 - Server-side validation: The server tracks fire rate, checks that the client's reported aim direction is physically possible given previous aim position and human reaction time limits. Catches blatant aimbots that snap instantly. Layer 2 - Statistical analysis: Over many matches, track headshot percentage, time-to-target, aim flick patterns, and accuracy distribution. An aimbot produces inhuman consistency that deviates from natural variance. Catches subtle aimbots that add randomization. Layer 3 - Client-side anti-cheat (e.g., EasyAntiCheat): Scans for known cheat signatures in memory, detects code injection, and monitors for suspicious processes. Catches commercially available cheats. No single layer is sufficient because: server-side validation can only catch blatant cheats, statistical analysis requires many matches of data before flagging, and client-side anti-cheat can be bypassed by custom or new cheats. Defense in depth is essential.",
+            "rubric": [
+              {
+                "key": "Describes server-side validation with specific checks",
+                "value": 4
+              },
+              {
+                "key": "Describes statistical detection with specific metrics",
+                "value": 4
+              },
+              {
+                "key": "Describes client-side anti-cheat scanning",
+                "value": 4
+              },
+              {
+                "key": "Explains why defense in depth is necessary",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 25
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Networked Multiplayer Prototype",
+        "week_assigned": 2,
+        "week_due": 4,
+        "points": 100,
+        "description": "Build a functional multiplayer game prototype supporting 2-4 players with authoritative server architecture, client-side prediction, and lag compensation. The prototype must demonstrate smooth gameplay under simulated latency conditions of up to 200ms round-trip.",
+        "objectives": [
+          "Implement a client-server architecture with authoritative game state",
+          "Build client-side prediction with server reconciliation for player movement",
+          "Implement lag compensation for at least one game mechanic (e.g., hit detection)",
+          "Demonstrate the system working under various simulated network conditions"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Unity project with Netcode for GameObjects implementation",
+          "Server and client builds that can run on separate machines",
+          "Network simulation test results showing behavior at 0ms, 50ms, 100ms, and 200ms RTT",
+          "Technical documentation explaining the networking architecture and design decisions",
+          "Video demonstration showing gameplay under normal and degraded network conditions"
+        ],
+        "grading_rubric": {
+          "network_architecture": {
+            "points": 30,
+            "criteria": [
+              "Server is fully authoritative over game state",
+              "Client never directly modifies authoritative state",
+              "State synchronization is bandwidth-efficient",
+              "Connection handling is robust (join, leave, reconnect)"
+            ]
+          },
+          "latency_compensation": {
+            "points": 30,
+            "criteria": [
+              "Client-side prediction produces smooth local movement",
+              "Server reconciliation correctly handles mispredictions",
+              "Lag compensation produces fair hit detection across latencies",
+              "Visual correction is smooth and not jarring to players"
+            ]
+          },
+          "robustness": {
+            "points": 25,
+            "criteria": [
+              "Gameplay remains playable at 200ms RTT",
+              "Handles packet loss gracefully without desynchronization",
+              "Server handles player disconnection without crashing",
+              "No exploitable client-side state manipulation"
+            ]
+          },
+          "documentation": {
+            "points": 15,
+            "criteria": [
+              "Clear architecture diagram showing data flow",
+              "Explanation of synchronization strategy and trade-offs",
+              "Network test results with analysis",
+              "Identified limitations and proposed improvements"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Fully functional multiplayer prototype with authoritative server",
+                "Smooth gameplay demonstrated across latency conditions",
+                "Robust handling of network edge cases",
+                "Thorough documentation of architecture and design decisions"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Competitive Multiplayer Systems Design Document",
+        "week_assigned": 3,
+        "week_due": 5,
+        "points": 100,
+        "description": "Design and document the complete competitive multiplayer systems for a team-based game. This design document must cover matchmaking, ranking, anti-cheat, social systems, and live operations. All systems must be specified in enough detail for an engineering team to implement them.",
+        "objectives": [
+          "Design a complete matchmaking and ranking system with mathematical specification",
+          "Specify anti-cheat measures across server-side, statistical, and client-side layers",
+          "Design social systems that encourage positive player behavior",
+          "Plan live operations infrastructure including scaling, deployment, and monitoring"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Matchmaking specification: rating algorithm, queue logic, party handling, placement system",
+          "Anti-cheat specification: server-side validation rules, statistical detection thresholds, client-side integration plan",
+          "Social systems design: friend system, party system, reporting, reputation scoring",
+          "Infrastructure plan: server architecture diagram, auto-scaling rules, deployment pipeline, monitoring dashboard specification",
+          "Simulation results: matchmaking simulation with 10,000 simulated players showing rating convergence and match quality"
+        ],
+        "grading_rubric": {
+          "matchmaking_design": {
+            "points": 30,
+            "criteria": [
+              "Rating system is mathematically specified with update formulas",
+              "Queue logic handles edge cases (long queues, skill extremes, parties)",
+              "Placement system is well-defined with convergence analysis",
+              "Anti-smurf and anti-boosting measures are included"
+            ]
+          },
+          "anti_cheat_design": {
+            "points": 25,
+            "criteria": [
+              "Server-side validation covers all major cheat categories",
+              "Statistical detection has defined thresholds and confidence intervals",
+              "False positive mitigation strategy is included",
+              "Escalation and ban appeal process is defined"
+            ]
+          },
+          "systems_integration": {
+            "points": 25,
+            "criteria": [
+              "Social systems are fully specified and integrated with matchmaking",
+              "Infrastructure plan supports the designed systems at scale",
+              "Monitoring covers all critical system health metrics",
+              "Deployment strategy supports zero-downtime updates"
+            ]
+          },
+          "simulation_analysis": {
+            "points": 20,
+            "criteria": [
+              "Simulation is methodologically sound with sufficient sample size",
+              "Results demonstrate rating convergence within expected matches",
+              "Match quality metrics are defined and analyzed",
+              "Edge cases are identified and addressed"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Implementation-ready specification of all competitive systems",
+                "Mathematically rigorous matchmaking and rating design",
+                "Comprehensive anti-cheat strategy with defense in depth",
+                "Realistic infrastructure plan with simulation validation"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 15,
+      "description": "Regular assessment of networking concepts and multiplayer design knowledge"
+    },
+    "lab_exercises": {
+      "percentage": 20,
+      "description": "Hands-on networking implementation exercises completed during lab sessions"
+    },
+    "multiplayer_prototype": {
+      "percentage": 25,
+      "description": "Functional networked multiplayer prototype with latency compensation"
+    },
+    "systems_design_document": {
+      "percentage": 25,
+      "description": "Comprehensive competitive multiplayer systems design with simulation analysis"
+    },
+    "final_presentation": {
+      "percentage": 15,
+      "description": "Live demonstration and defense of multiplayer prototype and systems design"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is mandatory for all lab sessions where networked testing requires multiple participants. More than 2 unexcused absences may result in a half-letter grade reduction.",
+    "late_submissions": "Late assignments are penalized 10% per day. Network programming assignments require partner testing; late submissions impact your testing partners and will be penalized accordingly.",
+    "collaboration": "Lab exercises may be completed in pairs. The multiplayer prototype may be completed in teams of up to 3. The systems design document must be completed individually. All team contributions must be documented.",
+    "academic_integrity": "All code must be original or properly attributed. Using networking middleware is permitted and encouraged, but the integration and game logic must be your own. Code sharing between teams is prohibited.",
+    "technology_requirements": "Students must have a computer capable of running Unity with networking packages. Two networked machines (physical or virtual) are required for testing. Lab computers are available for scheduled testing sessions."
+  }
+}

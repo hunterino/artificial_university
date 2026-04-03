@@ -1,0 +1,566 @@
+{
+  "course_info": {
+    "course_id": "GD408",
+    "title": "Game Analytics and Monetization",
+    "credit_hours": 3,
+    "duration": "15 weeks",
+    "meeting_schedule": "Tuesday, Thursday - 3 hours per week",
+    "prerequisites": [
+      "GD102 - Game Theory and Mechanics",
+      "GD405 - Game Marketing and Publishing"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "date": "2024-01-16",
+      "topic": "Introduction to Player Analytics",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Understand the role of analytics in modern game development",
+        "Identify key performance indicators (KPIs) for different game business models",
+        "Set up an analytics pipeline from event collection to dashboard visualization"
+      ],
+      "readings": [
+        "Game Analytics: Maximizing the Value of Player Data Ch. 1-3",
+        "Unity Analytics Documentation and Best Practices"
+      ],
+      "lecture_notes": {
+        "introduction": "Data-driven design does not mean letting numbers dictate every decision. It means making informed decisions with evidence rather than assumptions. This course teaches you to collect, analyze, and act on player behavior data responsibly.",
+        "key_concepts": [
+          "The analytics pipeline: instrumentation -> collection -> storage -> analysis -> action",
+          "Key metrics by business model: premium (units, refund rate, playtime), F2P (DAU, MAU, ARPDAU, LTV)",
+          "Event taxonomy: design events (gameplay actions), progression events, business events, error events",
+          "Analytics platforms: Unity Analytics, GameAnalytics, Amplitude, custom solutions",
+          "Data privacy fundamentals: GDPR, COPPA, CCPA compliance for game analytics"
+        ],
+        "demonstration": "Setting up Unity Analytics in a sample project, defining custom events, and viewing real-time data in the dashboard",
+        "setup_requirements": [
+          "Unity 2023.2+ with Analytics package installed",
+          "GameAnalytics free account for comparison",
+          "Spreadsheet software for data analysis exercises"
+        ],
+        "review": [
+          {
+            "key": "Analytics Pipeline",
+            "value": "Instrument events in game code -> Collect via SDK -> Store in data warehouse -> Analyze with queries and dashboards -> Act on insights to improve the game"
+          },
+          {
+            "key": "Critical Metrics",
+            "value": "DAU (daily active users), D1/D7/D30 retention, session length, sessions per day, conversion rate, ARPDAU (average revenue per daily active user), LTV (lifetime value)"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 1,
+      "session_number": 2,
+      "date": "2024-01-18",
+      "topic": "Funnel Analysis and Player Retention",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Build and interpret player retention curves",
+        "Identify drop-off points using funnel analysis",
+        "Design interventions to improve retention at critical stages"
+      ],
+      "readings": [
+        "Deconstructor of Fun: Mobile Game Retention Benchmarks 2023",
+        "Nir Eyal: Hooked - How to Build Habit-Forming Products Ch. 1-4"
+      ],
+      "lecture_notes": {
+        "introduction": "Retention is the single most important metric in games. A game that retains players can grow through word-of-mouth and eventually monetize. A game that fails to retain players will fail regardless of acquisition spend or monetization design.",
+        "key_concepts": [
+          "Retention curves: D1, D7, D30 retention as percentage of installing users who return",
+          "Industry benchmarks: D1 retention above 40% is good for mobile, above 25% for D7, above 10% for D30",
+          "Funnel analysis: mapping the player journey from install to first session to first purchase to long-term engagement",
+          "FTUE (First Time User Experience) optimization: the first 5 minutes determine D1 retention",
+          "Re-engagement mechanics: push notifications, daily rewards, social obligations, content cadence"
+        ],
+        "demonstration": "Analyzing a real retention dataset from a published mobile game, building cohort retention curves, and identifying the primary drop-off point",
+        "setup_requirements": [
+          "Sample retention dataset (provided on course portal)",
+          "Python with pandas and matplotlib, or Excel/Google Sheets",
+          "Analytics dashboard with funnel visualization capability"
+        ],
+        "review": [
+          {
+            "key": "Retention Curve Shape",
+            "value": "Healthy games show steep early drop (D1), flattening curve (D7-D14), and stable long-term tail. If the curve never flattens, the core loop has a fundamental engagement problem."
+          },
+          {
+            "key": "FTUE Impact",
+            "value": "Improving D1 retention from 30% to 40% is a 33% increase in your entire addressable audience for every subsequent metric. FTUE optimization has the highest ROI of any retention work."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 3,
+      "date": "2024-01-23",
+      "topic": "A/B Testing and Experimentation",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Design statistically valid A/B tests for game features and monetization",
+        "Calculate sample sizes and interpret test results with confidence intervals",
+        "Avoid common pitfalls in game experimentation"
+      ],
+      "readings": [
+        "Trustworthy Online Controlled Experiments Ch. 1-4 by Ron Kohavi",
+        "King.com Engineering Blog: A/B Testing at Scale in Mobile Games"
+      ],
+      "lecture_notes": {
+        "introduction": "Intuition is unreliable. A/B testing replaces guessing with measurement. But a badly designed test is worse than no test at all, because it gives you false confidence in a wrong conclusion.",
+        "key_concepts": [
+          "A/B test design: hypothesis, control group, treatment group, primary metric, guardrail metrics",
+          "Statistical significance: p-values, confidence intervals, and why p < 0.05 is not magic",
+          "Sample size calculation: effect size, statistical power, and how long to run a test",
+          "Common pitfalls: peeking at results early, testing too many variants, ignoring novelty effects",
+          "Practical considerations: segment interactions, network effects in multiplayer, and long-term vs. short-term metrics"
+        ],
+        "demonstration": "Designing an A/B test for a tutorial change, calculating required sample size, running the test on simulated data, and interpreting results with a confidence interval",
+        "setup_requirements": [
+          "Python with scipy.stats for statistical calculations",
+          "A/B test sample size calculator (Evan Miller or similar)",
+          "Simulated player behavior dataset for hands-on exercises"
+        ],
+        "review": [
+          {
+            "key": "Sample Size Formula",
+            "value": "n = (Z_alpha/2 + Z_beta)^2 * (p1(1-p1) + p2(1-p2)) / (p1 - p2)^2. For a 5% baseline conversion rate and 1 percentage point minimum detectable effect, you need approximately 7,500 users per group."
+          },
+          {
+            "key": "Guardrail Metrics",
+            "value": "Always monitor metrics you don't want to harm alongside the metric you're trying to improve. A tutorial change that improves D1 retention but tanks D7 retention is a net negative."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 5,
+      "date": "2024-01-30",
+      "topic": "Free-to-Play Monetization Design",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Design monetization systems for free-to-play games that generate revenue without exploiting players",
+        "Understand the economics of whale-dependent vs. broad monetization models",
+        "Analyze the monetization mechanics of successful F2P games"
+      ],
+      "readings": [
+        "Free-to-Play: Making Money From Games You Give Away by Will Luton Ch. 5-8",
+        "Deconstructor of Fun: Monetization Deep Dives (selected articles)"
+      ],
+      "lecture_notes": {
+        "introduction": "Free-to-play is a business model, not a game design philosophy. The best F2P games create genuine value for players at every spending tier, including zero. The worst exploit psychological vulnerabilities for short-term revenue at the cost of player trust and long-term viability.",
+        "key_concepts": [
+          "Monetization models: cosmetic-only (Fortnite), convenience/time-saving (Clash Royale), content expansion (Genshin Impact), battle pass (hybrid)",
+          "The whale problem: when 0.15% of players generate 50% of revenue, your game's survival depends on a tiny, potentially vulnerable population",
+          "Broad monetization: battle passes, cosmetics, and low-price-point offers that monetize 5-15% of players instead of 1-2%",
+          "Value perception: players must feel they received fair value for every purchase, or they churn with negative word-of-mouth",
+          "Monetization pacing: when to surface first purchase opportunity, optimal price ladders, and avoiding pay-to-win perception"
+        ],
+        "demonstration": "Deconstructing the monetization systems of three F2P games: one ethical broad-monetization model, one whale-dependent model, and one battle pass hybrid",
+        "setup_requirements": [
+          "Three F2P games installed for live analysis (provided list)",
+          "Revenue modeling spreadsheet template",
+          "Monetization deconstruction framework worksheet"
+        ],
+        "review": [
+          {
+            "key": "Broad vs. Whale Monetization",
+            "value": "Broad: 10% of players pay, average $10/month, stable revenue. Whale-dependent: 1% of players pay, average $100/month, volatile revenue tied to a few hundred individuals. Industry trend is toward broad monetization."
+          },
+          {
+            "key": "First Purchase Optimization",
+            "value": "The first purchase is the hardest. Offer a starter pack at 80% perceived discount that costs $0.99-$4.99. Once a player has made one purchase, the psychological barrier to future purchases drops dramatically."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 7,
+      "date": "2024-02-06",
+      "topic": "Ethical Monetization and Regulatory Landscape",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Evaluate monetization mechanics against ethical frameworks",
+        "Understand current and emerging regulations on loot boxes, gacha, and real-money trading",
+        "Design monetization systems that comply with global regulations"
+      ],
+      "readings": [
+        "UK Gambling Commission Report on Loot Boxes and Gambling-Like Mechanics",
+        "FTC Workshop Report: Inside the Game - Unlocking the Consumer Issues Surrounding Loot Boxes"
+      ],
+      "lecture_notes": {
+        "introduction": "The game industry's monetization practices are under increasing regulatory scrutiny worldwide. Designers who understand the ethical and legal landscape will build sustainable businesses. Those who ignore it face fines, forced redesigns, and reputational damage.",
+        "key_concepts": [
+          "Loot box mechanics: random reward, variable ratio reinforcement schedule, and the comparison to gambling",
+          "Regulatory landscape by region: Belgium (banned paid loot boxes), Netherlands (case-by-case), China (requires probability disclosure), Japan (kompu gacha banned), US/UK (under review)",
+          "Age rating implications: PEGI and ESRB flags for in-game purchases and random paid items",
+          "Dark patterns in monetization: artificial scarcity, manufactured urgency, social pressure mechanics, sunk cost exploitation",
+          "Ethical framework: would a reasonable person, fully informed about the odds and mechanics, still choose to make this purchase?"
+        ],
+        "demonstration": "Regulatory compliance audit of a hypothetical game's monetization system, identifying violations and proposing compliant alternatives",
+        "setup_requirements": [
+          "Regulatory reference sheet (provided) covering major jurisdictions",
+          "Sample monetization design document for audit exercise",
+          "Dark pattern identification checklist"
+        ],
+        "review": [
+          {
+            "key": "Loot Box Spectrum",
+            "value": "Cosmetic-only loot boxes with disclosed odds and no trading (lowest risk) to power-granting loot boxes with no odds disclosure and real-money trading (highest risk, likely regulated as gambling in multiple jurisdictions)."
+          },
+          {
+            "key": "Compliance Checklist",
+            "value": "Disclose all probabilities, include pity/mercy systems, no paid advantages in competitive modes, parental controls and spending limits, comply with age rating requirements for in-game purchases."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 9,
+      "date": "2024-02-13",
+      "topic": "Data-Driven Design Decisions and Revenue Modeling",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Build revenue projection models for different monetization strategies",
+        "Use analytics data to inform game design decisions without over-indexing on metrics",
+        "Balance player experience quality with business sustainability"
+      ],
+      "readings": [
+        "Eric Seufert: Freemium Economics Ch. 7-10",
+        "GDC Talk: Data-Driven Design Is Not Soulless Design"
+      ],
+      "lecture_notes": {
+        "introduction": "Data tells you what players are doing. Design intuition tells you why. The best game designers use both, treating analytics as a lens that sharpens their creative vision rather than a replacement for it.",
+        "key_concepts": [
+          "Revenue modeling: LTV (lifetime value) = ARPDAU * average lifespan in days. If LTV > CPI (cost per install), the game is profitable",
+          "Cohort analysis: tracking how different groups of players (by acquisition source, by time period, by geography) behave differently",
+          "The metrics trap: optimizing a metric can destroy the thing the metric was measuring (Goodhart's Law applied to games)",
+          "Balancing art and science: when to follow the data, when to trust your design instinct, and how to tell the difference",
+          "Subscription and season pass models: predictable revenue, content obligation, and the Netflix effect on player expectations"
+        ],
+        "demonstration": "Building a complete revenue projection model for a F2P mobile game, varying retention, monetization rate, and ARPDAU to find break-even scenarios",
+        "setup_requirements": [
+          "Revenue modeling spreadsheet template with formulas",
+          "Historical benchmark data for the target genre",
+          "Python or Excel for sensitivity analysis"
+        ],
+        "review": [
+          {
+            "key": "LTV Calculation",
+            "value": "LTV = sum of (ARPDAU_day_n * retention_day_n) for all days. Simplified: LTV = ARPDAU * (1 / (1 - D1_retention)) for geometric retention decay. A game with $0.05 ARPDAU and 45% D1 retention has LTV of approximately $0.09 per install."
+          },
+          {
+            "key": "Goodhart's Law in Games",
+            "value": "When session length becomes the target, designers add grind. When DAU becomes the target, designers add daily login rewards that feel like obligations. Optimize for player satisfaction, measure it through retention and NPS, not engagement proxies."
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "Analytics Fundamentals and Retention Analysis",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "A mobile game has the following retention data after launch: Day 1: 42%, Day 7: 18%, Day 30: 6%. The game acquires 10,000 new users per day at a CPI (cost per install) of $1.50 and has an ARPDAU of $0.08. (a) Calculate the approximate LTV per user using the sum of retained ARPDAU over 30 days (assume linear interpolation between data points). (b) Is this game profitable at the current CPI? (c) What single metric would you prioritize improving and why?",
+            "type": "calculation",
+            "points": 10,
+            "answer": "(a) Approximate LTV calculation: Day 0-1 average retention ~71%, Day 1-7 average retention ~30%, Day 7-30 average retention ~12%. LTV = ARPDAU * (1*0.71 + 6*0.30 + 23*0.12) = $0.08 * (0.71 + 1.80 + 2.76) = $0.08 * 5.27 = $0.42 over 30 days. (b) No, this game is not profitable. LTV ($0.42) < CPI ($1.50). The game loses approximately $1.08 per user acquired. (c) Prioritize D1 retention improvement. D1 retention is the multiplier on every subsequent metric. Improving D1 from 42% to 55% would increase LTV by roughly 30%, and FTUE optimization is the most cost-effective retention intervention. Alternatively, reducing CPI through organic growth or better targeting would help the unit economics without requiring product changes.",
+            "rubric": [
+              {
+                "key": "Reasonable LTV calculation with shown methodology",
+                "value": 4
+              },
+              {
+                "key": "Correct profitability assessment (LTV < CPI)",
+                "value": 2
+              },
+              {
+                "key": "Identifies D1 retention or CPI as the priority metric",
+                "value": 2
+              },
+              {
+                "key": "Justification explains the multiplicative impact of the chosen metric",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between a vanity metric and an actionable metric in game analytics. Provide one example of each for a free-to-play game and explain why the vanity metric is misleading.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "A vanity metric is a number that looks impressive but does not inform decisions or predict outcomes. An actionable metric directly connects to a business outcome and changes in response to product decisions. Vanity metric example: total downloads. A game with 5 million downloads sounds successful, but if D1 retention is 15%, those downloads represent 4.25 million people who tried the game and left. Total downloads does not tell you if the game is healthy. Actionable metric example: D7 retention by acquisition source. This tells you which marketing channels bring players who actually enjoy the game, allowing you to shift ad spend toward higher-quality sources. It directly informs a decision and predicts long-term revenue.",
+            "rubric": [
+              {
+                "key": "Clear definition distinguishing vanity from actionable metrics",
+                "value": 3
+              },
+              {
+                "key": "Valid vanity metric example with explanation of why it misleads",
+                "value": 3
+              },
+              {
+                "key": "Valid actionable metric example with explanation of decision it informs",
+                "value": 3
+              },
+              {
+                "key": "Connects the distinction to business outcomes",
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 5,
+        "topic": "Monetization Design and Ethical Considerations",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Design a battle pass system for a competitive multiplayer game. Specify: (a) the number of tiers and estimated time to complete, (b) the split between free and premium tracks, (c) what types of rewards appear at which tiers, (d) your pricing strategy, and (e) one specific design decision you would make to ensure the system feels fair to non-paying players.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "(a) 100 tiers, designed to complete in approximately 80-100 hours of gameplay over a 10-12 week season. This allows casual players (5 hours/week) to complete roughly 50-60% and dedicated players (10+ hours/week) to complete 100%. (b) Free track: every tier has a free reward. Premium track: additional reward per tier. Ratio: approximately 30% of total value is in the free track, 70% in premium. (c) Early tiers (1-20): common cosmetics, currency, and resources. Mid tiers (21-60): uncommon cosmetics, emotes, and sprays. Late tiers (61-90): rare cosmetics, unique visual effects. Final tiers (91-100): exclusive legendary cosmetic set, unique player title. No gameplay-affecting items in either track. (d) Price at $9.99 per season, with enough premium currency included in the pass rewards (~1200 coins) to buy the next season's pass (1000 coins), rewarding consistent players. (e) Free track players receive enough premium currency over a full season (300 coins) that after 3-4 seasons of saving, they can purchase one premium pass for free, ensuring every player has a path to premium content through play alone.",
+            "rubric": [
+              {
+                "key": "Tier count and completion time are realistic and specified",
+                "value": 2
+              },
+              {
+                "key": "Free/premium split is defined with clear value distribution",
+                "value": 2
+              },
+              {
+                "key": "Reward types are categorized by tier with escalating rarity",
+                "value": 2
+              },
+              {
+                "key": "Pricing includes self-funding mechanism for loyal players",
+                "value": 2
+              },
+              {
+                "key": "Specific fairness decision for non-paying players",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A mobile game studio proposes adding a gacha (random character draw) system to their RPG. Each pull costs $3 and the 5-star character rate is 0.6% with a pity system at 90 pulls. (a) Calculate the expected cost to guarantee a specific 5-star character assuming there are 6 possible 5-star characters with equal rates. (b) Identify two regulatory jurisdictions where this system would face scrutiny and explain why. (c) Propose one modification that would make this system more ethical while maintaining revenue.",
+            "type": "calculation",
+            "points": 15,
+            "answer": "(a) Pity guarantees a 5-star at 90 pulls = $270. But with 6 possible 5-star characters at equal rates, you have a 1/6 chance of getting the specific character. Expected pulls for a specific character: 90 * 6 = 540 pulls in the worst case (no early pulls). Expected cost: 540 * $3 = $1,620 in the worst case. If the game includes a 'featured banner' with 50/50 odds on the featured character (like Genshin Impact), worst case is 180 pulls = $540. Without a featured banner guarantee: expected cost is approximately $1,620 for a guaranteed specific character. (b) Belgium: has banned paid loot boxes since 2018 under gambling legislation. This gacha system would be illegal to offer for real money. The studio would need to allow purchase only with earned in-game currency or remove the random element entirely. Netherlands: the Dutch Gaming Authority evaluates loot boxes case by case. Systems where items can be traded or have perceived real-world value are classified as gambling. Even without trading, the low probability and high cost would face scrutiny. (c) Add a deterministic path: after 300 pulls on a featured banner without obtaining the featured character, the player can choose the character directly. This caps the maximum spend at $900 (still high, but eliminates the infinite worst case), gives players agency, and is the direction the industry is moving (several gacha games now include selection mechanics). Revenue impact is minimal because fewer than 1% of players hit the 300-pull cap.",
+            "rubric": [
+              {
+                "key": "Correct worst-case cost calculation accounting for character pool size",
+                "value": 4
+              },
+              {
+                "key": "Identifies Belgium and Netherlands (or other valid jurisdictions) with specific legal reasoning",
+                "value": 4
+              },
+              {
+                "key": "Proposed modification is specific, practical, and genuinely more ethical",
+                "value": 4
+              },
+              {
+                "key": "Addresses revenue impact of the proposed modification",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 25
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Analytics-Driven Game Optimization Report",
+        "week_assigned": 2,
+        "week_due": 4,
+        "points": 100,
+        "description": "Given a dataset of player behavior from a live game (provided), conduct a thorough analytics investigation. Identify the primary retention problem, design and simulate an A/B test to address it, and present a monetization optimization recommendation supported by data.",
+        "objectives": [
+          "Demonstrate proficiency in analyzing real player behavior data",
+          "Design a statistically valid A/B test with proper sample size calculation",
+          "Connect analytics findings to actionable design and monetization recommendations",
+          "Present data analysis in a clear, decision-ready format"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Retention analysis report with cohort curves and funnel visualization",
+          "A/B test design document with hypothesis, metrics, sample size calculation, and expected duration",
+          "Monetization analysis with revenue breakdown by segment and optimization recommendations",
+          "Executive summary (1 page) with top 3 prioritized recommendations and expected impact",
+          "Supporting data visualizations (charts, graphs) embedded in the report",
+          "Python or R notebook with all analysis code (reproducible)"
+        ],
+        "grading_rubric": {
+          "retention_analysis": {
+            "points": 30,
+            "criteria": [
+              "Retention curves are correctly calculated and visualized by cohort",
+              "Primary drop-off point is identified with supporting evidence",
+              "Root cause hypothesis is plausible and data-supported",
+              "Comparison to industry benchmarks is included"
+            ]
+          },
+          "ab_test_design": {
+            "points": 25,
+            "criteria": [
+              "Hypothesis is clearly stated and falsifiable",
+              "Sample size calculation is correct with stated assumptions",
+              "Primary and guardrail metrics are well-chosen",
+              "Test duration and early stopping rules are specified"
+            ]
+          },
+          "monetization_analysis": {
+            "points": 25,
+            "criteria": [
+              "Revenue is segmented meaningfully (by player type, cohort, geography)",
+              "Recommendations are specific and tied to data findings",
+              "LTV calculations are present and methodology is sound",
+              "Ethical considerations are addressed"
+            ]
+          },
+          "presentation_quality": {
+            "points": 20,
+            "criteria": [
+              "Visualizations are clear, properly labeled, and informative",
+              "Executive summary is concise and actionable",
+              "Analysis is reproducible from the provided notebook",
+              "Writing is clear and free of unsupported claims"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Rigorous retention and monetization analysis of real player data",
+                "Statistically valid A/B test design with proper methodology",
+                "Actionable recommendations connected to data findings",
+                "Professional presentation with reproducible analysis"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Ethical Monetization System Design",
+        "week_assigned": 4,
+        "week_due": 5,
+        "points": 100,
+        "description": "Design a complete monetization system for a free-to-play game of your choosing. The system must be profitable (demonstrate with a revenue model), ethical (pass a regulatory compliance audit), and player-friendly (justify every purchase opportunity). Include a written ethical analysis evaluating your own design against common dark patterns.",
+        "objectives": [
+          "Design a monetization system that balances revenue generation with player respect",
+          "Build a revenue projection model demonstrating financial viability",
+          "Conduct a regulatory compliance audit of your own design",
+          "Critically evaluate your design against ethical frameworks"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Monetization design document specifying all purchase opportunities, prices, and mechanics",
+          "Revenue projection model with sensitivity analysis for key assumptions (retention, conversion rate, ARPDAU)",
+          "Regulatory compliance audit covering GDPR, COPPA, and at least two additional jurisdictions",
+          "Ethical analysis essay (1,500-2,000 words) evaluating your design against dark pattern checklist",
+          "Competitive analysis comparing your monetization to 3 existing games in the same genre"
+        ],
+        "grading_rubric": {
+          "monetization_design": {
+            "points": 30,
+            "criteria": [
+              "All purchase opportunities are clearly specified with prices and value propositions",
+              "System creates genuine value at multiple spending tiers including free",
+              "No pay-to-win mechanics in competitive contexts",
+              "Purchase pacing is respectful and not based on manufactured urgency"
+            ]
+          },
+          "revenue_model": {
+            "points": 25,
+            "criteria": [
+              "Model uses realistic assumptions grounded in industry benchmarks",
+              "Sensitivity analysis shows which assumptions most affect profitability",
+              "Break-even point is clearly identified",
+              "Model accounts for seasonality and player lifecycle"
+            ]
+          },
+          "compliance_and_ethics": {
+            "points": 30,
+            "criteria": [
+              "Regulatory audit is thorough and covers specified jurisdictions",
+              "Ethical analysis honestly identifies any tension points in the design",
+              "Dark patterns are explicitly addressed and either avoided or justified",
+              "Age-appropriate design considerations are included"
+            ]
+          },
+          "competitive_analysis": {
+            "points": 15,
+            "criteria": [
+              "Three comparable games are analyzed with specific monetization details",
+              "Comparison identifies what your design does differently and why",
+              "Strengths and weaknesses of competing approaches are honestly assessed"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Complete and viable monetization system with detailed specification",
+                "Revenue model demonstrates financial sustainability with realistic assumptions",
+                "Regulatory compliance and ethical analysis are thorough and honest",
+                "Competitive analysis provides context and justification for design choices"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 15,
+      "description": "Regular assessment of analytics concepts, statistical methods, and monetization knowledge"
+    },
+    "data_analysis_labs": {
+      "percentage": 20,
+      "description": "Hands-on analytics exercises using real and simulated player datasets"
+    },
+    "analytics_optimization_report": {
+      "percentage": 25,
+      "description": "Comprehensive analytics investigation with A/B test design and monetization recommendations"
+    },
+    "monetization_design_project": {
+      "percentage": 25,
+      "description": "Ethical monetization system design with revenue model and compliance audit"
+    },
+    "class_participation": {
+      "percentage": 15,
+      "description": "Contributions to in-class monetization deconstructions and ethical debate discussions"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is mandatory for data analysis lab sessions and guest speaker presentations from industry analytics professionals. More than 2 unexcused absences result in a half-letter grade reduction.",
+    "late_submissions": "Late assignments are penalized 10% per day. The analytics report has a hard deadline because the dataset represents a time-sensitive business decision. No late submissions accepted for the analytics report.",
+    "collaboration": "Data analysis labs may be completed in pairs. Both major assignments must be completed individually. Sharing analysis code between students is prohibited, but discussing analytical approaches is encouraged.",
+    "academic_integrity": "All analysis must be original work with properly cited methodologies. Using AI tools for data analysis is permitted if the student can explain every step of the analysis and justify every conclusion. Fabricating or manipulating data is treated as academic fraud.",
+    "technology_requirements": "Students must have Python 3.8+ with pandas, numpy, matplotlib, and scipy installed, or equivalent R environment. Access to a spreadsheet application is required. Jupyter Notebook or Google Colab is recommended for reproducible analysis."
+  }
+}

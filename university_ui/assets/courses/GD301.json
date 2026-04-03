@@ -1,0 +1,540 @@
+{
+  "course_info": {
+    "course_id": "GD301",
+    "title": "Game Programming",
+    "credit_hours": 4,
+    "duration": "15 weeks",
+    "meeting_schedule": "Monday, Wednesday, Friday - 4 hours per week",
+    "prerequisites": [
+      "CS115 - Programming for Games",
+      "GD201 - 2D Game Development"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "date": "2024-01-15",
+      "topic": "Game Architecture Patterns",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Compare monolithic vs modular game architectures",
+        "Understand the game loop and fixed vs variable timestep",
+        "Identify common architectural patterns used in commercial engines"
+      ],
+      "readings": [
+        "Game Programming Patterns Ch. 1-3 (Robert Nystrom)",
+        "Game Engine Architecture Ch. 1 (Jason Gregory)"
+      ],
+      "lecture_notes": {
+        "introduction": "Game programming requires disciplined architecture from day one. A poorly structured codebase becomes unmaintainable as scope grows. Today we examine the patterns that professional studios rely on.",
+        "key_concepts": [
+          "The game loop: fixed timestep, variable timestep, and semi-fixed approaches",
+          "Separation of update and render phases",
+          "Service locator pattern for decoupling subsystems",
+          "Command pattern for input handling and replay systems",
+          "Observer pattern for event-driven communication between systems"
+        ],
+        "demonstration": "Building a minimal game loop in C++ with fixed-timestep update and interpolated rendering",
+        "setup_requirements": [
+          "C++ compiler (Clang 16+ or MSVC 2022)",
+          "CMake 3.25+",
+          "SDL2 development libraries installed"
+        ],
+        "review": [
+          {
+            "key": "Fixed Timestep",
+            "value": "Physics and game logic update at a constant rate (e.g., 60 Hz) regardless of frame rate, ensuring deterministic simulation"
+          },
+          {
+            "key": "Service Locator",
+            "value": "Provides a global access point to a service without coupling code to the concrete implementation, enabling hot-swapping of subsystems"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 1,
+      "session_number": 2,
+      "date": "2024-01-17",
+      "topic": "Component-Entity Systems",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Contrast inheritance-based hierarchies with composition-based entity systems",
+        "Implement a basic Entity-Component-System (ECS) framework",
+        "Understand data-oriented design principles for cache-friendly component storage"
+      ],
+      "readings": [
+        "Game Programming Patterns: Component Ch. (Robert Nystrom)",
+        "Data-Oriented Design (Richard Fabian) Ch. 2-3"
+      ],
+      "lecture_notes": {
+        "introduction": "The diamond of death in deep inheritance trees has plagued game codebases for decades. ECS offers a composition-first alternative that also aligns with modern CPU cache architecture.",
+        "key_concepts": [
+          "Entity as an ID, not an object: entities are integers indexing into component arrays",
+          "Components as plain data structs with no behavior",
+          "Systems that iterate over component arrays and perform logic",
+          "Archetype-based vs sparse-set storage strategies",
+          "Cache-line awareness: why struct-of-arrays beats array-of-structs for iteration"
+        ],
+        "demonstration": "Implementing a minimal ECS in C++ with PositionComponent, VelocityComponent, and a MovementSystem",
+        "setup_requirements": [
+          "Project from Session 1 with SDL2",
+          "Familiarity with C++ templates and std::vector"
+        ],
+        "review": [
+          {
+            "key": "ECS Composition",
+            "value": "An entity gains behavior by attaching components rather than inheriting from base classes, allowing arbitrary combinations without hierarchy changes"
+          },
+          {
+            "key": "Data-Oriented Design",
+            "value": "Organize data by how it is accessed (contiguous arrays per component type) rather than by object identity, yielding 5-10x iteration speedups"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 3,
+      "date": "2024-01-22",
+      "topic": "State Machines and Behavioral Modeling",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Implement finite state machines (FSMs) for character and game state control",
+        "Extend FSMs to hierarchical state machines (HSMs) for complex behaviors",
+        "Apply the state pattern to avoid sprawling conditional logic"
+      ],
+      "readings": [
+        "Game Programming Patterns: State Ch. (Robert Nystrom)",
+        "AI for Games Ch. 5.1-5.3 (Ian Millington)"
+      ],
+      "lecture_notes": {
+        "introduction": "State machines are the workhorse of game programming. From menu navigation to enemy AI to animation blending, nearly every subsystem can be modeled as a set of states and transitions.",
+        "key_concepts": [
+          "Finite state machines: states, transitions, enter/exit actions",
+          "Transition tables vs switch-case vs state pattern implementations",
+          "Hierarchical state machines: super-states containing sub-state machines",
+          "Pushdown automata for pause/resume state stacking",
+          "Concurrent state machines: multiple orthogonal state axes running in parallel"
+        ],
+        "demonstration": "Building a player controller FSM with Idle, Running, Jumping, Falling, and WallSliding states, then refactoring into an HSM with Grounded and Airborne super-states",
+        "setup_requirements": [
+          "ECS framework from Session 2",
+          "Sprite sheet for player character animation"
+        ],
+        "review": [
+          {
+            "key": "Hierarchical State Machine",
+            "value": "Super-states share common transition logic (e.g., Grounded handles landing) while sub-states handle specific behavior (Idle vs Running)"
+          },
+          {
+            "key": "Pushdown Automaton",
+            "value": "A stack of states where new states push on top and popping returns to the previous state, ideal for pause menus and conversation interrupts"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 5,
+      "date": "2024-01-29",
+      "topic": "AI Pathfinding: A* and Navigation",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Implement the A* pathfinding algorithm from scratch",
+        "Understand heuristic selection and its impact on path quality and performance",
+        "Apply navigation meshes for 3D environment pathfinding"
+      ],
+      "readings": [
+        "AI for Games Ch. 4.3 (Ian Millington)",
+        "Amit Patel's A* Tutorial (Red Blob Games)"
+      ],
+      "lecture_notes": {
+        "introduction": "Pathfinding is one of the most visible AI systems in any game. When an NPC walks around an obstacle smoothly, A* is almost certainly involved. Understanding the algorithm deeply lets you tune it for your game's specific constraints.",
+        "key_concepts": [
+          "A* algorithm: open set, closed set, g-cost, h-cost, f-cost",
+          "Admissible heuristics: Manhattan, Euclidean, Octile distance",
+          "Priority queue implementation with a binary heap for O(log n) operations",
+          "Navigation meshes (NavMesh): convex polygon decomposition of walkable surfaces",
+          "Path smoothing with funnel algorithm and string-pulling"
+        ],
+        "demonstration": "Implementing A* on a grid, then extending to a NavMesh with the funnel algorithm for smooth paths",
+        "setup_requirements": [
+          "Graph data structure library or custom implementation",
+          "Debug visualization for path rendering"
+        ],
+        "review": [
+          {
+            "key": "A* Heuristic",
+            "value": "The heuristic h(n) must never overestimate the true cost (admissibility) to guarantee optimal paths; Euclidean distance is admissible for any metric space"
+          },
+          {
+            "key": "Navigation Mesh",
+            "value": "A set of convex polygons covering walkable terrain; agents path-find across polygon edges and the funnel algorithm produces smooth trajectories within the corridor"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 7,
+      "date": "2024-02-05",
+      "topic": "Spatial Partitioning and Memory Management",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Implement spatial partitioning structures for efficient collision queries",
+        "Understand memory allocation patterns and pool allocators for game objects",
+        "Profile and optimize memory access patterns for cache efficiency"
+      ],
+      "readings": [
+        "Game Programming Patterns: Spatial Partition Ch. (Robert Nystrom)",
+        "Game Engine Architecture Ch. 5.2-5.4 (Jason Gregory)"
+      ],
+      "lecture_notes": {
+        "introduction": "Brute-force collision checking is O(n^2). Spatial partitioning reduces this to near-linear for typical game scenes. Combined with disciplined memory management, these techniques are what separate 30 FPS from 60 FPS.",
+        "key_concepts": [
+          "Quadtrees and octrees: recursive spatial subdivision with dynamic insert/remove",
+          "Uniform grids: fixed-cell spatial hashing for dense, evenly distributed objects",
+          "Bounding volume hierarchies (BVH): tree of AABBs for complex mesh queries",
+          "Pool allocators: pre-allocated fixed-size blocks to avoid malloc/free overhead",
+          "Object pools for frequently spawned/despawned entities (bullets, particles, NPCs)"
+        ],
+        "demonstration": "Building a quadtree with visualized subdivision, then profiling collision detection before and after with 10,000 entities",
+        "setup_requirements": [
+          "ECS framework with PositionComponent and ColliderComponent",
+          "Profiling tools: Valgrind/Instruments or Tracy Profiler"
+        ],
+        "review": [
+          {
+            "key": "Quadtree Complexity",
+            "value": "Query cost is O(log n) average for point queries; insertion requires splitting nodes when capacity is exceeded, with a configurable max depth to prevent degenerate cases"
+          },
+          {
+            "key": "Pool Allocator",
+            "value": "Pre-allocates a contiguous block of N objects; allocation is O(1) via a free-list pointer, and deallocation returns the slot to the free-list without system calls"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 9,
+      "date": "2024-02-12",
+      "topic": "Networking Fundamentals and Shader Programming Intro",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Understand client-server vs peer-to-peer game networking models",
+        "Implement basic state synchronization with interpolation and prediction",
+        "Write a simple vertex and fragment shader for real-time rendering effects"
+      ],
+      "readings": [
+        "Multiplayer Game Programming Ch. 1-3 (Josh Glazer & Sanjay Madhav)",
+        "The Book of Shaders Ch. 1-3 (Patricio Gonzalez Vivo)"
+      ],
+      "lecture_notes": {
+        "introduction": "We close the first unit by bridging two domains that define modern game programming: networking, which connects players, and shaders, which define how the world appears. Both require thinking in terms of latency and throughput.",
+        "key_concepts": [
+          "Client-server authority model: server is the single source of truth",
+          "UDP vs TCP for game traffic: why unreliable delivery is often preferable",
+          "Client-side prediction and server reconciliation for responsive controls",
+          "Vertex shaders: transforming geometry, skinning, and displacement mapping",
+          "Fragment shaders: per-pixel lighting, texture sampling, and post-processing effects"
+        ],
+        "demonstration": "Part 1: Sending entity positions over UDP with snapshot interpolation. Part 2: Writing an HLSL shader that combines diffuse lighting with a scrolling texture effect.",
+        "setup_requirements": [
+          "Networking: ENet library or raw BSD sockets",
+          "Shaders: GPU with OpenGL 4.5+ or DirectX 11 support",
+          "Shader compiler (glslangValidator or FXC)"
+        ],
+        "review": [
+          {
+            "key": "Client-Side Prediction",
+            "value": "The client immediately applies input locally, then reconciles when the server confirms or corrects, hiding round-trip latency from the player"
+          },
+          {
+            "key": "Fragment Shader",
+            "value": "Executes once per pixel (fragment) covered by a rasterized triangle; outputs the final color by combining lighting, texture, and material calculations"
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 3,
+        "topic": "Game Architecture, ECS, and State Machines",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "In an Entity-Component-System architecture, explain why storing components in contiguous arrays (struct-of-arrays layout) is significantly faster for system iteration than storing them as members of entity objects (array-of-structs layout). Reference CPU cache behavior in your answer.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "When a system iterates over a single component type (e.g., all PositionComponents), a struct-of-arrays layout stores all Position data contiguously in memory. The CPU prefetcher loads entire cache lines (typically 64 bytes), so sequential access hits the L1/L2 cache nearly every time. In an array-of-structs layout, Position data is interleaved with other component data the system does not need, wasting cache-line space and causing frequent cache misses. For 10,000 entities with 8 component types, SoA can be 5-10x faster because the working set that fits in cache is effectively 8x smaller per system pass.",
+            "rubric": [
+              {
+                "key": "Explains contiguous memory and cache-line loading",
+                "value": 4
+              },
+              {
+                "key": "Identifies cache misses from interleaved data in AoS",
+                "value": 3
+              },
+              {
+                "key": "Provides concrete performance reasoning or example",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "A player character has the following states: Idle, Running, Jumping, DoubleJumping, Falling, WallSliding, and Dashing. Design a hierarchical state machine by grouping these into two super-states: Grounded and Airborne. List which states belong to each super-state and describe one transition that the Grounded super-state handles so its sub-states do not have to duplicate the logic.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Grounded super-state contains: Idle, Running, Dashing. Airborne super-state contains: Jumping, DoubleJumping, Falling, WallSliding. The Grounded super-state handles the 'jump pressed' transition: regardless of whether the character is Idle, Running, or Dashing, pressing jump transitions to the Jumping state in the Airborne super-state. Without the HSM, each Grounded sub-state would need its own identical jump transition, tripling the maintenance burden.",
+            "rubric": [
+              {
+                "key": "Correct grouping of states into super-states",
+                "value": 4
+              },
+              {
+                "key": "Identifies a shared transition handled by the super-state",
+                "value": 3
+              },
+              {
+                "key": "Explains the duplication problem the HSM solves",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 5,
+        "topic": "A* Pathfinding, Spatial Partitioning, and Networking",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Given a grid where the start node S is at (0,0) and the goal G is at (4,3), and there is a wall blocking cells (2,1), (2,2), and (2,3): trace the first 5 nodes expanded by A* using Manhattan distance as the heuristic. Show the f(n) = g(n) + h(n) calculation for each expanded node.",
+            "type": "calculation",
+            "points": 10,
+            "answer": "Node 1: (0,0) g=0, h=7, f=7. Node 2: (1,0) g=1, h=6, f=7. Node 3: (1,1) g=2, h=5, f=7. Node 4: (1,2) g=3, h=4, f=7. Node 5: (1,3) g=4, h=3, f=7. A* expands nodes along the corridor south of the wall because f-costs are tied and it follows the path closest to the goal. The wall at column 2 forces the path to go around via row 0 or row 4.",
+            "rubric": [
+              {
+                "key": "Correct g, h, and f values for each node",
+                "value": 4
+              },
+              {
+                "key": "Correct expansion order based on f-cost priority",
+                "value": 3
+              },
+              {
+                "key": "Demonstrates understanding of wall avoidance",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain client-side prediction and server reconciliation in a networked game. Why is client-side prediction necessary, and what happens when the server's authoritative state disagrees with the client's predicted state?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Client-side prediction is necessary because network round-trip times (50-200ms) would make controls feel unresponsive if the client waited for server confirmation before moving. Instead, the client immediately applies input locally and stores a buffer of recent inputs with sequence numbers. When the server sends back its authoritative state tagged with the last processed input sequence number, the client compares its predicted state at that sequence to the server's state. If they match, no correction is needed. If they disagree, the client snaps to the server state and re-applies all inputs that occurred after the server's confirmed sequence number, effectively replaying unconfirmed inputs on top of the corrected state.",
+            "rubric": [
+              {
+                "key": "Explains why prediction is needed (latency hiding)",
+                "value": 3
+              },
+              {
+                "key": "Describes input buffer with sequence numbers",
+                "value": 3
+              },
+              {
+                "key": "Explains reconciliation: snap to server state and replay unconfirmed inputs",
+                "value": 4
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "ECS-Based Game Engine with A* Pathfinding",
+        "week_assigned": 2,
+        "week_due": 4,
+        "points": 100,
+        "description": "Build a working 2D game engine using the Entity-Component-System architecture developed in class. The engine must support entity creation/destruction, component attachment, and at least four systems: Movement, Collision (with spatial partitioning), Rendering, and AI Pathfinding (A* on a grid or NavMesh). Demonstrate the engine with a scene containing a player-controlled entity, 50+ AI entities that pathfind toward the player, and static obstacles.",
+        "objectives": [
+          "Demonstrate mastery of ECS architecture with clean separation of data and logic",
+          "Implement A* pathfinding that correctly handles obstacles and dynamic re-pathing",
+          "Apply spatial partitioning to achieve stable frame rates with 50+ active entities",
+          "Write a documented, extensible codebase that could serve as a foundation for future projects"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "C++ source code with CMake build system",
+          "Executable binary for the demonstration scene",
+          "Performance profiling report showing frame times with and without spatial partitioning",
+          "Architecture document (2-3 pages) explaining design decisions"
+        ],
+        "grading_rubric": {
+          "ecs_architecture": {
+            "points": 30,
+            "criteria": [
+              "Entities are IDs, not objects with behavior",
+              "Components are plain data with no logic",
+              "Systems iterate over component arrays without accessing entity objects",
+              "New component types can be added without modifying existing systems"
+            ]
+          },
+          "pathfinding_implementation": {
+            "points": 30,
+            "criteria": [
+              "A* produces correct shortest paths around obstacles",
+              "Heuristic is admissible and consistent",
+              "AI entities re-path when the player moves or obstacles change",
+              "Path smoothing or steering is applied for natural movement"
+            ]
+          },
+          "spatial_partitioning": {
+            "points": 20,
+            "criteria": [
+              "Quadtree or grid-based spatial hash is implemented correctly",
+              "Collision queries use the spatial structure instead of brute force",
+              "Profiling data shows measurable improvement over naive approach",
+              "Structure handles dynamic entity movement (insert/remove per frame)"
+            ]
+          },
+          "documentation_and_code_quality": {
+            "points": 20,
+            "criteria": [
+              "Code compiles without warnings on major compilers",
+              "Architecture document clearly explains design tradeoffs",
+              "Functions and types are documented with intent, not restated code",
+              "Profiling methodology is described and reproducible"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Fully functional ECS engine with all four required systems",
+                "A* pathfinding is correct, efficient, and handles edge cases",
+                "Spatial partitioning provides demonstrable performance improvement",
+                "Professional code quality with thorough documentation"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Networked Multiplayer Prototype with Shader Effects",
+        "week_assigned": 4,
+        "week_due": 5,
+        "points": 100,
+        "description": "Extend your ECS engine to support basic networked multiplayer and custom shader rendering. Implement a client-server architecture where two clients connect to a host, each controlling an entity. The server is authoritative and clients use prediction with reconciliation. Add at least one custom shader effect (e.g., dynamic lighting, trail effect, or damage flash) rendered via OpenGL or SDL2_gpu.",
+        "objectives": [
+          "Implement client-server networking with authoritative state management",
+          "Apply client-side prediction and server reconciliation for responsive controls",
+          "Write a vertex and fragment shader that enhances the visual presentation",
+          "Integrate networking and rendering cleanly into the existing ECS architecture"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Updated C++ source with networking and shader systems",
+          "Server and client executables demonstrating two-player interaction",
+          "Network architecture diagram showing message flow and state synchronization",
+          "Shader source files with commented explanations of the rendering math"
+        ],
+        "grading_rubric": {
+          "networking_implementation": {
+            "points": 35,
+            "criteria": [
+              "Server maintains authoritative game state",
+              "Clients send input, not state, to the server",
+              "Client-side prediction produces responsive local movement",
+              "Server reconciliation corrects mispredictions without visible teleporting"
+            ]
+          },
+          "shader_programming": {
+            "points": 30,
+            "criteria": [
+              "Custom vertex and fragment shader compiles and runs without errors",
+              "Shader produces a visually meaningful effect beyond flat color",
+              "Shader math is correct and explained in comments",
+              "Effect integrates cleanly with the game scene"
+            ]
+          },
+          "integration_quality": {
+            "points": 20,
+            "criteria": [
+              "Networking and rendering are implemented as ECS systems",
+              "No hard-coded dependencies between networking and rendering code",
+              "Engine remains extensible after additions",
+              "Frame rate is stable at 60 FPS with networking active"
+            ]
+          },
+          "documentation": {
+            "points": 15,
+            "criteria": [
+              "Network architecture diagram is accurate and clear",
+              "Shader source is well-commented with mathematical explanations",
+              "README explains build and run instructions for both server and client",
+              "Known limitations are documented honestly"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Functional networked multiplayer with authoritative server",
+                "Client-side prediction and reconciliation work correctly",
+                "Custom shader effect is visually polished and technically sound",
+                "Clean integration into ECS architecture with professional documentation"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 15,
+      "description": "Timed quizzes assessing understanding of architecture patterns, algorithms, and systems design"
+    },
+    "programming_labs": {
+      "percentage": 20,
+      "description": "In-class and take-home coding exercises building incremental engine features"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "Two large projects demonstrating ECS engine development, pathfinding, networking, and shaders"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Written and practical exam covering architecture patterns, ECS, state machines, and A* pathfinding"
+    },
+    "final_project": {
+      "percentage": 20,
+      "description": "Capstone game built on the student's own engine, integrating all systems from the course"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is mandatory for all lecture and lab sessions. More than 2 unexcused absences will result in a 5% final grade deduction per additional absence.",
+    "late_submissions": "Assignments lose 10% per day late. No submissions accepted more than 3 days late. Extensions require written request at least 48 hours before the deadline.",
+    "collaboration": "You may discuss approaches with classmates but all code must be written individually. Shared code between students will be treated as an academic integrity violation for all parties involved.",
+    "academic_integrity": "All code must be your own work or properly attributed with a comment citing the source. Use of AI code generation tools must be disclosed in your documentation. Unattributed code reuse will result in a zero on the assignment.",
+    "technology_requirements": "Students must have a computer with a C++ compiler (Clang 16+ or MSVC 2022), CMake 3.25+, and a GPU supporting OpenGL 4.5 or DirectX 11. Lab machines are available but personal machines are strongly recommended."
+  }
+}

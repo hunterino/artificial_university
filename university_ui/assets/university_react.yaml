@@ -1,0 +1,2555 @@
+package.json: |
+  {
+    "name": "artificial-university",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+      "dev": "vite",
+      "build": "tsc && vite build",
+      "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+      "preview": "vite preview"
+    },
+    "dependencies": {
+      "react": "^18.2.0",
+      "react-dom": "^18.2.0",
+      "react-router-dom": "^6.20.1",
+      "@anthropic-ai/sdk": "^0.9.1",
+      "lucide-react": "^0.294.0"
+    },
+    "devDependencies": {
+      "@types/react": "^18.2.37",
+      "@types/react-dom": "^18.2.15",
+      "@typescript-eslint/eslint-plugin": "^6.10.0",
+      "@typescript-eslint/parser": "^6.10.0",
+      "@vitejs/plugin-react": "^4.1.0",
+      "eslint": "^8.53.0",
+      "eslint-plugin-react-hooks": "^4.6.0",
+      "eslint-plugin-react-refresh": "^0.4.4",
+      "typescript": "^5.2.2",
+      "vite": "^5.0.0"
+    }
+  }
+
+vite.config.ts: |
+  import { defineConfig } from 'vite'
+  import react from '@vitejs/plugin-react'
+
+  export default defineConfig({
+    plugins: [react()],
+    server: {
+      port: 3000
+    }
+  })
+
+tsconfig.json: |
+  {
+    "compilerOptions": {
+      "target": "ES2020",
+      "useDefineForClassFields": true,
+      "lib": ["ES2020", "DOM", "DOM.Iterable"],
+      "module": "ESNext",
+      "skipLibCheck": true,
+      "moduleResolution": "bundler",
+      "allowImportingTsExtensions": true,
+      "resolveJsonModule": true,
+      "isolatedModules": true,
+      "noEmit": true,
+      "jsx": "react-jsx",
+      "strict": true,
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
+      "noFallthroughCasesInSwitch": true,
+      "baseUrl": ".",
+      "paths": {
+        "@/*": ["src/*"],
+        "@/components/*": ["src/components/*"],
+        "@/modules/*": ["src/modules/*"],
+        "@/utils/*": ["src/utils/*"],
+        "@/types/*": ["src/types/*"]
+      }
+    },
+    "include": ["src"],
+    "references": [{ "path": "./tsconfig.node.json" }]
+  }
+
+tsconfig.node.json: |
+  {
+    "compilerOptions": {
+      "composite": true,
+      "skipLibCheck": true,
+      "module": "ESNext",
+      "moduleResolution": "bundler",
+      "allowSyntheticDefaultImports": true
+    },
+    "include": ["vite.config.ts"]
+  }
+
+index.html: |
+  <!doctype html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Artificial University - AI-Powered Education</title>
+    </head>
+    <body>
+      <div id="root"></div>
+      <script type="module" src="/src/main.tsx"></script>
+    </body>
+  </html>
+
+src/main.tsx: |
+  import React from 'react'
+  import ReactDOM from 'react-dom/client'
+  import App from './App.tsx'
+  import './index.css'
+
+  ReactDOM.createRoot(document.getElementById('root')!).render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>,
+  )
+
+src/App.tsx: |
+  import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+  import { Navigation } from './components/Navigation'
+  import { Footer } from './components/Footer'
+  import { HomePage } from './modules/home/HomePage'
+  import { DegreePage } from './modules/degrees/DegreePage'
+  import { DegreeDetailPage } from './modules/degrees/DegreeDetailPage'
+  import { CourseDetailPage } from './modules/courses/CourseDetailPage'
+  import { TakeCoursePage } from './modules/take_course/TakeCoursePage'
+  import './App.css'
+
+  function App() {
+    return (
+      <Router>
+        <div className="app">
+          <Navigation />
+          <main className="main-content">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/degrees" element={<DegreePage />} />
+              <Route path="/degrees/:degreeId" element={<DegreeDetailPage />} />
+              <Route path="/courses/:courseId" element={<CourseDetailPage />} />
+              <Route path="/take-course/:courseId" element={<TakeCoursePage />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </Router>
+    )
+  }
+
+  export default App
+
+src/index.css: |
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+  }
+
+  .app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .main-content {
+    flex: 1;
+    padding: 2rem 0;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin: 1rem 0;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  }
+
+  .btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .grid {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .grid-2 {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  .grid-3 {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+
+  h1, h2, h3 {
+    color: #2d3748;
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+  }
+
+  h2 {
+    font-size: 2rem;
+    font-weight: 600;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
+
+  p {
+    margin-bottom: 1rem;
+    color: #4a5568;
+  }
+
+src/App.css: |
+  .hero-section {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+    color: white;
+    padding: 4rem 0;
+    text-align: center;
+    margin-bottom: 3rem;
+    border-radius: 0 0 50px 50px;
+  }
+
+  .hero-content h1 {
+    color: white;
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+
+  .hero-content p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .campus-illustration {
+    margin: 2rem 0;
+    padding: 2rem;
+    background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+    border-radius: 20px;
+    color: white;
+    text-align: center;
+  }
+
+  .student-body-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+
+  .stat-card {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    border-radius: 10px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+  }
+
+  .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #667eea;
+  }
+
+  .degree-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .degree-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  .course-list {
+    display: grid;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .course-item {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+  }
+
+  .navigation {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 1rem 0;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .nav-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #667eea;
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: #4a5568;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+
+  .nav-links a:hover {
+    color: #667eea;
+  }
+
+  .footer {
+    background: #2d3748;
+    color: white;
+    padding: 2rem 0;
+    text-align: center;
+    margin-top: 4rem;
+  }
+
+  .quiz-interface {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem 0;
+  }
+
+  .question-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+    border-left: 4px solid #28a745;
+  }
+
+  .grading-result {
+    background: #e8f5e8;
+    border: 1px solid #28a745;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+  }
+
+  .loading::after {
+    content: '';
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+src/types/index.ts: |
+  export interface University {
+    name: string;
+    mission: string;
+    accreditation: string;
+    established: number;
+    learning_model: string;
+    assessment_method: string;
+  }
+
+  export interface Course {
+    course_id: string;
+    title: string;
+    credit_hours: number;
+  }
+
+  export interface GeneralEducationCategory {
+    category: string;
+    credits: number;
+    courses: Course[];
+  }
+
+  export interface GeneralEducationRequirements {
+    total_credits: number;
+    categories: GeneralEducationCategory[];
+  }
+
+  export interface DegreeProgram {
+    degree_id: string;
+    title: string;
+    duration: string;
+    total_credits: number;
+    description: string;
+    major_credits: number;
+    required_courses: Course[];
+  }
+
+  export interface DegreesData {
+    university: University;
+    general_education_requirements: GeneralEducationRequirements;
+    degree_programs: DegreeProgram[];
+  }
+
+  export interface CourseDetail {
+    course_id: string;
+    title: string;
+    credit_hours: number;
+    description: string;
+    learning_objectives: string[];
+    covered_materials: string[];
+  }
+
+  export interface CoursesData {
+    courses: {
+      [category: string]: CourseDetail[];
+    };
+  }
+
+  export interface ClassSession {
+    week_number: number;
+    session_number: number;
+    date: string;
+    topic: string;
+    duration: string;
+    learning_objectives: string[];
+    readings: string[];
+    lecture_notes: {
+      introduction: string;
+      key_concepts: string[];
+      demonstration: string;
+      setup_requirements: string[];
+      review: {
+        key: string;
+        value: string;
+      }[];
+    };
+  }
+
+  export interface QuizQuestion {
+    question: string;
+    type: string;
+    points: number;
+    answer: string;
+    rubric: {
+      key: string;
+      value: number;
+    }[];
+  }
+
+  export interface Quiz {
+    quiz: number;
+    week: number;
+    topic: string;
+    duration: string;
+    questions: QuizQuestion[];
+    total_points: number;
+  }
+
+  export interface Assignment {
+    assignment: number;
+    title: string;
+    week_assigned: number;
+    week_due: number;
+    points: number;
+    description: string;
+    objectives: string[];
+    requirements: any;
+    deliverables: string[];
+    grading_rubric: any;
+    rubric: any[];
+  }
+
+  export interface ClassData {
+    course_info: {
+      course_id: string;
+      title: string;
+      credit_hours: number;
+      duration: string;
+      meeting_schedule: string;
+      prerequisites: string[];
+    };
+    class_schedule: ClassSession[];
+    assessments: {
+      quizzes: Quiz[];
+      major_assignments: Assignment[];
+    };
+  }
+
+  export interface AIResponse {
+    answer: string;
+    score: number;
+    feedback: string;
+    total_points: number;
+  }
+
+src/utils/dataLoader.ts: |
+  import { DegreesData, CoursesData, ClassData } from '@/types';
+
+  export const loadDegreesData = async (): Promise<DegreesData> => {
+    const response = await fetch('/assets/degrees.json');
+    if (!response.ok) {
+      throw new Error('Failed to load degrees data');
+    }
+    return response.json();
+  };
+
+  export const loadCoursesData = async (): Promise<CoursesData> => {
+    const response = await fetch('/assets/courses.json');
+    if (!response.ok) {
+      throw new Error('Failed to load courses data');
+    }
+    return response.json();
+  };
+
+  export const loadClassData = async (courseId: string): Promise<ClassData | null> => {
+    try {
+      const response = await fetch(`/assets/courses/${courseId.toLowerCase()}.json`);
+      if (!response.ok) {
+        return null;
+      }
+      return response.json();
+    } catch (error) {
+      return null;
+    }
+  };
+
+  export const checkClassDataExists = async (courseId: string): Promise<boolean> => {
+    try {
+      const response = await fetch(`/assets/courses/${courseId.toLowerCase()}.json`, { method: 'HEAD' });
+      return response.ok;
+    } catch (error) {
+      return false;
+    }
+  };
+
+src/utils/claudeApi.ts: |
+  export interface ClaudeResponse {
+    answer: string;
+    score: number;
+    feedback: string;
+    total_points: number;
+  }
+
+  const CLAUDE_API_KEY = import.meta.env.VITE_CLAUDE_API_KEY;
+
+  export class ClaudeApiClient {
+    private apiKey: string;
+
+    constructor(apiKey?: string) {
+      this.apiKey = apiKey || CLAUDE_API_KEY || '';
+    }
+
+    async askQuestion(question: string, context?: string): Promise<string> {
+      if (!this.apiKey) {
+        return "Claude API key not configured. Please set VITE_CLAUDE_API_KEY environment variable.";
+      }
+
+      try {
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.apiKey}`,
+            'anthropic-version': '2023-06-01',
+          },
+          body: JSON.stringify({
+            model: 'claude-3-sonnet-20240229',
+            max_tokens: 1000,
+            messages: [
+              {
+                role: 'user',
+                content: context ? `${context}\n\nQuestion: ${question}` : question
+              }
+            ]
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Claude API error: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return data.content[0].text;
+      } catch (error) {
+        console.error('Error calling Claude API:', error);
+        return `Error: Unable to get response from Claude API. ${error instanceof Error ? error.message : 'Unknown error'}`;
+      }
+    }
+
+    async gradeAnswer(
+      question: string,
+      studentAnswer: string,
+      correctAnswer: string,
+      rubric: { key: string; value: number }[],
+      totalPoints: number
+    ): Promise<ClaudeResponse> {
+      if (!this.apiKey) {
+        return {
+          answer: studentAnswer,
+          score: 0,
+          feedback: "Claude API key not configured. Cannot grade automatically.",
+          total_points: totalPoints
+        };
+      }
+
+      const gradingPrompt = `
+        Please grade this student's answer using the provided rubric.
+
+        Question: ${question}
+        Correct Answer: ${correctAnswer}
+        Student Answer: ${studentAnswer}
+  
+        Grading Rubric:
+        ${rubric.map(item => `- ${item.key}: ${item.value} points`).join('\n')}
+        Total Points: ${totalPoints}
+
+        Please provide:
+        1. A score out of ${totalPoints} points
+        2. Detailed feedback explaining the grade
+        3. Areas for improvement
+
+        Format your response as JSON:
+        {
+          "score": <number>,
+          "feedback": "<detailed feedback>"
+        }
+      `;
+
+      try {
+        const response = await this.askQuestion(gradingPrompt);
+  
+        // Try to parse JSON response
+        try {
+          const gradingResult = JSON.parse(response);
+          return {
+            answer: studentAnswer,
+            score: gradingResult.score || 0,
+            feedback: gradingResult.feedback || response,
+            total_points: totalPoints
+          };
+        } catch (parseError) {
+          // If JSON parsing fails, extract score manually and use full response as feedback
+          const scoreMatch = response.match(/score[\":\s]*(\d+)/i);
+          const extractedScore = scoreMatch ? parseInt(scoreMatch[1]) : 0;
+  
+          return {
+            answer: studentAnswer,
+            score: extractedScore,
+            feedback: response,
+            total_points: totalPoints
+          };
+        }
+      } catch (error) {
+        return {
+          answer: studentAnswer,
+          score: 0,
+          feedback: `Error grading answer: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          total_points: totalPoints
+        };
+      }
+    }
+  }
+
+  export const claudeApi = new ClaudeApiClient();
+
+src/components/Navigation.tsx: |
+  import { Link } from 'react-router-dom';
+  import { GraduationCap, Home, BookOpen } from 'lucide-react';
+
+  export const Navigation = () => {
+    return (
+      <nav className="navigation">
+        <div className="container">
+          <div className="nav-content">
+            <Link to="/" className="logo">
+              <GraduationCap size={32} style={{ marginRight: '0.5rem' }} />
+              Artificial University
+            </Link>
+            <ul className="nav-links">
+              <li>
+                <Link to="/">
+                  <Home size={18} style={{ marginRight: '0.5rem' }} />
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link to="/degrees">
+                  <BookOpen size={18} style={{ marginRight: '0.5rem' }} />
+                  Degrees
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    );
+  };
+
+src/components/Footer.tsx: |
+  import { Bot, Cpu, Zap } from 'lucide-react';
+
+  export const Footer = () => {
+    return (
+      <footer className="footer">
+        <div className="container">
+          <div className="grid grid-3" style={{ marginBottom: '2rem' }}>
+            <div style={{ textAlign: 'center' }}>
+              <Bot size={48} style={{ color: '#667eea', marginBottom: '1rem' }} />
+              <h3>AI-Powered Learning</h3>
+              <p>Personalized education through advanced AI technology</p>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <Cpu size={48} style={{ color: '#667eea', marginBottom: '1rem' }} />
+              <h3>Adaptive Assessment</h3>
+              <p>Continuous evaluation and real-time feedback systems</p>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <Zap size={48} style={{ color: '#667eea', marginBottom: '1rem' }} />
+              <h3>Fast-Track Learning</h3>
+              <p>Accelerated degree programs for motivated learners</p>
+            </div>
+          </div>
+          <div style={{ textAlign: 'center', paddingTop: '2rem', borderTop: '1px solid #4a5568' }}>
+            <p>&copy; 2024 Artificial University. Empowering the future of education.</p>
+          </div>
+        </div>
+      </footer>
+    );
+  };
+
+src/components/LoadingSpinner.tsx: |
+  export const LoadingSpinner = () => {
+    return (
+      <div className="loading">
+        <div></div>
+      </div>
+    );
+  };
+
+src/modules/home/HomePage.tsx: |
+  import { useState, useEffect } from 'react';
+  import { Link } from 'react-router-dom';
+  import { Users, Award, Globe, Zap, BookOpen, Brain } from 'lucide-react';
+  import { DegreesData } from '@/types';
+  import { loadDegreesData } from '@/utils/dataLoader';
+  import { LoadingSpinner } from '@/components/LoadingSpinner';
+
+  export const HomePage = () => {
+    const [data, setData] = useState<DegreesData | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const degreesData = await loadDegreesData();
+          setData(degreesData);
+        } catch (error) {
+          console.error('Error loading data:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchData();
+    }, []);
+
+    if (loading) {
+      return <LoadingSpinner />;
+    }
+
+    if (!data) {
+      return (
+        <div className="container">
+          <div className="card">
+            <h2>Error loading university data</h2>
+            <p>Please try refreshing the page.</p>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div>
+        {/* Hero Section */}
+        <section className="hero-section">
+          <div className="container">
+            <div className="hero-content">
+              <h1>{data.university.name}</h1>
+              <p>{data.university.mission}</p>
+              <div style={{ marginTop: '2rem' }}>
+                <Link to="/degrees" className="btn" style={{ fontSize: '1.1rem', padding: '1rem 2rem' }}>
+                  <BookOpen size={20} />
+                  Explore Degree Programs
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div className="container">
+          {/* University Info */}
+          <div className="card">
+            <div className="grid grid-2">
+              <div>
+                <h2>About Our University</h2>
+                <p><strong>Established:</strong> {data.university.established}</p>
+                <p><strong>Accreditation:</strong> {data.university.accreditation}</p>
+                <p><strong>Learning Model:</strong> {data.university.learning_model}</p>
+                <p><strong>Assessment Method:</strong> {data.university.assessment_method}</p>
+              </div>
+              <div className="campus-illustration">
+                <Brain size={64} style={{ marginBottom: '1rem' }} />
+                <h3>Virtual AI Campus</h3>
+                <p>Experience the future of education in our fully digital learning environment powered by artificial intelligence.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Student Body Stats */}
+          <div className="card">
+            <h2>Student Body & Innovation</h2>
+            <div className="student-body-stats">
+              <div className="stat-card">
+                <Users size={32} style={{ color: '#667eea', marginBottom: '0.5rem' }} />
+                <div className="stat-number">10,000+</div>
+                <div>Active AI Learners</div>
+              </div>
+              <div className="stat-card">
+                <Award size={32} style={{ color: '#667eea', marginBottom: '0.5rem' }} />
+                <div className="stat-number">12</div>
+                <div>Degree Programs</div>
+              </div>
+              <div className="stat-card">
+                <Globe size={32} style={{ color: '#667eea', marginBottom: '0.5rem' }} />
+                <div className="stat-number">50+</div>
+                <div>Countries Served</div>
+              </div>
+              <div className="stat-card">
+                <Zap size={32} style={{ color: '#667eea', marginBottom: '0.5rem' }} />
+                <div className="stat-number">98%</div>
+                <div>Satisfaction Rate</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Featured Degree Programs */}
+          <div className="card">
+            <h2>Featured Degree Programs</h2>
+            <div className="grid grid-3">
+              {data.degree_programs.slice(0, 6).map((degree) => (
+                <Link key={degree.degree_id} to={`/degrees/${degree.degree_id}`} className="degree-card card" style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <h3>{degree.title}</h3>
+                  <p>{degree.description.substring(0, 120)}...</p>
+                  <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ color: '#667eea', fontWeight: '600' }}>{degree.duration}</span>
+                    <span style={{ color: '#667eea', fontWeight: '600' }}>{degree.total_credits} Credits</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+            <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+              <Link to="/degrees" className="btn">
+                View All Degree Programs
+              </Link>
+            </div>
+          </div>
+
+          {/* General Education Requirements */}
+          <div className="card">
+            <h2>General Education Foundation</h2>
+            <p>All degree programs include {data.general_education_requirements.total_credits} credits of general education coursework across these essential areas:</p>
+            <div className="grid grid-2">
+              {data.general_education_requirements.categories.map((category) => (
+                <div key={category.category} className="course-item">
+                  <h3>{category.category}</h3>
+                  <p><strong>{category.credits} Credits</strong></p>
+                  <p>{category.courses.length} courses covering foundational knowledge and skills</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+src/modules/degrees/DegreePage.tsx: |
+  import { useState, useEffect } from 'react';
+  import { Link } from 'react-router-dom';
+  import { Clock, BookOpen, Award } from 'lucide-react';
+  import { DegreesData } from '@/types';
+  import { loadDegreesData } from '@/utils/dataLoader';
+  import { LoadingSpinner } from '@/components/LoadingSpinner';
+
+  export const DegreePage = () => {
+    const [data, setData] = useState<DegreesData | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const degreesData = await loadDegreesData();
+          setData(degreesData);
+        } catch (error) {
+          console.error('Error loading data:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchData();
+    }, []);
+
+    if (loading) {
+      return <LoadingSpinner />;
+    }
+
+    if (!data) {
+      return (
+        <div className="container">
+          <div className="card">
+            <h2>Error loading degree programs</h2>
+            <p>Please try refreshing the page.</p>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="container">
+        <div className="card">
+          <h1>Degree Programs</h1>
+          <p>Choose from our comprehensive selection of AI-powered degree programs designed for the digital age.</p>
+        </div>
+
+        <div className="grid grid-2">
+          {data.degree_programs.map((degree) => (
+            <div key={degree.degree_id} className="degree-card card">
+              <h2>{degree.title}</h2>
+              <p>{degree.description}</p>
+  
+              <div className="grid grid-3" style={{ margin: '1.5rem 0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Clock size={18} style={{ color: '#667eea' }} />
+                  <span>{degree.duration}</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Award size={18} style={{ color: '#667eea' }} />
+                  <span>{degree.total_credits} Credits</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <BookOpen size={18} style={{ color: '#667eea' }} />
+                  <span>{degree.required_courses.length} Courses</span>
+                </div>
+              </div>
+
+              <div style={{ marginTop: '2rem' }}>
+                <Link to={`/degrees/${degree.degree_id}`} className="btn">
+                  View Details & Curriculum
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+src/modules/degrees/DegreeDetailPage.tsx: |
+  import { useState, useEffect } from 'react';
+  import { useParams, Link } from 'react-router-dom';
+  import { BookOpen, Clock, Award, ArrowLeft } from 'lucide-react';
+  import { DegreesData, DegreeProgram } from '@/types';
+  import { loadDegreesData } from '@/utils/dataLoader';
+  import { LoadingSpinner } from '@/components/LoadingSpinner';
+
+  export const DegreeDetailPage = () => {
+    const { degreeId } = useParams<{ degreeId: string }>();
+    const [data, setData] = useState<DegreesData | null>(null);
+    const [degree, setDegree] = useState<DegreeProgram | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const degreesData = await loadDegreesData();
+          setData(degreesData);
+  
+          const foundDegree = degreesData.degree_programs.find(d => d.degree_id === degreeId);
+          setDegree(foundDegree || null);
+        } catch (error) {
+          console.error('Error loading data:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchData();
+    }, [degreeId]);
+
+    if (loading) {
+      return <LoadingSpinner />;
+    }
+
+    if (!data || !degree) {
+      return (
+        <div className="container">
+          <div className="card">
+            <h2>Degree program not found</h2>
+            <p>The requested degree program could not be found.</p>
+            <Link to="/degrees" className="btn">
+              <ArrowLeft size={18} />
+              Back to Degrees
+            </Link>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="container">
+        <div className="card">
+          <Link to="/degrees" className="btn" style={{ marginBottom: '2rem' }}>
+            <ArrowLeft size={18} />
+            Back to Degrees
+          </Link>
+  
+          <h1>{degree.title}</h1>
+          <p style={{ fontSize: '1.1rem', marginBottom: '2rem' }}>{degree.description}</p>
+  
+          <div className="grid grid-3" style={{ marginBottom: '2rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.1rem' }}>
+              <Clock size={20} style={{ color: '#667eea' }} />
+              <span><strong>Duration:</strong> {degree.duration}</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.1rem' }}>
+              <Award size={20} style={{ color: '#667eea' }} />
+              <span><strong>Total Credits:</strong> {degree.total_credits}</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1.1rem' }}>
+              <BookOpen size={20} style={{ color: '#667eea' }} />
+              <span><strong>Major Credits:</strong> {degree.major_credits}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="card">
+          <h2>Required Courses ({degree.required_courses.length} total)</h2>
+          <div className="course-list">
+            {degree.required_courses.map((course) => (
+              <div key={course.course_id} className="course-item">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div style={{ flex: 1 }}>
+                    <h3>{course.course_id}: {course.title}</h3>
+                    <p style={{ margin: 0, color: '#667eea', fontWeight: '600' }}>
+                      {course.credit_hours} Credit{course.credit_hours !== 1 ? 's' : ''}
+                    </p>
+                  </div>
+                  <Link to={`/courses/${course.course_id}`} className="btn" style={{ marginLeft: '1rem' }}>
+                    View Details
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="card">
+          <h2>General Education Requirements</h2>
+          <p>In addition to major-specific courses, all students must complete {data.general_education_requirements.total_credits} credits of general education coursework:</p>
+  
+          <div className="grid grid-2">
+            {data.general_education_requirements.categories.map((category) => (
+              <div key={category.category} className="course-item">
+                <h3>{category.category}</h3>
+                <p><strong>{category.credits} Credits Required</strong></p>
+                <ul style={{ marginTop: '1rem' }}>
+                  {category.courses.map((course) => (
+                    <li key={course.course_id} style={{ marginBottom: '0.5rem' }}>
+                      <Link to={`/courses/${course.course_id}`} style={{ color: '#667eea', textDecoration: 'none' }}>
+                        {course.course_id}: {course.title}
+                      </Link>
+                      <span style={{ color: '#666', marginLeft: '0.5rem' }}>({course.credit_hours} credits)</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+src/modules/courses/CourseDetailPage.tsx: |
+  import { useState, useEffect } from 'react';
+  import { useParams, Link } from 'react-router-dom';
+  import { BookOpen, Clock, Target, List, ArrowLeft, Bot } from 'lucide-react';
+  import { CoursesData, CourseDetail } from '@/types';
+  import { loadCoursesData, checkClassDataExists } from '@/utils/dataLoader';
+  import { LoadingSpinner } from '@/components/LoadingSpinner';
+
+  export const CourseDetailPage = () => {
+    const { courseId } = useParams<{ courseId: string }>();
+    const [data, setData] = useState<CoursesData | null>(null);
+    const [course, setCourse] = useState<CourseDetail | null>(null);
+    const [hasClassData, setHasClassData] = useState(false);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const coursesData = await loadCoursesData();
+          setData(coursesData);
+  
+          // Find the course in any category
+          let foundCourse: CourseDetail | null = null;
+          for (const category of Object.values(coursesData.courses)) {
+            const course = category.find(c => c.course_id === courseId);
+            if (course) {
+              foundCourse = course;
+              break;
+            }
+          }
+  
+          setCourse(foundCourse);
+  
+          // Check if detailed class data exists
+          if (courseId) {
+            const classDataExists = await checkClassDataExists(courseId);
+            setHasClassData(classDataExists);
+          }
+        } catch (error) {
+          console.error('Error loading data:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchData();
+    }, [courseId]);
+
+    if (loading) {
+      return <LoadingSpinner />;
+    }
+
+    if (!data || !course) {
+      return (
+        <div className="container">
+          <div className="card">
+            <h2>Course not found</h2>
+            <p>The requested course could not be found.</p>
+            <Link to="/degrees" className="btn">
+              <ArrowLeft size={18} />
+              Back to Degrees
+            </Link>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="container">
+        <div className="card">
+          <button onClick={() => window.history.back()} className="btn" style={{ marginBottom: '2rem' }}>
+            <ArrowLeft size={18} />
+            Back
+          </button>
+  
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem' }}>
+            <div>
+              <h1>{course.course_id}: {course.title}</h1>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Clock size={18} style={{ color: '#667eea' }} />
+                  <span><strong>{course.credit_hours} Credit Hours</strong></span>
+                </div>
+              </div>
+            </div>
+  
+            {hasClassData ? (
+              <Link to={`/take-course/${courseId}`} className="btn" style={{ fontSize: '1.1rem' }}>
+                <Bot size={20} />
+                Have AI Take This Course
+              </Link>
+            ) : (
+              <button className="btn" disabled style={{ fontSize: '1.1rem' }}>
+                <Bot size={20} />
+                AI Course Not Available
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="card">
+          <h2>Course Description</h2>
+          <p style={{ fontSize: '1.1rem', lineHeight: '1.8' }}>{course.description}</p>
+        </div>
+
+        <div className="grid grid-2">
+          <div className="card">
+            <h2>
+              <Target size={24} style={{ marginRight: '0.5rem', color: '#667eea' }} />
+              Learning Objectives
+            </h2>
+            <ul style={{ paddingLeft: '1.5rem' }}>
+              {course.learning_objectives.map((objective, index) => (
+                <li key={index} style={{ marginBottom: '0.75rem', lineHeight: '1.6' }}>
+                  {objective}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="card">
+            <h2>
+              <List size={24} style={{ marginRight: '0.5rem', color: '#667eea' }} />
+              Covered Materials
+            </h2>
+            <ul style={{ paddingLeft: '1.5rem' }}>
+              {course.covered_materials.map((material, index) => (
+                <li key={index} style={{ marginBottom: '0.75rem', lineHeight: '1.6' }}>
+                  {material}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {hasClassData && (
+          <div className="card" style={{ background: 'linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%)', border: '1px solid #28a745' }}>
+            <h2 style={{ color: '#28a745' }}>
+              <Bot size={24} style={{ marginRight: '0.5rem' }} />
+              AI-Powered Learning Available
+            </h2>
+            <p>This course includes detailed schedules, interactive quizzes, and assignments that can be completed with AI assistance. Experience the future of personalized education!</p>
+            <Link to={`/take-course/${courseId}`} className="btn" style={{ marginTop: '1rem', background: '#28a745' }}>
+              <Bot size={20} />
+              Start AI-Powered Learning Experience
+            </Link>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+src/modules/take_course/TakeCoursePage.tsx: |
+  import { useState, useEffect } from 'react';
+  import { useParams, Link } from 'react-router-dom';
+  import { ArrowLeft, Calendar, FileText, HelpCircle, Bot, Clock } from 'lucide-react';
+  import { ClassData, Quiz, Assignment } from '@/types';
+  import { loadClassData } from '@/utils/dataLoader';
+  import { LoadingSpinner } from '@/components/LoadingSpinner';
+  import { QuizInterface } from './components/QuizInterface';
+  import { AssignmentInterface } from './components/AssignmentInterface';
+
+  export const TakeCoursePage = () => {
+    const { courseId } = useParams<{ courseId: string }>();
+    const [classData, setClassData] = useState<ClassData | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null);
+    const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
+    const [activeTab, setActiveTab] = useState<'schedule' | 'quiz' | 'assignment'>('schedule');
+
+    useEffect(() => {
+      const fetchData = async () => {
+        if (!courseId) return;
+  
+        try {
+          const data = await loadClassData(courseId);
+          setClassData(data);
+        } catch (error) {
+          console.error('Error loading class data:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      fetchData();
+    }, [courseId]);
+
+    if (loading) {
+      return <LoadingSpinner />;
+    }
+
+    if (!classData) {
+      return (
+        <div className="container">
+          <div className="card">
+            <h2>Course data not available</h2>
+            <p>The detailed course data for AI learning is not available for this course.</p>
+            <Link to={`/courses/${courseId}`} className="btn">
+              <ArrowLeft size={18} />
+              Back to Course Details
+            </Link>
+          </div>
+        </div>
+      );
+    }
+
+    const handleQuizSelect = (quiz: Quiz) => {
+      setSelectedQuiz(quiz);
+      setSelectedAssignment(null);
+      setActiveTab('quiz');
+    };
+
+    const handleAssignmentSelect = (assignment: Assignment) => {
+      setSelectedAssignment(assignment);
+      setSelectedQuiz(null);
+      setActiveTab('assignment');
+    };
+
+    return (
+      <div className="container">
+        <div className="card">
+          <Link to={`/courses/${courseId}`} className="btn" style={{ marginBottom: '2rem' }}>
+            <ArrowLeft size={18} />
+            Back to Course Details
+          </Link>
+  
+          <h1>
+            <Bot size={32} style={{ marginRight: '1rem', color: '#667eea' }} />
+            AI Learning Experience: {classData.course_info.title}
+          </h1>
+          <p style={{ fontSize: '1.1rem', color: '#666' }}>
+            Interactive AI-powered learning with personalized feedback and assessment
+          </p>
+  
+          <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Clock size={18} style={{ color: '#667eea' }} />
+              <span><strong>{classData.course_info.credit_hours} Credits</strong></span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Calendar size={18} style={{ color: '#667eea' }} />
+              <span><strong>{classData.course_info.duration}</strong></span>
+            </div>
+          </div>
+        </div>
+
+        {/* Tab Navigation */}
+        <div className="card">
+          <div style={{ display: 'flex', gap: '1rem', borderBottom: '2px solid #eee', paddingBottom: '1rem' }}>
+            <button 
+              className={`btn ${activeTab === 'schedule' ? '' : 'btn-outline'}`}
+              onClick={() => setActiveTab('schedule')}
+              style={{ background: activeTab === 'schedule' ? undefined : 'transparent', color: activeTab === 'schedule' ? undefined : '#667eea' }}
+            >
+              <Calendar size={18} />
+              Course Schedule
+            </button>
+            <button 
+              className={`btn ${activeTab === 'quiz' ? '' : 'btn-outline'}`}
+              onClick={() => setActiveTab('quiz')}
+              style={{ background: activeTab === 'quiz' ? undefined : 'transparent', color: activeTab === 'quiz' ? undefined : '#667eea' }}
+            >
+              <HelpCircle size={18} />
+              Take Quiz
+            </button>
+            <button 
+              className={`btn ${activeTab === 'assignment' ? '' : 'btn-outline'}`}
+              onClick={() => setActiveTab('assignment')}
+              style={{ background: activeTab === 'assignment' ? undefined : 'transparent', color: activeTab === 'assignment' ? undefined : '#667eea' }}
+            >
+              <FileText size={18} />
+              Work on Assignment
+            </button>
+          </div>
+        </div>
+
+        {/* Course Schedule Tab */}
+        {activeTab === 'schedule' && (
+          <div className="card">
+            <h2>Course Schedule</h2>
+            <div className="course-list">
+              {classData.class_schedule.map((session) => (
+                <div key={session.session_number} className="course-item">
+                  <h3>Week {session.week_number}, Session {session.session_number}: {session.topic}</h3>
+                  <p><strong>Date:</strong> {session.date} | <strong>Duration:</strong> {session.duration}</p>
+  
+                  <div style={{ marginTop: '1rem' }}>
+                    <h4>Learning Objectives:</h4>
+                    <ul>
+                      {session.learning_objectives.map((objective, index) => (
+                        <li key={index}>{objective}</li>
+                      ))}
+                    </ul>
+                  </div>
+  
+                  {session.readings.length > 0 && (
+                    <div style={{ marginTop: '1rem' }}>
+                      <h4>Required Readings:</h4>
+                      <ul>
+                        {session.readings.map((reading, index) => (
+                          <li key={index}>{reading}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+  
+                  <div style={{ marginTop: '1rem' }}>
+                    <p><strong>Introduction:</strong> {session.lecture_notes.introduction}</p>
+                    <p><strong>Demonstration:</strong> {session.lecture_notes.demonstration}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Quiz Selection and Interface */}
+        {activeTab === 'quiz' && (
+          <div>
+            {!selectedQuiz ? (
+              <div className="card">
+                <h2>Select a Quiz</h2>
+                <div className="grid grid-2">
+                  {classData.assessments.quizzes.map((quiz) => (
+                    <div key={quiz.quiz} className="course-item" style={{ cursor: 'pointer' }} onClick={() => handleQuizSelect(quiz)}>
+                      <h3>Quiz {quiz.quiz}: {quiz.topic}</h3>
+                      <p><strong>Week:</strong> {quiz.week} | <strong>Duration:</strong> {quiz.duration}</p>
+                      <p><strong>Questions:</strong> {quiz.questions.length} | <strong>Total Points:</strong> {quiz.total_points}</p>
+                      <button className="btn" style={{ marginTop: '1rem' }}>
+                        <HelpCircle size={18} />
+                        Take This Quiz
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <QuizInterface 
+                quiz={selectedQuiz} 
+                onBack={() => setSelectedQuiz(null)}
+              />
+            )}
+          </div>
+        )}
+
+        {/* Assignment Selection and Interface */}
+        {activeTab === 'assignment' && (
+          <div>
+            {!selectedAssignment ? (
+              <div className="card">
+                <h2>Select an Assignment</h2>
+                <div className="course-list">
+                  {classData.assessments.major_assignments.map((assignment) => (
+                    <div key={assignment.assignment} className="course-item" style={{ cursor: 'pointer' }} onClick={() => handleAssignmentSelect(assignment)}>
+                      <h3>Assignment {assignment.assignment}: {assignment.title}</h3>
+                      <p><strong>Assigned:</strong> Week {assignment.week_assigned} | <strong>Due:</strong> Week {assignment.week_due}</p>
+                      <p><strong>Points:</strong> {assignment.points}</p>
+                      <p>{assignment.description}</p>
+                      <button className="btn" style={{ marginTop: '1rem' }}>
+                        <FileText size={18} />
+                        Work on Assignment
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <AssignmentInterface 
+                assignment={selectedAssignment} 
+                onBack={() => setSelectedAssignment(null)}
+              />
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+src/modules/take_course/components/QuizInterface.tsx: |
+  import { useState } from 'react';
+  import { ArrowLeft, Send, CheckCircle, AlertCircle } from 'lucide-react';
+  import { Quiz, QuizQuestion, AIResponse } from '@/types';
+  import { claudeApi } from '@/utils/claudeApi';
+  import { LoadingSpinner } from '@/components/LoadingSpinner';
+
+  interface QuizInterfaceProps {
+    quiz: Quiz;
+    onBack: () => void;
+  }
+
+  export const QuizInterface = ({ quiz, onBack }: QuizInterfaceProps) => {
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+    const [answers, setAnswers] = useState<string[]>(new Array(quiz.questions.length).fill(''));
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [results, setResults] = useState<AIResponse[]>([]);
+    const [showResults, setShowResults] = useState(false);
+
+    const currentQuestion = quiz.questions[currentQuestionIndex];
+
+    const handleAnswerChange = (value: string) => {
+      const newAnswers = [...answers];
+      newAnswers[currentQuestionIndex] = value;
+      setAnswers(newAnswers);
+    };
+
+    const handleSubmitQuiz = async () => {
+      setIsSubmitting(true);
+      const quizResults: AIResponse[] = [];
+
+      for (let i = 0; i < quiz.questions.length; i++) {
+        const question = quiz.questions[i];
+        const studentAnswer = answers[i];
+  
+        if (studentAnswer.trim()) {
+          try {
+            const result = await claudeApi.gradeAnswer(
+              question.question,
+              studentAnswer,
+              question.answer,
+              question.rubric,
+              question.points
+            );
+            quizResults.push(result);
+          } catch (error) {
+            quizResults.push({
+              answer: studentAnswer,
+              score: 0,
+              feedback: `Error grading question ${i + 1}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+              total_points: question.points
+            });
+          }
+        } else {
+          quizResults.push({
+            answer: '',
+            score: 0,
+            feedback: 'No answer provided',
+            total_points: question.points
+          });
+        }
+      }
+
+      setResults(quizResults);
+      setShowResults(true);
+      setIsSubmitting(false);
+    };
+
+    const totalScore = results.reduce((sum, result) => sum + result.score, 0);
+    const totalPossible = results.reduce((sum, result) => sum + result.total_points, 0);
+    const percentage = totalPossible > 0 ? Math.round((totalScore / totalPossible) * 100) : 0;
+
+    if (showResults) {
+      return (
+        <div className="card">
+          <button onClick={onBack} className="btn" style={{ marginBottom: '2rem' }}>
+            <ArrowLeft size={18} />
+            Back to Quiz Selection
+          </button>
+  
+          <h2>Quiz Results: {quiz.topic}</h2>
+  
+          <div className="grading-result" style={{ marginBottom: '2rem' }}>
+            <h3>
+              <CheckCircle size={24} style={{ color: '#28a745', marginRight: '0.5rem' }} />
+              Final Score: {totalScore} / {totalPossible} ({percentage}%)
+            </h3>
+          </div>
+
+          {results.map((result, index) => (
+            <div key={index} className="question-card">
+              <h4>Question {index + 1}</h4>
+              <p><strong>Question:</strong> {quiz.questions[index].question}</p>
+              <p><strong>Your Answer:</strong> {result.answer || 'No answer provided'}</p>
+              <p><strong>Correct Answer:</strong> {quiz.questions[index].answer}</p>
+  
+              <div className="grading-result">
+                <p><strong>Score:</strong> {result.score} / {result.total_points}</p>
+                <p><strong>Feedback:</strong> {result.feedback}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    if (isSubmitting) {
+      return (
+        <div className="card">
+          <h2>Grading Quiz with AI...</h2>
+          <LoadingSpinner />
+          <p style={{ textAlign: 'center', marginTop: '1rem' }}>
+            Please wait while Claude AI grades your responses...
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="card">
+        <button onClick={onBack} className="btn" style={{ marginBottom: '2rem' }}>
+          <ArrowLeft size={18} />
+          Back to Quiz Selection
+        </button>
+  
+        <h2>Quiz {quiz.quiz}: {quiz.topic}</h2>
+        <p><strong>Duration:</strong> {quiz.duration} | <strong>Total Points:</strong> {quiz.total_points}</p>
+  
+        <div style={{ marginBottom: '2rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h3>Question {currentQuestionIndex + 1} of {quiz.questions.length}</h3>
+            <span style={{ color: '#667eea', fontWeight: '600' }}>{currentQuestion.points} points</span>
+          </div>
+  
+          <div className="question-card">
+            <p style={{ fontSize: '1.1rem', marginBottom: '1.5rem' }}>{currentQuestion.question}</p>
+  
+            <textarea
+              value={answers[currentQuestionIndex]}
+              onChange={(e) => handleAnswerChange(e.target.value)}
+              placeholder="Enter your answer here..."
+              rows={6}
+              style={{
+                width: '100%',
+                padding: '1rem',
+                border: '2px solid #e2e8f0',
+                borderRadius: '8px',
+                fontSize: '1rem',
+                resize: 'vertical'
+              }}
+            />
+  
+            <div style={{ marginTop: '1rem', fontSize: '0.9rem', color: '#666' }}>
+              <strong>Question Type:</strong> {currentQuestion.type}
+            </div>
+          </div>
+  
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '2rem' }}>
+            <button 
+              onClick={() => setCurrentQuestionIndex(Math.max(0, currentQuestionIndex - 1))}
+              disabled={currentQuestionIndex === 0}
+              className="btn"
+            >
+              Previous
+            </button>
+  
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              {quiz.questions.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentQuestionIndex(index)}
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    border: 'none',
+                    background: index === currentQuestionIndex ? '#667eea' : answers[index] ? '#28a745' : '#e2e8f0',
+                    color: index === currentQuestionIndex || answers[index] ? 'white' : '#666',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {index + 1}
+                </button>
+              ))}
+            </div>
+  
+            {currentQuestionIndex < quiz.questions.length - 1 ? (
+              <button 
+                onClick={() => setCurrentQuestionIndex(Math.min(quiz.questions.length - 1, currentQuestionIndex + 1))}
+                className="btn"
+              >
+                Next
+              </button>
+            ) : (
+              <button 
+                onClick={handleSubmitQuiz}
+                className="btn"
+                disabled={answers.some(answer => !answer.trim())}
+              >
+                <Send size={18} />
+                Submit Quiz for AI Grading
+              </button>
+            )}
+          </div>
+  
+          {answers.some(answer => !answer.trim()) && (
+            <div style={{ marginTop: '1rem', padding: '1rem', background: '#fff3cd', border: '1px solid #ffeaa7', borderRadius: '8px' }}>
+              <AlertCircle size={18} style={{ color: '#856404', marginRight: '0.5rem' }} />
+              <span style={{ color: '#856404' }}>Please answer all questions before submitting.</span>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+src/modules/take_course/components/AssignmentInterface.tsx: |
+  import { useState } from 'react';
+  import { ArrowLeft, Send, FileText, CheckCircle } from 'lucide-react';
+  import { Assignment, AIResponse } from '@/types';
+  import { claudeApi } from '@/utils/claudeApi';
+  import { LoadingSpinner } from '@/components/LoadingSpinner';
+
+  interface AssignmentInterfaceProps {
+    assignment: Assignment;
+    onBack: () => void;
+  }
+
+  export const AssignmentInterface = ({ assignment, onBack }: AssignmentInterfaceProps) => {
+    const [response, setResponse] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [result, setResult] = useState<AIResponse | null>(null);
+    const [showFeedback, setShowFeedback] = useState(false);
+
+    const handleSubmitAssignment = async () => {
+      if (!response.trim()) return;
+
+      setIsSubmitting(true);
+  
+      try {
+        // For assignments, we'll ask Claude to provide feedback rather than a strict grade
+        const feedbackPrompt = `
+          Please review this student's assignment submission and provide constructive feedback.
+
+          Assignment: ${assignment.title}
+          Description: ${assignment.description}
+  
+          Objectives:
+          ${assignment.objectives.map(obj => `- ${obj}`).join('\n')}
+  
+          Student Submission:
+          ${response}
+
+          Please provide:
+          1. Strengths of the submission
+          2. Areas for improvement
+          3. Specific suggestions for enhancement
+          4. Overall assessment of how well it meets the objectives
+  
+          Format your response as detailed feedback that would help the student improve.
+        `;
+
+        const feedback = await claudeApi.askQuestion(feedbackPrompt);
+  
+        setResult({
+          answer: response,
+          score: 0, // Assignments might not have numerical scores
+          feedback: feedback,
+          total_points: assignment.points
+        });
+  
+        setShowFeedback(true);
+      } catch (error) {
+        setResult({
+          answer: response,
+          score: 0,
+          feedback: `Error getting feedback: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          total_points: assignment.points
+        });
+        setShowFeedback(true);
+      } finally {
+        setIsSubmitting(false);
+      }
+    };
+
+    if (showFeedback && result) {
+      return (
+        <div className="card">
+          <button onClick={onBack} className="btn" style={{ marginBottom: '2rem' }}>
+            <ArrowLeft size={18} />
+            Back to Assignment Selection
+          </button>
+  
+          <h2>Assignment Feedback: {assignment.title}</h2>
+  
+          <div className="grading-result" style={{ marginBottom: '2rem' }}>
+            <h3>
+              <CheckCircle size={24} style={{ color: '#28a745', marginRight: '0.5rem' }} />
+              Submission Received and Reviewed
+            </h3>
+          </div>
+
+          <div className="question-card">
+            <h4>Your Submission</h4>
+            <div style={{ 
+              background: '#f8f9fa', 
+              padding: '1rem', 
+              borderRadius: '8px', 
+              border: '1px solid #e9ecef',
+              marginBottom: '1.5rem'
+            }}>
+              <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit' }}>{result.answer}</pre>
+            </div>
+  
+            <h4>AI Feedback</h4>
+            <div className="grading-result">
+              <div style={{ whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>{result.feedback}</div>
+            </div>
+          </div>
+
+          <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+            <button 
+              onClick={() => {
+                setShowFeedback(false);
+                setResult(null);
+                setResponse('');
+              }}
+              className="btn"
+            >
+              Submit Another Response
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    if (isSubmitting) {
+      return (
+        <div className="card">
+          <h2>Getting AI Feedback...</h2>
+          <LoadingSpinner />
+          <p style={{ textAlign: 'center', marginTop: '1rem' }}>
+            Please wait while Claude AI reviews your assignment...
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="card">
+        <button onClick={onBack} className="btn" style={{ marginBottom: '2rem' }}>
+          <ArrowLeft size={18} />
+          Back to Assignment Selection
+        </button>
+  
+        <h2>Assignment {assignment.assignment}: {assignment.title}</h2>
+        <div style={{ marginBottom: '2rem' }}>
+          <p><strong>Week Assigned:</strong> {assignment.week_assigned} | <strong>Due Week:</strong> {assignment.week_due}</p>
+          <p><strong>Total Points:</strong> {assignment.points}</p>
+        </div>
+  
+        <div className="question-card">
+          <h3>Assignment Description</h3>
+          <p style={{ fontSize: '1.1rem', lineHeight: '1.6', marginBottom: '1.5rem' }}>
+            {assignment.description}
+          </p>
+  
+          <h4>Objectives</h4>
+          <ul style={{ marginBottom: '1.5rem' }}>
+            {assignment.objectives.map((objective, index) => (
+              <li key={index} style={{ marginBottom: '0.5rem' }}>{objective}</li>
+            ))}
+          </ul>
+  
+          <h4>Deliverables</h4>
+          <ul style={{ marginBottom: '1.5rem' }}>
+            {assignment.deliverables.map((deliverable, index) => (
+              <li key={index} style={{ marginBottom: '0.5rem' }}>{deliverable}</li>
+            ))}
+          </ul>
+        </div>
+  
+        <div className="question-card">
+          <h3>
+            <FileText size={24} style={{ marginRight: '0.5rem', color: '#667eea' }} />
+            Your Assignment Submission
+          </h3>
+          <p style={{ marginBottom: '1rem', color: '#666' }}>
+            Provide your response to this assignment. The AI will review your submission and provide detailed feedback.
+          </p>
+  
+          <textarea
+            value={response}
+            onChange={(e) => setResponse(e.target.value)}
+            placeholder="Enter your assignment response here... Be thorough and address all objectives and deliverables."
+            rows={15}
+            style={{
+              width: '100%',
+              padding: '1rem',
+              border: '2px solid #e2e8f0',
+              borderRadius: '8px',
+              fontSize: '1rem',
+              resize: 'vertical',
+              fontFamily: 'monospace'
+            }}
+          />
+  
+          <div style={{ marginTop: '2rem', textAlign: 'center' }}>
+            <button 
+              onClick={handleSubmitAssignment}
+              disabled={!response.trim()}
+              className="btn"
+              style={{ fontSize: '1.1rem', padding: '1rem 2rem' }}
+            >
+              <Send size={20} />
+              Submit for AI Review
+            </button>
+          </div>
+  
+          {!response.trim() && (
+            <p style={{ textAlign: 'center', marginTop: '1rem', color: '#666' }}>
+              Please provide your assignment response before submitting.
+            </p>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+assets/degrees.json: |
+  {
+    "university": {
+      "name": "Artificial University",
+      "mission": "Empowering AI LLM learners to complete a degree through innovative online education with AI-powered assessment and personalized learning pathways",
+      "accreditation": "Regionally Accredited by the Digital Education Accreditation Council",
+      "established": 2024,
+      "learning_model": "100% online with AI-powered LLM testing, automated grading, and adaptive learning algorithms",
+      "assessment_method": "Continuous AI evaluation through natural language processing, project-based assessments, and real-time feedback systems"
+    },
+    "general_education_requirements": {
+      "total_credits": 42,
+      "categories": [
+        {
+          "category": "Communication & Critical Thinking",
+          "credits": 12,
+          "courses": [
+            {"course_id": "GEN101", "title": "Digital Communication Fundamentals", "credit_hours": 3},
+            {"course_id": "GEN102", "title": "Critical Thinking in the Digital Age", "credit_hours": 3},
+            {"course_id": "GEN103", "title": "Academic Writing and Research", "credit_hours": 3},
+            {"course_id": "GEN104", "title": "Public Speaking and Presentation", "credit_hours": 3}
+          ]
+        },
+        {
+          "category": "Mathematics & Quantitative Reasoning",
+          "credits": 9,
+          "courses": [
+            {"course_id": "GEN201", "title": "College Mathematics", "credit_hours": 3},
+            {"course_id": "GEN202", "title": "Statistics and Data Analysis", "credit_hours": 3},
+            {"course_id": "GEN203", "title": "Logic and Problem Solving", "credit_hours": 3}
+          ]
+        },
+        {
+          "category": "Science & Technology",
+          "credits": 9,
+          "courses": [
+            {"course_id": "GEN301", "title": "Introduction to Computer Literacy", "credit_hours": 3},
+            {"course_id": "GEN302", "title": "Digital Ethics and AI Society", "credit_hours": 3},
+            {"course_id": "GEN303", "title": "Environmental Science and Sustainability", "credit_hours": 3}
+          ]
+        },
+        {
+          "category": "Social Sciences & Humanities",
+          "credits": 12,
+          "courses": [
+            {"course_id": "GEN401", "title": "Global Cultures and Diversity", "credit_hours": 3},
+            {"course_id": "GEN402", "title": "History of Innovation and Technology", "credit_hours": 3},
+            {"course_id": "GEN403", "title": "Psychology of Learning", "credit_hours": 3},
+            {"course_id": "GEN404", "title": "Economics in the Digital Era", "credit_hours": 3}
+          ]
+        }
+      ]
+    },
+    "degree_programs": [
+      {
+        "degree_id": "BSCS001",
+        "title": "Bachelor of Science in Computer Science",
+        "duration": "4 years",
+        "total_credits": 120,
+        "description": "A comprehensive program designed to prepare students for careers in software development, systems analysis, and emerging technologies. Students will master programming languages, algorithms, data structures, and software engineering principles through AI-guided learning and real-world project applications.",
+        "major_credits": 78,
+        "required_courses": [
+          {"course_id": "CS101", "title": "Programming Fundamentals I", "credit_hours": 4},
+          {"course_id": "CS102", "title": "Programming Fundamentals II", "credit_hours": 4},
+          {"course_id": "CS201", "title": "Data Structures and Algorithms", "credit_hours": 4},
+          {"course_id": "CS202", "title": "Computer Systems Architecture", "credit_hours": 3},
+          {"course_id": "CS301", "title": "Database Management Systems", "credit_hours": 3},
+          {"course_id": "CS302", "title": "Operating Systems", "credit_hours": 3},
+          {"course_id": "CS303", "title": "Software Engineering", "credit_hours": 4},
+          {"course_id": "CS304", "title": "Web Development", "credit_hours": 3},
+          {"course_id": "CS401", "title": "Computer Networks", "credit_hours": 3},
+          {"course_id": "CS402", "title": "Artificial Intelligence Fundamentals", "credit_hours": 4},
+          {"course_id": "CS403", "title": "Machine Learning Applications", "credit_hours": 4},
+          {"course_id": "CS404", "title": "Cybersecurity Principles", "credit_hours": 3},
+          {"course_id": "CS405", "title": "Mobile Application Development", "credit_hours": 3},
+          {"course_id": "CS406", "title": "Cloud Computing", "credit_hours": 3},
+          {"course_id": "CS407", "title": "Data Science and Analytics", "credit_hours": 4},
+          {"course_id": "CS408", "title": "Human-Computer Interaction", "credit_hours": 3},
+          {"course_id": "CS409", "title": "Advanced Programming Concepts", "credit_hours": 4},
+          {"course_id": "CS410", "title": "Software Testing and Quality Assurance", "credit_hours": 3},
+          {"course_id": "CS490", "title": "Senior Capstone Project", "credit_hours": 4},
+          {"course_id": "CS491", "title": "Industry Practicum", "credit_hours": 3},
+          {"course_id": "MATH205", "title": "Discrete Mathematics", "credit_hours": 3},
+          {"course_id": "MATH206", "title": "Calculus I", "credit_hours": 4},
+          {"course_id": "MATH207", "title": "Linear Algebra", "credit_hours": 3}
+        ]
+      },
+      {
+        "degree_id": "BSBA001",
+        "title": "Bachelor of Science in Business Administration",
+        "duration": "4 years",
+        "total_credits": 120,
+        "description": "A dynamic business program that integrates traditional business principles with modern digital strategies. Students develop leadership, analytical, and strategic thinking skills while learning to navigate the evolving business landscape through AI-enhanced case studies and simulations.",
+        "major_credits": 78,
+        "required_courses": [
+          {"course_id": "BA101", "title": "Principles of Management", "credit_hours": 3},
+          {"course_id": "BA102", "title": "Financial Accounting", "credit_hours": 3},
+          {"course_id": "BA103", "title": "Managerial Accounting", "credit_hours": 3},
+          {"course_id": "BA201", "title": "Marketing Fundamentals", "credit_hours": 3},
+          {"course_id": "BA202", "title": "Business Finance", "credit_hours": 3},
+          {"course_id": "BA203", "title": "Operations Management", "credit_hours": 3},
+          {"course_id": "BA204", "title": "Human Resource Management", "credit_hours": 3},
+          {"course_id": "BA301", "title": "Strategic Management", "credit_hours": 3},
+          {"course_id": "BA302", "title": "International Business", "credit_hours": 3},
+          {"course_id": "BA303", "title": "Business Law and Ethics", "credit_hours": 3},
+          {"course_id": "BA304", "title": "Digital Marketing", "credit_hours": 3},
+          {"course_id": "BA305", "title": "E-commerce and Digital Business", "credit_hours": 3},
+          {"course_id": "BA401", "title": "Business Analytics", "credit_hours": 3},
+          {"course_id": "BA402", "title": "Supply Chain Management", "credit_hours": 3},
+          {"course_id": "BA403", "title": "Entrepreneurship", "credit_hours": 3},
+          {"course_id": "BA404", "title": "Leadership and Organizational Behavior", "credit_hours": 3},
+          {"course_id": "BA405", "title": "Investment and Portfolio Management", "credit_hours": 3},
+          {"course_id": "BA406", "title": "Corporate Strategy", "credit_hours": 3},
+          {"course_id": "BA407", "title": "Business Communication", "credit_hours": 3},
+          {"course_id": "BA408", "title": "Project Management Fundamentals", "credit_hours": 3},
+          {"course_id": "BA490", "title": "Business Capstone Project", "credit_hours": 4},
+          {"course_id": "BA491", "title": "Business Internship", "credit_hours": 3},
+          {"course_id": "ECON201", "title": "Microeconomics", "credit_hours": 3},
+          {"course_id": "ECON202", "title": "Macroeconomics", "credit_hours": 3},
+          {"course_id": "STAT301", "title": "Business Statistics", "credit_hours": 3}
+        ]
+      },
+      {
+        "degree_id": "BAGD001",
+        "title": "Bachelor of Arts in Game Design and Media",
+        "duration": "4 years",
+        "total_credits": 120,
+        "description": "A creative and technical program combining storytelling, visual design, and interactive media development. Students learn game mechanics, narrative design, digital art, and programming while developing skills for careers in gaming, interactive media, and digital entertainment industries.",
+        "major_credits": 78,
+        "required_courses": [
+          {"course_id": "GD101", "title": "Introduction to Game Design", "credit_hours": 3},
+          {"course_id": "GD102", "title": "Game Theory and Mechanics", "credit_hours": 3},
+          {"course_id": "GD103", "title": "Digital Art Fundamentals", "credit_hours": 3},
+          {"course_id": "GD201", "title": "2D Game Development", "credit_hours": 4},
+          {"course_id": "GD202", "title": "3D Modeling and Animation", "credit_hours": 4},
+          {"course_id": "GD203", "title": "Interactive Storytelling", "credit_hours": 3},
+          {"course_id": "GD301", "title": "Game Programming", "credit_hours": 4},
+          {"course_id": "GD302", "title": "Level Design", "credit_hours": 3},
+          {"course_id": "GD303", "title": "Character Design and Development", "credit_hours": 3},
+          {"course_id": "GD304", "title": "Game Audio and Sound Design", "credit_hours": 3},
+          {"course_id": "GD401", "title": "3D Game Development", "credit_hours": 4},
+          {"course_id": "GD402", "title": "Mobile Game Development", "credit_hours": 3},
+          {"course_id": "GD403", "title": "Virtual Reality and Augmented Reality", "credit_hours": 4},
+          {"course_id": "GD404", "title": "Game Testing and Quality Assurance", "credit_hours": 3},
+          {"course_id": "GD405", "title": "Game Marketing and Publishing", "credit_hours": 3},
+          {"course_id": "GD406", "title": "Multiplayer Game Design", "credit_hours": 3},
+          {"course_id": "GD407", "title": "Indie Game Development", "credit_hours": 3},
+          {"course_id": "GD408", "title": "Game Analytics and Monetization", "credit_hours": 3},
+          {"course_id": "GD409", "title": "Serious Games and Gamification", "credit_hours": 3},
+          {"course_id": "GD410", "title": "Game Industry Professional Practices", "credit_hours": 3},
+          {"course_id": "GD490", "title": "Game Design Capstone Project", "credit_hours": 4},
+          {"course_id": "GD491", "title": "Game Industry Internship", "credit_hours": 3},
+          {"course_id": "ART201", "title": "Digital Design Principles", "credit_hours": 3},
+          {"course_id": "CS115", "title": "Programming for Games", "credit_hours": 3},
+          {"course_id": "COMM201", "title": "Media Studies", "credit_hours": 3}
+        ]
+      }
+    ]
+  }
+
+assets/courses.json: |
+  {
+    "courses": {
+      "Business Administration": [
+        {
+          "course_id": "BA202",
+          "title": "Business Finance",
+          "credit_hours": 3,
+          "description": "Fundamental principles of corporate finance including financial analysis, capital budgeting, and financing decisions. Students learn to evaluate investment opportunities, manage working capital, and understand the relationship between risk and return in business contexts.",
+          "learning_objectives": [
+            "Analyze financial statements and calculate key financial ratios",
+            "Evaluate capital budgeting decisions using NPV and IRR",
+            "Understand cost of capital and capital structure decisions",
+            "Assess working capital management strategies",
+            "Apply risk and return concepts to financial decision-making"
+          ],
+          "covered_materials": [
+            "Time value of money and present value calculations",
+            "Financial statement analysis and ratio analysis",
+            "Capital budgeting techniques and decision criteria",
+            "Cost of capital and weighted average cost of capital",
+            "Capital structure and dividend policy",
+            "Working capital management",
+            "Risk assessment and portfolio theory",
+            "International financial management basics"
+          ]
+        },
+        {
+          "course_id": "BA203",
+          "title": "Operations Management",
+          "credit_hours": 3,
+          "description": "Study of operations and production management including process design, capacity planning, inventory management, and quality control. Students learn to optimize operational efficiency and effectiveness in manufacturing and service organizations.",
+          "learning_objectives": [
+            "Design efficient operational processes and workflows",
+            "Apply inventory management and control techniques",
+            "Implement quality management and continuous improvement practices",
+            "Analyze capacity planning and scheduling decisions",
+            "Evaluate supply chain management strategies"
+          ],
+          "covered_materials": [
+            "Operations strategy and competitive advantage",
+            "Process analysis and design",
+            "Capacity planning and facility location",
+            "Inventory management models",
+            "Quality management and Six Sigma",
+            "Project management and scheduling",
+            "Supply chain management fundamentals",
+            "Lean operations and continuous improvement"
+          ]
+        }
+      ],
+      "Game Design Media Courses": [
+        {
+          "course_id": "GD102",
+          "title": "Game Theory and Mechanics",
+          "credit_hours": 3,
+          "description": "Study of game design theory, mechanics, and player psychology including game balance, progression systems, and player motivation. Students learn to design engaging gameplay experiences while understanding the psychological and social aspects of gaming.",
+          "learning_objectives": [
+            "Understand fundamental game design theory and principles",
+            "Analyze game mechanics and their impact on player experience",
+            "Design balanced and engaging gameplay systems",
+            "Apply player psychology to game design decisions",
+            "Evaluate games critically from a design perspective"
+          ],
+          "covered_materials": [
+            "Game design theory and frameworks",
+            "Core mechanics and game systems",
+            "Player motivation and engagement",
+            "Game balance and difficulty curves",
+            "Progression systems and rewards",
+            "Social dynamics in gaming",
+            "Game genre analysis and conventions",
+            "Playtesting and iteration methods"
+          ]
+        },
+        {
+          "course_id": "GD401",
+          "title": "3D Game Development",
+          "credit_hours": 4,
+          "description": "Advanced 3D game development including 3D graphics programming, physics simulation, and complex game systems. Students create sophisticated 3D games while learning advanced technical and design concepts.",
+          "learning_objectives": [
+            "Develop complete 3D games using modern engines",
+            "Implement 3D graphics and rendering techniques",
+            "Create complex 3D gameplay mechanics",
+            "Optimize 3D games for performance",
+            "Apply advanced game development patterns"
+          ],
+          "covered_materials": [
+            "3D game engines and development environments",
+            "3D graphics programming and shaders",
+            "Physics simulation and collision detection",
+            "Camera systems and player controls",
+            "3D user interface design",
+            "Performance optimization techniques",
+            "Advanced lighting and visual effects",
+            "Platform deployment and distribution"
+          ]
+        }
+      ],
+      "Educational Technology Courses": [
+        {
+          "course_id": "ED102",
+          "title": "Learning Theory and Development",
+          "credit_hours": 3,
+          "description": "Comprehensive study of learning theories and human development principles that inform educational technology design. Students explore cognitive, behavioral, and constructivist approaches while understanding how technology can support different learning processes.",
+          "learning_objectives": [
+            "Understand major learning theories and their applications",
+            "Analyze cognitive development and learning processes",
+            "Apply learning theory to educational technology design",
+            "Evaluate developmental considerations in technology use",
+            "Design age-appropriate educational experiences"
+          ],
+          "covered_materials": [
+            "Cognitive development theories (Piaget, Vygotsky)",
+            "Behaviorist and constructivist learning theories",
+            "Social learning and collaborative learning",
+            "Adult learning principles and andragogy",
+            "Motivation and engagement in learning",
+            "Individual differences and learning styles",
+            "Technology's impact on cognitive development",
+            "Learning theory applications in digital environments"
+          ]
+        }
+      ]
+    }
+  }
+
+assets/courses/gd401.json: |
+  {
+    "course_info": {
+      "course_id": "GD401",
+      "title": "3D Game Development",
+      "credit_hours": 4,
+      "duration": "15 weeks",
+      "meeting_schedule": "Monday, Wednesday, Friday - 3 hours per week",
+      "prerequisites": [
+        "GD301 - 2D Game Development",
+        "CS202 - Object-Oriented Programming",
+        "MATH251 - Linear Algebra",
+        "CS101 - Computer Graphics Fundamentals"
+      ]
+    },
+    "class_schedule": [
+      {
+        "week_number": 1,
+        "session_number": 1,
+        "date": "2024-01-15",
+        "topic": "Introduction to 3D Game Development",
+        "duration": "50 minutes",
+        "learning_objectives": [
+          "Understand the scope and complexity of 3D game development",
+          "Identify key differences between 2D and 3D game development",
+          "Overview of modern 3D game engines"
+        ],
+        "readings": [
+          "Game Engine Architecture Ch. 1-2",
+          "Real-Time Rendering Ch. 1"
+        ],
+        "lecture_notes": {
+          "introduction": "Welcome to 3D Game Development. This course will take you from 2D concepts into the complex world of three-dimensional interactive experiences.",
+          "key_concepts": [
+            "3D coordinate systems and transformations",
+            "Rendering pipeline overview",
+            "Game engine architecture",
+            "Performance considerations in 3D",
+            "Modern 3D development tools and workflows"
+          ],
+          "demonstration": "Live demo of Unity 3D interface and basic scene setup",
+          "setup_requirements": [
+            "Unity 2023.2 LTS installed",
+            "Visual Studio or VS Code configured",
+            "Git repository access"
+          ],
+          "review": [
+            {
+              "key": "3D Coordinate Systems",
+              "value": "Right-handed vs left-handed coordinate systems, world vs local space"
+            },
+            {
+              "key": "Rendering Pipeline",
+              "value": "Vertex processing, rasterization, fragment shading, post-processing"
+            }
+          ]
+        }
+      },
+      {
+        "week_number": 1,
+        "session_number": 2,
+        "date": "2024-01-17",
+        "topic": "3D Mathematics and Transformations",
+        "duration": "50 minutes",
+        "learning_objectives": [
+          "Master 3D vector operations",
+          "Understand matrix transformations",
+          "Apply quaternions for rotations"
+        ],
+        "readings": [
+          "3D Math Primer Ch. 3-4",
+          "Game Engine Architecture Ch. 4"
+        ],
+        "lecture_notes": {
+          "introduction": "Mathematical foundations are crucial for 3D graphics programming. Today we'll cover the essential math concepts.",
+          "key_concepts": [
+            "Vector operations in 3D space",
+            "Matrix multiplication and transformations",
+            "Quaternion rotations",
+            "Homogeneous coordinates",
+            "Transform hierarchies"
+          ],
+          "demonstration": "Interactive demonstration of transformations using Unity's transform component",
+          "setup_requirements": [
+            "Calculator or mathematical software",
+            "Unity project from previous session"
+          ],
+          "review": [
+            {
+              "key": "Transformation Matrix",
+              "value": "4x4 matrix combining translation, rotation, and scale"
+            },
+            {
+              "key": "Quaternions",
+              "value": "4-component representation of rotation that avoids gimbal lock"
+            }
+          ]
+        }
+      },
+      {
+        "week_number": 2,
+        "session_number": 3,
+        "date": "2024-01-22",
+        "topic": "3D Graphics Pipeline and Shaders",
+        "duration": "50 minutes",
+        "learning_objectives": [
+          "Understand the complete graphics rendering pipeline",
+          "Learn shader programming basics",
+          "Implement vertex and fragment shaders"
+        ],
+        "readings": [
+          "Real-Time Rendering Ch. 2-3",
+          "Unity Shader Programming Guide"
+        ],
+        "lecture_notes": {
+          "introduction": "The graphics pipeline is the heart of 3D rendering. Understanding each stage is essential for advanced graphics programming.",
+          "key_concepts": [
+            "Vertex shader stage",
+            "Geometry processing",
+            "Rasterization process",
+            "Fragment shader operations",
+            "HLSL/GLSL shader languages"
+          ],
+          "demonstration": "Writing a simple vertex/fragment shader pair in Unity",
+          "setup_requirements": [
+            "Unity ShaderGraph package installed",
+            "Basic understanding of linear algebra"
+          ],
+          "review": [
+            {
+              "key": "Vertex Shader",
+              "value": "Processes individual vertices, handles transformations and lighting calculations"
+            },
+            {
+              "key": "Fragment Shader",
+              "value": "Determines final pixel color, handles texturing and complex lighting"
+            }
+          ]
+        }
+      }
+    ],
+    "assessments": {
+      "quizzes": [
+        {
+          "quiz": 1,
+          "week": 2,
+          "topic": "3D Mathematics and Coordinate Systems",
+          "duration": "20 minutes",
+          "questions": [
+            {
+              "question": "What is the result of multiplying a 4x4 transformation matrix by a position vector (2, 3, 4, 1) if the matrix represents a translation of (1, 0, 0)?",
+              "type": "calculation",
+              "points": 10,
+              "answer": "(3, 3, 4, 1)",
+              "rubric": [
+                {
+                  "key": "Correct final answer",
+                  "value": 6
+                },
+                {
+                  "key": "Proper matrix multiplication shown",
+                  "value": 3
+                },
+                {
+                  "key": "Homogeneous coordinate understanding",
+                  "value": 1
+                }
+              ]
+            },
+            {
+              "question": "Explain the primary advantage of using quaternions over Euler angles for 3D rotations.",
+              "type": "short_answer",
+              "points": 10,
+              "answer": "Quaternions avoid gimbal lock, provide smooth interpolation, and are more efficient for combining rotations.",
+              "rubric": [
+                {
+                  "key": "Mentions gimbal lock avoidance",
+                  "value": 4
+                },
+                {
+                  "key": "Discusses interpolation benefits",
+                  "value": 3
+                },
+                {
+                  "key": "Notes computational efficiency",
+                  "value": 3
+                }
+              ]
+            }
+          ],
+          "total_points": 20
+        },
+        {
+          "quiz": 2,
+          "week": 4,
+          "topic": "Graphics Pipeline and Shaders",
+          "duration": "25 minutes",
+          "questions": [
+            {
+              "question": "List the main stages of the graphics rendering pipeline in order.",
+              "type": "short_answer",
+              "points": 10,
+              "answer": "Vertex processing, primitive assembly, rasterization, fragment processing, per-fragment operations",
+              "rubric": [
+                {
+                  "key": "Correct order of stages",
+                  "value": 6
+                },
+                {
+                  "key": "All major stages included",
+                  "value": 4
+                }
+              ]
+            },
+            {
+              "question": "Write a simple HLSL vertex shader function that transforms a vertex position from object space to clip space.",
+              "type": "code",
+              "points": 15,
+              "answer": "float4 vertex : SV_Position = mul(UNITY_MATRIX_MVP, input.vertex);",
+              "rubric": [
+                {
+                  "key": "Correct matrix multiplication",
+                  "value": 8
+                },
+                {
+                  "key": "Proper HLSL syntax",
+                  "value": 4
+                },
+                {
+                  "key": "Correct semantic usage",
+                  "value": 3
+                }
+              ]
+            }
+          ],
+          "total_points": 25
+        }
+      ],
+      "major_assignments": [
+        {
+          "assignment": 1,
+          "title": "3D Scene Construction and Basic Interaction",
+          "week_assigned": 3,
+          "week_due": 5,
+          "points": 100,
+          "description": "Create a fully interactive 3D scene with multiple objects, materials, lighting, and basic player controls. This assignment focuses on fundamental 3D development skills.",
+          "objectives": [
+            "Demonstrate proficiency with 3D scene composition",
+            "Implement basic 3D player controls",
+            "Apply appropriate materials and lighting",
+            "Create an engaging interactive experience"
+          ],
+          "requirements": {},
+          "deliverables": [
+            "Unity project files with complete scene",
+            "Build executable for Windows",
+            "Technical documentation (2-3 pages)",
+            "Screen recording demonstrating functionality"
+          ],
+          "grading_rubric": {},
+          "rubric": []
+        }
+      ]
+    }
+  }
+
+.env.example: |
+  # Claude AI API Key (required for AI grading functionality)
+  VITE_CLAUDE_API_KEY=your_claude_api_key_here
+
+README.md: |
+  # Artificial University - AI-Powered Education Platform
+
+  A React + TypeScript application showcasing an innovative AI-powered university with interactive course experiences.
+
+  ## Features
+
+  - **University Overview**: Browse degree programs and course catalogs
+  - **Degree Programs**: Detailed curriculum and course requirements
+  - **Course Details**: Comprehensive course descriptions with learning objectives
+  - **AI-Powered Learning**: Interactive courses with AI-assisted quizzes and assignments
+  - **Claude AI Integration**: Automated grading and feedback system
+
+  ## Prerequisites
+
+  - Node.js 18+ and npm
+  - Claude AI API key (for AI grading functionality)
+
+  ## Setup
+
+  1. Clone the repository
+  2. Install dependencies:
+     ```bash
+     npm install
+     ```
+  3. Copy `.env.example` to `.env` and add your Claude AI API key:
+     ```bash
+     cp .env.example .env
+     ```
+  4. Start the development server:
+     ```bash
+     npm run dev
+     ```
+
+  ## Project Structure
