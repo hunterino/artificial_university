@@ -65,18 +65,24 @@ class DataService extends ChangeNotifier {
   }
 
   Future<void> _loadAllClassDetails() async {
-    final manifestString = await rootBundle.loadString('AssetManifest.json');
-    final manifest = json.decode(manifestString) as Map<String, dynamic>;
-    final classFiles = manifest.keys
-        .where((key) =>
-            key.startsWith('assets/courses/') &&
-            key.endsWith('.json') &&
-            !key.contains('schema'))
-        .toList();
+    // Collect all unique course IDs from degree programs and gen ed
+    final courseIds = <String>{};
+    for (final degree in _degreePrograms) {
+      for (final course in degree.requiredCourses) {
+        courseIds.add(course.courseId);
+      }
+    }
+    if (_generalEducation != null) {
+      for (final category in _generalEducation!.categories) {
+        for (final course in category.courses) {
+          courseIds.add(course.courseId);
+        }
+      }
+    }
 
-    for (final file in classFiles) {
-      final classId = file.split('/').last.replaceAll('.json', '');
-      await _loadClassDetail(classId);
+    // Try loading class details for each known course ID
+    for (final courseId in courseIds) {
+      await _loadClassDetail(courseId);
     }
   }
 
