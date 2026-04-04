@@ -63,7 +63,6 @@ class CourseInfo {
 class ClassSession {
   final int weekNumber;
   final int sessionNumber;
-  final String date;
   final String topic;
   final String duration;
   final List<String> learningObjectives;
@@ -73,7 +72,6 @@ class ClassSession {
   ClassSession({
     required this.weekNumber,
     required this.sessionNumber,
-    required this.date,
     required this.topic,
     required this.duration,
     required this.learningObjectives,
@@ -85,7 +83,6 @@ class ClassSession {
     return ClassSession(
       weekNumber: extractInt(json, 'week_number'),
       sessionNumber: extractInt(json, 'session_number'),
-      date: extractString(json, 'date'),
       topic: extractString(json, 'topic'),
       duration: extractString(json, 'duration'),
       learningObjectives: extractStringList(json, 'learning_objectives'),

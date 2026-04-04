@@ -1,21 +1,426 @@
 {
-  "course_info": {"course_id":"CS405","title":"Mobile Application Development","credit_hours":3,"duration":"15 weeks","meeting_schedule":"Monday, Wednesday - 3 hours per week","prerequisites":["CS304 - Web Development"]},
+  "course_info": {
+    "course_id": "CS405",
+    "title": "Mobile Application Development",
+    "credit_hours": 3,
+    "duration": "15 weeks",
+    "meeting_schedule": "Monday, Wednesday - 3 hours per week",
+    "prerequisites": [
+      "CS304 - Web Development"
+    ]
+  },
   "class_schedule": [
-    {"week_number":1,"session_number":1,"date":"2024-01-15","topic":"Mobile Development Landscape and Flutter Fundamentals","duration":"50 minutes","learning_objectives":["Compare native, hybrid, and cross-platform mobile development approaches","Set up a Flutter development environment","Build and run a first Flutter application"],"readings":["Flutter Documentation: Getting Started","Google Codelabs: Your First Flutter App"],"lecture_notes":{"introduction":"Mobile apps are the primary way billions of people interact with software. This course teaches cross-platform development with Flutter, enabling you to build native-quality iOS and Android apps from a single codebase.","key_concepts":["Native vs cross-platform: performance and development speed trade-offs","Flutter architecture: Dart language, widget tree, rendering engine","Widget fundamentals: StatelessWidget vs StatefulWidget","Material Design and Cupertino design systems","Hot reload for rapid iteration"],"demonstration":"Create a Flutter project, build a simple profile card with an image, name, and bio using Material widgets, and demonstrate hot reload for instant feedback","setup_requirements":["Flutter SDK installed","Android Studio or VS Code with Flutter extension","Android emulator or iOS simulator configured"],"review":[{"key":"Widget Tree","value":"In Flutter, everything is a widget: the app, layouts, text, buttons, even padding. Widgets compose into a tree that Flutter renders to native platform views using its own rendering engine"},{"key":"Hot Reload","value":"Flutter injects updated code into the running Dart VM and rebuilds the widget tree, preserving state; changes appear in under a second without restarting the app"}]}},
-    {"week_number":2,"session_number":3,"date":"2024-01-22","topic":"State Management with Provider","duration":"50 minutes","learning_objectives":["Manage application state using the Provider pattern","Distinguish between ephemeral (local) and application (shared) state","Implement ChangeNotifier for reactive UI updates"],"readings":["Flutter Documentation: Simple State Management","Provider Package Documentation"],"lecture_notes":{"introduction":"State management is the hardest problem in mobile development. Provider offers a pragmatic approach that scales from simple apps to complex ones without the boilerplate of more heavyweight solutions.","key_concepts":["Ephemeral state: managed locally with setState","Application state: shared across widgets, managed with Provider","ChangeNotifier: notify listeners when state changes","ChangeNotifierProvider: providing state to the widget tree","Consumer and context.watch for reactive rebuilds"],"demonstration":"Build a shopping cart app with Provider: product list screen, cart screen, and a shared CartModel that updates both screens when items are added or removed","setup_requirements":["Flutter project configured","Provider package added to pubspec.yaml"],"review":[{"key":"Lifting State Up","value":"When two widgets need the same state, move it to their nearest common ancestor and pass it down; Provider automates this pattern by making state available anywhere in the widget tree"},{"key":"Selective Rebuilding","value":"Using Consumer or context.select rebuilds only the widgets that depend on the changed state, not the entire tree; this is critical for performance in large apps"}]}},
-    {"week_number":3,"session_number":5,"date":"2024-01-29","topic":"Navigation, Routing, and Responsive Layouts","duration":"50 minutes","learning_objectives":["Implement declarative navigation with Go Router","Build responsive layouts that adapt to different screen sizes","Handle deep linking and route parameters"],"readings":["Flutter Documentation: Navigation and Routing","go_router Package Documentation"],"lecture_notes":{"introduction":"Navigation defines how users move through your app. Responsive layouts ensure your app looks great on phones, tablets, and desktops. Together, they create a polished user experience.","key_concepts":["Navigator 2.0 and declarative routing with go_router","Route parameters, query parameters, and path matching","LayoutBuilder and MediaQuery for responsive design","Adaptive layouts: different UI for phone vs tablet","Deep linking: opening specific screens from external URLs"],"demonstration":"Build a master-detail layout that shows a list on phones and a side-by-side view on tablets, with deep linking support for sharing specific items","setup_requirements":["Flutter project with go_router","Multiple device sizes configured in emulator"],"review":[{"key":"Declarative Routing","value":"Routes are defined as data structures mapping URL paths to widget builders; the framework handles push/pop animations and deep linking automatically, unlike imperative Navigator.push calls"},{"key":"Responsive Breakpoints","value":"Use LayoutBuilder to check available width: <600dp for phone, 600-900dp for tablet, >900dp for desktop. Build different widget trees for each breakpoint rather than scaling a single layout"}]}},
-    {"week_number":4,"session_number":7,"date":"2024-02-05","topic":"API Integration and Local Storage","duration":"50 minutes","learning_objectives":["Fetch data from REST APIs using the http package","Persist data locally with SQLite and shared preferences","Handle loading states, errors, and offline scenarios"],"readings":["Flutter Documentation: Networking","sqflite Package Documentation"],"lecture_notes":{"introduction":"Most mobile apps are thin clients for backend services. This session covers fetching data from APIs, caching it locally for offline access, and handling the inevitable network failures that mobile environments present.","key_concepts":["HTTP client: GET, POST, PUT, DELETE with error handling","JSON serialization and deserialization with model classes","Local storage: shared_preferences for settings, sqflite for structured data","Repository pattern: abstracting data sources behind a common interface","Connectivity awareness: online vs offline behavior"],"demonstration":"Build a news reader that fetches articles from an API, caches them in SQLite for offline reading, and shows a clear loading/error/empty state for each scenario","setup_requirements":["Flutter project with http, sqflite, shared_preferences packages","REST API endpoint for testing"],"review":[{"key":"Repository Pattern","value":"The repository provides a single interface for data access; it decides whether to fetch from the network, local cache, or both. UI code never knows or cares about the data source"},{"key":"Error States","value":"Mobile apps must handle network timeout, server error, no connectivity, and invalid response. Every API call needs loading, success, and error states visible to the user"}]}},
-    {"week_number":5,"session_number":9,"date":"2024-02-12","topic":"Platform Integration and Publishing","duration":"50 minutes","learning_objectives":["Access platform features: camera, location, notifications","Prepare apps for App Store and Play Store submission","Implement platform channels for native code integration"],"readings":["Flutter Documentation: Platform Integration","Apple App Store Review Guidelines (summary)","Google Play Store Policies (summary)"],"lecture_notes":{"introduction":"The final mile of mobile development is platform integration and publishing. Accessing device hardware, handling permissions, and meeting store review requirements are what turn a Flutter prototype into a production app.","key_concepts":["Platform channels: calling native iOS/Android code from Dart","Permissions: requesting camera, location, notification access at runtime","Push notifications: FCM setup and handling","App signing, versioning, and release builds","Store submission: screenshots, descriptions, review guidelines compliance"],"demonstration":"Add camera capture and location tagging to an existing app using platform plugins, configure Firebase Cloud Messaging for push notifications, and build a release APK","setup_requirements":["Flutter project with camera, geolocator, firebase_messaging packages","Firebase project configured","Physical device for testing hardware features"],"review":[{"key":"Runtime Permissions","value":"Both iOS and Android require requesting sensitive permissions (camera, location) at runtime with a clear explanation of why the app needs them; requesting without explanation results in store rejection"},{"key":"App Signing","value":"Release builds must be signed with a private key; the corresponding public key is registered with the app store. Losing the signing key means you cannot update the app, so it must be backed up securely"}]}}
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "topic": "Mobile Development Landscape and Flutter Fundamentals",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Compare native, hybrid, and cross-platform mobile development approaches",
+        "Set up a Flutter development environment",
+        "Build and run a first Flutter application"
+      ],
+      "readings": [
+        "Flutter Documentation: Getting Started",
+        "Google Codelabs: Your First Flutter App"
+      ],
+      "lecture_notes": {
+        "introduction": "Mobile apps are the primary way billions of people interact with software. This course teaches cross-platform development with Flutter, enabling you to build native-quality iOS and Android apps from a single codebase.",
+        "key_concepts": [
+          "Native vs cross-platform: performance and development speed trade-offs",
+          "Flutter architecture: Dart language, widget tree, rendering engine",
+          "Widget fundamentals: StatelessWidget vs StatefulWidget",
+          "Material Design and Cupertino design systems",
+          "Hot reload for rapid iteration"
+        ],
+        "demonstration": "Create a Flutter project, build a simple profile card with an image, name, and bio using Material widgets, and demonstrate hot reload for instant feedback",
+        "setup_requirements": [
+          "Flutter SDK installed",
+          "Android Studio or VS Code with Flutter extension",
+          "Android emulator or iOS simulator configured"
+        ],
+        "review": [
+          {
+            "key": "Widget Tree",
+            "value": "In Flutter, everything is a widget: the app, layouts, text, buttons, even padding. Widgets compose into a tree that Flutter renders to native platform views using its own rendering engine"
+          },
+          {
+            "key": "Hot Reload",
+            "value": "Flutter injects updated code into the running Dart VM and rebuilds the widget tree, preserving state; changes appear in under a second without restarting the app"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 3,
+      "topic": "State Management with Provider",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Manage application state using the Provider pattern",
+        "Distinguish between ephemeral (local) and application (shared) state",
+        "Implement ChangeNotifier for reactive UI updates"
+      ],
+      "readings": [
+        "Flutter Documentation: Simple State Management",
+        "Provider Package Documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "State management is the hardest problem in mobile development. Provider offers a pragmatic approach that scales from simple apps to complex ones without the boilerplate of more heavyweight solutions.",
+        "key_concepts": [
+          "Ephemeral state: managed locally with setState",
+          "Application state: shared across widgets, managed with Provider",
+          "ChangeNotifier: notify listeners when state changes",
+          "ChangeNotifierProvider: providing state to the widget tree",
+          "Consumer and context.watch for reactive rebuilds"
+        ],
+        "demonstration": "Build a shopping cart app with Provider: product list screen, cart screen, and a shared CartModel that updates both screens when items are added or removed",
+        "setup_requirements": [
+          "Flutter project configured",
+          "Provider package added to pubspec.yaml"
+        ],
+        "review": [
+          {
+            "key": "Lifting State Up",
+            "value": "When two widgets need the same state, move it to their nearest common ancestor and pass it down; Provider automates this pattern by making state available anywhere in the widget tree"
+          },
+          {
+            "key": "Selective Rebuilding",
+            "value": "Using Consumer or context.select rebuilds only the widgets that depend on the changed state, not the entire tree; this is critical for performance in large apps"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 5,
+      "topic": "Navigation, Routing, and Responsive Layouts",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Implement declarative navigation with Go Router",
+        "Build responsive layouts that adapt to different screen sizes",
+        "Handle deep linking and route parameters"
+      ],
+      "readings": [
+        "Flutter Documentation: Navigation and Routing",
+        "go_router Package Documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Navigation defines how users move through your app. Responsive layouts ensure your app looks great on phones, tablets, and desktops. Together, they create a polished user experience.",
+        "key_concepts": [
+          "Navigator 2.0 and declarative routing with go_router",
+          "Route parameters, query parameters, and path matching",
+          "LayoutBuilder and MediaQuery for responsive design",
+          "Adaptive layouts: different UI for phone vs tablet",
+          "Deep linking: opening specific screens from external URLs"
+        ],
+        "demonstration": "Build a master-detail layout that shows a list on phones and a side-by-side view on tablets, with deep linking support for sharing specific items",
+        "setup_requirements": [
+          "Flutter project with go_router",
+          "Multiple device sizes configured in emulator"
+        ],
+        "review": [
+          {
+            "key": "Declarative Routing",
+            "value": "Routes are defined as data structures mapping URL paths to widget builders; the framework handles push/pop animations and deep linking automatically, unlike imperative Navigator.push calls"
+          },
+          {
+            "key": "Responsive Breakpoints",
+            "value": "Use LayoutBuilder to check available width: <600dp for phone, 600-900dp for tablet, >900dp for desktop. Build different widget trees for each breakpoint rather than scaling a single layout"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 7,
+      "topic": "API Integration and Local Storage",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Fetch data from REST APIs using the http package",
+        "Persist data locally with SQLite and shared preferences",
+        "Handle loading states, errors, and offline scenarios"
+      ],
+      "readings": [
+        "Flutter Documentation: Networking",
+        "sqflite Package Documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Most mobile apps are thin clients for backend services. This session covers fetching data from APIs, caching it locally for offline access, and handling the inevitable network failures that mobile environments present.",
+        "key_concepts": [
+          "HTTP client: GET, POST, PUT, DELETE with error handling",
+          "JSON serialization and deserialization with model classes",
+          "Local storage: shared_preferences for settings, sqflite for structured data",
+          "Repository pattern: abstracting data sources behind a common interface",
+          "Connectivity awareness: online vs offline behavior"
+        ],
+        "demonstration": "Build a news reader that fetches articles from an API, caches them in SQLite for offline reading, and shows a clear loading/error/empty state for each scenario",
+        "setup_requirements": [
+          "Flutter project with http, sqflite, shared_preferences packages",
+          "REST API endpoint for testing"
+        ],
+        "review": [
+          {
+            "key": "Repository Pattern",
+            "value": "The repository provides a single interface for data access; it decides whether to fetch from the network, local cache, or both. UI code never knows or cares about the data source"
+          },
+          {
+            "key": "Error States",
+            "value": "Mobile apps must handle network timeout, server error, no connectivity, and invalid response. Every API call needs loading, success, and error states visible to the user"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 9,
+      "topic": "Platform Integration and Publishing",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Access platform features: camera, location, notifications",
+        "Prepare apps for App Store and Play Store submission",
+        "Implement platform channels for native code integration"
+      ],
+      "readings": [
+        "Flutter Documentation: Platform Integration",
+        "Apple App Store Review Guidelines (summary)",
+        "Google Play Store Policies (summary)"
+      ],
+      "lecture_notes": {
+        "introduction": "The final mile of mobile development is platform integration and publishing. Accessing device hardware, handling permissions, and meeting store review requirements are what turn a Flutter prototype into a production app.",
+        "key_concepts": [
+          "Platform channels: calling native iOS/Android code from Dart",
+          "Permissions: requesting camera, location, notification access at runtime",
+          "Push notifications: FCM setup and handling",
+          "App signing, versioning, and release builds",
+          "Store submission: screenshots, descriptions, review guidelines compliance"
+        ],
+        "demonstration": "Add camera capture and location tagging to an existing app using platform plugins, configure Firebase Cloud Messaging for push notifications, and build a release APK",
+        "setup_requirements": [
+          "Flutter project with camera, geolocator, firebase_messaging packages",
+          "Firebase project configured",
+          "Physical device for testing hardware features"
+        ],
+        "review": [
+          {
+            "key": "Runtime Permissions",
+            "value": "Both iOS and Android require requesting sensitive permissions (camera, location) at runtime with a clear explanation of why the app needs them; requesting without explanation results in store rejection"
+          },
+          {
+            "key": "App Signing",
+            "value": "Release builds must be signed with a private key; the corresponding public key is registered with the app store. Losing the signing key means you cannot update the app, so it must be backed up securely"
+          }
+        ]
+      }
+    }
   ],
   "assessments": {
     "quizzes": [
-      {"quiz":1,"week":2,"topic":"Flutter Widgets and State Management","duration":"20 minutes","questions":[{"question":"Explain the difference between StatelessWidget and StatefulWidget. When should you use each?","type":"short_answer","points":10,"answer":"StatelessWidget has no mutable state; its build method always produces the same output for the same configuration (props). Use it for static UI elements like labels, icons, and layout containers. StatefulWidget has a companion State object that holds mutable state; calling setState triggers a rebuild with the new state. Use it when the widget needs to change in response to user interaction or asynchronous events (e.g., a checkbox, a form field, an animation).","rubric":[{"key":"Correct definitions of both widget types","value":4},{"key":"Correct use cases for each","value":3},{"key":"Mentions setState triggering rebuild","value":3}]},{"question":"Write a ChangeNotifier class called CounterModel with an increment method and a count getter. Then show how to provide it with ChangeNotifierProvider and consume it with Consumer.","type":"code","points":10,"answer":"class CounterModel extends ChangeNotifier {\n  int _count = 0;\n  int get count => _count;\n  void increment() {\n    _count++;\n    notifyListeners();\n  }\n}\n\n// Providing:\nChangeNotifierProvider(\n  create: (_) => CounterModel(),\n  child: MyApp(),\n)\n\n// Consuming:\nConsumer<CounterModel>(\n  builder: (context, counter, child) => Text('${counter.count}'),\n)","rubric":[{"key":"Correct ChangeNotifier with notifyListeners","value":4},{"key":"Correct ChangeNotifierProvider usage","value":3},{"key":"Correct Consumer usage","value":3}]}],"total_points":20},
-      {"quiz":2,"week":4,"topic":"Navigation, API Integration, and Storage","duration":"25 minutes","questions":[{"question":"Explain the repository pattern in the context of a mobile app that fetches data from an API and caches it locally. Why is this pattern valuable?","type":"short_answer","points":10,"answer":"The repository pattern creates an abstraction layer between the data sources (remote API, local database) and the rest of the application. The repository interface exposes methods like getArticles() without revealing whether data comes from the network or local cache. The implementation decides: check the cache first, fall back to the API if the cache is stale or empty, and update the cache after a successful API call. This is valuable because: (1) UI code does not need to change when you switch data sources. (2) Testing is easier with mock repositories. (3) Offline support is implemented in one place. (4) Caching strategy can be changed without affecting the rest of the app.","rubric":[{"key":"Correctly defines the repository abstraction","value":4},{"key":"Explains the cache-then-network strategy","value":3},{"key":"Lists at least two benefits","value":3}]},{"question":"A Flutter app crashes when the user navigates back from a screen that makes an API call. The error says 'setState called after dispose'. Explain the cause and the fix.","type":"short_answer","points":15,"answer":"The API call is asynchronous. If the user navigates away before the response arrives, the widget is disposed (removed from the tree). When the callback runs and calls setState, the State object is no longer mounted, causing the error. Fix: Check the mounted property before calling setState. Better: cancel the async operation in the dispose method using a CancelToken (for HTTP) or by setting a flag. Best: use a state management solution like Provider where the model outlives the widget and the widget rebuilds reactively without needing setState.","rubric":[{"key":"Correctly identifies async callback after dispose","value":5},{"key":"Mentions checking mounted property","value":3},{"key":"Mentions canceling the async operation in dispose","value":4},{"key":"Suggests state management as a structural fix","value":3}]}],"total_points":25}
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "Flutter Widgets and State Management",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "Explain the difference between StatelessWidget and StatefulWidget. When should you use each?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "StatelessWidget has no mutable state; its build method always produces the same output for the same configuration (props). Use it for static UI elements like labels, icons, and layout containers. StatefulWidget has a companion State object that holds mutable state; calling setState triggers a rebuild with the new state. Use it when the widget needs to change in response to user interaction or asynchronous events (e.g., a checkbox, a form field, an animation).",
+            "rubric": [
+              {
+                "key": "Correct definitions of both widget types",
+                "value": 4
+              },
+              {
+                "key": "Correct use cases for each",
+                "value": 3
+              },
+              {
+                "key": "Mentions setState triggering rebuild",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Write a ChangeNotifier class called CounterModel with an increment method and a count getter. Then show how to provide it with ChangeNotifierProvider and consume it with Consumer.",
+            "type": "code",
+            "points": 10,
+            "answer": "class CounterModel extends ChangeNotifier {\n  int _count = 0;\n  int get count => _count;\n  void increment() {\n    _count++;\n    notifyListeners();\n  }\n}\n\n// Providing:\nChangeNotifierProvider(\n  create: (_) => CounterModel(),\n  child: MyApp(),\n)\n\n// Consuming:\nConsumer<CounterModel>(\n  builder: (context, counter, child) => Text('${counter.count}'),\n)",
+            "rubric": [
+              {
+                "key": "Correct ChangeNotifier with notifyListeners",
+                "value": 4
+              },
+              {
+                "key": "Correct ChangeNotifierProvider usage",
+                "value": 3
+              },
+              {
+                "key": "Correct Consumer usage",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 4,
+        "topic": "Navigation, API Integration, and Storage",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Explain the repository pattern in the context of a mobile app that fetches data from an API and caches it locally. Why is this pattern valuable?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "The repository pattern creates an abstraction layer between the data sources (remote API, local database) and the rest of the application. The repository interface exposes methods like getArticles() without revealing whether data comes from the network or local cache. The implementation decides: check the cache first, fall back to the API if the cache is stale or empty, and update the cache after a successful API call. This is valuable because: (1) UI code does not need to change when you switch data sources. (2) Testing is easier with mock repositories. (3) Offline support is implemented in one place. (4) Caching strategy can be changed without affecting the rest of the app.",
+            "rubric": [
+              {
+                "key": "Correctly defines the repository abstraction",
+                "value": 4
+              },
+              {
+                "key": "Explains the cache-then-network strategy",
+                "value": 3
+              },
+              {
+                "key": "Lists at least two benefits",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "A Flutter app crashes when the user navigates back from a screen that makes an API call. The error says 'setState called after dispose'. Explain the cause and the fix.",
+            "type": "short_answer",
+            "points": 15,
+            "answer": "The API call is asynchronous. If the user navigates away before the response arrives, the widget is disposed (removed from the tree). When the callback runs and calls setState, the State object is no longer mounted, causing the error. Fix: Check the mounted property before calling setState. Better: cancel the async operation in the dispose method using a CancelToken (for HTTP) or by setting a flag. Best: use a state management solution like Provider where the model outlives the widget and the widget rebuilds reactively without needing setState.",
+            "rubric": [
+              {
+                "key": "Correctly identifies async callback after dispose",
+                "value": 5
+              },
+              {
+                "key": "Mentions checking mounted property",
+                "value": 3
+              },
+              {
+                "key": "Mentions canceling the async operation in dispose",
+                "value": 4
+              },
+              {
+                "key": "Suggests state management as a structural fix",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 25
+      }
     ],
     "major_assignments": [
-      {"assignment":1,"title":"Full-Featured Mobile Application","week_assigned":3,"week_due":5,"points":100,"description":"Design and build a complete cross-platform mobile application with Flutter that includes multiple screens, state management, API integration, local storage, and platform feature integration. The app should solve a real user need and be polished enough for store submission.","objectives":["Build a multi-screen Flutter app with proper navigation and state management","Integrate with a REST API for data and implement local caching","Access at least one platform feature (camera, location, or notifications)","Produce a polished app ready for store submission"],"requirements":{},"deliverables":["Complete Flutter project source code","Release builds for Android (APK) and iOS (IPA or simulator build)","App store listing assets: icon, screenshots, description","Design document (2 pages) explaining architecture and technology choices"],"grading_rubric":{"functionality":{"points":35,"criteria":["All specified features work correctly on both platforms","Navigation handles edge cases (back button, deep links)","API integration handles loading, error, and empty states","Local storage provides meaningful offline capability"]},"code_quality":{"points":25,"criteria":["State management uses Provider with proper separation","Repository pattern abstracts data sources","Code is organized by feature with clear module boundaries","No unnecessary rebuilds or performance issues"]},"user_experience":{"points":25,"criteria":["UI follows Material Design guidelines consistently","App is responsive across phone and tablet sizes","Loading and error states provide clear feedback","Animations and transitions feel native and polished"]},"documentation":{"points":15,"criteria":["Architecture document explains key decisions","README includes setup and build instructions","Code has meaningful comments where needed","Store listing assets are professional quality"]}},"rubric":[{"attributes":{"points":100,"criteria":["Complete cross-platform app with robust feature set","Clean architecture with Provider and repository pattern","Polished UI with proper error handling and offline support","Professional documentation and store-ready assets"]}}]}
+      {
+        "assignment": 1,
+        "title": "Full-Featured Mobile Application",
+        "week_assigned": 3,
+        "week_due": 5,
+        "points": 100,
+        "description": "Design and build a complete cross-platform mobile application with Flutter that includes multiple screens, state management, API integration, local storage, and platform feature integration. The app should solve a real user need and be polished enough for store submission.",
+        "objectives": [
+          "Build a multi-screen Flutter app with proper navigation and state management",
+          "Integrate with a REST API for data and implement local caching",
+          "Access at least one platform feature (camera, location, or notifications)",
+          "Produce a polished app ready for store submission"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Complete Flutter project source code",
+          "Release builds for Android (APK) and iOS (IPA or simulator build)",
+          "App store listing assets: icon, screenshots, description",
+          "Design document (2 pages) explaining architecture and technology choices"
+        ],
+        "grading_rubric": {
+          "functionality": {
+            "points": 35,
+            "criteria": [
+              "All specified features work correctly on both platforms",
+              "Navigation handles edge cases (back button, deep links)",
+              "API integration handles loading, error, and empty states",
+              "Local storage provides meaningful offline capability"
+            ]
+          },
+          "code_quality": {
+            "points": 25,
+            "criteria": [
+              "State management uses Provider with proper separation",
+              "Repository pattern abstracts data sources",
+              "Code is organized by feature with clear module boundaries",
+              "No unnecessary rebuilds or performance issues"
+            ]
+          },
+          "user_experience": {
+            "points": 25,
+            "criteria": [
+              "UI follows Material Design guidelines consistently",
+              "App is responsive across phone and tablet sizes",
+              "Loading and error states provide clear feedback",
+              "Animations and transitions feel native and polished"
+            ]
+          },
+          "documentation": {
+            "points": 15,
+            "criteria": [
+              "Architecture document explains key decisions",
+              "README includes setup and build instructions",
+              "Code has meaningful comments where needed",
+              "Store listing assets are professional quality"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Complete cross-platform app with robust feature set",
+                "Clean architecture with Provider and repository pattern",
+                "Polished UI with proper error handling and offline support",
+                "Professional documentation and store-ready assets"
+              ]
+            }
+          }
+        ]
+      }
     ]
   },
-  "grading_breakdown": {"weekly_quizzes":{"percentage":15,"description":"Regular assessment of Flutter and mobile concepts"},"lab_assignments":{"percentage":25,"description":"Weekly mobile development exercises"},"major_assignments":{"percentage":30,"description":"Full mobile application project"},"midterm_examination":{"percentage":10,"description":"Written and coding exam on Flutter fundamentals"},"final_examination":{"percentage":20,"description":"Comprehensive exam covering all mobile development topics"}},
-  "course_policies": {"attendance":"Attendance is expected for all lectures and mandatory for lab sessions.","late_submissions":"Late assignments lose 10% per day. No submissions accepted more than 5 days late.","collaboration":"Discussion is encouraged. All code must be written individually unless pair programming is assigned.","academic_integrity":"All submitted code must be your own work. Using templates or AI-generated code without attribution is plagiarism.","technology_requirements":"Students need Flutter SDK, Android Studio or VS Code, and either an Android device/emulator or iOS simulator. Lab computers are available."}
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 15,
+      "description": "Regular assessment of Flutter and mobile concepts"
+    },
+    "lab_assignments": {
+      "percentage": 25,
+      "description": "Weekly mobile development exercises"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "Full mobile application project"
+    },
+    "midterm_examination": {
+      "percentage": 10,
+      "description": "Written and coding exam on Flutter fundamentals"
+    },
+    "final_examination": {
+      "percentage": 20,
+      "description": "Comprehensive exam covering all mobile development topics"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is expected for all lectures and mandatory for lab sessions.",
+    "late_submissions": "Late assignments lose 10% per day. No submissions accepted more than 5 days late.",
+    "collaboration": "Discussion is encouraged. All code must be written individually unless pair programming is assigned.",
+    "academic_integrity": "All submitted code must be your own work. Using templates or AI-generated code without attribution is plagiarism.",
+    "technology_requirements": "Students need Flutter SDK, Android Studio or VS Code, and either an Android device/emulator or iOS simulator. Lab computers are available."
+  }
 }

@@ -14,7 +14,6 @@
     {
       "week_number": 1,
       "session_number": 1,
-      "date": "2024-01-16",
       "topic": "Cloud Computing Security Fundamentals",
       "duration": "50 minutes",
       "learning_objectives": [
@@ -22,110 +21,239 @@
         "Identify unique cloud security challenges compared to on-premises",
         "Apply the CSA Cloud Controls Matrix to cloud environments"
       ],
-      "readings": ["NIST SP 800-144 Cloud Computing Guidelines", "CSA Security Guidance v4"],
+      "readings": [
+        "NIST SP 800-144 Cloud Computing Guidelines",
+        "CSA Security Guidance v4"
+      ],
       "lecture_notes": {
         "introduction": "Cloud computing fundamentally changes the security model. Understanding what you control versus what the provider controls is the foundation of cloud security.",
-        "key_concepts": ["Shared responsibility model across IaaS/PaaS/SaaS", "Cloud deployment models: public, private, hybrid, multi-cloud", "CSA Cloud Controls Matrix domains", "Cloud-specific threats: data breaches, misconfiguration, insecure APIs", "Cloud security posture management (CSPM)"],
+        "key_concepts": [
+          "Shared responsibility model across IaaS/PaaS/SaaS",
+          "Cloud deployment models: public, private, hybrid, multi-cloud",
+          "CSA Cloud Controls Matrix domains",
+          "Cloud-specific threats: data breaches, misconfiguration, insecure APIs",
+          "Cloud security posture management (CSPM)"
+        ],
         "demonstration": "Reviewing the AWS Shared Responsibility Model and auditing an AWS account's security posture using AWS Security Hub",
-        "setup_requirements": ["AWS Free Tier account", "AWS CLI configured", "AWS Security Hub enabled"],
+        "setup_requirements": [
+          "AWS Free Tier account",
+          "AWS CLI configured",
+          "AWS Security Hub enabled"
+        ],
         "review": [
-          {"key": "Shared Responsibility", "value": "In IaaS, the customer secures everything above the hypervisor (OS, applications, data). The provider secures the physical infrastructure and hypervisor. In SaaS, the provider secures nearly everything; the customer manages access and data."},
-          {"key": "Misconfiguration Risk", "value": "Cloud misconfiguration (public S3 buckets, open security groups, excessive IAM permissions) is the leading cause of cloud breaches. CSPM tools continuously audit for misconfigurations."}
+          {
+            "key": "Shared Responsibility",
+            "value": "In IaaS, the customer secures everything above the hypervisor (OS, applications, data). The provider secures the physical infrastructure and hypervisor. In SaaS, the provider secures nearly everything; the customer manages access and data."
+          },
+          {
+            "key": "Misconfiguration Risk",
+            "value": "Cloud misconfiguration (public S3 buckets, open security groups, excessive IAM permissions) is the leading cause of cloud breaches. CSPM tools continuously audit for misconfigurations."
+          }
         ]
       }
     },
     {
       "week_number": 1,
       "session_number": 2,
-      "date": "2024-01-18",
       "topic": "Identity and Access Management in the Cloud",
       "duration": "50 minutes",
-      "learning_objectives": ["Implement least-privilege IAM policies in AWS", "Configure MFA and conditional access policies", "Detect and remediate excessive IAM permissions"],
-      "readings": ["AWS IAM Best Practices documentation", "NIST SP 800-63 Digital Identity Guidelines"],
+      "learning_objectives": [
+        "Implement least-privilege IAM policies in AWS",
+        "Configure MFA and conditional access policies",
+        "Detect and remediate excessive IAM permissions"
+      ],
+      "readings": [
+        "AWS IAM Best Practices documentation",
+        "NIST SP 800-63 Digital Identity Guidelines"
+      ],
       "lecture_notes": {
         "introduction": "In cloud environments, identity IS the perimeter. IAM misconfigurations are the most common path to cloud compromise.",
-        "key_concepts": ["IAM policy structure: principal, action, resource, condition", "Least-privilege IAM: policy boundaries, permission boundaries", "Service accounts and workload identity", "IAM Access Analyzer for detecting over-permissive policies", "Cross-account access and role assumption chains"],
+        "key_concepts": [
+          "IAM policy structure: principal, action, resource, condition",
+          "Least-privilege IAM: policy boundaries, permission boundaries",
+          "Service accounts and workload identity",
+          "IAM Access Analyzer for detecting over-permissive policies",
+          "Cross-account access and role assumption chains"
+        ],
         "demonstration": "Creating a least-privilege IAM policy for a Lambda function, using IAM Access Analyzer to detect external access, and implementing a permission boundary",
-        "setup_requirements": ["AWS IAM console access", "AWS IAM Access Analyzer", "Sample IAM policies for review"],
+        "setup_requirements": [
+          "AWS IAM console access",
+          "AWS IAM Access Analyzer",
+          "Sample IAM policies for review"
+        ],
         "review": [
-          {"key": "IAM Policy Evaluation", "value": "AWS evaluates: explicit deny overrides everything, then checks for explicit allow. If neither, default deny. Organization SCPs, permission boundaries, and resource policies all participate."},
-          {"key": "Privilege Escalation", "value": "Certain IAM permissions (iam:CreatePolicy, iam:AttachUserPolicy, sts:AssumeRole) enable privilege escalation paths. Must be restricted to break-glass admin accounts only."}
+          {
+            "key": "IAM Policy Evaluation",
+            "value": "AWS evaluates: explicit deny overrides everything, then checks for explicit allow. If neither, default deny. Organization SCPs, permission boundaries, and resource policies all participate."
+          },
+          {
+            "key": "Privilege Escalation",
+            "value": "Certain IAM permissions (iam:CreatePolicy, iam:AttachUserPolicy, sts:AssumeRole) enable privilege escalation paths. Must be restricted to break-glass admin accounts only."
+          }
         ]
       }
     },
     {
       "week_number": 2,
       "session_number": 3,
-      "date": "2024-01-23",
       "topic": "Cloud Network Security and Data Protection",
       "duration": "50 minutes",
-      "learning_objectives": ["Design secure VPC architectures with proper segmentation", "Implement encryption at rest and in transit for cloud data", "Configure cloud-native security monitoring"],
-      "readings": ["AWS VPC Security documentation", "NIST SP 800-111 Storage Encryption"],
+      "learning_objectives": [
+        "Design secure VPC architectures with proper segmentation",
+        "Implement encryption at rest and in transit for cloud data",
+        "Configure cloud-native security monitoring"
+      ],
+      "readings": [
+        "AWS VPC Security documentation",
+        "NIST SP 800-111 Storage Encryption"
+      ],
       "lecture_notes": {
         "introduction": "Cloud networking introduces virtual constructs that require new security thinking. Data protection in the cloud must address both the provider's responsibilities and the customer's encryption obligations.",
-        "key_concepts": ["VPC design: public/private subnets, NAT gateways, VPC endpoints", "Security groups vs NACLs: stateful vs stateless", "Encryption at rest: KMS, CMK, envelope encryption", "Encryption in transit: TLS, VPN, PrivateLink", "VPC Flow Logs for network monitoring"],
+        "key_concepts": [
+          "VPC design: public/private subnets, NAT gateways, VPC endpoints",
+          "Security groups vs NACLs: stateful vs stateless",
+          "Encryption at rest: KMS, CMK, envelope encryption",
+          "Encryption in transit: TLS, VPN, PrivateLink",
+          "VPC Flow Logs for network monitoring"
+        ],
         "demonstration": "Building a secure VPC with public and private subnets, configuring security groups, enabling VPC Flow Logs, and setting up S3 bucket encryption with KMS",
-        "setup_requirements": ["AWS VPC console", "AWS KMS", "S3 bucket for testing"],
+        "setup_requirements": [
+          "AWS VPC console",
+          "AWS KMS",
+          "S3 bucket for testing"
+        ],
         "review": [
-          {"key": "VPC Endpoints", "value": "PrivateLink endpoints keep traffic between your VPC and AWS services on the AWS backbone, never traversing the public internet. Essential for sensitive data."},
-          {"key": "Envelope Encryption", "value": "Data is encrypted with a data key, and the data key is encrypted with a KMS master key. Only the encrypted data key is stored alongside the data. Decryption requires KMS access."}
+          {
+            "key": "VPC Endpoints",
+            "value": "PrivateLink endpoints keep traffic between your VPC and AWS services on the AWS backbone, never traversing the public internet. Essential for sensitive data."
+          },
+          {
+            "key": "Envelope Encryption",
+            "value": "Data is encrypted with a data key, and the data key is encrypted with a KMS master key. Only the encrypted data key is stored alongside the data. Decryption requires KMS access."
+          }
         ]
       }
     },
     {
       "week_number": 3,
       "session_number": 5,
-      "date": "2024-01-30",
       "topic": "Container and Serverless Security in the Cloud",
       "duration": "50 minutes",
-      "learning_objectives": ["Secure container orchestration with EKS/GKE security policies", "Implement serverless security for Lambda/Cloud Functions", "Manage container image supply chain security"],
-      "readings": ["NIST SP 800-190 Container Security", "AWS Lambda security best practices"],
+      "learning_objectives": [
+        "Secure container orchestration with EKS/GKE security policies",
+        "Implement serverless security for Lambda/Cloud Functions",
+        "Manage container image supply chain security"
+      ],
+      "readings": [
+        "NIST SP 800-190 Container Security",
+        "AWS Lambda security best practices"
+      ],
       "lecture_notes": {
         "introduction": "Containers and serverless architectures introduce new security paradigms. The ephemeral nature of these workloads requires security to be built into the deployment pipeline, not bolted on afterward.",
-        "key_concepts": ["Kubernetes RBAC and network policies", "Pod security standards: restricted, baseline, privileged", "Container image scanning: ECR scanning, Trivy", "Lambda security: execution role, VPC placement, layer security", "Supply chain security: SBOM, image signing, admission controllers"],
+        "key_concepts": [
+          "Kubernetes RBAC and network policies",
+          "Pod security standards: restricted, baseline, privileged",
+          "Container image scanning: ECR scanning, Trivy",
+          "Lambda security: execution role, VPC placement, layer security",
+          "Supply chain security: SBOM, image signing, admission controllers"
+        ],
         "demonstration": "Deploying a hardened EKS cluster with pod security standards, implementing an admission controller that rejects unsigned images, and configuring Lambda with least-privilege execution role",
-        "setup_requirements": ["EKS or minikube cluster", "Trivy for image scanning", "AWS Lambda console"],
+        "setup_requirements": [
+          "EKS or minikube cluster",
+          "Trivy for image scanning",
+          "AWS Lambda console"
+        ],
         "review": [
-          {"key": "Pod Security Standards", "value": "Kubernetes defines three levels: Privileged (unrestricted), Baseline (prevents known privilege escalations), Restricted (heavily restricted). Enforce at namespace level with admission controllers."},
-          {"key": "Lambda Attack Surface", "value": "Lambda functions inherit their execution role's permissions. An injection vulnerability in a Lambda with broad permissions can access any AWS resource the role allows. Least-privilege execution roles are critical."}
+          {
+            "key": "Pod Security Standards",
+            "value": "Kubernetes defines three levels: Privileged (unrestricted), Baseline (prevents known privilege escalations), Restricted (heavily restricted). Enforce at namespace level with admission controllers."
+          },
+          {
+            "key": "Lambda Attack Surface",
+            "value": "Lambda functions inherit their execution role's permissions. An injection vulnerability in a Lambda with broad permissions can access any AWS resource the role allows. Least-privilege execution roles are critical."
+          }
         ]
       }
     },
     {
       "week_number": 4,
       "session_number": 7,
-      "date": "2024-02-06",
       "topic": "Cloud Security Monitoring and Incident Response",
       "duration": "50 minutes",
-      "learning_objectives": ["Configure CloudTrail, GuardDuty, and Config for security monitoring", "Detect cloud-specific attack patterns", "Respond to cloud security incidents"],
-      "readings": ["AWS CloudTrail documentation", "Cloud incident response frameworks"],
+      "learning_objectives": [
+        "Configure CloudTrail, GuardDuty, and Config for security monitoring",
+        "Detect cloud-specific attack patterns",
+        "Respond to cloud security incidents"
+      ],
+      "readings": [
+        "AWS CloudTrail documentation",
+        "Cloud incident response frameworks"
+      ],
       "lecture_notes": {
         "introduction": "Cloud environments generate extensive telemetry. Properly configured monitoring and alerting enables detection of cloud-specific attacks like credential compromise, resource hijacking, and data exfiltration.",
-        "key_concepts": ["CloudTrail: API call logging for all AWS actions", "GuardDuty: ML-based threat detection for cloud environments", "AWS Config: configuration compliance monitoring", "Cloud attack patterns: credential theft, crypto-mining, data exfiltration", "Cloud IR: evidence collection, containment, recovery"],
+        "key_concepts": [
+          "CloudTrail: API call logging for all AWS actions",
+          "GuardDuty: ML-based threat detection for cloud environments",
+          "AWS Config: configuration compliance monitoring",
+          "Cloud attack patterns: credential theft, crypto-mining, data exfiltration",
+          "Cloud IR: evidence collection, containment, recovery"
+        ],
         "demonstration": "Investigating a simulated GuardDuty finding of compromised credentials: tracing CloudTrail events, identifying unauthorized resource creation, and executing containment",
-        "setup_requirements": ["CloudTrail enabled with S3 logging", "GuardDuty enabled with sample findings", "AWS Config rules configured"],
+        "setup_requirements": [
+          "CloudTrail enabled with S3 logging",
+          "GuardDuty enabled with sample findings",
+          "AWS Config rules configured"
+        ],
         "review": [
-          {"key": "CloudTrail Analysis", "value": "Every API call in AWS is logged in CloudTrail. Key events: ConsoleLogin, CreateAccessKey, RunInstances, PutBucketPolicy. The source IP, user agent, and assumed role reveal the attack chain."},
-          {"key": "Cloud IR Differences", "value": "No physical access for evidence collection. Use API-based snapshots (EBS snapshots, S3 object versions). Containment via security group changes and IAM policy modifications, not network cable pulls."}
+          {
+            "key": "CloudTrail Analysis",
+            "value": "Every API call in AWS is logged in CloudTrail. Key events: ConsoleLogin, CreateAccessKey, RunInstances, PutBucketPolicy. The source IP, user agent, and assumed role reveal the attack chain."
+          },
+          {
+            "key": "Cloud IR Differences",
+            "value": "No physical access for evidence collection. Use API-based snapshots (EBS snapshots, S3 object versions). Containment via security group changes and IAM policy modifications, not network cable pulls."
+          }
         ]
       }
     },
     {
       "week_number": 5,
       "session_number": 9,
-      "date": "2024-02-13",
       "topic": "Multi-Cloud Security and Compliance Automation",
       "duration": "50 minutes",
-      "learning_objectives": ["Design security controls for multi-cloud environments", "Implement infrastructure-as-code security with Terraform", "Automate compliance checking with policy-as-code"],
-      "readings": ["Terraform security best practices", "Open Policy Agent documentation"],
+      "learning_objectives": [
+        "Design security controls for multi-cloud environments",
+        "Implement infrastructure-as-code security with Terraform",
+        "Automate compliance checking with policy-as-code"
+      ],
+      "readings": [
+        "Terraform security best practices",
+        "Open Policy Agent documentation"
+      ],
       "lecture_notes": {
         "introduction": "Most enterprises use multiple cloud providers. Consistent security across AWS, Azure, and GCP requires infrastructure-as-code and policy-as-code approaches.",
-        "key_concepts": ["Multi-cloud security challenges: inconsistent controls, different IAM models", "Infrastructure as Code security: Terraform with tfsec scanning", "Policy as Code: Open Policy Agent (OPA) for automated compliance", "CSPM tools: Prisma Cloud, Wiz, Aqua for multi-cloud visibility", "Compliance automation: CIS benchmarks for cloud"],
+        "key_concepts": [
+          "Multi-cloud security challenges: inconsistent controls, different IAM models",
+          "Infrastructure as Code security: Terraform with tfsec scanning",
+          "Policy as Code: Open Policy Agent (OPA) for automated compliance",
+          "CSPM tools: Prisma Cloud, Wiz, Aqua for multi-cloud visibility",
+          "Compliance automation: CIS benchmarks for cloud"
+        ],
         "demonstration": "Writing Terraform configurations with tfsec scanning to prevent misconfiguration, and OPA policies that enforce encryption and public access restrictions",
-        "setup_requirements": ["Terraform installed", "tfsec scanner", "OPA/Rego policy engine"],
+        "setup_requirements": [
+          "Terraform installed",
+          "tfsec scanner",
+          "OPA/Rego policy engine"
+        ],
         "review": [
-          {"key": "Policy as Code", "value": "Define security policies as code (OPA/Rego) that automatically evaluates infrastructure changes before deployment. Prevents misconfigurations from reaching production."},
-          {"key": "Shift Left Security", "value": "Integrate security scanning into CI/CD pipelines: tfsec in PR checks, image scanning in build, OPA in deployment. Catch issues before they reach production."}
+          {
+            "key": "Policy as Code",
+            "value": "Define security policies as code (OPA/Rego) that automatically evaluates infrastructure changes before deployment. Prevents misconfigurations from reaching production."
+          },
+          {
+            "key": "Shift Left Security",
+            "value": "Integrate security scanning into CI/CD pipelines: tfsec in PR checks, image scanning in build, OPA in deployment. Catch issues before they reach production."
+          }
         ]
       }
     }
@@ -138,8 +266,46 @@
         "topic": "Cloud Fundamentals, IAM, and Network Security",
         "duration": "20 minutes",
         "questions": [
-          {"question": "An AWS S3 bucket containing customer PII was found to be publicly accessible. The bucket policy allows s3:GetObject for principal '*'. Explain the chain of failures that led to this exposure, and describe three specific controls that would have prevented it.", "type": "short_answer", "points": 10, "answer": "Chain of failures: (1) The bucket policy explicitly grants public access ('Principal': '*'). (2) The S3 Block Public Access settings at both account and bucket level were not enabled. (3) No CSPM tool was monitoring for public bucket configurations. Prevention controls: (1) Enable S3 Block Public Access at the AWS account level, which overrides any bucket policy that grants public access. (2) AWS Config rule 's3-bucket-public-read-prohibited' that automatically flags and remediates public buckets. (3) IAM permission boundary preventing non-admin users from modifying bucket policies, combined with a review process for bucket policy changes.", "rubric": [{"key": "Identifies the specific policy and account-level failures", "value": 4}, {"key": "Three valid prevention controls", "value": 4}, {"key": "Technical accuracy", "value": 2}]},
-          {"question": "An IAM user has the policy: {Effect: Allow, Action: 'iam:*', Resource: '*'}. Explain the specific privilege escalation path this enables and how you would detect it.", "type": "short_answer", "points": 10, "answer": "This policy grants full IAM control. Escalation path: The user can create a new IAM policy with AdministratorAccess and attach it to their own user, effectively granting themselves full AWS account access. They could also create new access keys for any user, assume any role, or modify any policy. Specific actions: iam:CreatePolicy, iam:AttachUserPolicy with their own ARN, or iam:CreateAccessKey for the root account. Detection: (1) IAM Access Analyzer flags policies with 'iam:*' as overly permissive. (2) CloudTrail alerts on iam:AttachUserPolicy, iam:CreatePolicy, or iam:CreateAccessKey events from non-admin users. (3) AWS Config rule 'iam-policy-no-statements-with-admin-access' detects the policy.", "rubric": [{"key": "Correct privilege escalation path described", "value": 4}, {"key": "Specific dangerous IAM actions identified", "value": 3}, {"key": "Valid detection methods", "value": 3}]}
+          {
+            "question": "An AWS S3 bucket containing customer PII was found to be publicly accessible. The bucket policy allows s3:GetObject for principal '*'. Explain the chain of failures that led to this exposure, and describe three specific controls that would have prevented it.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Chain of failures: (1) The bucket policy explicitly grants public access ('Principal': '*'). (2) The S3 Block Public Access settings at both account and bucket level were not enabled. (3) No CSPM tool was monitoring for public bucket configurations. Prevention controls: (1) Enable S3 Block Public Access at the AWS account level, which overrides any bucket policy that grants public access. (2) AWS Config rule 's3-bucket-public-read-prohibited' that automatically flags and remediates public buckets. (3) IAM permission boundary preventing non-admin users from modifying bucket policies, combined with a review process for bucket policy changes.",
+            "rubric": [
+              {
+                "key": "Identifies the specific policy and account-level failures",
+                "value": 4
+              },
+              {
+                "key": "Three valid prevention controls",
+                "value": 4
+              },
+              {
+                "key": "Technical accuracy",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "An IAM user has the policy: {Effect: Allow, Action: 'iam:*', Resource: '*'}. Explain the specific privilege escalation path this enables and how you would detect it.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "This policy grants full IAM control. Escalation path: The user can create a new IAM policy with AdministratorAccess and attach it to their own user, effectively granting themselves full AWS account access. They could also create new access keys for any user, assume any role, or modify any policy. Specific actions: iam:CreatePolicy, iam:AttachUserPolicy with their own ARN, or iam:CreateAccessKey for the root account. Detection: (1) IAM Access Analyzer flags policies with 'iam:*' as overly permissive. (2) CloudTrail alerts on iam:AttachUserPolicy, iam:CreatePolicy, or iam:CreateAccessKey events from non-admin users. (3) AWS Config rule 'iam-policy-no-statements-with-admin-access' detects the policy.",
+            "rubric": [
+              {
+                "key": "Correct privilege escalation path described",
+                "value": 4
+              },
+              {
+                "key": "Specific dangerous IAM actions identified",
+                "value": 3
+              },
+              {
+                "key": "Valid detection methods",
+                "value": 3
+              }
+            ]
+          }
         ],
         "total_points": 20
       },
@@ -149,8 +315,46 @@
         "topic": "Container Security, Cloud Monitoring, and Compliance",
         "duration": "20 minutes",
         "questions": [
-          {"question": "A CloudTrail log shows the following sequence from an IAM user 'developer-jane': CreateAccessKey (for user 'admin-service'), AssumeRole (OrganizationAdminRole), CreateBucketPolicy (granting public access to a data bucket). Analyze this incident and describe the response actions.", "type": "short_answer", "points": 10, "answer": "Analysis: This is an IAM privilege escalation and data exfiltration attempt. developer-jane created access keys for a more privileged service account, used those keys to assume an admin role, then modified a bucket policy to expose data publicly. Response: (1) Immediate: deactivate ALL access keys for both developer-jane and admin-service accounts. (2) Revert the bucket policy to deny public access. (3) Revoke active sessions using IAM inline deny policy with aws:TokenIssueTime condition. (4) Check S3 access logs to determine if data was accessed while the bucket was public. (5) Investigate: review all developer-jane CloudTrail events for the past 90 days. Check how developer-jane obtained CreateAccessKey permission for admin-service (was this authorized?).", "rubric": [{"key": "Correct analysis of the escalation chain", "value": 4}, {"key": "Appropriate immediate containment actions", "value": 3}, {"key": "Investigation and scope assessment", "value": 3}]},
-          {"question": "Explain why a Kubernetes pod running as root with hostNetwork: true and privileged: true is a critical security risk. What pod security standard would prevent this, and how does an admission controller enforce it?", "type": "short_answer", "points": 10, "answer": "Risk: A root + hostNetwork + privileged pod has effectively the same access as the node itself. hostNetwork means the pod shares the node's network namespace (can sniff all node traffic, bind to any port). privileged means the container has all Linux capabilities and can access host devices. Combined with root, the pod can escape the container, access the host filesystem, and compromise the entire node and all pods on it. The 'Restricted' pod security standard prevents this by requiring: runAsNonRoot, disallowing privileged containers, dropping all capabilities, and blocking hostNetwork. An admission controller (PodSecurity admission controller or OPA Gatekeeper) intercepts pod creation API requests and rejects any pod spec that violates the namespace's security standard.", "rubric": [{"key": "Explains each risk component correctly", "value": 4}, {"key": "Identifies Restricted standard with specific requirements", "value": 3}, {"key": "Explains admission controller enforcement mechanism", "value": 3}]}
+          {
+            "question": "A CloudTrail log shows the following sequence from an IAM user 'developer-jane': CreateAccessKey (for user 'admin-service'), AssumeRole (OrganizationAdminRole), CreateBucketPolicy (granting public access to a data bucket). Analyze this incident and describe the response actions.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Analysis: This is an IAM privilege escalation and data exfiltration attempt. developer-jane created access keys for a more privileged service account, used those keys to assume an admin role, then modified a bucket policy to expose data publicly. Response: (1) Immediate: deactivate ALL access keys for both developer-jane and admin-service accounts. (2) Revert the bucket policy to deny public access. (3) Revoke active sessions using IAM inline deny policy with aws:TokenIssueTime condition. (4) Check S3 access logs to determine if data was accessed while the bucket was public. (5) Investigate: review all developer-jane CloudTrail events for the past 90 days. Check how developer-jane obtained CreateAccessKey permission for admin-service (was this authorized?).",
+            "rubric": [
+              {
+                "key": "Correct analysis of the escalation chain",
+                "value": 4
+              },
+              {
+                "key": "Appropriate immediate containment actions",
+                "value": 3
+              },
+              {
+                "key": "Investigation and scope assessment",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain why a Kubernetes pod running as root with hostNetwork: true and privileged: true is a critical security risk. What pod security standard would prevent this, and how does an admission controller enforce it?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Risk: A root + hostNetwork + privileged pod has effectively the same access as the node itself. hostNetwork means the pod shares the node's network namespace (can sniff all node traffic, bind to any port). privileged means the container has all Linux capabilities and can access host devices. Combined with root, the pod can escape the container, access the host filesystem, and compromise the entire node and all pods on it. The 'Restricted' pod security standard prevents this by requiring: runAsNonRoot, disallowing privileged containers, dropping all capabilities, and blocking hostNetwork. An admission controller (PodSecurity admission controller or OPA Gatekeeper) intercepts pod creation API requests and rejects any pod spec that violates the namespace's security standard.",
+            "rubric": [
+              {
+                "key": "Explains each risk component correctly",
+                "value": 4
+              },
+              {
+                "key": "Identifies Restricted standard with specific requirements",
+                "value": 3
+              },
+              {
+                "key": "Explains admission controller enforcement mechanism",
+                "value": 3
+              }
+            ]
+          }
         ],
         "total_points": 20
       }
@@ -163,25 +367,94 @@
         "week_due": 5,
         "points": 100,
         "description": "Design and deploy a secure cloud architecture for a provided business scenario. Implement IAM, network security, encryption, monitoring, and compliance automation.",
-        "objectives": ["Design a secure cloud architecture following the shared responsibility model", "Implement IAM, VPC, and encryption controls", "Deploy monitoring and compliance automation", "Demonstrate detection of simulated cloud attacks"],
+        "objectives": [
+          "Design a secure cloud architecture following the shared responsibility model",
+          "Implement IAM, VPC, and encryption controls",
+          "Deploy monitoring and compliance automation",
+          "Demonstrate detection of simulated cloud attacks"
+        ],
         "requirements": {},
-        "deliverables": ["Cloud architecture design document", "Terraform/CloudFormation templates for infrastructure", "Security monitoring dashboard with alerting", "Compliance audit report showing control effectiveness"],
+        "deliverables": [
+          "Cloud architecture design document",
+          "Terraform/CloudFormation templates for infrastructure",
+          "Security monitoring dashboard with alerting",
+          "Compliance audit report showing control effectiveness"
+        ],
         "grading_rubric": {
-          "architecture": {"points": 25, "criteria": ["Proper VPC segmentation and network design", "Least-privilege IAM implementation", "Encryption at rest and in transit configured", "Shared responsibility model correctly applied"]},
-          "implementation": {"points": 30, "criteria": ["Infrastructure deployed via IaC", "Security controls functional and tested", "Monitoring and alerting configured", "Compliance rules automated"]},
-          "attack_detection": {"points": 25, "criteria": ["Simulated credential compromise detected", "Simulated data exfiltration detected", "Automated response triggered", "Alert investigation documented"]},
-          "documentation": {"points": 20, "criteria": ["Architecture decisions justified", "Security controls mapped to threats", "Operational runbooks provided", "Limitations documented"]}
+          "architecture": {
+            "points": 25,
+            "criteria": [
+              "Proper VPC segmentation and network design",
+              "Least-privilege IAM implementation",
+              "Encryption at rest and in transit configured",
+              "Shared responsibility model correctly applied"
+            ]
+          },
+          "implementation": {
+            "points": 30,
+            "criteria": [
+              "Infrastructure deployed via IaC",
+              "Security controls functional and tested",
+              "Monitoring and alerting configured",
+              "Compliance rules automated"
+            ]
+          },
+          "attack_detection": {
+            "points": 25,
+            "criteria": [
+              "Simulated credential compromise detected",
+              "Simulated data exfiltration detected",
+              "Automated response triggered",
+              "Alert investigation documented"
+            ]
+          },
+          "documentation": {
+            "points": 20,
+            "criteria": [
+              "Architecture decisions justified",
+              "Security controls mapped to threats",
+              "Operational runbooks provided",
+              "Limitations documented"
+            ]
+          }
         },
-        "rubric": [{"attributes": {"points": 100, "criteria": ["Secure cloud architecture following best practices", "Functional security controls verified through testing", "Effective monitoring detecting simulated attacks", "Professional documentation suitable for enterprise deployment"]}}]
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Secure cloud architecture following best practices",
+                "Functional security controls verified through testing",
+                "Effective monitoring detecting simulated attacks",
+                "Professional documentation suitable for enterprise deployment"
+              ]
+            }
+          }
+        ]
       }
     ]
   },
   "grading_breakdown": {
-    "weekly_quizzes": {"percentage": 15, "description": "Assessment of cloud security concepts and platform-specific knowledge"},
-    "lab_assignments": {"percentage": 25, "description": "Hands-on cloud security configuration and monitoring exercises"},
-    "major_assignments": {"percentage": 25, "description": "Cloud security architecture design and implementation project"},
-    "midterm_examination": {"percentage": 15, "description": "Assessment covering cloud IAM, networking, and data protection"},
-    "final_examination": {"percentage": 20, "description": "Cumulative exam covering all cloud security topics"}
+    "weekly_quizzes": {
+      "percentage": 15,
+      "description": "Assessment of cloud security concepts and platform-specific knowledge"
+    },
+    "lab_assignments": {
+      "percentage": 25,
+      "description": "Hands-on cloud security configuration and monitoring exercises"
+    },
+    "major_assignments": {
+      "percentage": 25,
+      "description": "Cloud security architecture design and implementation project"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Assessment covering cloud IAM, networking, and data protection"
+    },
+    "final_examination": {
+      "percentage": 20,
+      "description": "Cumulative exam covering all cloud security topics"
+    }
   },
   "course_policies": {
     "attendance": "Attendance is mandatory for all lab sessions. More than 2 unexcused absences may result in a grade reduction.",

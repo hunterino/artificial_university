@@ -5,24 +5,423 @@
     "credit_hours": 3,
     "duration": "15 weeks",
     "meeting_schedule": "Tuesday, Thursday - 3 hours per week",
-    "prerequisites": ["CS401 - Computer Networks"]
+    "prerequisites": [
+      "CS401 - Computer Networks"
+    ]
   },
   "class_schedule": [
-    {"week_number":1,"session_number":1,"date":"2024-01-16","topic":"Foundations of Information Security","duration":"50 minutes","learning_objectives":["Understand the CIA triad: confidentiality, integrity, availability","Identify common threat actors and their motivations","Apply risk assessment frameworks to evaluate security posture"],"readings":["Stallings, Computer Security, Ch. 1","NIST Cybersecurity Framework Overview"],"lecture_notes":{"introduction":"Every system you build will be attacked. Cybersecurity is not an add-on; it is a fundamental design consideration. This course teaches you to think like an attacker so you can build defenses that actually work.","key_concepts":["CIA triad: confidentiality, integrity, availability","Threat actors: nation-states, organized crime, insiders, hacktivists","Risk = Likelihood x Impact; risk assessment and acceptance","Defense in depth: layered security controls","Security mindset: assume breach, verify everything"],"demonstration":"Walk through a real-world breach case study (e.g., the SolarWinds supply chain attack), identifying which CIA properties were violated and what defenses failed","setup_requirements":["Kali Linux VM or similar security-focused distribution","Wireshark installed","Access to the course CTF platform"],"review":[{"key":"CIA Triad","value":"Confidentiality (only authorized access), Integrity (data is accurate and unmodified), Availability (systems are accessible when needed); every security control protects one or more of these properties"},{"key":"Defense in Depth","value":"No single control is sufficient; layered defenses (firewalls, encryption, authentication, monitoring, backups) ensure that bypassing one layer does not compromise the entire system"}]}},
-    {"week_number":2,"session_number":3,"date":"2024-01-23","topic":"Cryptography: Symmetric and Asymmetric Encryption","duration":"50 minutes","learning_objectives":["Explain how AES symmetric encryption works at a high level","Understand RSA key generation, encryption, and digital signatures","Apply hash functions for integrity verification"],"readings":["Stallings, Ch. 2-3 - Symmetric and Public-Key Encryption","Schneier, Applied Cryptography, selected sections"],"lecture_notes":{"introduction":"Cryptography is the mathematical foundation of security. Encryption provides confidentiality, digital signatures provide authentication and non-repudiation, and hash functions provide integrity. Every security protocol depends on these primitives.","key_concepts":["Symmetric encryption: same key encrypts and decrypts (AES-256)","Asymmetric encryption: public key encrypts, private key decrypts (RSA)","Digital signatures: private key signs, public key verifies","Hash functions: SHA-256, collision resistance, pre-image resistance","Key exchange: Diffie-Hellman for establishing shared secrets over insecure channels"],"demonstration":"Encrypt a file with AES-256, sign it with an RSA private key, and verify the signature with the public key using OpenSSL command-line tools","setup_requirements":["OpenSSL installed","Python with cryptography library"],"review":[{"key":"Kerckhoffs Principle","value":"A cryptographic system should be secure even if everything about the system except the key is public knowledge; security through obscurity is not security"},{"key":"Key Length Guidance","value":"AES-128 is sufficient for most purposes; AES-256 provides a larger margin. RSA-2048 is the minimum for new systems; RSA-4096 for long-term security. ECDSA-256 provides equivalent security to RSA-3072 with smaller keys"}]}},
-    {"week_number":3,"session_number":5,"date":"2024-01-30","topic":"Web Application Security: OWASP Top 10","duration":"50 minutes","learning_objectives":["Identify and exploit common web vulnerabilities: injection, XSS, CSRF","Implement defenses for each vulnerability class","Perform a basic web application security assessment"],"readings":["OWASP Top 10 (2021 edition)","PortSwigger Web Security Academy: SQL Injection and XSS"],"lecture_notes":{"introduction":"Web applications are the most attacked surface in most organizations. The OWASP Top 10 catalogs the most critical web application security risks. Understanding these vulnerabilities and their defenses is essential for any developer.","key_concepts":["SQL injection: manipulating queries through unsanitized input","Cross-site scripting (XSS): injecting scripts into web pages","Cross-site request forgery (CSRF): forging authenticated requests","Broken authentication: session management flaws","Parameterized queries, input validation, CSP headers, CSRF tokens"],"demonstration":"Exploit a SQL injection vulnerability in a deliberately vulnerable web app (DVWA), extract the database, then implement parameterized queries to fix it","setup_requirements":["DVWA or WebGoat installed","Burp Suite Community Edition","Browser developer tools"],"review":[{"key":"Parameterized Queries","value":"Separate SQL code from data by using placeholders; the database driver handles escaping, making SQL injection impossible regardless of input content"},{"key":"Content Security Policy","value":"CSP headers tell the browser which sources of scripts, styles, and other resources are trusted; even if XSS is injected, CSP prevents execution of unauthorized scripts"}]}},
-    {"week_number":4,"session_number":7,"date":"2024-02-06","topic":"Authentication, Authorization, and Identity Management","duration":"50 minutes","learning_objectives":["Design secure authentication systems with multi-factor authentication","Implement role-based and attribute-based access control","Understand OAuth 2.0 and OpenID Connect flows"],"readings":["Stallings, Ch. 4 - Authentication","OAuth 2.0 RFC 6749 (simplified overview)"],"lecture_notes":{"introduction":"Authentication verifies who you are; authorization determines what you can do. Getting these wrong is the single most common cause of security breaches. This session covers the protocols and patterns for building secure identity systems.","key_concepts":["Authentication factors: knowledge, possession, inherence","Password storage: bcrypt, scrypt, argon2 — never store plaintext","Multi-factor authentication: TOTP, WebAuthn, SMS (weakest)","RBAC vs ABAC: role-based vs attribute-based access control","OAuth 2.0 authorization code flow with PKCE"],"demonstration":"Implement a login system with bcrypt password hashing and TOTP-based two-factor authentication, then set up OAuth 2.0 login with Google as the identity provider","setup_requirements":["Python with Flask or Express","bcrypt and pyotp libraries","OAuth test application configured"],"review":[{"key":"bcrypt Cost Factor","value":"bcrypt's work factor should be tuned so that hashing takes approximately 250ms on your server; this makes brute-force attacks against stolen hashes impractically slow while keeping login latency acceptable"},{"key":"OAuth 2.0 PKCE","value":"Proof Key for Code Exchange prevents authorization code interception attacks; the client generates a random verifier, sends its hash in the authorization request, and proves knowledge of the verifier when exchanging the code for a token"}]}},
-    {"week_number":5,"session_number":9,"date":"2024-02-13","topic":"Penetration Testing and Security Assessment","duration":"50 minutes","learning_objectives":["Conduct a structured penetration test following a methodology","Use reconnaissance, scanning, and exploitation tools","Write a professional security assessment report"],"readings":["Weidman, Penetration Testing, Ch. 1-4","PTES (Penetration Testing Execution Standard)"],"lecture_notes":{"introduction":"Penetration testing is authorized simulated attacking to find vulnerabilities before real attackers do. A structured methodology ensures comprehensive coverage. The report is as important as the testing — vulnerabilities found but not communicated are vulnerabilities unfixed.","key_concepts":["Penetration testing phases: reconnaissance, scanning, exploitation, post-exploitation, reporting","Reconnaissance: passive (OSINT) and active (port scanning, service enumeration)","Vulnerability scanning: Nmap, Nessus, OpenVAS","Exploitation: Metasploit framework basics","Report writing: executive summary, findings with severity, remediation recommendations"],"demonstration":"Conduct a guided penetration test against a vulnerable lab environment: enumerate services with Nmap, identify vulnerabilities, exploit one, and write a finding report","setup_requirements":["Kali Linux VM with Nmap and Metasploit","Vulnerable target VM (Metasploitable or HackTheBox)","Isolated lab network"],"review":[{"key":"Rules of Engagement","value":"A penetration test without written authorization is a crime; the scope, timing, allowed techniques, and emergency contacts must be agreed upon in writing before any testing begins"},{"key":"CVSS Scoring","value":"The Common Vulnerability Scoring System provides a standardized severity rating (0-10) based on attack complexity, privileges required, and impact; this enables consistent prioritization of remediation efforts"}]}}
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "topic": "Foundations of Information Security",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Understand the CIA triad: confidentiality, integrity, availability",
+        "Identify common threat actors and their motivations",
+        "Apply risk assessment frameworks to evaluate security posture"
+      ],
+      "readings": [
+        "Stallings, Computer Security, Ch. 1",
+        "NIST Cybersecurity Framework Overview"
+      ],
+      "lecture_notes": {
+        "introduction": "Every system you build will be attacked. Cybersecurity is not an add-on; it is a fundamental design consideration. This course teaches you to think like an attacker so you can build defenses that actually work.",
+        "key_concepts": [
+          "CIA triad: confidentiality, integrity, availability",
+          "Threat actors: nation-states, organized crime, insiders, hacktivists",
+          "Risk = Likelihood x Impact; risk assessment and acceptance",
+          "Defense in depth: layered security controls",
+          "Security mindset: assume breach, verify everything"
+        ],
+        "demonstration": "Walk through a real-world breach case study (e.g., the SolarWinds supply chain attack), identifying which CIA properties were violated and what defenses failed",
+        "setup_requirements": [
+          "Kali Linux VM or similar security-focused distribution",
+          "Wireshark installed",
+          "Access to the course CTF platform"
+        ],
+        "review": [
+          {
+            "key": "CIA Triad",
+            "value": "Confidentiality (only authorized access), Integrity (data is accurate and unmodified), Availability (systems are accessible when needed); every security control protects one or more of these properties"
+          },
+          {
+            "key": "Defense in Depth",
+            "value": "No single control is sufficient; layered defenses (firewalls, encryption, authentication, monitoring, backups) ensure that bypassing one layer does not compromise the entire system"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 3,
+      "topic": "Cryptography: Symmetric and Asymmetric Encryption",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Explain how AES symmetric encryption works at a high level",
+        "Understand RSA key generation, encryption, and digital signatures",
+        "Apply hash functions for integrity verification"
+      ],
+      "readings": [
+        "Stallings, Ch. 2-3 - Symmetric and Public-Key Encryption",
+        "Schneier, Applied Cryptography, selected sections"
+      ],
+      "lecture_notes": {
+        "introduction": "Cryptography is the mathematical foundation of security. Encryption provides confidentiality, digital signatures provide authentication and non-repudiation, and hash functions provide integrity. Every security protocol depends on these primitives.",
+        "key_concepts": [
+          "Symmetric encryption: same key encrypts and decrypts (AES-256)",
+          "Asymmetric encryption: public key encrypts, private key decrypts (RSA)",
+          "Digital signatures: private key signs, public key verifies",
+          "Hash functions: SHA-256, collision resistance, pre-image resistance",
+          "Key exchange: Diffie-Hellman for establishing shared secrets over insecure channels"
+        ],
+        "demonstration": "Encrypt a file with AES-256, sign it with an RSA private key, and verify the signature with the public key using OpenSSL command-line tools",
+        "setup_requirements": [
+          "OpenSSL installed",
+          "Python with cryptography library"
+        ],
+        "review": [
+          {
+            "key": "Kerckhoffs Principle",
+            "value": "A cryptographic system should be secure even if everything about the system except the key is public knowledge; security through obscurity is not security"
+          },
+          {
+            "key": "Key Length Guidance",
+            "value": "AES-128 is sufficient for most purposes; AES-256 provides a larger margin. RSA-2048 is the minimum for new systems; RSA-4096 for long-term security. ECDSA-256 provides equivalent security to RSA-3072 with smaller keys"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 5,
+      "topic": "Web Application Security: OWASP Top 10",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Identify and exploit common web vulnerabilities: injection, XSS, CSRF",
+        "Implement defenses for each vulnerability class",
+        "Perform a basic web application security assessment"
+      ],
+      "readings": [
+        "OWASP Top 10 (2021 edition)",
+        "PortSwigger Web Security Academy: SQL Injection and XSS"
+      ],
+      "lecture_notes": {
+        "introduction": "Web applications are the most attacked surface in most organizations. The OWASP Top 10 catalogs the most critical web application security risks. Understanding these vulnerabilities and their defenses is essential for any developer.",
+        "key_concepts": [
+          "SQL injection: manipulating queries through unsanitized input",
+          "Cross-site scripting (XSS): injecting scripts into web pages",
+          "Cross-site request forgery (CSRF): forging authenticated requests",
+          "Broken authentication: session management flaws",
+          "Parameterized queries, input validation, CSP headers, CSRF tokens"
+        ],
+        "demonstration": "Exploit a SQL injection vulnerability in a deliberately vulnerable web app (DVWA), extract the database, then implement parameterized queries to fix it",
+        "setup_requirements": [
+          "DVWA or WebGoat installed",
+          "Burp Suite Community Edition",
+          "Browser developer tools"
+        ],
+        "review": [
+          {
+            "key": "Parameterized Queries",
+            "value": "Separate SQL code from data by using placeholders; the database driver handles escaping, making SQL injection impossible regardless of input content"
+          },
+          {
+            "key": "Content Security Policy",
+            "value": "CSP headers tell the browser which sources of scripts, styles, and other resources are trusted; even if XSS is injected, CSP prevents execution of unauthorized scripts"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 7,
+      "topic": "Authentication, Authorization, and Identity Management",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Design secure authentication systems with multi-factor authentication",
+        "Implement role-based and attribute-based access control",
+        "Understand OAuth 2.0 and OpenID Connect flows"
+      ],
+      "readings": [
+        "Stallings, Ch. 4 - Authentication",
+        "OAuth 2.0 RFC 6749 (simplified overview)"
+      ],
+      "lecture_notes": {
+        "introduction": "Authentication verifies who you are; authorization determines what you can do. Getting these wrong is the single most common cause of security breaches. This session covers the protocols and patterns for building secure identity systems.",
+        "key_concepts": [
+          "Authentication factors: knowledge, possession, inherence",
+          "Password storage: bcrypt, scrypt, argon2 — never store plaintext",
+          "Multi-factor authentication: TOTP, WebAuthn, SMS (weakest)",
+          "RBAC vs ABAC: role-based vs attribute-based access control",
+          "OAuth 2.0 authorization code flow with PKCE"
+        ],
+        "demonstration": "Implement a login system with bcrypt password hashing and TOTP-based two-factor authentication, then set up OAuth 2.0 login with Google as the identity provider",
+        "setup_requirements": [
+          "Python with Flask or Express",
+          "bcrypt and pyotp libraries",
+          "OAuth test application configured"
+        ],
+        "review": [
+          {
+            "key": "bcrypt Cost Factor",
+            "value": "bcrypt's work factor should be tuned so that hashing takes approximately 250ms on your server; this makes brute-force attacks against stolen hashes impractically slow while keeping login latency acceptable"
+          },
+          {
+            "key": "OAuth 2.0 PKCE",
+            "value": "Proof Key for Code Exchange prevents authorization code interception attacks; the client generates a random verifier, sends its hash in the authorization request, and proves knowledge of the verifier when exchanging the code for a token"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 9,
+      "topic": "Penetration Testing and Security Assessment",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Conduct a structured penetration test following a methodology",
+        "Use reconnaissance, scanning, and exploitation tools",
+        "Write a professional security assessment report"
+      ],
+      "readings": [
+        "Weidman, Penetration Testing, Ch. 1-4",
+        "PTES (Penetration Testing Execution Standard)"
+      ],
+      "lecture_notes": {
+        "introduction": "Penetration testing is authorized simulated attacking to find vulnerabilities before real attackers do. A structured methodology ensures comprehensive coverage. The report is as important as the testing — vulnerabilities found but not communicated are vulnerabilities unfixed.",
+        "key_concepts": [
+          "Penetration testing phases: reconnaissance, scanning, exploitation, post-exploitation, reporting",
+          "Reconnaissance: passive (OSINT) and active (port scanning, service enumeration)",
+          "Vulnerability scanning: Nmap, Nessus, OpenVAS",
+          "Exploitation: Metasploit framework basics",
+          "Report writing: executive summary, findings with severity, remediation recommendations"
+        ],
+        "demonstration": "Conduct a guided penetration test against a vulnerable lab environment: enumerate services with Nmap, identify vulnerabilities, exploit one, and write a finding report",
+        "setup_requirements": [
+          "Kali Linux VM with Nmap and Metasploit",
+          "Vulnerable target VM (Metasploitable or HackTheBox)",
+          "Isolated lab network"
+        ],
+        "review": [
+          {
+            "key": "Rules of Engagement",
+            "value": "A penetration test without written authorization is a crime; the scope, timing, allowed techniques, and emergency contacts must be agreed upon in writing before any testing begins"
+          },
+          {
+            "key": "CVSS Scoring",
+            "value": "The Common Vulnerability Scoring System provides a standardized severity rating (0-10) based on attack complexity, privileges required, and impact; this enables consistent prioritization of remediation efforts"
+          }
+        ]
+      }
+    }
   ],
   "assessments": {
     "quizzes": [
-      {"quiz":1,"week":2,"topic":"Cryptography and Threat Modeling","duration":"20 minutes","questions":[{"question":"Explain the difference between symmetric and asymmetric encryption. Why are both needed in TLS?","type":"short_answer","points":10,"answer":"Symmetric encryption (AES) uses one shared key for both encryption and decryption — fast but requires secure key exchange. Asymmetric encryption (RSA) uses a public/private key pair — slow but enables key exchange without a shared secret. TLS needs both: asymmetric encryption establishes a shared session key during the handshake, then symmetric encryption protects the data for the rest of the connection because it is orders of magnitude faster.","rubric":[{"key":"Correctly defines both encryption types","value":4},{"key":"Explains why both are needed in TLS","value":4},{"key":"Notes performance difference","value":2}]},{"question":"A company stores user passwords as SHA-256 hashes. Explain why this is insecure and what they should use instead.","type":"short_answer","points":10,"answer":"SHA-256 is a fast hash function, which means attackers can compute billions of hashes per second using GPUs, making brute-force and rainbow table attacks feasible. Passwords should be stored using a slow, salted password hashing function like bcrypt, scrypt, or argon2. These functions are deliberately slow (tunable work factor), use salt to prevent rainbow tables, and use memory-hard algorithms to resist GPU attacks.","rubric":[{"key":"Explains SHA-256 is too fast for passwords","value":4},{"key":"Mentions rainbow tables and GPU attacks","value":3},{"key":"Recommends bcrypt/scrypt/argon2 with reasoning","value":3}]}],"total_points":20},
-      {"quiz":2,"week":4,"topic":"Web Security and Authentication","duration":"25 minutes","questions":[{"question":"Write a SQL injection payload that would bypass the following login query: SELECT * FROM users WHERE username='INPUT' AND password='INPUT'. Then write the parameterized query version that prevents this attack.","type":"code","points":15,"answer":"Injection payload: username = ' OR '1'='1' -- \nThis makes the query: SELECT * FROM users WHERE username='' OR '1'='1' -- ' AND password='...'\nThe OR '1'='1' is always true, and -- comments out the password check.\n\nParameterized version (Python):\ncursor.execute('SELECT * FROM users WHERE username = %s AND password = %s', (username, password))\n\nThe database driver treats the parameters as data, not SQL code, preventing injection regardless of input content.","rubric":[{"key":"Valid SQL injection payload that bypasses login","value":5},{"key":"Correct explanation of why it works","value":4},{"key":"Correct parameterized query syntax","value":4},{"key":"Explains why parameterized queries prevent injection","value":2}]},{"question":"Explain the OAuth 2.0 authorization code flow step by step. Why is PKCE important for public clients?","type":"short_answer","points":10,"answer":"1. Client redirects user to authorization server with client_id, redirect_uri, scope, and code_challenge (PKCE). 2. User authenticates and consents. 3. Authorization server redirects back to client with an authorization code. 4. Client sends the code plus code_verifier to the token endpoint. 5. Authorization server verifies the code_verifier matches the code_challenge, then returns access_token and refresh_token. PKCE is important for public clients (SPAs, mobile apps) because they cannot securely store a client_secret. Without PKCE, an attacker who intercepts the authorization code could exchange it for a token. PKCE ensures only the client that initiated the flow can complete it.","rubric":[{"key":"Correct step-by-step flow","value":5},{"key":"Explains PKCE purpose for public clients","value":3},{"key":"Explains authorization code interception risk","value":2}]}],"total_points":25}
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "Cryptography and Threat Modeling",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "Explain the difference between symmetric and asymmetric encryption. Why are both needed in TLS?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Symmetric encryption (AES) uses one shared key for both encryption and decryption — fast but requires secure key exchange. Asymmetric encryption (RSA) uses a public/private key pair — slow but enables key exchange without a shared secret. TLS needs both: asymmetric encryption establishes a shared session key during the handshake, then symmetric encryption protects the data for the rest of the connection because it is orders of magnitude faster.",
+            "rubric": [
+              {
+                "key": "Correctly defines both encryption types",
+                "value": 4
+              },
+              {
+                "key": "Explains why both are needed in TLS",
+                "value": 4
+              },
+              {
+                "key": "Notes performance difference",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A company stores user passwords as SHA-256 hashes. Explain why this is insecure and what they should use instead.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "SHA-256 is a fast hash function, which means attackers can compute billions of hashes per second using GPUs, making brute-force and rainbow table attacks feasible. Passwords should be stored using a slow, salted password hashing function like bcrypt, scrypt, or argon2. These functions are deliberately slow (tunable work factor), use salt to prevent rainbow tables, and use memory-hard algorithms to resist GPU attacks.",
+            "rubric": [
+              {
+                "key": "Explains SHA-256 is too fast for passwords",
+                "value": 4
+              },
+              {
+                "key": "Mentions rainbow tables and GPU attacks",
+                "value": 3
+              },
+              {
+                "key": "Recommends bcrypt/scrypt/argon2 with reasoning",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 4,
+        "topic": "Web Security and Authentication",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Write a SQL injection payload that would bypass the following login query: SELECT * FROM users WHERE username='INPUT' AND password='INPUT'. Then write the parameterized query version that prevents this attack.",
+            "type": "code",
+            "points": 15,
+            "answer": "Injection payload: username = ' OR '1'='1' -- \nThis makes the query: SELECT * FROM users WHERE username='' OR '1'='1' -- ' AND password='...'\nThe OR '1'='1' is always true, and -- comments out the password check.\n\nParameterized version (Python):\ncursor.execute('SELECT * FROM users WHERE username = %s AND password = %s', (username, password))\n\nThe database driver treats the parameters as data, not SQL code, preventing injection regardless of input content.",
+            "rubric": [
+              {
+                "key": "Valid SQL injection payload that bypasses login",
+                "value": 5
+              },
+              {
+                "key": "Correct explanation of why it works",
+                "value": 4
+              },
+              {
+                "key": "Correct parameterized query syntax",
+                "value": 4
+              },
+              {
+                "key": "Explains why parameterized queries prevent injection",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the OAuth 2.0 authorization code flow step by step. Why is PKCE important for public clients?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "1. Client redirects user to authorization server with client_id, redirect_uri, scope, and code_challenge (PKCE). 2. User authenticates and consents. 3. Authorization server redirects back to client with an authorization code. 4. Client sends the code plus code_verifier to the token endpoint. 5. Authorization server verifies the code_verifier matches the code_challenge, then returns access_token and refresh_token. PKCE is important for public clients (SPAs, mobile apps) because they cannot securely store a client_secret. Without PKCE, an attacker who intercepts the authorization code could exchange it for a token. PKCE ensures only the client that initiated the flow can complete it.",
+            "rubric": [
+              {
+                "key": "Correct step-by-step flow",
+                "value": 5
+              },
+              {
+                "key": "Explains PKCE purpose for public clients",
+                "value": 3
+              },
+              {
+                "key": "Explains authorization code interception risk",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 25
+      }
     ],
     "major_assignments": [
-      {"assignment":1,"title":"Security Assessment and Remediation Report","week_assigned":3,"week_due":5,"points":100,"description":"Conduct a comprehensive security assessment of a provided vulnerable web application. Identify vulnerabilities across the OWASP Top 10 categories, demonstrate exploitation for each, and implement fixes with verification testing.","objectives":["Identify at least 8 distinct vulnerabilities across OWASP Top 10 categories","Demonstrate exploitation of each vulnerability with evidence","Implement and verify fixes for all identified vulnerabilities","Produce a professional security assessment report"],"requirements":{},"deliverables":["Security assessment report with executive summary and detailed findings","Screenshots and logs demonstrating exploitation of each vulnerability","Patched application code with all identified vulnerabilities fixed","Verification test results proving each fix is effective"],"grading_rubric":{"vulnerability_identification":{"points":30,"criteria":["At least 8 distinct vulnerabilities identified","Vulnerabilities span multiple OWASP Top 10 categories","Severity ratings are accurate and justified","No critical vulnerabilities missed"]},"exploitation":{"points":25,"criteria":["Each vulnerability is exploited with clear evidence","Exploitation steps are reproducible from the report","Business impact of each vulnerability is articulated","Exploitation demonstrates understanding of the underlying flaw"]},"remediation":{"points":30,"criteria":["Fixes address the root cause, not just the symptom","No new vulnerabilities introduced by the fixes","Verification tests prove each fix is effective","Fixes follow security best practices"]},"report_quality":{"points":15,"criteria":["Executive summary is clear and actionable","Findings follow a consistent format","Remediation recommendations are specific and prioritized","Report is professional quality suitable for a client"]}},"rubric":[{"attributes":{"points":100,"criteria":["Comprehensive vulnerability identification across OWASP categories","Demonstrated exploitation with clear evidence and business impact","Effective remediation addressing root causes with verification","Professional-quality security assessment report"]}}]}
+      {
+        "assignment": 1,
+        "title": "Security Assessment and Remediation Report",
+        "week_assigned": 3,
+        "week_due": 5,
+        "points": 100,
+        "description": "Conduct a comprehensive security assessment of a provided vulnerable web application. Identify vulnerabilities across the OWASP Top 10 categories, demonstrate exploitation for each, and implement fixes with verification testing.",
+        "objectives": [
+          "Identify at least 8 distinct vulnerabilities across OWASP Top 10 categories",
+          "Demonstrate exploitation of each vulnerability with evidence",
+          "Implement and verify fixes for all identified vulnerabilities",
+          "Produce a professional security assessment report"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Security assessment report with executive summary and detailed findings",
+          "Screenshots and logs demonstrating exploitation of each vulnerability",
+          "Patched application code with all identified vulnerabilities fixed",
+          "Verification test results proving each fix is effective"
+        ],
+        "grading_rubric": {
+          "vulnerability_identification": {
+            "points": 30,
+            "criteria": [
+              "At least 8 distinct vulnerabilities identified",
+              "Vulnerabilities span multiple OWASP Top 10 categories",
+              "Severity ratings are accurate and justified",
+              "No critical vulnerabilities missed"
+            ]
+          },
+          "exploitation": {
+            "points": 25,
+            "criteria": [
+              "Each vulnerability is exploited with clear evidence",
+              "Exploitation steps are reproducible from the report",
+              "Business impact of each vulnerability is articulated",
+              "Exploitation demonstrates understanding of the underlying flaw"
+            ]
+          },
+          "remediation": {
+            "points": 30,
+            "criteria": [
+              "Fixes address the root cause, not just the symptom",
+              "No new vulnerabilities introduced by the fixes",
+              "Verification tests prove each fix is effective",
+              "Fixes follow security best practices"
+            ]
+          },
+          "report_quality": {
+            "points": 15,
+            "criteria": [
+              "Executive summary is clear and actionable",
+              "Findings follow a consistent format",
+              "Remediation recommendations are specific and prioritized",
+              "Report is professional quality suitable for a client"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Comprehensive vulnerability identification across OWASP categories",
+                "Demonstrated exploitation with clear evidence and business impact",
+                "Effective remediation addressing root causes with verification",
+                "Professional-quality security assessment report"
+              ]
+            }
+          }
+        ]
+      }
     ]
   },
-  "grading_breakdown": {"weekly_quizzes":{"percentage":15,"description":"Regular assessment of security concepts"},"lab_assignments":{"percentage":25,"description":"Hands-on security labs and CTF challenges"},"major_assignments":{"percentage":25,"description":"Security assessment projects"},"midterm_examination":{"percentage":15,"description":"Written exam covering cryptography and web security"},"final_examination":{"percentage":20,"description":"Comprehensive exam covering all cybersecurity topics"}},
-  "course_policies": {"attendance":"Attendance is mandatory for all lab sessions. More than 2 unexcused absences may result in grade reduction.","late_submissions":"Late assignments lose 10% per day. No submissions accepted more than 5 days late.","collaboration":"Security labs may be completed individually or in pairs as assigned. All written reports must be individual work.","academic_integrity":"Security tools and techniques learned in this course must only be used on authorized systems. Unauthorized access to any system is grounds for course failure and disciplinary action.","technology_requirements":"Students need a laptop capable of running VMs (8GB+ RAM), Kali Linux VM, and Burp Suite Community Edition. Lab VMs are provided."}
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 15,
+      "description": "Regular assessment of security concepts"
+    },
+    "lab_assignments": {
+      "percentage": 25,
+      "description": "Hands-on security labs and CTF challenges"
+    },
+    "major_assignments": {
+      "percentage": 25,
+      "description": "Security assessment projects"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Written exam covering cryptography and web security"
+    },
+    "final_examination": {
+      "percentage": 20,
+      "description": "Comprehensive exam covering all cybersecurity topics"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is mandatory for all lab sessions. More than 2 unexcused absences may result in grade reduction.",
+    "late_submissions": "Late assignments lose 10% per day. No submissions accepted more than 5 days late.",
+    "collaboration": "Security labs may be completed individually or in pairs as assigned. All written reports must be individual work.",
+    "academic_integrity": "Security tools and techniques learned in this course must only be used on authorized systems. Unauthorized access to any system is grounds for course failure and disciplinary action.",
+    "technology_requirements": "Students need a laptop capable of running VMs (8GB+ RAM), Kali Linux VM, and Burp Suite Community Edition. Lab VMs are provided."
+  }
 }

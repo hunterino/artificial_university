@@ -329,7 +329,7 @@ class _TakeClassScreenState extends State<TakeClassScreen>
                 ),
                 const Spacer(),
                 Text(
-                  session.date,
+                  'Session ${session.sessionNumber}',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],

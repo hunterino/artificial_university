@@ -1,28 +1,468 @@
 {
-  "course_info": {"course_id": "CY407", "title": "Vulnerability Assessment", "credit_hours": 3, "duration": "15 weeks", "meeting_schedule": "Monday, Wednesday - 3 hours per week", "prerequisites": ["CY201 - Ethical Hacking and Penetration Testing", "CY303 - Risk Assessment and Management"]},
+  "course_info": {
+    "course_id": "CY407",
+    "title": "Vulnerability Assessment",
+    "credit_hours": 3,
+    "duration": "15 weeks",
+    "meeting_schedule": "Monday, Wednesday - 3 hours per week",
+    "prerequisites": [
+      "CY201 - Ethical Hacking and Penetration Testing",
+      "CY303 - Risk Assessment and Management"
+    ]
+  },
   "class_schedule": [
-    {"week_number": 1, "session_number": 1, "date": "2024-01-15", "topic": "Vulnerability Management Lifecycle", "duration": "50 minutes", "learning_objectives": ["Design an enterprise vulnerability management program", "Configure vulnerability scanning tools for comprehensive coverage", "Prioritize remediation using risk-based approaches"], "readings": ["NIST SP 800-40 Guide to Patch and Vulnerability Management", "Qualys/Nessus documentation"], "lecture_notes": {"introduction": "Vulnerability management is the continuous process of identifying, classifying, remediating, and mitigating vulnerabilities. It is one of the highest-ROI security investments an organization can make.", "key_concepts": ["VM lifecycle: discover, assess, prioritize, remediate, verify, report", "Scanner types: network, authenticated, agent-based, cloud-native", "Asset inventory: you cannot protect what you do not know exists", "Risk-based prioritization: CVSS + exploit availability + asset criticality", "SLA-based remediation timelines by severity"], "demonstration": "Configuring and running a Nessus vulnerability scan against a lab network, analyzing results, and prioritizing findings", "setup_requirements": ["Nessus Essentials or OpenVAS", "Lab network with diverse systems", "Asset inventory database"], "review": [{"key": "Risk-Based Prioritization", "value": "CVSS alone is insufficient. Consider: is there a public exploit? Is the asset internet-facing? What data does it hold? Combine CVSS with EPSS (Exploit Prediction Scoring System) and asset criticality for true risk ranking."}, {"key": "EPSS", "value": "Exploit Prediction Scoring System estimates the probability a vulnerability will be exploited in the next 30 days. Combines with CVSS: a CVSS 7.0 with EPSS 0.95 is far more urgent than a CVSS 9.8 with EPSS 0.01."}]}},
-    {"week_number": 1, "session_number": 2, "date": "2024-01-17", "topic": "Network and Infrastructure Vulnerability Assessment", "duration": "50 minutes", "learning_objectives": ["Perform authenticated and unauthenticated network scans", "Identify and validate network infrastructure vulnerabilities", "Assess configuration weaknesses against security benchmarks"], "readings": ["Nmap Network Scanning reference", "CIS Benchmarks for network devices"], "lecture_notes": {"introduction": "Network infrastructure forms the backbone of organizational IT. Misconfigured routers, switches, and firewalls create vulnerabilities that bypass all application-level security.", "key_concepts": ["Authenticated vs unauthenticated scanning: coverage vs access tradeoffs", "Network device assessment: routers, switches, firewalls, load balancers", "Configuration audit against CIS Benchmarks", "Service enumeration and default credential checking", "SSL/TLS configuration assessment"], "demonstration": "Running authenticated Nessus scans against network infrastructure, comparing results with CIS Benchmark requirements, and identifying configuration drift", "setup_requirements": ["Nessus with credential-based scanning configured", "Network devices in lab environment", "CIS Benchmark scoring tools"], "review": [{"key": "Authenticated Scanning", "value": "Authenticated scans log into systems and inspect installed packages, configurations, and file permissions. They find 10-20x more vulnerabilities than unauthenticated scans that can only probe exposed services."}, {"key": "Configuration Drift", "value": "Systems gradually deviate from hardened baselines over time as patches, changes, and workarounds are applied. Regular benchmark scanning detects drift before it creates exploitable vulnerabilities."}]}},
-    {"week_number": 2, "session_number": 3, "date": "2024-01-22", "topic": "Web Application Vulnerability Assessment", "duration": "50 minutes", "learning_objectives": ["Configure and run web application vulnerability scanners", "Validate scanner findings and eliminate false positives", "Assess APIs for security vulnerabilities"], "readings": ["OWASP Testing Guide v4.2", "Burp Suite documentation"], "lecture_notes": {"introduction": "Web applications are the most common attack vector. Automated scanning finds many issues quickly, but manual validation is essential to confirm findings and discover logic flaws.", "key_concepts": ["DAST scanners: Burp Suite, OWASP ZAP, Nikto", "SAST tools: SonarQube, Semgrep for code-level vulnerabilities", "API security testing: authentication, authorization, injection, rate limiting", "Scanner tuning: reducing false positives while maintaining detection", "Manual validation: confirming automated findings with exploitation"], "demonstration": "Running Burp Suite active scan against DVWA, validating SQL injection and XSS findings manually, and testing an API for broken authentication", "setup_requirements": ["Burp Suite Professional or Community", "OWASP ZAP", "DVWA and Juice Shop", "Sample API for testing"], "review": [{"key": "DAST vs SAST", "value": "DAST tests the running application from the outside (black box). SAST analyzes source code without execution (white box). DAST finds runtime issues; SAST finds code-level flaws. Use both for comprehensive coverage."}, {"key": "False Positive Management", "value": "Every scanner finding must be validated before reporting. False positives waste developer time and erode trust in the vulnerability management program. Track false positive rate as a scanner quality metric."}]}},
-    {"week_number": 3, "session_number": 5, "date": "2024-01-29", "topic": "Cloud and Container Vulnerability Assessment", "duration": "50 minutes", "learning_objectives": ["Assess cloud environments for misconfigurations and vulnerabilities", "Scan container images for known CVEs", "Implement vulnerability assessment in CI/CD pipelines"], "readings": ["AWS Security Best Practices", "Container scanning tool documentation"], "lecture_notes": {"introduction": "Cloud and container environments introduce new vulnerability categories: infrastructure misconfigurations, image vulnerabilities, and IaC template flaws that traditional scanners miss.", "key_concepts": ["CSPM: cloud misconfiguration scanning (Prowler, ScoutSuite)", "Container image scanning: Trivy, Grype, Anchore", "IaC scanning: tfsec, checkov for Terraform/CloudFormation", "CI/CD integration: shift-left vulnerability scanning", "Cloud-native vulnerability management: AWS Inspector, Azure Defender"], "demonstration": "Scanning a Docker image with Trivy, auditing an AWS account with Prowler, and integrating tfsec into a GitHub Actions CI pipeline", "setup_requirements": ["Trivy and Grype installed", "Prowler for AWS scanning", "tfsec for Terraform", "Sample CI/CD pipeline"], "review": [{"key": "Shift Left", "value": "Find vulnerabilities as early as possible: in IaC templates before deployment, in container images before registry push, in code before merge. Cheaper to fix and prevents vulnerable deployments."}, {"key": "CSPM Scanning", "value": "Cloud Security Posture Management continuously audits cloud configurations against best practices: public S3 buckets, overly permissive security groups, unencrypted databases, MFA not enforced."}]}},
-    {"week_number": 4, "session_number": 7, "date": "2024-02-05", "topic": "Remediation Management and Tracking", "duration": "50 minutes", "learning_objectives": ["Design SLA-based remediation workflows", "Track vulnerability remediation metrics", "Manage exceptions and compensating controls"], "readings": ["Vulnerability management metrics papers", "SLA framework examples"], "lecture_notes": {"introduction": "Finding vulnerabilities is only half the battle. Effective remediation management ensures that findings are actually fixed within acceptable timeframes.", "key_concepts": ["SLA by severity: Critical 7 days, High 30 days, Medium 90 days, Low 180 days", "Remediation ownership: assigning findings to responsible teams", "Vulnerability ticketing integration: JIRA, ServiceNow", "Exception management: risk acceptance with compensating controls", "Remediation velocity and aging metrics"], "demonstration": "Setting up a vulnerability management workflow with automated ticket creation, SLA tracking, and escalation for overdue remediation", "setup_requirements": ["Vulnerability management platform", "Ticketing system integration", "Metrics dashboard"], "review": [{"key": "Remediation SLAs", "value": "SLAs must be risk-adjusted: a Critical vulnerability on an internet-facing system has a shorter SLA than the same vulnerability on an isolated internal system. Context matters."}, {"key": "Aging Analysis", "value": "Track the average age of open vulnerabilities by severity. Increasing age indicates a backlog. Decreasing age indicates the program is reducing risk faster than new vulnerabilities appear."}]}},
-    {"week_number": 5, "session_number": 9, "date": "2024-02-12", "topic": "Vulnerability Disclosure and Bug Bounty Programs", "duration": "50 minutes", "learning_objectives": ["Design a responsible vulnerability disclosure policy", "Evaluate bug bounty program options and economics", "Manage external vulnerability reports professionally"], "readings": ["ISO 29147 Vulnerability Disclosure", "HackerOne and Bugcrowd documentation"], "lecture_notes": {"introduction": "External researchers find vulnerabilities that internal teams miss. A well-designed disclosure program harnesses this external talent while managing legal and reputational risks.", "key_concepts": ["Responsible disclosure: coordinated disclosure timeline (typically 90 days)", "Vulnerability Disclosure Policy (VDP): safe harbor for researchers", "Bug bounty economics: cost per vulnerability vs penetration testing", "Triage workflow: receiving, validating, and responding to reports", "Legal safe harbor: protecting researchers from CFAA prosecution"], "demonstration": "Designing a vulnerability disclosure policy and bug bounty program, including scope, rules, rewards, and legal safe harbor language", "setup_requirements": ["VDP template", "Bug bounty platform overview", "Triage workflow template"], "review": [{"key": "VDP vs Bug Bounty", "value": "VDP: no monetary reward, provides a channel for reporting. Bug bounty: pays researchers for valid findings. VDP is a minimum baseline; bug bounty incentivizes more thorough research."}, {"key": "90-Day Disclosure", "value": "Industry standard: researcher reports vulnerability, vendor has 90 days to patch. After 90 days, researcher may publish details regardless. This creates urgency for vendors to patch."}]}}
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "topic": "Vulnerability Management Lifecycle",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Design an enterprise vulnerability management program",
+        "Configure vulnerability scanning tools for comprehensive coverage",
+        "Prioritize remediation using risk-based approaches"
+      ],
+      "readings": [
+        "NIST SP 800-40 Guide to Patch and Vulnerability Management",
+        "Qualys/Nessus documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Vulnerability management is the continuous process of identifying, classifying, remediating, and mitigating vulnerabilities. It is one of the highest-ROI security investments an organization can make.",
+        "key_concepts": [
+          "VM lifecycle: discover, assess, prioritize, remediate, verify, report",
+          "Scanner types: network, authenticated, agent-based, cloud-native",
+          "Asset inventory: you cannot protect what you do not know exists",
+          "Risk-based prioritization: CVSS + exploit availability + asset criticality",
+          "SLA-based remediation timelines by severity"
+        ],
+        "demonstration": "Configuring and running a Nessus vulnerability scan against a lab network, analyzing results, and prioritizing findings",
+        "setup_requirements": [
+          "Nessus Essentials or OpenVAS",
+          "Lab network with diverse systems",
+          "Asset inventory database"
+        ],
+        "review": [
+          {
+            "key": "Risk-Based Prioritization",
+            "value": "CVSS alone is insufficient. Consider: is there a public exploit? Is the asset internet-facing? What data does it hold? Combine CVSS with EPSS (Exploit Prediction Scoring System) and asset criticality for true risk ranking."
+          },
+          {
+            "key": "EPSS",
+            "value": "Exploit Prediction Scoring System estimates the probability a vulnerability will be exploited in the next 30 days. Combines with CVSS: a CVSS 7.0 with EPSS 0.95 is far more urgent than a CVSS 9.8 with EPSS 0.01."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 1,
+      "session_number": 2,
+      "topic": "Network and Infrastructure Vulnerability Assessment",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Perform authenticated and unauthenticated network scans",
+        "Identify and validate network infrastructure vulnerabilities",
+        "Assess configuration weaknesses against security benchmarks"
+      ],
+      "readings": [
+        "Nmap Network Scanning reference",
+        "CIS Benchmarks for network devices"
+      ],
+      "lecture_notes": {
+        "introduction": "Network infrastructure forms the backbone of organizational IT. Misconfigured routers, switches, and firewalls create vulnerabilities that bypass all application-level security.",
+        "key_concepts": [
+          "Authenticated vs unauthenticated scanning: coverage vs access tradeoffs",
+          "Network device assessment: routers, switches, firewalls, load balancers",
+          "Configuration audit against CIS Benchmarks",
+          "Service enumeration and default credential checking",
+          "SSL/TLS configuration assessment"
+        ],
+        "demonstration": "Running authenticated Nessus scans against network infrastructure, comparing results with CIS Benchmark requirements, and identifying configuration drift",
+        "setup_requirements": [
+          "Nessus with credential-based scanning configured",
+          "Network devices in lab environment",
+          "CIS Benchmark scoring tools"
+        ],
+        "review": [
+          {
+            "key": "Authenticated Scanning",
+            "value": "Authenticated scans log into systems and inspect installed packages, configurations, and file permissions. They find 10-20x more vulnerabilities than unauthenticated scans that can only probe exposed services."
+          },
+          {
+            "key": "Configuration Drift",
+            "value": "Systems gradually deviate from hardened baselines over time as patches, changes, and workarounds are applied. Regular benchmark scanning detects drift before it creates exploitable vulnerabilities."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 3,
+      "topic": "Web Application Vulnerability Assessment",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Configure and run web application vulnerability scanners",
+        "Validate scanner findings and eliminate false positives",
+        "Assess APIs for security vulnerabilities"
+      ],
+      "readings": [
+        "OWASP Testing Guide v4.2",
+        "Burp Suite documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Web applications are the most common attack vector. Automated scanning finds many issues quickly, but manual validation is essential to confirm findings and discover logic flaws.",
+        "key_concepts": [
+          "DAST scanners: Burp Suite, OWASP ZAP, Nikto",
+          "SAST tools: SonarQube, Semgrep for code-level vulnerabilities",
+          "API security testing: authentication, authorization, injection, rate limiting",
+          "Scanner tuning: reducing false positives while maintaining detection",
+          "Manual validation: confirming automated findings with exploitation"
+        ],
+        "demonstration": "Running Burp Suite active scan against DVWA, validating SQL injection and XSS findings manually, and testing an API for broken authentication",
+        "setup_requirements": [
+          "Burp Suite Professional or Community",
+          "OWASP ZAP",
+          "DVWA and Juice Shop",
+          "Sample API for testing"
+        ],
+        "review": [
+          {
+            "key": "DAST vs SAST",
+            "value": "DAST tests the running application from the outside (black box). SAST analyzes source code without execution (white box). DAST finds runtime issues; SAST finds code-level flaws. Use both for comprehensive coverage."
+          },
+          {
+            "key": "False Positive Management",
+            "value": "Every scanner finding must be validated before reporting. False positives waste developer time and erode trust in the vulnerability management program. Track false positive rate as a scanner quality metric."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 5,
+      "topic": "Cloud and Container Vulnerability Assessment",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Assess cloud environments for misconfigurations and vulnerabilities",
+        "Scan container images for known CVEs",
+        "Implement vulnerability assessment in CI/CD pipelines"
+      ],
+      "readings": [
+        "AWS Security Best Practices",
+        "Container scanning tool documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Cloud and container environments introduce new vulnerability categories: infrastructure misconfigurations, image vulnerabilities, and IaC template flaws that traditional scanners miss.",
+        "key_concepts": [
+          "CSPM: cloud misconfiguration scanning (Prowler, ScoutSuite)",
+          "Container image scanning: Trivy, Grype, Anchore",
+          "IaC scanning: tfsec, checkov for Terraform/CloudFormation",
+          "CI/CD integration: shift-left vulnerability scanning",
+          "Cloud-native vulnerability management: AWS Inspector, Azure Defender"
+        ],
+        "demonstration": "Scanning a Docker image with Trivy, auditing an AWS account with Prowler, and integrating tfsec into a GitHub Actions CI pipeline",
+        "setup_requirements": [
+          "Trivy and Grype installed",
+          "Prowler for AWS scanning",
+          "tfsec for Terraform",
+          "Sample CI/CD pipeline"
+        ],
+        "review": [
+          {
+            "key": "Shift Left",
+            "value": "Find vulnerabilities as early as possible: in IaC templates before deployment, in container images before registry push, in code before merge. Cheaper to fix and prevents vulnerable deployments."
+          },
+          {
+            "key": "CSPM Scanning",
+            "value": "Cloud Security Posture Management continuously audits cloud configurations against best practices: public S3 buckets, overly permissive security groups, unencrypted databases, MFA not enforced."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 7,
+      "topic": "Remediation Management and Tracking",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Design SLA-based remediation workflows",
+        "Track vulnerability remediation metrics",
+        "Manage exceptions and compensating controls"
+      ],
+      "readings": [
+        "Vulnerability management metrics papers",
+        "SLA framework examples"
+      ],
+      "lecture_notes": {
+        "introduction": "Finding vulnerabilities is only half the battle. Effective remediation management ensures that findings are actually fixed within acceptable timeframes.",
+        "key_concepts": [
+          "SLA by severity: Critical 7 days, High 30 days, Medium 90 days, Low 180 days",
+          "Remediation ownership: assigning findings to responsible teams",
+          "Vulnerability ticketing integration: JIRA, ServiceNow",
+          "Exception management: risk acceptance with compensating controls",
+          "Remediation velocity and aging metrics"
+        ],
+        "demonstration": "Setting up a vulnerability management workflow with automated ticket creation, SLA tracking, and escalation for overdue remediation",
+        "setup_requirements": [
+          "Vulnerability management platform",
+          "Ticketing system integration",
+          "Metrics dashboard"
+        ],
+        "review": [
+          {
+            "key": "Remediation SLAs",
+            "value": "SLAs must be risk-adjusted: a Critical vulnerability on an internet-facing system has a shorter SLA than the same vulnerability on an isolated internal system. Context matters."
+          },
+          {
+            "key": "Aging Analysis",
+            "value": "Track the average age of open vulnerabilities by severity. Increasing age indicates a backlog. Decreasing age indicates the program is reducing risk faster than new vulnerabilities appear."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 9,
+      "topic": "Vulnerability Disclosure and Bug Bounty Programs",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Design a responsible vulnerability disclosure policy",
+        "Evaluate bug bounty program options and economics",
+        "Manage external vulnerability reports professionally"
+      ],
+      "readings": [
+        "ISO 29147 Vulnerability Disclosure",
+        "HackerOne and Bugcrowd documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "External researchers find vulnerabilities that internal teams miss. A well-designed disclosure program harnesses this external talent while managing legal and reputational risks.",
+        "key_concepts": [
+          "Responsible disclosure: coordinated disclosure timeline (typically 90 days)",
+          "Vulnerability Disclosure Policy (VDP): safe harbor for researchers",
+          "Bug bounty economics: cost per vulnerability vs penetration testing",
+          "Triage workflow: receiving, validating, and responding to reports",
+          "Legal safe harbor: protecting researchers from CFAA prosecution"
+        ],
+        "demonstration": "Designing a vulnerability disclosure policy and bug bounty program, including scope, rules, rewards, and legal safe harbor language",
+        "setup_requirements": [
+          "VDP template",
+          "Bug bounty platform overview",
+          "Triage workflow template"
+        ],
+        "review": [
+          {
+            "key": "VDP vs Bug Bounty",
+            "value": "VDP: no monetary reward, provides a channel for reporting. Bug bounty: pays researchers for valid findings. VDP is a minimum baseline; bug bounty incentivizes more thorough research."
+          },
+          {
+            "key": "90-Day Disclosure",
+            "value": "Industry standard: researcher reports vulnerability, vendor has 90 days to patch. After 90 days, researcher may publish details regardless. This creates urgency for vendors to patch."
+          }
+        ]
+      }
+    }
   ],
   "assessments": {
     "quizzes": [
-      {"quiz": 1, "week": 2, "topic": "VM Lifecycle, Network and Web Assessment", "duration": "20 minutes", "questions": [
-        {"question": "A Nessus scan reports 3,500 findings across 200 systems. 150 are Critical, 400 are High, 1,200 are Medium, and 1,750 are Low. The security team has capacity to remediate 100 findings per week. Design a 4-week prioritized remediation plan using risk-based criteria beyond just CVSS severity.", "type": "short_answer", "points": 10, "answer": "Week 1 (100 findings): All Critical findings on internet-facing systems with EPSS > 0.5 (likely ~40-50 findings) plus High findings on internet-facing systems with known public exploits. Rationale: highest immediate risk of external exploitation. Week 2 (100 findings): Remaining Critical findings on internal systems, plus High findings with EPSS > 0.7 on systems containing sensitive data. Rationale: critical vulnerabilities regardless of exposure. Week 3 (100 findings): Remaining High findings on systems processing PII/financial data, plus any High findings with active exploitation reported in threat intelligence. Rationale: regulatory and data protection priority. Week 4 (100 findings): Remaining High findings plus Medium findings on internet-facing systems. Begin addressing systematic issues (e.g., if 200 Medium findings are all the same missing patch, one deployment fixes all). Note: request additional capacity or budget since at 100/week, the 550 Critical+High findings alone require 5.5 weeks.", "rubric": [{"key": "Risk-based prioritization beyond CVSS", "value": 4}, {"key": "Considers internet exposure, data sensitivity, EPSS", "value": 3}, {"key": "Realistic capacity planning and escalation", "value": 3}]},
-        {"question": "A web application vulnerability scanner reports SQL injection on a login form. Describe the exact manual validation steps you would perform to confirm this is a true positive, and what you would include in the vulnerability report.", "type": "short_answer", "points": 10, "answer": "Validation steps: (1) Reproduce in Burp Repeater: capture the login request, inject a single quote (') in the username field, observe the response for SQL error messages or behavioral changes. (2) Confirm with time-based blind injection: inject 'OR SLEEP(5)-- and measure response time. A 5-second delay confirms injection. (3) Test UNION injection: determine column count with ORDER BY incrementing, then UNION SELECT to extract data. (4) Verify scope: test other input fields on the same form and other forms in the application. Report contents: Title: SQL Injection in Login Form (CWE-89). Severity: Critical (CVSS 9.8 - unauthenticated, network-exploitable, full database access). Affected URL and parameter. Proof of concept: exact request/response showing the injection. Business impact: complete database compromise, authentication bypass. Remediation: use parameterized queries (prepared statements) for all database interactions.", "rubric": [{"key": "Correct validation methodology", "value": 4}, {"key": "Progressive injection techniques", "value": 3}, {"key": "Complete report contents", "value": 3}]}
-      ], "total_points": 20},
-      {"quiz": 2, "week": 4, "topic": "Cloud Assessment, Remediation, and Disclosure", "duration": "20 minutes", "questions": [
-        {"question": "A Trivy scan of your organization's production Docker image reveals 45 CVEs: 3 Critical, 12 High, 20 Medium, 10 Low. The image is based on ubuntu:20.04 and the Critical CVEs are in the base OS packages. Explain your remediation strategy considering this is a production container.", "type": "short_answer", "points": 10, "answer": "Strategy: (1) Immediately assess if Critical CVEs have public exploits and are reachable from the container's network position. (2) Base image update: ubuntu:20.04 is an older LTS. Rebuild the image on ubuntu:22.04 or a minimal base (distroless, alpine) to eliminate OS-level CVEs. This likely fixes most Critical and High findings. (3) Multi-stage build: separate build dependencies from runtime. The final image should contain only the application binary and required runtime libraries, minimizing attack surface. (4) Remaining CVEs: after base image update, rescan. Fix application-level dependency CVEs by updating libraries. For CVEs in packages the application does not use, remove those packages from the image. (5) CI/CD gate: add Trivy scan to the pipeline with a policy that blocks deployment if Critical CVEs are present. (6) Production deployment: test the rebuilt image in staging, deploy via rolling update to avoid downtime.", "rubric": [{"key": "Base image update strategy", "value": 3}, {"key": "Image minimization approach", "value": 3}, {"key": "CI/CD integration and deployment plan", "value": 4}]},
-        {"question": "An external security researcher emails your organization claiming they found an RCE vulnerability in your public API. You have no vulnerability disclosure policy. Describe how you should respond, and draft the key elements of a VDP you would implement afterward.", "type": "short_answer", "points": 10, "answer": "Immediate response: (1) Acknowledge receipt within 24 hours with gratitude. (2) Do NOT threaten legal action. (3) Ask for technical details if not provided. (4) Assign an internal team to validate the finding. (5) Keep the researcher informed of validation status and remediation timeline. (6) Provide credit in the security advisory if the researcher wishes. VDP key elements: (1) Scope: list in-scope assets (production domains, APIs) and out-of-scope (corporate email, employee systems). (2) Safe harbor: 'We will not pursue legal action against researchers acting in good faith within this policy.' (3) Rules: no data exfiltration, no DoS, no social engineering of employees. (4) Reporting channel: dedicated security@company.com with PGP key. (5) Response SLAs: acknowledge in 48 hours, validate in 7 days, remediate Critical in 30 days. (6) Recognition: public acknowledgment and/or Hall of Fame.", "rubric": [{"key": "Professional immediate response", "value": 3}, {"key": "Safe harbor and legal protection for researchers", "value": 4}, {"key": "Complete VDP elements", "value": 3}]}
-      ], "total_points": 20}
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "VM Lifecycle, Network and Web Assessment",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "A Nessus scan reports 3,500 findings across 200 systems. 150 are Critical, 400 are High, 1,200 are Medium, and 1,750 are Low. The security team has capacity to remediate 100 findings per week. Design a 4-week prioritized remediation plan using risk-based criteria beyond just CVSS severity.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Week 1 (100 findings): All Critical findings on internet-facing systems with EPSS > 0.5 (likely ~40-50 findings) plus High findings on internet-facing systems with known public exploits. Rationale: highest immediate risk of external exploitation. Week 2 (100 findings): Remaining Critical findings on internal systems, plus High findings with EPSS > 0.7 on systems containing sensitive data. Rationale: critical vulnerabilities regardless of exposure. Week 3 (100 findings): Remaining High findings on systems processing PII/financial data, plus any High findings with active exploitation reported in threat intelligence. Rationale: regulatory and data protection priority. Week 4 (100 findings): Remaining High findings plus Medium findings on internet-facing systems. Begin addressing systematic issues (e.g., if 200 Medium findings are all the same missing patch, one deployment fixes all). Note: request additional capacity or budget since at 100/week, the 550 Critical+High findings alone require 5.5 weeks.",
+            "rubric": [
+              {
+                "key": "Risk-based prioritization beyond CVSS",
+                "value": 4
+              },
+              {
+                "key": "Considers internet exposure, data sensitivity, EPSS",
+                "value": 3
+              },
+              {
+                "key": "Realistic capacity planning and escalation",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "A web application vulnerability scanner reports SQL injection on a login form. Describe the exact manual validation steps you would perform to confirm this is a true positive, and what you would include in the vulnerability report.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Validation steps: (1) Reproduce in Burp Repeater: capture the login request, inject a single quote (') in the username field, observe the response for SQL error messages or behavioral changes. (2) Confirm with time-based blind injection: inject 'OR SLEEP(5)-- and measure response time. A 5-second delay confirms injection. (3) Test UNION injection: determine column count with ORDER BY incrementing, then UNION SELECT to extract data. (4) Verify scope: test other input fields on the same form and other forms in the application. Report contents: Title: SQL Injection in Login Form (CWE-89). Severity: Critical (CVSS 9.8 - unauthenticated, network-exploitable, full database access). Affected URL and parameter. Proof of concept: exact request/response showing the injection. Business impact: complete database compromise, authentication bypass. Remediation: use parameterized queries (prepared statements) for all database interactions.",
+            "rubric": [
+              {
+                "key": "Correct validation methodology",
+                "value": 4
+              },
+              {
+                "key": "Progressive injection techniques",
+                "value": 3
+              },
+              {
+                "key": "Complete report contents",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 4,
+        "topic": "Cloud Assessment, Remediation, and Disclosure",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "A Trivy scan of your organization's production Docker image reveals 45 CVEs: 3 Critical, 12 High, 20 Medium, 10 Low. The image is based on ubuntu:20.04 and the Critical CVEs are in the base OS packages. Explain your remediation strategy considering this is a production container.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Strategy: (1) Immediately assess if Critical CVEs have public exploits and are reachable from the container's network position. (2) Base image update: ubuntu:20.04 is an older LTS. Rebuild the image on ubuntu:22.04 or a minimal base (distroless, alpine) to eliminate OS-level CVEs. This likely fixes most Critical and High findings. (3) Multi-stage build: separate build dependencies from runtime. The final image should contain only the application binary and required runtime libraries, minimizing attack surface. (4) Remaining CVEs: after base image update, rescan. Fix application-level dependency CVEs by updating libraries. For CVEs in packages the application does not use, remove those packages from the image. (5) CI/CD gate: add Trivy scan to the pipeline with a policy that blocks deployment if Critical CVEs are present. (6) Production deployment: test the rebuilt image in staging, deploy via rolling update to avoid downtime.",
+            "rubric": [
+              {
+                "key": "Base image update strategy",
+                "value": 3
+              },
+              {
+                "key": "Image minimization approach",
+                "value": 3
+              },
+              {
+                "key": "CI/CD integration and deployment plan",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "An external security researcher emails your organization claiming they found an RCE vulnerability in your public API. You have no vulnerability disclosure policy. Describe how you should respond, and draft the key elements of a VDP you would implement afterward.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Immediate response: (1) Acknowledge receipt within 24 hours with gratitude. (2) Do NOT threaten legal action. (3) Ask for technical details if not provided. (4) Assign an internal team to validate the finding. (5) Keep the researcher informed of validation status and remediation timeline. (6) Provide credit in the security advisory if the researcher wishes. VDP key elements: (1) Scope: list in-scope assets (production domains, APIs) and out-of-scope (corporate email, employee systems). (2) Safe harbor: 'We will not pursue legal action against researchers acting in good faith within this policy.' (3) Rules: no data exfiltration, no DoS, no social engineering of employees. (4) Reporting channel: dedicated security@company.com with PGP key. (5) Response SLAs: acknowledge in 48 hours, validate in 7 days, remediate Critical in 30 days. (6) Recognition: public acknowledgment and/or Hall of Fame.",
+            "rubric": [
+              {
+                "key": "Professional immediate response",
+                "value": 3
+              },
+              {
+                "key": "Safe harbor and legal protection for researchers",
+                "value": 4
+              },
+              {
+                "key": "Complete VDP elements",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      }
     ],
     "major_assignments": [
-      {"assignment": 1, "title": "Enterprise Vulnerability Assessment Program", "week_assigned": 2, "week_due": 5, "points": 100, "description": "Design and execute a comprehensive vulnerability assessment of a provided lab environment spanning network, web, and cloud assets. Produce a prioritized findings report and program design.", "objectives": ["Perform multi-layer vulnerability assessment across network, web, and cloud", "Validate and prioritize findings using risk-based methodology", "Design an ongoing vulnerability management program", "Produce a professional assessment report"], "requirements": {}, "deliverables": ["Vulnerability assessment report with validated findings", "Risk-prioritized remediation plan with SLAs", "VM program design document", "Vulnerability disclosure policy draft"], "grading_rubric": {"assessment_execution": {"points": 30, "criteria": ["Network, web, and cloud assets scanned", "Authenticated scanning configured", "False positives identified and removed", "Coverage documented"]}, "prioritization": {"points": 25, "criteria": ["Risk-based prioritization beyond CVSS", "EPSS and exploit availability considered", "Asset criticality factored", "Business context applied"]}, "program_design": {"points": 25, "criteria": ["Complete VM lifecycle defined", "SLAs appropriate for organization", "Metrics and reporting framework", "Tool selection justified"]}, "reporting": {"points": 20, "criteria": ["Professional report format", "Each finding: description, evidence, risk, remediation", "Executive summary with risk posture", "Trend analysis recommendations"]}}, "rubric": [{"attributes": {"points": 100, "criteria": ["Comprehensive multi-layer vulnerability assessment", "Risk-based prioritization demonstrating analytical maturity", "Practical VM program design suitable for enterprise adoption", "Professional reporting with actionable findings"]}}]}
+      {
+        "assignment": 1,
+        "title": "Enterprise Vulnerability Assessment Program",
+        "week_assigned": 2,
+        "week_due": 5,
+        "points": 100,
+        "description": "Design and execute a comprehensive vulnerability assessment of a provided lab environment spanning network, web, and cloud assets. Produce a prioritized findings report and program design.",
+        "objectives": [
+          "Perform multi-layer vulnerability assessment across network, web, and cloud",
+          "Validate and prioritize findings using risk-based methodology",
+          "Design an ongoing vulnerability management program",
+          "Produce a professional assessment report"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Vulnerability assessment report with validated findings",
+          "Risk-prioritized remediation plan with SLAs",
+          "VM program design document",
+          "Vulnerability disclosure policy draft"
+        ],
+        "grading_rubric": {
+          "assessment_execution": {
+            "points": 30,
+            "criteria": [
+              "Network, web, and cloud assets scanned",
+              "Authenticated scanning configured",
+              "False positives identified and removed",
+              "Coverage documented"
+            ]
+          },
+          "prioritization": {
+            "points": 25,
+            "criteria": [
+              "Risk-based prioritization beyond CVSS",
+              "EPSS and exploit availability considered",
+              "Asset criticality factored",
+              "Business context applied"
+            ]
+          },
+          "program_design": {
+            "points": 25,
+            "criteria": [
+              "Complete VM lifecycle defined",
+              "SLAs appropriate for organization",
+              "Metrics and reporting framework",
+              "Tool selection justified"
+            ]
+          },
+          "reporting": {
+            "points": 20,
+            "criteria": [
+              "Professional report format",
+              "Each finding: description, evidence, risk, remediation",
+              "Executive summary with risk posture",
+              "Trend analysis recommendations"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Comprehensive multi-layer vulnerability assessment",
+                "Risk-based prioritization demonstrating analytical maturity",
+                "Practical VM program design suitable for enterprise adoption",
+                "Professional reporting with actionable findings"
+              ]
+            }
+          }
+        ]
+      }
     ]
   },
-  "grading_breakdown": {"weekly_quizzes": {"percentage": 15, "description": "Assessment of vulnerability management concepts and tool knowledge"}, "lab_assignments": {"percentage": 25, "description": "Hands-on scanning, validation, and remediation tracking exercises"}, "major_assignments": {"percentage": 25, "description": "Enterprise vulnerability assessment and program design"}, "midterm_examination": {"percentage": 15, "description": "Practical exam: timed vulnerability assessment of a lab environment"}, "final_examination": {"percentage": 20, "description": "Cumulative exam covering all vulnerability assessment topics"}},
-  "course_policies": {"attendance": "Attendance is mandatory for all lab sessions. More than 2 unexcused absences may result in a grade reduction.", "late_submissions": "Late assignments are penalized 10% per day. No submissions accepted more than 5 days late without prior arrangement.", "collaboration": "Lab exercises may be completed in pairs. All reports and program designs must be individual work.", "academic_integrity": "Vulnerability scanning must only be performed against designated lab systems. Scanning production or external systems is grounds for course failure.", "lab_safety": "Follow all scanning policies. Do not run DoS-capable scans without instructor approval. Report any accidental impact to non-lab systems immediately."}
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 15,
+      "description": "Assessment of vulnerability management concepts and tool knowledge"
+    },
+    "lab_assignments": {
+      "percentage": 25,
+      "description": "Hands-on scanning, validation, and remediation tracking exercises"
+    },
+    "major_assignments": {
+      "percentage": 25,
+      "description": "Enterprise vulnerability assessment and program design"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Practical exam: timed vulnerability assessment of a lab environment"
+    },
+    "final_examination": {
+      "percentage": 20,
+      "description": "Cumulative exam covering all vulnerability assessment topics"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is mandatory for all lab sessions. More than 2 unexcused absences may result in a grade reduction.",
+    "late_submissions": "Late assignments are penalized 10% per day. No submissions accepted more than 5 days late without prior arrangement.",
+    "collaboration": "Lab exercises may be completed in pairs. All reports and program designs must be individual work.",
+    "academic_integrity": "Vulnerability scanning must only be performed against designated lab systems. Scanning production or external systems is grounds for course failure.",
+    "lab_safety": "Follow all scanning policies. Do not run DoS-capable scans without instructor approval. Report any accidental impact to non-lab systems immediately."
+  }
 }

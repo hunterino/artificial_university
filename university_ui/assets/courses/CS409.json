@@ -1,22 +1,469 @@
 {
-  "course_info": {"course_id":"CS409","title":"Advanced Programming Concepts","credit_hours":4,"duration":"15 weeks","meeting_schedule":"Monday, Wednesday, Friday - 4 hours per week","prerequisites":["CS201 - Data Structures and Algorithms"]},
+  "course_info": {
+    "course_id": "CS409",
+    "title": "Advanced Programming Concepts",
+    "credit_hours": 4,
+    "duration": "15 weeks",
+    "meeting_schedule": "Monday, Wednesday, Friday - 4 hours per week",
+    "prerequisites": [
+      "CS201 - Data Structures and Algorithms"
+    ]
+  },
   "class_schedule": [
-    {"week_number":1,"session_number":1,"date":"2024-01-15","topic":"Functional Programming Paradigm","duration":"50 minutes","learning_objectives":["Understand pure functions, immutability, and referential transparency","Apply higher-order functions: map, filter, reduce","Write programs using functional composition and pipelines"],"readings":["Abelson & Sussman, SICP, Ch. 1","Hutton, Programming in Haskell, Ch. 1-3"],"lecture_notes":{"introduction":"Most professional code mixes paradigms. This course expands your programming toolkit beyond OOP to include functional, concurrent, and generic programming. Each paradigm offers different strengths for different problems.","key_concepts":["Pure functions: same input always produces same output, no side effects","Immutability: data cannot be changed after creation, new values are derived","Higher-order functions: functions that take or return functions","Function composition: building complex operations from simple ones","Closures: functions that capture their lexical environment"],"demonstration":"Rewrite an imperative data processing pipeline using functional style: replace loops with map/filter/reduce, replace mutation with immutable transformations, and compare readability and testability","setup_requirements":["Python 3.12+ and Haskell GHC installed","Functional programming REPL configured"],"review":[{"key":"Referential Transparency","value":"An expression is referentially transparent if it can be replaced with its value without changing program behavior; this enables equational reasoning, memoization, and safe parallelization"},{"key":"Immutability and Concurrency","value":"Immutable data cannot have race conditions because no thread can modify it; this eliminates the need for locks, making concurrent programming dramatically simpler and safer"}]}},
-    {"week_number":2,"session_number":3,"date":"2024-01-22","topic":"Concurrent and Parallel Programming","duration":"50 minutes","learning_objectives":["Distinguish between concurrency and parallelism","Implement concurrent programs using async/await and message passing","Understand the actor model and CSP (Communicating Sequential Processes)"],"readings":["Goetz, Java Concurrency in Practice, Ch. 1-3","Go Documentation: Concurrency Patterns"],"lecture_notes":{"introduction":"Concurrency is about dealing with multiple things at once; parallelism is about doing multiple things at once. Modern software must handle both: responsive UIs, network I/O, and multi-core computation all require concurrent thinking.","key_concepts":["Concurrency vs parallelism: structure vs execution","async/await: cooperative multitasking for I/O-bound work","Message passing: goroutines and channels (CSP model)","Actor model: isolated state with asynchronous message passing","Thread pools: managing thread lifecycle for CPU-bound parallelism"],"demonstration":"Implement a web scraper three ways: sequential, async/await (I/O concurrency), and thread pool (CPU parallelism for parsing), comparing throughput and code complexity","setup_requirements":["Python with asyncio and concurrent.futures","Go installed for CSP examples"],"review":[{"key":"Share Memory by Communicating","value":"Instead of communicating by sharing memory (with locks), share memory by communicating (with channels); this is the Go proverb that captures the CSP approach to safe concurrent programming"},{"key":"async/await vs Threads","value":"async/await uses a single thread with cooperative scheduling (no context switch overhead, limited to I/O-bound work); threads use OS scheduling (real parallelism, higher overhead, requires synchronization for shared state)"}]}},
-    {"week_number":3,"session_number":5,"date":"2024-01-29","topic":"Type Systems and Generic Programming","duration":"50 minutes","learning_objectives":["Understand static vs dynamic typing and type inference","Implement generic/parameterized types for reusable code","Use type constraints and bounded polymorphism"],"readings":["Pierce, Types and Programming Languages, Ch. 1-3","Rust Documentation: Generics and Traits"],"lecture_notes":{"introduction":"Type systems are a form of lightweight formal verification: they catch entire classes of bugs at compile time. Generic programming lets you write code that works with any type that satisfies specified constraints, maximizing reuse without sacrificing type safety.","key_concepts":["Static typing: types checked at compile time (Java, Rust, TypeScript)","Dynamic typing: types checked at runtime (Python, JavaScript)","Type inference: compiler deduces types from usage (Rust, TypeScript, Kotlin)","Generics: parameterized types and functions (List<T>, fn sort<T: Ord>)","Traits and interfaces: defining behavior contracts for generic bounds"],"demonstration":"Implement a generic priority queue in Rust that works with any type implementing the Ord trait, then contrast with a Python version that accepts any type but fails at runtime if comparison is unsupported","setup_requirements":["Rust toolchain installed","TypeScript environment for type system examples","Python for dynamic typing contrast"],"review":[{"key":"Type Erasure vs Monomorphization","value":"Java generics use type erasure (generic types become Object at runtime); Rust generics use monomorphization (compiler generates specialized code for each concrete type). Monomorphization gives zero-cost abstraction but increases binary size"},{"key":"Algebraic Data Types","value":"Sum types (enums with data) and product types (structs/tuples) together form algebraic data types; they enable exhaustive pattern matching, making it impossible to forget a case when handling variants"}]}},
-    {"week_number":4,"session_number":7,"date":"2024-02-05","topic":"Metaprogramming and Code Generation","duration":"50 minutes","learning_objectives":["Understand compile-time vs runtime metaprogramming","Use decorators, macros, and reflection for code generation","Evaluate when metaprogramming helps vs when it obscures"],"readings":["Lopes, Exercises in Programming Style, selected chapters","Python Documentation: Decorators and Metaclasses"],"lecture_notes":{"introduction":"Metaprogramming is writing code that writes or modifies code. Used judiciously, it eliminates boilerplate and enforces invariants. Used carelessly, it creates unmaintainable magic. This session teaches you when and how to use it responsibly.","key_concepts":["Python decorators: wrapping functions to add behavior","Python metaclasses: customizing class creation","Rust procedural macros: compile-time code generation","Reflection: inspecting types and values at runtime","Tradeoffs: power vs readability, magic vs explicitness"],"demonstration":"Build a Python decorator that automatically validates function arguments against type annotations, a retry decorator for network calls, and a Rust derive macro that generates serialization code","setup_requirements":["Python 3.12+ with typing module","Rust with proc_macro crate"],"review":[{"key":"Decorator Pattern","value":"Decorators wrap a function to add behavior (logging, caching, authentication) without modifying the function's code; they are the most common and most readable form of metaprogramming in Python"},{"key":"When Not to Use Metaprogramming","value":"If a simple function or class achieves the same goal, prefer it; metaprogramming should be a last resort for eliminating genuine repetitive boilerplate, not a first choice for showing off language features"}]}},
-    {"week_number":5,"session_number":9,"date":"2024-02-12","topic":"Memory Management and Performance Optimization","duration":"50 minutes","learning_objectives":["Understand garbage collection, reference counting, and ownership models","Profile programs to identify performance bottlenecks","Apply optimization techniques guided by profiling data"],"readings":["Godbolt, 'What Every Programmer Should Know About Memory'","Rust Documentation: Ownership and Borrowing"],"lecture_notes":{"introduction":"Performance matters. Understanding how memory is managed in different languages — and how to measure and optimize performance — separates programmers who build fast software from those who wonder why their code is slow.","key_concepts":["Stack vs heap allocation: speed vs flexibility","Garbage collection: mark-and-sweep, generational GC, GC pauses","Reference counting: deterministic deallocation, circular reference problem","Rust ownership: compile-time memory management with no GC overhead","Profiling: CPU profiling, memory profiling, flame graphs, benchmarking"],"demonstration":"Profile a Python program to find a performance bottleneck, optimize it in Python, then rewrite the hot path in Rust (via PyO3) to achieve a 50x speedup, measuring before and after","setup_requirements":["Python with cProfile and memory_profiler","Rust with criterion benchmarking","Flame graph visualization tool"],"review":[{"key":"Rust Ownership","value":"Each value has exactly one owner; when the owner goes out of scope, the value is dropped. Borrowing allows temporary read-only or exclusive mutable access. This system prevents use-after-free, double-free, and data races at compile time with zero runtime cost"},{"key":"Profile Before Optimizing","value":"Never guess where bottlenecks are; always measure first. Programmers' intuition about performance is consistently wrong. Profile, identify the hot path, optimize that path, and measure again to verify improvement"}]}},
-    {"week_number":5,"session_number":10,"date":"2024-02-14","topic":"Design Patterns Across Paradigms","duration":"50 minutes","learning_objectives":["Apply design patterns from OOP, functional, and concurrent paradigms","Recognize when a pattern from one paradigm solves a problem in another","Build programs that combine paradigms effectively"],"readings":["Gamma et al., Design Patterns (selected: Strategy, Observer, Iterator)","Gabriel, Patterns of Software, Ch. 1-3"],"lecture_notes":{"introduction":"Design patterns are not language-specific; they are solutions to recurring problems. Many OOP patterns (Strategy, Observer, Iterator) have simpler functional equivalents. Understanding patterns across paradigms lets you choose the simplest solution.","key_concepts":["Strategy pattern: OOP (interface + classes) vs functional (pass a function)","Observer pattern: OOP (callbacks) vs reactive (streams and subscribers)","Iterator pattern: OOP (interface) vs generators and lazy sequences","Builder pattern: OOP (method chaining) vs functional (pipeline composition)","Choosing the right paradigm for the problem at hand"],"demonstration":"Implement a configurable data pipeline using Strategy pattern in OOP style, then refactor to functional style using higher-order functions, comparing verbosity and flexibility","setup_requirements":["Multi-language environment (Python, Rust, or Go)","Design pattern reference"],"review":[{"key":"Patterns as Language Gaps","value":"Peter Norvig observed that many Gang of Four patterns are workarounds for language limitations; first-class functions eliminate Strategy, closures eliminate Command, and algebraic data types eliminate Visitor. Choose languages that make your patterns unnecessary"},{"key":"Composition Over Inheritance","value":"Prefer composing behaviors from small, focused components over deep inheritance hierarchies; composition is more flexible (swap behaviors at runtime), more testable (mock individual components), and avoids the fragile base class problem"}]}}
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "topic": "Functional Programming Paradigm",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Understand pure functions, immutability, and referential transparency",
+        "Apply higher-order functions: map, filter, reduce",
+        "Write programs using functional composition and pipelines"
+      ],
+      "readings": [
+        "Abelson & Sussman, SICP, Ch. 1",
+        "Hutton, Programming in Haskell, Ch. 1-3"
+      ],
+      "lecture_notes": {
+        "introduction": "Most professional code mixes paradigms. This course expands your programming toolkit beyond OOP to include functional, concurrent, and generic programming. Each paradigm offers different strengths for different problems.",
+        "key_concepts": [
+          "Pure functions: same input always produces same output, no side effects",
+          "Immutability: data cannot be changed after creation, new values are derived",
+          "Higher-order functions: functions that take or return functions",
+          "Function composition: building complex operations from simple ones",
+          "Closures: functions that capture their lexical environment"
+        ],
+        "demonstration": "Rewrite an imperative data processing pipeline using functional style: replace loops with map/filter/reduce, replace mutation with immutable transformations, and compare readability and testability",
+        "setup_requirements": [
+          "Python 3.12+ and Haskell GHC installed",
+          "Functional programming REPL configured"
+        ],
+        "review": [
+          {
+            "key": "Referential Transparency",
+            "value": "An expression is referentially transparent if it can be replaced with its value without changing program behavior; this enables equational reasoning, memoization, and safe parallelization"
+          },
+          {
+            "key": "Immutability and Concurrency",
+            "value": "Immutable data cannot have race conditions because no thread can modify it; this eliminates the need for locks, making concurrent programming dramatically simpler and safer"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 3,
+      "topic": "Concurrent and Parallel Programming",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Distinguish between concurrency and parallelism",
+        "Implement concurrent programs using async/await and message passing",
+        "Understand the actor model and CSP (Communicating Sequential Processes)"
+      ],
+      "readings": [
+        "Goetz, Java Concurrency in Practice, Ch. 1-3",
+        "Go Documentation: Concurrency Patterns"
+      ],
+      "lecture_notes": {
+        "introduction": "Concurrency is about dealing with multiple things at once; parallelism is about doing multiple things at once. Modern software must handle both: responsive UIs, network I/O, and multi-core computation all require concurrent thinking.",
+        "key_concepts": [
+          "Concurrency vs parallelism: structure vs execution",
+          "async/await: cooperative multitasking for I/O-bound work",
+          "Message passing: goroutines and channels (CSP model)",
+          "Actor model: isolated state with asynchronous message passing",
+          "Thread pools: managing thread lifecycle for CPU-bound parallelism"
+        ],
+        "demonstration": "Implement a web scraper three ways: sequential, async/await (I/O concurrency), and thread pool (CPU parallelism for parsing), comparing throughput and code complexity",
+        "setup_requirements": [
+          "Python with asyncio and concurrent.futures",
+          "Go installed for CSP examples"
+        ],
+        "review": [
+          {
+            "key": "Share Memory by Communicating",
+            "value": "Instead of communicating by sharing memory (with locks), share memory by communicating (with channels); this is the Go proverb that captures the CSP approach to safe concurrent programming"
+          },
+          {
+            "key": "async/await vs Threads",
+            "value": "async/await uses a single thread with cooperative scheduling (no context switch overhead, limited to I/O-bound work); threads use OS scheduling (real parallelism, higher overhead, requires synchronization for shared state)"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 5,
+      "topic": "Type Systems and Generic Programming",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Understand static vs dynamic typing and type inference",
+        "Implement generic/parameterized types for reusable code",
+        "Use type constraints and bounded polymorphism"
+      ],
+      "readings": [
+        "Pierce, Types and Programming Languages, Ch. 1-3",
+        "Rust Documentation: Generics and Traits"
+      ],
+      "lecture_notes": {
+        "introduction": "Type systems are a form of lightweight formal verification: they catch entire classes of bugs at compile time. Generic programming lets you write code that works with any type that satisfies specified constraints, maximizing reuse without sacrificing type safety.",
+        "key_concepts": [
+          "Static typing: types checked at compile time (Java, Rust, TypeScript)",
+          "Dynamic typing: types checked at runtime (Python, JavaScript)",
+          "Type inference: compiler deduces types from usage (Rust, TypeScript, Kotlin)",
+          "Generics: parameterized types and functions (List<T>, fn sort<T: Ord>)",
+          "Traits and interfaces: defining behavior contracts for generic bounds"
+        ],
+        "demonstration": "Implement a generic priority queue in Rust that works with any type implementing the Ord trait, then contrast with a Python version that accepts any type but fails at runtime if comparison is unsupported",
+        "setup_requirements": [
+          "Rust toolchain installed",
+          "TypeScript environment for type system examples",
+          "Python for dynamic typing contrast"
+        ],
+        "review": [
+          {
+            "key": "Type Erasure vs Monomorphization",
+            "value": "Java generics use type erasure (generic types become Object at runtime); Rust generics use monomorphization (compiler generates specialized code for each concrete type). Monomorphization gives zero-cost abstraction but increases binary size"
+          },
+          {
+            "key": "Algebraic Data Types",
+            "value": "Sum types (enums with data) and product types (structs/tuples) together form algebraic data types; they enable exhaustive pattern matching, making it impossible to forget a case when handling variants"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 7,
+      "topic": "Metaprogramming and Code Generation",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Understand compile-time vs runtime metaprogramming",
+        "Use decorators, macros, and reflection for code generation",
+        "Evaluate when metaprogramming helps vs when it obscures"
+      ],
+      "readings": [
+        "Lopes, Exercises in Programming Style, selected chapters",
+        "Python Documentation: Decorators and Metaclasses"
+      ],
+      "lecture_notes": {
+        "introduction": "Metaprogramming is writing code that writes or modifies code. Used judiciously, it eliminates boilerplate and enforces invariants. Used carelessly, it creates unmaintainable magic. This session teaches you when and how to use it responsibly.",
+        "key_concepts": [
+          "Python decorators: wrapping functions to add behavior",
+          "Python metaclasses: customizing class creation",
+          "Rust procedural macros: compile-time code generation",
+          "Reflection: inspecting types and values at runtime",
+          "Tradeoffs: power vs readability, magic vs explicitness"
+        ],
+        "demonstration": "Build a Python decorator that automatically validates function arguments against type annotations, a retry decorator for network calls, and a Rust derive macro that generates serialization code",
+        "setup_requirements": [
+          "Python 3.12+ with typing module",
+          "Rust with proc_macro crate"
+        ],
+        "review": [
+          {
+            "key": "Decorator Pattern",
+            "value": "Decorators wrap a function to add behavior (logging, caching, authentication) without modifying the function's code; they are the most common and most readable form of metaprogramming in Python"
+          },
+          {
+            "key": "When Not to Use Metaprogramming",
+            "value": "If a simple function or class achieves the same goal, prefer it; metaprogramming should be a last resort for eliminating genuine repetitive boilerplate, not a first choice for showing off language features"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 9,
+      "topic": "Memory Management and Performance Optimization",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Understand garbage collection, reference counting, and ownership models",
+        "Profile programs to identify performance bottlenecks",
+        "Apply optimization techniques guided by profiling data"
+      ],
+      "readings": [
+        "Godbolt, 'What Every Programmer Should Know About Memory'",
+        "Rust Documentation: Ownership and Borrowing"
+      ],
+      "lecture_notes": {
+        "introduction": "Performance matters. Understanding how memory is managed in different languages — and how to measure and optimize performance — separates programmers who build fast software from those who wonder why their code is slow.",
+        "key_concepts": [
+          "Stack vs heap allocation: speed vs flexibility",
+          "Garbage collection: mark-and-sweep, generational GC, GC pauses",
+          "Reference counting: deterministic deallocation, circular reference problem",
+          "Rust ownership: compile-time memory management with no GC overhead",
+          "Profiling: CPU profiling, memory profiling, flame graphs, benchmarking"
+        ],
+        "demonstration": "Profile a Python program to find a performance bottleneck, optimize it in Python, then rewrite the hot path in Rust (via PyO3) to achieve a 50x speedup, measuring before and after",
+        "setup_requirements": [
+          "Python with cProfile and memory_profiler",
+          "Rust with criterion benchmarking",
+          "Flame graph visualization tool"
+        ],
+        "review": [
+          {
+            "key": "Rust Ownership",
+            "value": "Each value has exactly one owner; when the owner goes out of scope, the value is dropped. Borrowing allows temporary read-only or exclusive mutable access. This system prevents use-after-free, double-free, and data races at compile time with zero runtime cost"
+          },
+          {
+            "key": "Profile Before Optimizing",
+            "value": "Never guess where bottlenecks are; always measure first. Programmers' intuition about performance is consistently wrong. Profile, identify the hot path, optimize that path, and measure again to verify improvement"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 10,
+      "topic": "Design Patterns Across Paradigms",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Apply design patterns from OOP, functional, and concurrent paradigms",
+        "Recognize when a pattern from one paradigm solves a problem in another",
+        "Build programs that combine paradigms effectively"
+      ],
+      "readings": [
+        "Gamma et al., Design Patterns (selected: Strategy, Observer, Iterator)",
+        "Gabriel, Patterns of Software, Ch. 1-3"
+      ],
+      "lecture_notes": {
+        "introduction": "Design patterns are not language-specific; they are solutions to recurring problems. Many OOP patterns (Strategy, Observer, Iterator) have simpler functional equivalents. Understanding patterns across paradigms lets you choose the simplest solution.",
+        "key_concepts": [
+          "Strategy pattern: OOP (interface + classes) vs functional (pass a function)",
+          "Observer pattern: OOP (callbacks) vs reactive (streams and subscribers)",
+          "Iterator pattern: OOP (interface) vs generators and lazy sequences",
+          "Builder pattern: OOP (method chaining) vs functional (pipeline composition)",
+          "Choosing the right paradigm for the problem at hand"
+        ],
+        "demonstration": "Implement a configurable data pipeline using Strategy pattern in OOP style, then refactor to functional style using higher-order functions, comparing verbosity and flexibility",
+        "setup_requirements": [
+          "Multi-language environment (Python, Rust, or Go)",
+          "Design pattern reference"
+        ],
+        "review": [
+          {
+            "key": "Patterns as Language Gaps",
+            "value": "Peter Norvig observed that many Gang of Four patterns are workarounds for language limitations; first-class functions eliminate Strategy, closures eliminate Command, and algebraic data types eliminate Visitor. Choose languages that make your patterns unnecessary"
+          },
+          {
+            "key": "Composition Over Inheritance",
+            "value": "Prefer composing behaviors from small, focused components over deep inheritance hierarchies; composition is more flexible (swap behaviors at runtime), more testable (mock individual components), and avoids the fragile base class problem"
+          }
+        ]
+      }
+    }
   ],
   "assessments": {
     "quizzes": [
-      {"quiz":1,"week":2,"topic":"Functional and Concurrent Programming","duration":"20 minutes","questions":[{"question":"Rewrite the following imperative code in functional style using only map, filter, and reduce (no loops or mutation):\n\nnumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\nresult = 0\nfor n in numbers:\n    if n % 2 == 0:\n        result += n * n","type":"code","points":10,"answer":"from functools import reduce\nresult = reduce(lambda acc, x: acc + x, map(lambda n: n * n, filter(lambda n: n % 2 == 0, numbers)))\n\n# Or more readably:\nevens = filter(lambda n: n % 2 == 0, numbers)\nsquared = map(lambda n: n * n, evens)\nresult = reduce(lambda acc, x: acc + x, squared)\n\n# Result: 4 + 16 + 36 + 64 + 100 = 220","rubric":[{"key":"Correct use of filter for even numbers","value":3},{"key":"Correct use of map for squaring","value":3},{"key":"Correct use of reduce for summation","value":3},{"key":"No loops or mutation","value":1}]},{"question":"Explain the difference between concurrency and parallelism with a real-world analogy and a programming example of each.","type":"short_answer","points":10,"answer":"Concurrency is about managing multiple tasks that can overlap in time (structure). Parallelism is about executing multiple tasks simultaneously (execution). Analogy: A single cook preparing two dishes by switching between them is concurrent but not parallel. Two cooks each preparing one dish is parallel. Programming: async/await handling multiple HTTP requests on one thread is concurrent (switches between requests during I/O waits). A thread pool processing images on 4 CPU cores is parallel (truly simultaneous computation).","rubric":[{"key":"Correct definitions of both concepts","value":4},{"key":"Clear real-world analogy","value":3},{"key":"Correct programming examples","value":3}]}],"total_points":20},
-      {"quiz":2,"week":4,"topic":"Type Systems and Metaprogramming","duration":"25 minutes","questions":[{"question":"Write a generic function in Rust (or pseudocode with type constraints) that finds the maximum element in a slice. Explain what trait bound is required and why.","type":"code","points":15,"answer":"fn find_max<T: PartialOrd>(slice: &[T]) -> Option<&T> {\n    if slice.is_empty() {\n        return None;\n    }\n    let mut max = &slice[0];\n    for item in &slice[1..] {\n        if item > max {\n            max = item;\n        }\n    }\n    Some(max)\n}\n\nThe PartialOrd trait bound is required because the > comparison operator is defined by this trait. Without it, the compiler cannot guarantee that the type T supports comparison, and the code would not compile. This is the benefit of bounded generics: the compiler enforces that the function is only called with types that support the required operations.","rubric":[{"key":"Correct generic function with trait bound","value":5},{"key":"Handles empty slice edge case","value":3},{"key":"Correct iteration and comparison logic","value":4},{"key":"Explains why the trait bound is necessary","value":3}]},{"question":"Write a Python decorator called @retry(max_attempts=3, delay=1) that retries a function up to max_attempts times if it raises an exception, waiting delay seconds between attempts.","type":"code","points":10,"answer":"import time\nfrom functools import wraps\n\ndef retry(max_attempts=3, delay=1):\n    def decorator(func):\n        @wraps(func)\n        def wrapper(*args, **kwargs):\n            last_exception = None\n            for attempt in range(max_attempts):\n                try:\n                    return func(*args, **kwargs)\n                except Exception as e:\n                    last_exception = e\n                    if attempt < max_attempts - 1:\n                        time.sleep(delay)\n            raise last_exception\n        return wrapper\n    return decorator","rubric":[{"key":"Correct three-level nesting for parameterized decorator","value":4},{"key":"Correct retry loop with attempt counting","value":3},{"key":"Re-raises last exception after all attempts fail","value":3}]}],"total_points":25}
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "Functional and Concurrent Programming",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "Rewrite the following imperative code in functional style using only map, filter, and reduce (no loops or mutation):\n\nnumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\nresult = 0\nfor n in numbers:\n    if n % 2 == 0:\n        result += n * n",
+            "type": "code",
+            "points": 10,
+            "answer": "from functools import reduce\nresult = reduce(lambda acc, x: acc + x, map(lambda n: n * n, filter(lambda n: n % 2 == 0, numbers)))\n\n# Or more readably:\nevens = filter(lambda n: n % 2 == 0, numbers)\nsquared = map(lambda n: n * n, evens)\nresult = reduce(lambda acc, x: acc + x, squared)\n\n# Result: 4 + 16 + 36 + 64 + 100 = 220",
+            "rubric": [
+              {
+                "key": "Correct use of filter for even numbers",
+                "value": 3
+              },
+              {
+                "key": "Correct use of map for squaring",
+                "value": 3
+              },
+              {
+                "key": "Correct use of reduce for summation",
+                "value": 3
+              },
+              {
+                "key": "No loops or mutation",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between concurrency and parallelism with a real-world analogy and a programming example of each.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Concurrency is about managing multiple tasks that can overlap in time (structure). Parallelism is about executing multiple tasks simultaneously (execution). Analogy: A single cook preparing two dishes by switching between them is concurrent but not parallel. Two cooks each preparing one dish is parallel. Programming: async/await handling multiple HTTP requests on one thread is concurrent (switches between requests during I/O waits). A thread pool processing images on 4 CPU cores is parallel (truly simultaneous computation).",
+            "rubric": [
+              {
+                "key": "Correct definitions of both concepts",
+                "value": 4
+              },
+              {
+                "key": "Clear real-world analogy",
+                "value": 3
+              },
+              {
+                "key": "Correct programming examples",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 4,
+        "topic": "Type Systems and Metaprogramming",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Write a generic function in Rust (or pseudocode with type constraints) that finds the maximum element in a slice. Explain what trait bound is required and why.",
+            "type": "code",
+            "points": 15,
+            "answer": "fn find_max<T: PartialOrd>(slice: &[T]) -> Option<&T> {\n    if slice.is_empty() {\n        return None;\n    }\n    let mut max = &slice[0];\n    for item in &slice[1..] {\n        if item > max {\n            max = item;\n        }\n    }\n    Some(max)\n}\n\nThe PartialOrd trait bound is required because the > comparison operator is defined by this trait. Without it, the compiler cannot guarantee that the type T supports comparison, and the code would not compile. This is the benefit of bounded generics: the compiler enforces that the function is only called with types that support the required operations.",
+            "rubric": [
+              {
+                "key": "Correct generic function with trait bound",
+                "value": 5
+              },
+              {
+                "key": "Handles empty slice edge case",
+                "value": 3
+              },
+              {
+                "key": "Correct iteration and comparison logic",
+                "value": 4
+              },
+              {
+                "key": "Explains why the trait bound is necessary",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Write a Python decorator called @retry(max_attempts=3, delay=1) that retries a function up to max_attempts times if it raises an exception, waiting delay seconds between attempts.",
+            "type": "code",
+            "points": 10,
+            "answer": "import time\nfrom functools import wraps\n\ndef retry(max_attempts=3, delay=1):\n    def decorator(func):\n        @wraps(func)\n        def wrapper(*args, **kwargs):\n            last_exception = None\n            for attempt in range(max_attempts):\n                try:\n                    return func(*args, **kwargs)\n                except Exception as e:\n                    last_exception = e\n                    if attempt < max_attempts - 1:\n                        time.sleep(delay)\n            raise last_exception\n        return wrapper\n    return decorator",
+            "rubric": [
+              {
+                "key": "Correct three-level nesting for parameterized decorator",
+                "value": 4
+              },
+              {
+                "key": "Correct retry loop with attempt counting",
+                "value": 3
+              },
+              {
+                "key": "Re-raises last exception after all attempts fail",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 25
+      }
     ],
     "major_assignments": [
-      {"assignment":1,"title":"Multi-Paradigm Programming Project","week_assigned":3,"week_due":5,"points":100,"description":"Design and implement a concurrent data processing system that combines functional, object-oriented, and concurrent programming paradigms. The system must process a stream of events using a configurable pipeline of transformation and aggregation stages, with concurrent execution for I/O and computation.","objectives":["Apply functional programming for data transformation stages","Use OOP for system structure and configuration","Implement concurrency for parallel processing and I/O","Profile and optimize the system based on measured bottlenecks"],"requirements":{},"deliverables":["Source code implementing the multi-paradigm pipeline","Benchmark results comparing sequential vs concurrent execution","Profiling report identifying and addressing bottlenecks","Design document (3 pages) explaining paradigm choices for each component"],"grading_rubric":{"functional_design":{"points":25,"criteria":["Transformation stages are pure functions with no side effects","Pipeline is composable: stages can be added, removed, or reordered","Higher-order functions used appropriately for configuration","Immutable data flows between stages"]},"concurrent_implementation":{"points":30,"criteria":["I/O-bound work uses async/await or equivalent","CPU-bound work uses thread/process parallelism","No race conditions or deadlocks","Graceful error handling in concurrent contexts"]},"architecture":{"points":25,"criteria":["Clear separation between paradigms with justified boundaries","OOP used for system structure, FP for data processing, concurrency for execution","Code is modular and each module is independently testable","Configuration is data-driven, not hardcoded"]},"analysis":{"points":20,"criteria":["Profiling identifies actual bottlenecks with data","Concurrent version shows measurable speedup over sequential","Design document explains paradigm choices with rationale","Performance analysis is honest about trade-offs"]}},"rubric":[{"attributes":{"points":100,"criteria":["Effective combination of functional, OOP, and concurrent paradigms","Correct concurrent execution with measured performance improvement","Clean architecture with justified paradigm boundaries","Thorough profiling and honest performance analysis"]}}]}
+      {
+        "assignment": 1,
+        "title": "Multi-Paradigm Programming Project",
+        "week_assigned": 3,
+        "week_due": 5,
+        "points": 100,
+        "description": "Design and implement a concurrent data processing system that combines functional, object-oriented, and concurrent programming paradigms. The system must process a stream of events using a configurable pipeline of transformation and aggregation stages, with concurrent execution for I/O and computation.",
+        "objectives": [
+          "Apply functional programming for data transformation stages",
+          "Use OOP for system structure and configuration",
+          "Implement concurrency for parallel processing and I/O",
+          "Profile and optimize the system based on measured bottlenecks"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Source code implementing the multi-paradigm pipeline",
+          "Benchmark results comparing sequential vs concurrent execution",
+          "Profiling report identifying and addressing bottlenecks",
+          "Design document (3 pages) explaining paradigm choices for each component"
+        ],
+        "grading_rubric": {
+          "functional_design": {
+            "points": 25,
+            "criteria": [
+              "Transformation stages are pure functions with no side effects",
+              "Pipeline is composable: stages can be added, removed, or reordered",
+              "Higher-order functions used appropriately for configuration",
+              "Immutable data flows between stages"
+            ]
+          },
+          "concurrent_implementation": {
+            "points": 30,
+            "criteria": [
+              "I/O-bound work uses async/await or equivalent",
+              "CPU-bound work uses thread/process parallelism",
+              "No race conditions or deadlocks",
+              "Graceful error handling in concurrent contexts"
+            ]
+          },
+          "architecture": {
+            "points": 25,
+            "criteria": [
+              "Clear separation between paradigms with justified boundaries",
+              "OOP used for system structure, FP for data processing, concurrency for execution",
+              "Code is modular and each module is independently testable",
+              "Configuration is data-driven, not hardcoded"
+            ]
+          },
+          "analysis": {
+            "points": 20,
+            "criteria": [
+              "Profiling identifies actual bottlenecks with data",
+              "Concurrent version shows measurable speedup over sequential",
+              "Design document explains paradigm choices with rationale",
+              "Performance analysis is honest about trade-offs"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Effective combination of functional, OOP, and concurrent paradigms",
+                "Correct concurrent execution with measured performance improvement",
+                "Clean architecture with justified paradigm boundaries",
+                "Thorough profiling and honest performance analysis"
+              ]
+            }
+          }
+        ]
+      }
     ]
   },
-  "grading_breakdown": {"weekly_quizzes":{"percentage":15,"description":"Regular assessment of advanced programming concepts"},"lab_assignments":{"percentage":20,"description":"Weekly exercises in each programming paradigm"},"major_assignments":{"percentage":30,"description":"Multi-paradigm programming project"},"midterm_examination":{"percentage":15,"description":"Written and coding exam on functional and concurrent programming"},"final_examination":{"percentage":20,"description":"Comprehensive exam covering all paradigms and patterns"}},
-  "course_policies": {"attendance":"Attendance is expected for lectures and mandatory for lab sessions.","late_submissions":"Late assignments lose 10% per day. No submissions accepted more than 5 days late.","collaboration":"Discussion of paradigm concepts is encouraged. All code and analysis must be individual work.","academic_integrity":"All submitted code must be your own. Using code from external sources without attribution is plagiarism.","technology_requirements":"Students need Python 3.12+, Rust toolchain, and Go installed. Lab computers are available with all environments configured."}
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 15,
+      "description": "Regular assessment of advanced programming concepts"
+    },
+    "lab_assignments": {
+      "percentage": 20,
+      "description": "Weekly exercises in each programming paradigm"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "Multi-paradigm programming project"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Written and coding exam on functional and concurrent programming"
+    },
+    "final_examination": {
+      "percentage": 20,
+      "description": "Comprehensive exam covering all paradigms and patterns"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is expected for lectures and mandatory for lab sessions.",
+    "late_submissions": "Late assignments lose 10% per day. No submissions accepted more than 5 days late.",
+    "collaboration": "Discussion of paradigm concepts is encouraged. All code and analysis must be individual work.",
+    "academic_integrity": "All submitted code must be your own. Using code from external sources without attribution is plagiarism.",
+    "technology_requirements": "Students need Python 3.12+, Rust toolchain, and Go installed. Lab computers are available with all environments configured."
+  }
 }

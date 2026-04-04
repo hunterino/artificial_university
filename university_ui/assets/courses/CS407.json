@@ -1,21 +1,426 @@
 {
-  "course_info": {"course_id":"CS407","title":"Data Science and Analytics","credit_hours":4,"duration":"15 weeks","meeting_schedule":"Monday, Wednesday, Friday - 4 hours per week","prerequisites":["CS301 - Database Management Systems"]},
+  "course_info": {
+    "course_id": "CS407",
+    "title": "Data Science and Analytics",
+    "credit_hours": 4,
+    "duration": "15 weeks",
+    "meeting_schedule": "Monday, Wednesday, Friday - 4 hours per week",
+    "prerequisites": [
+      "CS301 - Database Management Systems"
+    ]
+  },
   "class_schedule": [
-    {"week_number":1,"session_number":1,"date":"2024-01-15","topic":"Introduction to Data Science and the Analytics Pipeline","duration":"50 minutes","learning_objectives":["Understand the end-to-end data science workflow","Set up a Python data science environment with pandas and Jupyter","Perform exploratory data analysis on a real dataset"],"readings":["McKinney, Python for Data Analysis, Ch. 1-4","Wickham, R for Data Science, Ch. 1 (for the tidy data philosophy)"],"lecture_notes":{"introduction":"Data science turns raw data into actionable insights. This course teaches the full pipeline: acquiring data, cleaning it, exploring it, modeling it, and communicating findings. You will work with real messy datasets, not textbook clean ones.","key_concepts":["Data science pipeline: acquire, clean, explore, model, communicate","Pandas DataFrame: the workhorse data structure for tabular data","Exploratory Data Analysis (EDA): summary statistics, distributions, correlations","Data quality issues: missing values, duplicates, inconsistent formats","Tidy data principles: each variable is a column, each observation is a row"],"demonstration":"Load a messy real-world CSV dataset into pandas, identify data quality issues, clean them, compute summary statistics, and create initial visualizations","setup_requirements":["Python 3.12+ with pandas, numpy, matplotlib, seaborn","Jupyter Notebook configured","Sample datasets downloaded"],"review":[{"key":"Tidy Data","value":"A dataset is tidy when each variable has its own column, each observation has its own row, and each value has its own cell; most data wrangling effort goes into getting data into tidy form"},{"key":"EDA Before Modeling","value":"Always explore data before building models; visualizations reveal patterns, outliers, and data quality issues that summary statistics miss. A model built on data you have not explored is built on sand"}]}},
-    {"week_number":2,"session_number":3,"date":"2024-01-22","topic":"Data Wrangling and Feature Engineering","duration":"50 minutes","learning_objectives":["Transform messy data into analysis-ready format using pandas","Engineer informative features from raw data","Handle missing data with appropriate imputation strategies"],"readings":["McKinney, Ch. 7-8 - Data Cleaning and Wrangling","Feature Engineering for Machine Learning, Ch. 1-3"],"lecture_notes":{"introduction":"Data scientists spend 80% of their time cleaning and transforming data. Feature engineering — creating new variables from existing ones — is often the difference between a mediocre model and an excellent one.","key_concepts":["Pandas operations: merge, join, groupby, pivot, melt","String manipulation and datetime parsing","Missing data strategies: drop, fill forward, mean impute, model-based imputation","Feature engineering: binning, encoding categoricals, interaction terms, lag features","Data validation: asserting data quality invariants programmatically"],"demonstration":"Take a raw e-commerce dataset with multiple tables, join them, handle missing values, engineer features (days since last purchase, average order value, purchase frequency), and validate the result","setup_requirements":["Python with pandas","Multi-table dataset provided"],"review":[{"key":"One-Hot Encoding","value":"Convert categorical variables to binary columns (one per category); this is necessary for algorithms that require numeric input. Use drop_first=True to avoid the dummy variable trap in linear models"},{"key":"Target Leakage","value":"Features that contain information about the target that would not be available at prediction time; this causes artificially high accuracy during training but fails in production. Always verify feature availability at prediction time"}]}},
-    {"week_number":3,"session_number":5,"date":"2024-01-29","topic":"Statistical Analysis and Hypothesis Testing","duration":"50 minutes","learning_objectives":["Conduct hypothesis tests for comparing groups and detecting relationships","Interpret p-values, confidence intervals, and effect sizes correctly","Avoid common statistical pitfalls: multiple testing, p-hacking"],"readings":["Diez, OpenIntro Statistics, Ch. 5-7","Wasserstein, 'The ASA Statement on p-Values' (2016)"],"lecture_notes":{"introduction":"Statistical analysis provides the rigor that separates data science from data anecdotes. Hypothesis testing tells you whether observed patterns are likely real or just noise. Understanding statistics is essential for making defensible data-driven decisions.","key_concepts":["Null and alternative hypotheses","t-tests: comparing two group means","Chi-square test: testing independence of categorical variables","Correlation vs causation: observational data limitations","Multiple testing correction: Bonferroni, FDR","Effect size: practical significance beyond statistical significance"],"demonstration":"Analyze an A/B test dataset: formulate hypotheses, conduct a t-test, calculate confidence intervals and effect size, and make a recommendation accounting for both statistical and practical significance","setup_requirements":["Python with scipy.stats","A/B test dataset provided"],"review":[{"key":"p-Value Interpretation","value":"The p-value is NOT the probability that the null hypothesis is true; it is the probability of observing data this extreme if the null hypothesis were true. A small p-value means the data is unlikely under H0, not that H0 is false"},{"key":"Effect Size","value":"A statistically significant result with a tiny effect size may not be practically important; always report effect size alongside p-values. With large enough samples, any trivial difference becomes statistically significant"}]}},
-    {"week_number":4,"session_number":7,"date":"2024-02-05","topic":"Data Visualization and Storytelling","duration":"50 minutes","learning_objectives":["Create effective visualizations using matplotlib, seaborn, and plotly","Design dashboards that communicate insights to stakeholders","Apply data storytelling principles to present findings persuasively"],"readings":["Knaflic, Storytelling with Data, Ch. 1-5","Tufte, The Visual Display of Quantitative Information, Ch. 1-2"],"lecture_notes":{"introduction":"The best analysis is useless if stakeholders do not understand or act on it. Data visualization and storytelling are how you translate complex findings into decisions. A good chart communicates in seconds what a table of numbers cannot communicate at all.","key_concepts":["Chart selection: when to use bar, line, scatter, box, heatmap","Decluttering: removing chart junk to focus attention on data","Color usage: sequential, diverging, and categorical palettes","Interactive dashboards with plotly and Streamlit","Narrative structure: situation, complication, resolution for data stories"],"demonstration":"Take an EDA analysis and transform it into a stakeholder presentation: replace exploratory charts with publication-quality visuals, add context and narrative, and build an interactive dashboard","setup_requirements":["Python with matplotlib, seaborn, plotly, streamlit","Presentation tool (slides or notebook)"],"review":[{"key":"Pre-Attentive Attributes","value":"Size, color, position, and orientation are processed by the brain before conscious thought; use these strategically to draw attention to the key insight in your chart without requiring the viewer to study it"},{"key":"Data-Ink Ratio","value":"Maximize the proportion of ink used to display data vs non-data elements; remove gridlines, excessive labels, 3D effects, and decorative elements that do not carry information"}]}},
-    {"week_number":5,"session_number":9,"date":"2024-02-12","topic":"Big Data Technologies and Scalable Analytics","duration":"50 minutes","learning_objectives":["Understand distributed computing frameworks for big data","Write PySpark jobs for data processing at scale","Identify when big data tools are needed vs when pandas suffices"],"readings":["Karau, Learning Spark, Ch. 1-3","Google, 'MapReduce: Simplified Data Processing on Large Datasets' (2004)"],"lecture_notes":{"introduction":"When your data exceeds the memory of a single machine, you need distributed processing. Spark and similar frameworks let you apply the same analytical thinking to terabytes that you apply to megabytes, but with different performance trade-offs.","key_concepts":["MapReduce paradigm: map (transform), shuffle (redistribute), reduce (aggregate)","Apache Spark: RDDs, DataFrames, lazy evaluation, in-memory processing","PySpark: Spark with Python API, SQL interface","Partitioning and shuffling: where performance bottlenecks live","When to use Spark vs pandas: the 10GB rule of thumb"],"demonstration":"Process a 5GB web log dataset with PySpark: read from S3, filter, aggregate page views by hour and country, and write results to Parquet format, all in a Jupyter notebook connected to a Spark cluster","setup_requirements":["PySpark installed (local mode or cluster)","Sample large dataset available","Jupyter with PySpark kernel"],"review":[{"key":"Lazy Evaluation","value":"Spark builds a computation graph (DAG) but does not execute until an action (collect, write, count) is called; this enables optimization like predicate pushdown and column pruning before any data is processed"},{"key":"Shuffle Cost","value":"Shuffling data across nodes (during groupBy, join, sort) is the most expensive operation in distributed processing; minimizing shuffles through proper partitioning and broadcast joins is the key to Spark performance"}]}}
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "topic": "Introduction to Data Science and the Analytics Pipeline",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Understand the end-to-end data science workflow",
+        "Set up a Python data science environment with pandas and Jupyter",
+        "Perform exploratory data analysis on a real dataset"
+      ],
+      "readings": [
+        "McKinney, Python for Data Analysis, Ch. 1-4",
+        "Wickham, R for Data Science, Ch. 1 (for the tidy data philosophy)"
+      ],
+      "lecture_notes": {
+        "introduction": "Data science turns raw data into actionable insights. This course teaches the full pipeline: acquiring data, cleaning it, exploring it, modeling it, and communicating findings. You will work with real messy datasets, not textbook clean ones.",
+        "key_concepts": [
+          "Data science pipeline: acquire, clean, explore, model, communicate",
+          "Pandas DataFrame: the workhorse data structure for tabular data",
+          "Exploratory Data Analysis (EDA): summary statistics, distributions, correlations",
+          "Data quality issues: missing values, duplicates, inconsistent formats",
+          "Tidy data principles: each variable is a column, each observation is a row"
+        ],
+        "demonstration": "Load a messy real-world CSV dataset into pandas, identify data quality issues, clean them, compute summary statistics, and create initial visualizations",
+        "setup_requirements": [
+          "Python 3.12+ with pandas, numpy, matplotlib, seaborn",
+          "Jupyter Notebook configured",
+          "Sample datasets downloaded"
+        ],
+        "review": [
+          {
+            "key": "Tidy Data",
+            "value": "A dataset is tidy when each variable has its own column, each observation has its own row, and each value has its own cell; most data wrangling effort goes into getting data into tidy form"
+          },
+          {
+            "key": "EDA Before Modeling",
+            "value": "Always explore data before building models; visualizations reveal patterns, outliers, and data quality issues that summary statistics miss. A model built on data you have not explored is built on sand"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 3,
+      "topic": "Data Wrangling and Feature Engineering",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Transform messy data into analysis-ready format using pandas",
+        "Engineer informative features from raw data",
+        "Handle missing data with appropriate imputation strategies"
+      ],
+      "readings": [
+        "McKinney, Ch. 7-8 - Data Cleaning and Wrangling",
+        "Feature Engineering for Machine Learning, Ch. 1-3"
+      ],
+      "lecture_notes": {
+        "introduction": "Data scientists spend 80% of their time cleaning and transforming data. Feature engineering — creating new variables from existing ones — is often the difference between a mediocre model and an excellent one.",
+        "key_concepts": [
+          "Pandas operations: merge, join, groupby, pivot, melt",
+          "String manipulation and datetime parsing",
+          "Missing data strategies: drop, fill forward, mean impute, model-based imputation",
+          "Feature engineering: binning, encoding categoricals, interaction terms, lag features",
+          "Data validation: asserting data quality invariants programmatically"
+        ],
+        "demonstration": "Take a raw e-commerce dataset with multiple tables, join them, handle missing values, engineer features (days since last purchase, average order value, purchase frequency), and validate the result",
+        "setup_requirements": [
+          "Python with pandas",
+          "Multi-table dataset provided"
+        ],
+        "review": [
+          {
+            "key": "One-Hot Encoding",
+            "value": "Convert categorical variables to binary columns (one per category); this is necessary for algorithms that require numeric input. Use drop_first=True to avoid the dummy variable trap in linear models"
+          },
+          {
+            "key": "Target Leakage",
+            "value": "Features that contain information about the target that would not be available at prediction time; this causes artificially high accuracy during training but fails in production. Always verify feature availability at prediction time"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 5,
+      "topic": "Statistical Analysis and Hypothesis Testing",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Conduct hypothesis tests for comparing groups and detecting relationships",
+        "Interpret p-values, confidence intervals, and effect sizes correctly",
+        "Avoid common statistical pitfalls: multiple testing, p-hacking"
+      ],
+      "readings": [
+        "Diez, OpenIntro Statistics, Ch. 5-7",
+        "Wasserstein, 'The ASA Statement on p-Values' (2016)"
+      ],
+      "lecture_notes": {
+        "introduction": "Statistical analysis provides the rigor that separates data science from data anecdotes. Hypothesis testing tells you whether observed patterns are likely real or just noise. Understanding statistics is essential for making defensible data-driven decisions.",
+        "key_concepts": [
+          "Null and alternative hypotheses",
+          "t-tests: comparing two group means",
+          "Chi-square test: testing independence of categorical variables",
+          "Correlation vs causation: observational data limitations",
+          "Multiple testing correction: Bonferroni, FDR",
+          "Effect size: practical significance beyond statistical significance"
+        ],
+        "demonstration": "Analyze an A/B test dataset: formulate hypotheses, conduct a t-test, calculate confidence intervals and effect size, and make a recommendation accounting for both statistical and practical significance",
+        "setup_requirements": [
+          "Python with scipy.stats",
+          "A/B test dataset provided"
+        ],
+        "review": [
+          {
+            "key": "p-Value Interpretation",
+            "value": "The p-value is NOT the probability that the null hypothesis is true; it is the probability of observing data this extreme if the null hypothesis were true. A small p-value means the data is unlikely under H0, not that H0 is false"
+          },
+          {
+            "key": "Effect Size",
+            "value": "A statistically significant result with a tiny effect size may not be practically important; always report effect size alongside p-values. With large enough samples, any trivial difference becomes statistically significant"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 7,
+      "topic": "Data Visualization and Storytelling",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Create effective visualizations using matplotlib, seaborn, and plotly",
+        "Design dashboards that communicate insights to stakeholders",
+        "Apply data storytelling principles to present findings persuasively"
+      ],
+      "readings": [
+        "Knaflic, Storytelling with Data, Ch. 1-5",
+        "Tufte, The Visual Display of Quantitative Information, Ch. 1-2"
+      ],
+      "lecture_notes": {
+        "introduction": "The best analysis is useless if stakeholders do not understand or act on it. Data visualization and storytelling are how you translate complex findings into decisions. A good chart communicates in seconds what a table of numbers cannot communicate at all.",
+        "key_concepts": [
+          "Chart selection: when to use bar, line, scatter, box, heatmap",
+          "Decluttering: removing chart junk to focus attention on data",
+          "Color usage: sequential, diverging, and categorical palettes",
+          "Interactive dashboards with plotly and Streamlit",
+          "Narrative structure: situation, complication, resolution for data stories"
+        ],
+        "demonstration": "Take an EDA analysis and transform it into a stakeholder presentation: replace exploratory charts with publication-quality visuals, add context and narrative, and build an interactive dashboard",
+        "setup_requirements": [
+          "Python with matplotlib, seaborn, plotly, streamlit",
+          "Presentation tool (slides or notebook)"
+        ],
+        "review": [
+          {
+            "key": "Pre-Attentive Attributes",
+            "value": "Size, color, position, and orientation are processed by the brain before conscious thought; use these strategically to draw attention to the key insight in your chart without requiring the viewer to study it"
+          },
+          {
+            "key": "Data-Ink Ratio",
+            "value": "Maximize the proportion of ink used to display data vs non-data elements; remove gridlines, excessive labels, 3D effects, and decorative elements that do not carry information"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 9,
+      "topic": "Big Data Technologies and Scalable Analytics",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Understand distributed computing frameworks for big data",
+        "Write PySpark jobs for data processing at scale",
+        "Identify when big data tools are needed vs when pandas suffices"
+      ],
+      "readings": [
+        "Karau, Learning Spark, Ch. 1-3",
+        "Google, 'MapReduce: Simplified Data Processing on Large Datasets' (2004)"
+      ],
+      "lecture_notes": {
+        "introduction": "When your data exceeds the memory of a single machine, you need distributed processing. Spark and similar frameworks let you apply the same analytical thinking to terabytes that you apply to megabytes, but with different performance trade-offs.",
+        "key_concepts": [
+          "MapReduce paradigm: map (transform), shuffle (redistribute), reduce (aggregate)",
+          "Apache Spark: RDDs, DataFrames, lazy evaluation, in-memory processing",
+          "PySpark: Spark with Python API, SQL interface",
+          "Partitioning and shuffling: where performance bottlenecks live",
+          "When to use Spark vs pandas: the 10GB rule of thumb"
+        ],
+        "demonstration": "Process a 5GB web log dataset with PySpark: read from S3, filter, aggregate page views by hour and country, and write results to Parquet format, all in a Jupyter notebook connected to a Spark cluster",
+        "setup_requirements": [
+          "PySpark installed (local mode or cluster)",
+          "Sample large dataset available",
+          "Jupyter with PySpark kernel"
+        ],
+        "review": [
+          {
+            "key": "Lazy Evaluation",
+            "value": "Spark builds a computation graph (DAG) but does not execute until an action (collect, write, count) is called; this enables optimization like predicate pushdown and column pruning before any data is processed"
+          },
+          {
+            "key": "Shuffle Cost",
+            "value": "Shuffling data across nodes (during groupBy, join, sort) is the most expensive operation in distributed processing; minimizing shuffles through proper partitioning and broadcast joins is the key to Spark performance"
+          }
+        ]
+      }
+    }
   ],
   "assessments": {
     "quizzes": [
-      {"quiz":1,"week":2,"topic":"Data Wrangling and EDA","duration":"20 minutes","questions":[{"question":"Given a DataFrame with columns [user_id, purchase_date, amount, category], write pandas code to calculate the total spend per user per month, then find the top 5 users by total spend.","type":"code","points":10,"answer":"df['month'] = df['purchase_date'].dt.to_period('M')\nmonthly_spend = df.groupby(['user_id', 'month'])['amount'].sum().reset_index()\ntop_users = df.groupby('user_id')['amount'].sum().nlargest(5)\n# Or combined:\ntop_users = df.groupby('user_id')['amount'].sum().sort_values(ascending=False).head(5)","rubric":[{"key":"Correct groupby with proper columns","value":4},{"key":"Correct aggregation function","value":3},{"key":"Correct top-5 selection","value":3}]},{"question":"A dataset has 15% missing values in a numeric column. Describe three different imputation strategies and when each is appropriate.","type":"short_answer","points":10,"answer":"1. Mean/median imputation: Replace missing values with the column mean (median for skewed data). Appropriate when data is missing completely at random and the column distribution is roughly normal. Fast but reduces variance and can bias correlations.\n2. Forward fill: Replace missing values with the previous non-missing value. Appropriate for time series data where the last known value is a reasonable estimate.\n3. Model-based imputation (e.g., KNN or iterative imputer): Use other features to predict missing values. Appropriate when missingness depends on other variables (MAR) and when preserving multivariate relationships matters. Most accurate but most complex.","rubric":[{"key":"Three distinct strategies named and described","value":4},{"key":"Correct conditions for each strategy","value":4},{"key":"Mentions trade-offs or limitations","value":2}]}],"total_points":20},
-      {"quiz":2,"week":4,"topic":"Statistics and Visualization","duration":"25 minutes","questions":[{"question":"An A/B test comparing a new checkout flow (B) against the original (A) shows: A conversion rate = 3.2%, B conversion rate = 3.8%, p-value = 0.04, sample size = 50,000 per group. Should the team launch variant B? Justify your answer considering both statistical and practical significance.","type":"short_answer","points":15,"answer":"The p-value of 0.04 < 0.05 suggests the difference is statistically significant. However, the absolute lift is only 0.6 percentage points (3.8% - 3.2%). Before launching, consider: (1) Is a 0.6pp lift practically significant for the business? At 50K users, this is 300 additional conversions. (2) Calculate the 95% confidence interval for the lift to understand the range of plausible effect sizes. (3) Check the effect size (Cohen's h or relative lift of 18.75%). (4) Consider the cost of implementing and maintaining the new flow. If 300 additional conversions per period is valuable and the implementation cost is low, launch B. If the margin of error includes zero or the lift is too small to justify the engineering cost, consider running the test longer for a more precise estimate.","rubric":[{"key":"Correctly interprets p-value and statistical significance","value":4},{"key":"Considers practical significance and business impact","value":5},{"key":"Mentions confidence interval or uncertainty","value":3},{"key":"Makes a justified recommendation","value":3}]},{"question":"Explain why a bar chart is more appropriate than a pie chart for comparing 8 categories, and when a pie chart might be acceptable.","type":"short_answer","points":10,"answer":"Bar charts use position along a common axis to encode value, which the human visual system compares more accurately than the angles and areas used by pie charts. With 8 categories, pie slices become too small to compare reliably, and similar-sized slices are nearly indistinguishable. Bar charts also support easy sorting (largest to smallest) and comparison across charts. A pie chart is acceptable only when: (1) there are 2-3 categories, (2) the goal is to show parts of a whole rather than compare values, and (3) one category dominates (e.g., 70/20/10 split).","rubric":[{"key":"Explains position encoding is more accurate than angle","value":4},{"key":"Notes difficulty comparing many small pie slices","value":3},{"key":"Identifies acceptable pie chart conditions","value":3}]}],"total_points":25}
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "Data Wrangling and EDA",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "Given a DataFrame with columns [user_id, purchase_date, amount, category], write pandas code to calculate the total spend per user per month, then find the top 5 users by total spend.",
+            "type": "code",
+            "points": 10,
+            "answer": "df['month'] = df['purchase_date'].dt.to_period('M')\nmonthly_spend = df.groupby(['user_id', 'month'])['amount'].sum().reset_index()\ntop_users = df.groupby('user_id')['amount'].sum().nlargest(5)\n# Or combined:\ntop_users = df.groupby('user_id')['amount'].sum().sort_values(ascending=False).head(5)",
+            "rubric": [
+              {
+                "key": "Correct groupby with proper columns",
+                "value": 4
+              },
+              {
+                "key": "Correct aggregation function",
+                "value": 3
+              },
+              {
+                "key": "Correct top-5 selection",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "A dataset has 15% missing values in a numeric column. Describe three different imputation strategies and when each is appropriate.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "1. Mean/median imputation: Replace missing values with the column mean (median for skewed data). Appropriate when data is missing completely at random and the column distribution is roughly normal. Fast but reduces variance and can bias correlations.\n2. Forward fill: Replace missing values with the previous non-missing value. Appropriate for time series data where the last known value is a reasonable estimate.\n3. Model-based imputation (e.g., KNN or iterative imputer): Use other features to predict missing values. Appropriate when missingness depends on other variables (MAR) and when preserving multivariate relationships matters. Most accurate but most complex.",
+            "rubric": [
+              {
+                "key": "Three distinct strategies named and described",
+                "value": 4
+              },
+              {
+                "key": "Correct conditions for each strategy",
+                "value": 4
+              },
+              {
+                "key": "Mentions trade-offs or limitations",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 4,
+        "topic": "Statistics and Visualization",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "An A/B test comparing a new checkout flow (B) against the original (A) shows: A conversion rate = 3.2%, B conversion rate = 3.8%, p-value = 0.04, sample size = 50,000 per group. Should the team launch variant B? Justify your answer considering both statistical and practical significance.",
+            "type": "short_answer",
+            "points": 15,
+            "answer": "The p-value of 0.04 < 0.05 suggests the difference is statistically significant. However, the absolute lift is only 0.6 percentage points (3.8% - 3.2%). Before launching, consider: (1) Is a 0.6pp lift practically significant for the business? At 50K users, this is 300 additional conversions. (2) Calculate the 95% confidence interval for the lift to understand the range of plausible effect sizes. (3) Check the effect size (Cohen's h or relative lift of 18.75%). (4) Consider the cost of implementing and maintaining the new flow. If 300 additional conversions per period is valuable and the implementation cost is low, launch B. If the margin of error includes zero or the lift is too small to justify the engineering cost, consider running the test longer for a more precise estimate.",
+            "rubric": [
+              {
+                "key": "Correctly interprets p-value and statistical significance",
+                "value": 4
+              },
+              {
+                "key": "Considers practical significance and business impact",
+                "value": 5
+              },
+              {
+                "key": "Mentions confidence interval or uncertainty",
+                "value": 3
+              },
+              {
+                "key": "Makes a justified recommendation",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain why a bar chart is more appropriate than a pie chart for comparing 8 categories, and when a pie chart might be acceptable.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Bar charts use position along a common axis to encode value, which the human visual system compares more accurately than the angles and areas used by pie charts. With 8 categories, pie slices become too small to compare reliably, and similar-sized slices are nearly indistinguishable. Bar charts also support easy sorting (largest to smallest) and comparison across charts. A pie chart is acceptable only when: (1) there are 2-3 categories, (2) the goal is to show parts of a whole rather than compare values, and (3) one category dominates (e.g., 70/20/10 split).",
+            "rubric": [
+              {
+                "key": "Explains position encoding is more accurate than angle",
+                "value": 4
+              },
+              {
+                "key": "Notes difficulty comparing many small pie slices",
+                "value": 3
+              },
+              {
+                "key": "Identifies acceptable pie chart conditions",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 25
+      }
     ],
     "major_assignments": [
-      {"assignment":1,"title":"End-to-End Data Science Project","week_assigned":3,"week_due":5,"points":100,"description":"Conduct a complete data science project on a real-world dataset: from data acquisition and cleaning through analysis and modeling to a final presentation. Your analysis must answer a specific, well-defined question with evidence-based conclusions.","objectives":["Formulate a clear analytical question and design a methodology to answer it","Clean, explore, and engineer features from a messy real-world dataset","Apply appropriate statistical tests and build predictive models","Communicate findings through visualizations and a stakeholder presentation"],"requirements":{},"deliverables":["Jupyter Notebook with complete reproducible analysis","Stakeholder presentation (10 slides) summarizing findings and recommendations","Interactive dashboard deployed on Streamlit","Analysis report (4-5 pages) with methodology, findings, and limitations"],"grading_rubric":{"data_preparation":{"points":25,"criteria":["Data cleaning is thorough and well-documented","Missing data handled with appropriate strategies","Feature engineering creates informative variables","Data quality is validated programmatically"]},"analysis":{"points":30,"criteria":["Statistical tests are appropriate for the question","Results are interpreted correctly with effect sizes","Modeling approach is justified and properly validated","Limitations are acknowledged honestly"]},"visualization":{"points":25,"criteria":["Charts are appropriate for the data type and message","Visualizations follow best practices (decluttered, labeled, accessible)","Interactive dashboard provides useful exploration capability","Data story has a clear narrative arc"]},"communication":{"points":20,"criteria":["Stakeholder presentation is clear and actionable","Technical depth is appropriate for the audience","Methodology is reproducible from the notebook","Report is well-written and professionally formatted"]}},"rubric":[{"attributes":{"points":100,"criteria":["Complete data science project with rigorous methodology","Accurate analysis with appropriate statistical rigor","Effective visualizations and stakeholder communication","Professional documentation with honest limitations"]}}]}
+      {
+        "assignment": 1,
+        "title": "End-to-End Data Science Project",
+        "week_assigned": 3,
+        "week_due": 5,
+        "points": 100,
+        "description": "Conduct a complete data science project on a real-world dataset: from data acquisition and cleaning through analysis and modeling to a final presentation. Your analysis must answer a specific, well-defined question with evidence-based conclusions.",
+        "objectives": [
+          "Formulate a clear analytical question and design a methodology to answer it",
+          "Clean, explore, and engineer features from a messy real-world dataset",
+          "Apply appropriate statistical tests and build predictive models",
+          "Communicate findings through visualizations and a stakeholder presentation"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Jupyter Notebook with complete reproducible analysis",
+          "Stakeholder presentation (10 slides) summarizing findings and recommendations",
+          "Interactive dashboard deployed on Streamlit",
+          "Analysis report (4-5 pages) with methodology, findings, and limitations"
+        ],
+        "grading_rubric": {
+          "data_preparation": {
+            "points": 25,
+            "criteria": [
+              "Data cleaning is thorough and well-documented",
+              "Missing data handled with appropriate strategies",
+              "Feature engineering creates informative variables",
+              "Data quality is validated programmatically"
+            ]
+          },
+          "analysis": {
+            "points": 30,
+            "criteria": [
+              "Statistical tests are appropriate for the question",
+              "Results are interpreted correctly with effect sizes",
+              "Modeling approach is justified and properly validated",
+              "Limitations are acknowledged honestly"
+            ]
+          },
+          "visualization": {
+            "points": 25,
+            "criteria": [
+              "Charts are appropriate for the data type and message",
+              "Visualizations follow best practices (decluttered, labeled, accessible)",
+              "Interactive dashboard provides useful exploration capability",
+              "Data story has a clear narrative arc"
+            ]
+          },
+          "communication": {
+            "points": 20,
+            "criteria": [
+              "Stakeholder presentation is clear and actionable",
+              "Technical depth is appropriate for the audience",
+              "Methodology is reproducible from the notebook",
+              "Report is well-written and professionally formatted"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Complete data science project with rigorous methodology",
+                "Accurate analysis with appropriate statistical rigor",
+                "Effective visualizations and stakeholder communication",
+                "Professional documentation with honest limitations"
+              ]
+            }
+          }
+        ]
+      }
     ]
   },
-  "grading_breakdown": {"weekly_quizzes":{"percentage":10,"description":"Regular assessment of data science concepts"},"lab_assignments":{"percentage":25,"description":"Weekly data analysis exercises"},"major_assignments":{"percentage":30,"description":"End-to-end data science project"},"midterm_examination":{"percentage":15,"description":"Written exam on statistics and data wrangling"},"final_examination":{"percentage":20,"description":"Comprehensive exam covering all data science topics"}},
-  "course_policies": {"attendance":"Attendance is expected for lectures and mandatory for lab sessions.","late_submissions":"Late assignments lose 10% per day. No submissions accepted more than 5 days late.","collaboration":"Discussion of analytical approaches is encouraged. All analysis and reports must be individual work.","academic_integrity":"All submitted work must be your own. Copying analysis code from Kaggle or other sources without attribution is plagiarism.","technology_requirements":"Students need Python 3.12+ with pandas, numpy, scipy, scikit-learn, matplotlib, seaborn, plotly, and Jupyter. PySpark will be used in the final unit."}
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 10,
+      "description": "Regular assessment of data science concepts"
+    },
+    "lab_assignments": {
+      "percentage": 25,
+      "description": "Weekly data analysis exercises"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "End-to-end data science project"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Written exam on statistics and data wrangling"
+    },
+    "final_examination": {
+      "percentage": 20,
+      "description": "Comprehensive exam covering all data science topics"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is expected for lectures and mandatory for lab sessions.",
+    "late_submissions": "Late assignments lose 10% per day. No submissions accepted more than 5 days late.",
+    "collaboration": "Discussion of analytical approaches is encouraged. All analysis and reports must be individual work.",
+    "academic_integrity": "All submitted work must be your own. Copying analysis code from Kaggle or other sources without attribution is plagiarism.",
+    "technology_requirements": "Students need Python 3.12+ with pandas, numpy, scipy, scikit-learn, matplotlib, seaborn, plotly, and Jupyter. PySpark will be used in the final unit."
+  }
 }

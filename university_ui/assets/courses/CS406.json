@@ -1,21 +1,428 @@
 {
-  "course_info": {"course_id":"CS406","title":"Cloud Computing","credit_hours":3,"duration":"15 weeks","meeting_schedule":"Tuesday, Thursday - 3 hours per week","prerequisites":["CS302 - Operating Systems"]},
+  "course_info": {
+    "course_id": "CS406",
+    "title": "Cloud Computing",
+    "credit_hours": 3,
+    "duration": "15 weeks",
+    "meeting_schedule": "Tuesday, Thursday - 3 hours per week",
+    "prerequisites": [
+      "CS302 - Operating Systems"
+    ]
+  },
   "class_schedule": [
-    {"week_number":1,"session_number":1,"date":"2024-01-16","topic":"Cloud Computing Fundamentals","duration":"50 minutes","learning_objectives":["Understand cloud service models: IaaS, PaaS, SaaS","Compare major cloud providers: AWS, Azure, GCP","Identify when cloud is and is not appropriate for a workload"],"readings":["NIST Definition of Cloud Computing (SP 800-145)","AWS Well-Architected Framework Overview"],"lecture_notes":{"introduction":"Cloud computing transformed software deployment from buying servers to renting compute by the second. This course teaches you to architect, deploy, and operate applications on cloud infrastructure, focusing on AWS as the primary platform.","key_concepts":["Cloud characteristics: on-demand, broad network access, resource pooling, elasticity, measured service","Service models: IaaS (EC2), PaaS (Elastic Beanstalk), SaaS (Gmail)","Deployment models: public, private, hybrid","Shared responsibility model: provider secures infrastructure, you secure your application","Cost models: pay-per-use, reserved instances, spot instances"],"demonstration":"Launch an EC2 instance, SSH into it, deploy a simple web application, and examine the AWS billing dashboard to understand cost implications","setup_requirements":["AWS account with Free Tier","AWS CLI configured","SSH key pair generated"],"review":[{"key":"Shared Responsibility Model","value":"AWS secures the cloud infrastructure (physical data centers, hypervisors, network); you secure your configurations, data, access controls, and application code. Many cloud breaches result from customer misconfiguration, not provider failure"},{"key":"Elasticity","value":"The ability to automatically scale resources up when demand increases and down when it decreases; this turns fixed capital expense into variable operational expense proportional to actual usage"}]}},
-    {"week_number":2,"session_number":3,"date":"2024-01-23","topic":"Virtualization and Containers","duration":"50 minutes","learning_objectives":["Explain how virtualization and containers work at a systems level","Build and deploy Docker containers","Understand container orchestration with Kubernetes"],"readings":["Docker Documentation: Getting Started","Kubernetes Documentation: Overview"],"lecture_notes":{"introduction":"Containers are the standard deployment unit for cloud applications. Understanding the difference between VMs and containers, and knowing how to containerize your applications, is a non-negotiable skill for cloud engineering.","key_concepts":["Hypervisor-based virtualization: full OS per VM, hardware-level isolation","Containers: shared kernel, process-level isolation, lightweight","Docker: Dockerfile, images, containers, registries","Docker Compose: multi-container applications","Kubernetes: pods, services, deployments, autoscaling"],"demonstration":"Containerize a Node.js web app with Docker, push the image to ECR, then deploy it to a Kubernetes cluster on EKS with autoscaling based on CPU utilization","setup_requirements":["Docker Desktop installed","kubectl configured","AWS EKS cluster available"],"review":[{"key":"Container vs VM","value":"VMs include a full OS (GB-sized, minutes to start); containers share the host kernel (MB-sized, seconds to start). Containers provide process isolation, not hardware isolation, so they are less secure but much more efficient"},{"key":"Kubernetes Pod","value":"The smallest deployable unit in Kubernetes; a pod runs one or more tightly-coupled containers that share network and storage. Deployments manage pod replicas and rolling updates"}]}},
-    {"week_number":3,"session_number":5,"date":"2024-01-30","topic":"Serverless Computing and Event-Driven Architecture","duration":"50 minutes","learning_objectives":["Build serverless functions with AWS Lambda","Design event-driven architectures using SQS, SNS, and EventBridge","Understand the trade-offs of serverless vs container-based deployment"],"readings":["AWS Lambda Documentation: Getting Started","Serverless Architecture Patterns whitepaper"],"lecture_notes":{"introduction":"Serverless computing abstracts away all infrastructure management. You write functions, define triggers, and pay only for execution time. Event-driven architecture connects serverless functions into scalable, loosely-coupled systems.","key_concepts":["AWS Lambda: function-as-a-service, triggers, execution model","Cold start: first invocation latency, provisioned concurrency","Event sources: API Gateway, S3, SQS, DynamoDB Streams","Message queues (SQS) and pub/sub (SNS) for decoupling","Serverless trade-offs: no server management but limited execution time and state"],"demonstration":"Build a serverless image processing pipeline: S3 upload triggers Lambda, which resizes the image and stores metadata in DynamoDB, sending a notification via SNS","setup_requirements":["AWS account with Lambda, S3, DynamoDB, SNS configured","AWS SAM CLI for local testing","Sample images for testing"],"review":[{"key":"Cold Start","value":"The first invocation of a Lambda function after idle time requires loading the runtime and your code, adding 100ms-10s of latency depending on language and package size; provisioned concurrency pre-warms instances to eliminate this"},{"key":"Event-Driven Decoupling","value":"Components communicate through events rather than direct calls; the image uploader does not know or care about the resizer. This enables independent scaling, deployment, and failure isolation"}]}},
-    {"week_number":4,"session_number":7,"date":"2024-02-06","topic":"Cloud Storage and Database Services","duration":"50 minutes","learning_objectives":["Choose the right cloud storage service for different data patterns","Deploy and manage cloud database services (RDS, DynamoDB)","Implement data backup and disaster recovery strategies"],"readings":["AWS Storage Services Overview","DynamoDB Documentation: Core Concepts"],"lecture_notes":{"introduction":"Cloud providers offer dozens of storage and database services, each optimized for different access patterns. Choosing the wrong service leads to poor performance and high costs. This session teaches you to match data requirements to the right service.","key_concepts":["Object storage (S3): unstructured data, unlimited scale, 11 nines durability","Block storage (EBS): attached to EC2 instances, low-latency random access","Relational databases (RDS): managed PostgreSQL, MySQL, Aurora","NoSQL databases (DynamoDB): key-value and document, single-digit millisecond latency","Caching (ElastiCache): Redis and Memcached for read-heavy workloads"],"demonstration":"Deploy a PostgreSQL RDS instance, configure automated backups and read replicas, then set up DynamoDB for session storage with on-demand capacity","setup_requirements":["AWS account with RDS and DynamoDB access","Database client for RDS","AWS CLI for DynamoDB operations"],"review":[{"key":"RDS vs DynamoDB","value":"RDS for relational data with complex queries and transactions; DynamoDB for high-throughput key-value access with predictable performance. DynamoDB scales horizontally with no limit; RDS scales vertically with a cap on instance size"},{"key":"S3 Durability","value":"S3 stores data across multiple facilities with 99.999999999% (11 nines) durability; losing an object in S3 is statistically less likely than being struck by lightning. This makes it the default choice for any data that must not be lost"}]}},
-    {"week_number":5,"session_number":9,"date":"2024-02-13","topic":"Cloud Security and Infrastructure as Code","duration":"50 minutes","learning_objectives":["Implement IAM policies following the principle of least privilege","Define cloud infrastructure using Terraform","Automate security controls and compliance checks"],"readings":["AWS IAM Documentation: Best Practices","Terraform Documentation: Getting Started"],"lecture_notes":{"introduction":"Cloud misconfiguration is the leading cause of cloud security breaches. Infrastructure as code (IaC) ensures your cloud environment is defined in version-controlled, reviewable, and repeatable code, eliminating manual configuration drift.","key_concepts":["IAM: users, roles, policies, least privilege principle","Terraform: declarative infrastructure definition, plan, apply, state management","Security groups and network ACLs for network-level access control","Secrets management: AWS Secrets Manager, never hardcode credentials","Compliance automation: AWS Config rules, CloudTrail logging"],"demonstration":"Write Terraform configuration to deploy a VPC with public and private subnets, security groups, an EC2 instance, and an RDS instance with least-privilege IAM roles","setup_requirements":["Terraform installed","AWS account with IAM permissions","Version control for Terraform files"],"review":[{"key":"Least Privilege","value":"Every IAM principal should have only the permissions required for its specific function and nothing more; overly broad policies (especially admin access) are the most common root cause of cloud security incidents"},{"key":"Infrastructure as Code Benefits","value":"IaC provides version history (who changed what, when), peer review (PR-based infrastructure changes), repeatability (identical environments for dev/staging/prod), and disaster recovery (recreate infrastructure from code)"}]}}
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "topic": "Cloud Computing Fundamentals",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Understand cloud service models: IaaS, PaaS, SaaS",
+        "Compare major cloud providers: AWS, Azure, GCP",
+        "Identify when cloud is and is not appropriate for a workload"
+      ],
+      "readings": [
+        "NIST Definition of Cloud Computing (SP 800-145)",
+        "AWS Well-Architected Framework Overview"
+      ],
+      "lecture_notes": {
+        "introduction": "Cloud computing transformed software deployment from buying servers to renting compute by the second. This course teaches you to architect, deploy, and operate applications on cloud infrastructure, focusing on AWS as the primary platform.",
+        "key_concepts": [
+          "Cloud characteristics: on-demand, broad network access, resource pooling, elasticity, measured service",
+          "Service models: IaaS (EC2), PaaS (Elastic Beanstalk), SaaS (Gmail)",
+          "Deployment models: public, private, hybrid",
+          "Shared responsibility model: provider secures infrastructure, you secure your application",
+          "Cost models: pay-per-use, reserved instances, spot instances"
+        ],
+        "demonstration": "Launch an EC2 instance, SSH into it, deploy a simple web application, and examine the AWS billing dashboard to understand cost implications",
+        "setup_requirements": [
+          "AWS account with Free Tier",
+          "AWS CLI configured",
+          "SSH key pair generated"
+        ],
+        "review": [
+          {
+            "key": "Shared Responsibility Model",
+            "value": "AWS secures the cloud infrastructure (physical data centers, hypervisors, network); you secure your configurations, data, access controls, and application code. Many cloud breaches result from customer misconfiguration, not provider failure"
+          },
+          {
+            "key": "Elasticity",
+            "value": "The ability to automatically scale resources up when demand increases and down when it decreases; this turns fixed capital expense into variable operational expense proportional to actual usage"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 3,
+      "topic": "Virtualization and Containers",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Explain how virtualization and containers work at a systems level",
+        "Build and deploy Docker containers",
+        "Understand container orchestration with Kubernetes"
+      ],
+      "readings": [
+        "Docker Documentation: Getting Started",
+        "Kubernetes Documentation: Overview"
+      ],
+      "lecture_notes": {
+        "introduction": "Containers are the standard deployment unit for cloud applications. Understanding the difference between VMs and containers, and knowing how to containerize your applications, is a non-negotiable skill for cloud engineering.",
+        "key_concepts": [
+          "Hypervisor-based virtualization: full OS per VM, hardware-level isolation",
+          "Containers: shared kernel, process-level isolation, lightweight",
+          "Docker: Dockerfile, images, containers, registries",
+          "Docker Compose: multi-container applications",
+          "Kubernetes: pods, services, deployments, autoscaling"
+        ],
+        "demonstration": "Containerize a Node.js web app with Docker, push the image to ECR, then deploy it to a Kubernetes cluster on EKS with autoscaling based on CPU utilization",
+        "setup_requirements": [
+          "Docker Desktop installed",
+          "kubectl configured",
+          "AWS EKS cluster available"
+        ],
+        "review": [
+          {
+            "key": "Container vs VM",
+            "value": "VMs include a full OS (GB-sized, minutes to start); containers share the host kernel (MB-sized, seconds to start). Containers provide process isolation, not hardware isolation, so they are less secure but much more efficient"
+          },
+          {
+            "key": "Kubernetes Pod",
+            "value": "The smallest deployable unit in Kubernetes; a pod runs one or more tightly-coupled containers that share network and storage. Deployments manage pod replicas and rolling updates"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 5,
+      "topic": "Serverless Computing and Event-Driven Architecture",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Build serverless functions with AWS Lambda",
+        "Design event-driven architectures using SQS, SNS, and EventBridge",
+        "Understand the trade-offs of serverless vs container-based deployment"
+      ],
+      "readings": [
+        "AWS Lambda Documentation: Getting Started",
+        "Serverless Architecture Patterns whitepaper"
+      ],
+      "lecture_notes": {
+        "introduction": "Serverless computing abstracts away all infrastructure management. You write functions, define triggers, and pay only for execution time. Event-driven architecture connects serverless functions into scalable, loosely-coupled systems.",
+        "key_concepts": [
+          "AWS Lambda: function-as-a-service, triggers, execution model",
+          "Cold start: first invocation latency, provisioned concurrency",
+          "Event sources: API Gateway, S3, SQS, DynamoDB Streams",
+          "Message queues (SQS) and pub/sub (SNS) for decoupling",
+          "Serverless trade-offs: no server management but limited execution time and state"
+        ],
+        "demonstration": "Build a serverless image processing pipeline: S3 upload triggers Lambda, which resizes the image and stores metadata in DynamoDB, sending a notification via SNS",
+        "setup_requirements": [
+          "AWS account with Lambda, S3, DynamoDB, SNS configured",
+          "AWS SAM CLI for local testing",
+          "Sample images for testing"
+        ],
+        "review": [
+          {
+            "key": "Cold Start",
+            "value": "The first invocation of a Lambda function after idle time requires loading the runtime and your code, adding 100ms-10s of latency depending on language and package size; provisioned concurrency pre-warms instances to eliminate this"
+          },
+          {
+            "key": "Event-Driven Decoupling",
+            "value": "Components communicate through events rather than direct calls; the image uploader does not know or care about the resizer. This enables independent scaling, deployment, and failure isolation"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 7,
+      "topic": "Cloud Storage and Database Services",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Choose the right cloud storage service for different data patterns",
+        "Deploy and manage cloud database services (RDS, DynamoDB)",
+        "Implement data backup and disaster recovery strategies"
+      ],
+      "readings": [
+        "AWS Storage Services Overview",
+        "DynamoDB Documentation: Core Concepts"
+      ],
+      "lecture_notes": {
+        "introduction": "Cloud providers offer dozens of storage and database services, each optimized for different access patterns. Choosing the wrong service leads to poor performance and high costs. This session teaches you to match data requirements to the right service.",
+        "key_concepts": [
+          "Object storage (S3): unstructured data, unlimited scale, 11 nines durability",
+          "Block storage (EBS): attached to EC2 instances, low-latency random access",
+          "Relational databases (RDS): managed PostgreSQL, MySQL, Aurora",
+          "NoSQL databases (DynamoDB): key-value and document, single-digit millisecond latency",
+          "Caching (ElastiCache): Redis and Memcached for read-heavy workloads"
+        ],
+        "demonstration": "Deploy a PostgreSQL RDS instance, configure automated backups and read replicas, then set up DynamoDB for session storage with on-demand capacity",
+        "setup_requirements": [
+          "AWS account with RDS and DynamoDB access",
+          "Database client for RDS",
+          "AWS CLI for DynamoDB operations"
+        ],
+        "review": [
+          {
+            "key": "RDS vs DynamoDB",
+            "value": "RDS for relational data with complex queries and transactions; DynamoDB for high-throughput key-value access with predictable performance. DynamoDB scales horizontally with no limit; RDS scales vertically with a cap on instance size"
+          },
+          {
+            "key": "S3 Durability",
+            "value": "S3 stores data across multiple facilities with 99.999999999% (11 nines) durability; losing an object in S3 is statistically less likely than being struck by lightning. This makes it the default choice for any data that must not be lost"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 9,
+      "topic": "Cloud Security and Infrastructure as Code",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Implement IAM policies following the principle of least privilege",
+        "Define cloud infrastructure using Terraform",
+        "Automate security controls and compliance checks"
+      ],
+      "readings": [
+        "AWS IAM Documentation: Best Practices",
+        "Terraform Documentation: Getting Started"
+      ],
+      "lecture_notes": {
+        "introduction": "Cloud misconfiguration is the leading cause of cloud security breaches. Infrastructure as code (IaC) ensures your cloud environment is defined in version-controlled, reviewable, and repeatable code, eliminating manual configuration drift.",
+        "key_concepts": [
+          "IAM: users, roles, policies, least privilege principle",
+          "Terraform: declarative infrastructure definition, plan, apply, state management",
+          "Security groups and network ACLs for network-level access control",
+          "Secrets management: AWS Secrets Manager, never hardcode credentials",
+          "Compliance automation: AWS Config rules, CloudTrail logging"
+        ],
+        "demonstration": "Write Terraform configuration to deploy a VPC with public and private subnets, security groups, an EC2 instance, and an RDS instance with least-privilege IAM roles",
+        "setup_requirements": [
+          "Terraform installed",
+          "AWS account with IAM permissions",
+          "Version control for Terraform files"
+        ],
+        "review": [
+          {
+            "key": "Least Privilege",
+            "value": "Every IAM principal should have only the permissions required for its specific function and nothing more; overly broad policies (especially admin access) are the most common root cause of cloud security incidents"
+          },
+          {
+            "key": "Infrastructure as Code Benefits",
+            "value": "IaC provides version history (who changed what, when), peer review (PR-based infrastructure changes), repeatability (identical environments for dev/staging/prod), and disaster recovery (recreate infrastructure from code)"
+          }
+        ]
+      }
+    }
   ],
   "assessments": {
     "quizzes": [
-      {"quiz":1,"week":2,"topic":"Cloud Fundamentals and Containers","duration":"20 minutes","questions":[{"question":"Explain the difference between horizontal scaling and vertical scaling. Which is preferred in cloud architectures and why?","type":"short_answer","points":10,"answer":"Vertical scaling (scale up) adds more CPU/RAM to an existing server; it is simple but has a hardware ceiling and creates a single point of failure. Horizontal scaling (scale out) adds more servers behind a load balancer; it has no theoretical limit and provides redundancy. Cloud architectures prefer horizontal scaling because cloud instances are commodities designed to be added and removed dynamically, and distributing load across multiple instances provides both scalability and fault tolerance.","rubric":[{"key":"Correctly defines both scaling types","value":4},{"key":"Identifies horizontal as preferred in cloud","value":3},{"key":"Explains fault tolerance and scalability benefits","value":3}]},{"question":"Write a Dockerfile for a Python Flask web application that installs dependencies from requirements.txt and runs the app on port 5000.","type":"code","points":10,"answer":"FROM python:3.12-slim\nWORKDIR /app\nCOPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt\nCOPY . .\nEXPOSE 5000\nCMD [\"python\", \"app.py\"]","rubric":[{"key":"Correct base image and WORKDIR","value":3},{"key":"Copies and installs requirements before app code (layer caching)","value":4},{"key":"Correct EXPOSE and CMD","value":3}]}],"total_points":20},
-      {"quiz":2,"week":4,"topic":"Serverless, Storage, and Security","duration":"25 minutes","questions":[{"question":"Design a serverless architecture for a URL shortener service. Describe which AWS services you would use for each component and how they connect.","type":"short_answer","points":15,"answer":"API Gateway: receives HTTP requests (POST to create short URL, GET to redirect). Lambda (create): generates a unique short code, stores the mapping in DynamoDB, returns the short URL. Lambda (redirect): looks up the short code in DynamoDB, returns a 301 redirect to the original URL. DynamoDB: stores short_code (partition key) -> original_url mapping with TTL for expiration. CloudFront: CDN in front of API Gateway for low-latency global access and caching of redirect responses. Route 53: custom domain for the short URLs. CloudWatch: monitoring and logging for all Lambda invocations.","rubric":[{"key":"Correct service selection for each component","value":5},{"key":"Appropriate use of DynamoDB for key-value lookup","value":4},{"key":"Includes caching and monitoring considerations","value":3},{"key":"Architecture is scalable and cost-effective","value":3}]},{"question":"Explain why the following IAM policy is dangerous and how to fix it: {\"Effect\":\"Allow\",\"Action\":\"*\",\"Resource\":\"*\"}","type":"short_answer","points":10,"answer":"This policy grants full access to every AWS service and every resource in the account. It violates the principle of least privilege, meaning if the credentials are compromised, the attacker has complete control. Fix: Restrict Action to only the specific API calls needed (e.g., s3:GetObject, dynamodb:PutItem) and restrict Resource to only the specific ARNs of resources the principal needs to access (e.g., a specific S3 bucket or DynamoDB table).","rubric":[{"key":"Identifies the policy grants unrestricted access","value":3},{"key":"Explains the risk of credential compromise","value":3},{"key":"Provides correct fix with specific actions and resources","value":4}]}],"total_points":25}
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "Cloud Fundamentals and Containers",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "Explain the difference between horizontal scaling and vertical scaling. Which is preferred in cloud architectures and why?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Vertical scaling (scale up) adds more CPU/RAM to an existing server; it is simple but has a hardware ceiling and creates a single point of failure. Horizontal scaling (scale out) adds more servers behind a load balancer; it has no theoretical limit and provides redundancy. Cloud architectures prefer horizontal scaling because cloud instances are commodities designed to be added and removed dynamically, and distributing load across multiple instances provides both scalability and fault tolerance.",
+            "rubric": [
+              {
+                "key": "Correctly defines both scaling types",
+                "value": 4
+              },
+              {
+                "key": "Identifies horizontal as preferred in cloud",
+                "value": 3
+              },
+              {
+                "key": "Explains fault tolerance and scalability benefits",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Write a Dockerfile for a Python Flask web application that installs dependencies from requirements.txt and runs the app on port 5000.",
+            "type": "code",
+            "points": 10,
+            "answer": "FROM python:3.12-slim\nWORKDIR /app\nCOPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt\nCOPY . .\nEXPOSE 5000\nCMD [\"python\", \"app.py\"]",
+            "rubric": [
+              {
+                "key": "Correct base image and WORKDIR",
+                "value": 3
+              },
+              {
+                "key": "Copies and installs requirements before app code (layer caching)",
+                "value": 4
+              },
+              {
+                "key": "Correct EXPOSE and CMD",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 4,
+        "topic": "Serverless, Storage, and Security",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Design a serverless architecture for a URL shortener service. Describe which AWS services you would use for each component and how they connect.",
+            "type": "short_answer",
+            "points": 15,
+            "answer": "API Gateway: receives HTTP requests (POST to create short URL, GET to redirect). Lambda (create): generates a unique short code, stores the mapping in DynamoDB, returns the short URL. Lambda (redirect): looks up the short code in DynamoDB, returns a 301 redirect to the original URL. DynamoDB: stores short_code (partition key) -> original_url mapping with TTL for expiration. CloudFront: CDN in front of API Gateway for low-latency global access and caching of redirect responses. Route 53: custom domain for the short URLs. CloudWatch: monitoring and logging for all Lambda invocations.",
+            "rubric": [
+              {
+                "key": "Correct service selection for each component",
+                "value": 5
+              },
+              {
+                "key": "Appropriate use of DynamoDB for key-value lookup",
+                "value": 4
+              },
+              {
+                "key": "Includes caching and monitoring considerations",
+                "value": 3
+              },
+              {
+                "key": "Architecture is scalable and cost-effective",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain why the following IAM policy is dangerous and how to fix it: {\"Effect\":\"Allow\",\"Action\":\"*\",\"Resource\":\"*\"}",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "This policy grants full access to every AWS service and every resource in the account. It violates the principle of least privilege, meaning if the credentials are compromised, the attacker has complete control. Fix: Restrict Action to only the specific API calls needed (e.g., s3:GetObject, dynamodb:PutItem) and restrict Resource to only the specific ARNs of resources the principal needs to access (e.g., a specific S3 bucket or DynamoDB table).",
+            "rubric": [
+              {
+                "key": "Identifies the policy grants unrestricted access",
+                "value": 3
+              },
+              {
+                "key": "Explains the risk of credential compromise",
+                "value": 3
+              },
+              {
+                "key": "Provides correct fix with specific actions and resources",
+                "value": 4
+              }
+            ]
+          }
+        ],
+        "total_points": 25
+      }
     ],
     "major_assignments": [
-      {"assignment":1,"title":"Cloud-Native Application Deployment","week_assigned":3,"week_due":5,"points":100,"description":"Design, deploy, and operate a cloud-native application on AWS using infrastructure as code. The application must include containerized services, managed database, autoscaling, monitoring, and proper security controls, all defined in Terraform.","objectives":["Deploy a multi-tier application using containers and managed services","Define all infrastructure using Terraform with proper state management","Implement autoscaling, monitoring, and alerting","Follow security best practices including least-privilege IAM and encryption"],"requirements":{},"deliverables":["Terraform configuration files for all infrastructure","Application source code and Dockerfiles","Architecture diagram showing all components and their interactions","Operations runbook covering deployment, scaling, monitoring, and incident response"],"grading_rubric":{"architecture":{"points":30,"criteria":["Multi-tier design with proper network segmentation","Appropriate service selection for each component","Autoscaling configured with sensible thresholds","Architecture diagram is complete and accurate"]},"infrastructure_as_code":{"points":30,"criteria":["All infrastructure defined in Terraform (no manual configuration)","Terraform state is stored remotely with locking","Variables and modules used for reusability","Plan output reviewed before applying"]},"security":{"points":20,"criteria":["IAM follows least privilege for all roles","Database is in a private subnet with no public access","All data encrypted at rest and in transit","Secrets managed through Secrets Manager, not hardcoded"]},"operations":{"points":20,"criteria":["CloudWatch dashboards and alarms configured","Runbook covers common operational procedures","Deployment process is automated and repeatable","Backup and recovery procedures documented and tested"]}},"rubric":[{"attributes":{"points":100,"criteria":["Well-architected cloud-native application deployment","Complete IaC with Terraform following best practices","Security controls implementing defense in depth","Operational readiness with monitoring and runbook"]}}]}
+      {
+        "assignment": 1,
+        "title": "Cloud-Native Application Deployment",
+        "week_assigned": 3,
+        "week_due": 5,
+        "points": 100,
+        "description": "Design, deploy, and operate a cloud-native application on AWS using infrastructure as code. The application must include containerized services, managed database, autoscaling, monitoring, and proper security controls, all defined in Terraform.",
+        "objectives": [
+          "Deploy a multi-tier application using containers and managed services",
+          "Define all infrastructure using Terraform with proper state management",
+          "Implement autoscaling, monitoring, and alerting",
+          "Follow security best practices including least-privilege IAM and encryption"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Terraform configuration files for all infrastructure",
+          "Application source code and Dockerfiles",
+          "Architecture diagram showing all components and their interactions",
+          "Operations runbook covering deployment, scaling, monitoring, and incident response"
+        ],
+        "grading_rubric": {
+          "architecture": {
+            "points": 30,
+            "criteria": [
+              "Multi-tier design with proper network segmentation",
+              "Appropriate service selection for each component",
+              "Autoscaling configured with sensible thresholds",
+              "Architecture diagram is complete and accurate"
+            ]
+          },
+          "infrastructure_as_code": {
+            "points": 30,
+            "criteria": [
+              "All infrastructure defined in Terraform (no manual configuration)",
+              "Terraform state is stored remotely with locking",
+              "Variables and modules used for reusability",
+              "Plan output reviewed before applying"
+            ]
+          },
+          "security": {
+            "points": 20,
+            "criteria": [
+              "IAM follows least privilege for all roles",
+              "Database is in a private subnet with no public access",
+              "All data encrypted at rest and in transit",
+              "Secrets managed through Secrets Manager, not hardcoded"
+            ]
+          },
+          "operations": {
+            "points": 20,
+            "criteria": [
+              "CloudWatch dashboards and alarms configured",
+              "Runbook covers common operational procedures",
+              "Deployment process is automated and repeatable",
+              "Backup and recovery procedures documented and tested"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Well-architected cloud-native application deployment",
+                "Complete IaC with Terraform following best practices",
+                "Security controls implementing defense in depth",
+                "Operational readiness with monitoring and runbook"
+              ]
+            }
+          }
+        ]
+      }
     ]
   },
-  "grading_breakdown": {"weekly_quizzes":{"percentage":15,"description":"Regular assessment of cloud concepts"},"lab_assignments":{"percentage":25,"description":"Hands-on cloud deployment labs"},"major_assignments":{"percentage":25,"description":"Cloud architecture and deployment projects"},"midterm_examination":{"percentage":15,"description":"Written exam on cloud services and containers"},"final_examination":{"percentage":20,"description":"Comprehensive exam covering all cloud topics"}},
-  "course_policies": {"attendance":"Attendance is expected for all lectures and mandatory for lab sessions.","late_submissions":"Late assignments lose 10% per day. No submissions accepted more than 5 days late.","collaboration":"Discussion of cloud architectures is encouraged. All Terraform code and reports must be individual work.","academic_integrity":"All submitted work must be your own. Never share AWS credentials or access keys.","technology_requirements":"Students need an AWS Free Tier account, Docker, Terraform, and kubectl installed. Lab credits are provided for AWS usage beyond free tier."}
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 15,
+      "description": "Regular assessment of cloud concepts"
+    },
+    "lab_assignments": {
+      "percentage": 25,
+      "description": "Hands-on cloud deployment labs"
+    },
+    "major_assignments": {
+      "percentage": 25,
+      "description": "Cloud architecture and deployment projects"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Written exam on cloud services and containers"
+    },
+    "final_examination": {
+      "percentage": 20,
+      "description": "Comprehensive exam covering all cloud topics"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is expected for all lectures and mandatory for lab sessions.",
+    "late_submissions": "Late assignments lose 10% per day. No submissions accepted more than 5 days late.",
+    "collaboration": "Discussion of cloud architectures is encouraged. All Terraform code and reports must be individual work.",
+    "academic_integrity": "All submitted work must be your own. Never share AWS credentials or access keys.",
+    "technology_requirements": "Students need an AWS Free Tier account, Docker, Terraform, and kubectl installed. Lab credits are provided for AWS usage beyond free tier."
+  }
 }
