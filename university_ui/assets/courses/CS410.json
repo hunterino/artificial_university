@@ -13,205 +13,831 @@
     {
       "week_number": 1,
       "session_number": 1,
-      "topic": "Foundations of Software Quality and Testing",
-      "duration": "50 minutes",
+      "topic": "Testing Fundamentals and Taxonomy",
+      "duration": "75 minutes",
       "learning_objectives": [
         "Understand the role of QA in the software development lifecycle",
         "Distinguish between verification and validation",
-        "Identify testing levels: unit, integration, system, acceptance"
+        "Classify testing levels: unit, integration, system, acceptance",
+        "Identify the cost of defects at different lifecycle stages"
       ],
       "readings": [
         "Myers, The Art of Software Testing, Ch. 1-2",
-        "Beizer, Software Testing Techniques, Ch. 1"
+        "Beizer, Software Testing Techniques, Ch. 1",
+        "IEEE 829 Standard for Software Test Documentation (overview)"
       ],
       "lecture_notes": {
-        "introduction": "Software bugs cost the global economy billions annually. Testing is the systematic process of finding defects before users do. This course teaches you to design test strategies, write effective tests, and build quality into the development process.",
+        "introduction": "Software bugs cost the global economy an estimated $1.7 trillion annually in lost productivity, security breaches, and system failures. Testing is the systematic process of finding defects before users do. But testing is more than writing test cases: it encompasses strategy, design, automation, metrics, and culture. This course teaches you to think like a quality engineer. You will learn to design test strategies that balance cost and risk, write effective automated tests at every level of the testing pyramid, build CI/CD pipelines with quality gates, conduct performance and security testing, and measure quality with meaningful metrics. The goal is not just to find bugs but to build quality into the development process from the start. Prevention is cheaper than detection, and detection is cheaper than failure. By the end of this course, you will be able to design and implement a comprehensive quality assurance program for a real software project, from unit tests to production monitoring.",
         "key_concepts": [
-          "Verification vs validation: building it right vs building the right thing",
-          "Testing levels: unit, integration, system, acceptance (testing pyramid)",
-          "Black-box vs white-box testing: testing behavior vs testing structure",
-          "Test adequacy criteria: when is testing sufficient?",
-          "Cost of defects: exponential increase with late discovery"
+          "Verification vs validation: building the product right vs building the right product",
+          "Testing pyramid: many unit tests (fast, cheap), fewer integration tests, fewest E2E tests (slow, expensive)",
+          "Black-box testing: testing behavior against requirements without examining code structure",
+          "White-box testing: testing code structure by examining paths, branches, and conditions",
+          "Gray-box testing: combining black-box and white-box approaches with partial code knowledge",
+          "Test adequacy criteria: defining when testing is sufficient (coverage, mutation score, risk)",
+          "Cost of defects: exponential increase with late discovery (10-100x from coding to production)",
+          "Shift-left testing: moving testing earlier in the development lifecycle to reduce costs",
+          "Quality attributes: correctness, reliability, performance, security, usability, maintainability",
+          "Testing vs debugging: testing finds symptoms, debugging finds root causes"
         ],
-        "demonstration": "Examine a real bug report from an open-source project, trace it through the code to understand the root cause, then write a regression test that would have caught it",
+        "demonstration": "Examine a real CVE (Common Vulnerabilities and Exposures) report for an open-source project. Trace the vulnerability through the code to understand the root cause. Then write a regression test that would have caught the bug before release. Discuss what testing strategy could have prevented the vulnerability.",
         "setup_requirements": [
-          "Python with pytest or Java with JUnit",
-          "Sample project with intentional bugs",
-          "Code coverage tool configured"
+          "Python 3.12+ with pytest framework installed",
+          "Git repository with a sample web application containing intentional bugs",
+          "Code coverage tool (coverage.py) configured"
         ],
         "review": [
           {
             "key": "Dijkstra's Observation",
-            "value": "Testing can only show the presence of bugs, never their absence; this means testing must be combined with other quality techniques (code review, static analysis, formal methods) for critical systems"
+            "value": "Testing can only show the presence of bugs, never their absence. This means testing must be combined with other quality techniques: code review catches design flaws, static analysis catches pattern violations, and formal methods prove properties for critical systems."
           },
           {
             "key": "Cost of Late Defects",
-            "value": "A bug found in production costs 10-100x more to fix than one found during coding, due to diagnosis difficulty, deployment overhead, user impact, and reputation damage. Testing shifts defect discovery left (earlier)"
+            "value": "A bug found in production costs 10-100x more to fix than one found during coding, due to diagnosis difficulty, deployment overhead, user impact, and reputation damage. Testing shifts defect discovery left (earlier), reducing the total cost of quality."
+          },
+          {
+            "key": "Testing Pyramid Rationale",
+            "value": "Unit tests run in milliseconds, test one thing, and pinpoint failures precisely. E2E tests take minutes, test everything, and produce vague failures. The pyramid shape reflects the economics: invest heavily in fast, precise tests and use slow, broad tests sparingly for integration confidence."
+          },
+          {
+            "key": "Quality is Not Just Testing",
+            "value": "Testing is one pillar of quality. Code review, pair programming, static analysis, architecture review, and monitoring in production all contribute. A comprehensive quality program uses all of these, weighted by project risk and team maturity."
           }
         ]
       }
     },
     {
       "week_number": 2,
-      "session_number": 3,
-      "topic": "Test Design Techniques: Black-Box and White-Box",
-      "duration": "50 minutes",
+      "session_number": 2,
+      "topic": "Unit Testing and Test-Driven Development",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Apply equivalence partitioning and boundary value analysis",
-        "Design white-box tests using statement, branch, and path coverage",
-        "Combine techniques for comprehensive test suites"
+        "Write effective unit tests with meaningful assertions and clear failure messages",
+        "Practice test-driven development: red-green-refactor cycle",
+        "Structure test suites using arrange-act-assert and given-when-then patterns",
+        "Identify characteristics of good unit tests: fast, isolated, repeatable, self-validating"
       ],
       "readings": [
-        "Myers, Ch. 4-5 - Test Case Design",
-        "Ammann & Offutt, Introduction to Software Testing, Ch. 2-3"
+        "Beck, Test-Driven Development: By Example, Ch. 1-8",
+        "Meszaros, xUnit Test Patterns, Ch. 3-5",
+        "Martin, Clean Code, Ch. 9 (Unit Tests)"
       ],
       "lecture_notes": {
-        "introduction": "Systematic test design ensures you cover important cases without redundancy. Black-box techniques derive tests from requirements; white-box techniques derive tests from code structure. Professional testers use both.",
+        "introduction": "Unit tests are the foundation of software quality. A unit test exercises a single unit of code (a function, method, or class) in isolation, verifying that it produces the correct output for given inputs. Good unit tests are fast (milliseconds), isolated (no external dependencies), repeatable (same result every run), and self-validating (pass/fail with no human interpretation). Test-driven development (TDD) inverts the traditional workflow: write a failing test first, then write the minimum code to make it pass, then refactor while keeping tests green. TDD produces code that is testable by design, documented by its tests, and incrementally developed with confidence. Critics argue TDD slows initial development. Proponents counter that TDD reduces debugging time, produces better designs (because hard-to-test code is usually hard-to-maintain code), and builds a safety net that accelerates future changes. Whether you practice strict TDD or test-after, the principles of good unit testing are the same. This session covers both the mechanics and the craft: not just how to write tests, but how to write tests that are maintainable, meaningful, and trustworthy.",
         "key_concepts": [
-          "Equivalence partitioning: dividing inputs into classes that should behave identically",
-          "Boundary value analysis: testing at the edges of equivalence classes",
-          "Decision tables: systematically covering combinations of conditions",
-          "Statement coverage: every line of code executed at least once",
-          "Branch coverage: every true/false branch taken at least once",
-          "Modified condition/decision coverage (MC/DC): each condition independently affects outcome"
+          "Arrange-Act-Assert pattern: set up preconditions, execute the code under test, verify the result",
+          "Test-driven development: write failing test, write minimal code to pass, refactor with green tests",
+          "Test isolation: each test runs independently with no shared state or order dependencies",
+          "Test naming: names describe behavior, not implementation (test_empty_cart_total_is_zero)",
+          "Assertion quality: assert specific values, not just 'no exception thrown'",
+          "Edge cases: empty inputs, boundary values, null/None, maximum values, unicode, negative numbers",
+          "Test fixtures: shared setup code using setUp/tearDown or pytest fixtures",
+          "Parameterized tests: testing the same logic with multiple input/output pairs",
+          "Test doubles: fakes, stubs, mocks, and spies for isolating the unit under test",
+          "FIRST principles: Fast, Isolated, Repeatable, Self-validating, Timely"
         ],
-        "demonstration": "Given a function specification, derive test cases using equivalence partitioning and boundary value analysis, then measure branch coverage and add tests to reach 100%",
+        "demonstration": "Implement a shopping cart price calculator using TDD. Start with the simplest test (empty cart returns zero), incrementally add tests for single items, multiple items, discounts, and tax calculation. Each test drives the next piece of implementation. Show how TDD naturally produces a clean, well-structured API.",
         "setup_requirements": [
-          "Python with pytest and coverage.py",
-          "Sample function with specification"
+          "Python 3.12+ with pytest",
+          "pytest-cov for coverage reporting",
+          "VS Code with Python Test Explorer extension"
         ],
         "review": [
           {
-            "key": "Boundary Value Analysis",
-            "value": "Most bugs cluster at boundaries: the edges of valid ranges, the first and last elements, empty inputs, single elements, and exactly-at-limit values. Testing one value from each equivalence class plus all boundaries catches the majority of defects"
+            "key": "Red-Green-Refactor",
+            "value": "Red: write a test that fails because the feature does not exist. Green: write the simplest code that makes the test pass (even if ugly). Refactor: clean up the code while keeping all tests green. This cycle produces tested, clean code in small increments."
           },
           {
-            "key": "Coverage is Necessary Not Sufficient",
-            "value": "100% branch coverage means every branch was executed, but it does not guarantee correct behavior for all inputs; coverage measures what was executed, not what was verified. Always pair coverage with assertions"
+            "key": "Tests Document Behavior",
+            "value": "A well-named test suite is executable documentation: test_discount_applies_to_orders_over_100() describes the business rule. When requirements change, the tests show exactly which behaviors are affected. When onboarding, tests show how the system is supposed to work."
+          },
+          {
+            "key": "Fragile Tests",
+            "value": "Tests that break when implementation changes (without behavior changing) are fragile and costly. Test behavior, not implementation. Assert on outputs and side effects, not on internal method calls or data structures. This makes tests resilient to refactoring."
+          },
+          {
+            "key": "Test Coverage as Indicator",
+            "value": "Coverage tells you what code executed during tests, not whether it was verified correctly. 100% coverage with no assertions proves nothing. Use coverage to find untested code, then add meaningful assertions. Aim for high coverage of critical paths, not universal 100%."
           }
         ]
       }
     },
     {
       "week_number": 3,
-      "session_number": 5,
-      "topic": "Test Automation and Continuous Testing",
-      "duration": "50 minutes",
+      "session_number": 3,
+      "topic": "Integration Testing",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Architect a test automation strategy balancing speed and confidence",
-        "Write maintainable automated tests that resist code changes",
-        "Integrate tests into CI/CD pipelines for continuous feedback"
+        "Design integration tests that verify component interactions",
+        "Set up test databases, mock services, and test containers",
+        "Apply integration testing strategies: big-bang, top-down, bottom-up, sandwich",
+        "Balance integration test thoroughness with execution speed"
       ],
       "readings": [
-        "Meszaros, xUnit Test Patterns, Ch. 1-5",
-        "Humble & Farley, Continuous Delivery, Ch. 4-5"
+        "Humble & Farley, Continuous Delivery, Ch. 4-5",
+        "Freeman & Pryce, Growing Object-Oriented Software, Ch. 8-10",
+        "Testcontainers documentation"
       ],
       "lecture_notes": {
-        "introduction": "Manual testing does not scale. Test automation runs thousands of tests in minutes, giving developers fast feedback on every code change. But poorly designed automation creates a maintenance burden that slows development instead of protecting it.",
+        "introduction": "Unit tests verify that individual components work correctly in isolation. But software failures often occur at the boundaries between components: a function that works perfectly alone may fail when connected to a database, a message queue, or an external API. Integration tests verify these interactions. They test the contracts between components: does the service correctly query the database? Does the API client correctly parse the response? Does the message consumer correctly handle malformed messages? Integration tests are more expensive than unit tests (slower, require infrastructure, harder to debug) but catch bugs that unit tests cannot. The key challenge is balancing thoroughness with speed. Testing every possible interaction is infeasible; testing none is reckless. This session teaches systematic approaches to integration test design: identifying high-risk integration points, setting up realistic test environments using containers, and structuring tests to maximize defect detection while minimizing execution time and maintenance burden.",
         "key_concepts": [
-          "Test automation pyramid: many unit, some integration, few E2E",
-          "Test maintainability: page object model, test fixtures, avoiding brittle selectors",
-          "Test data management: factories, fixtures, database seeding",
-          "Flaky tests: causes (timing, order dependence, shared state) and fixes",
-          "CI integration: test parallelization, test selection, failure reporting"
+          "Integration points: database queries, API calls, message queues, file systems, external services",
+          "Contract testing: verifying that a service meets the interface expected by its consumers",
+          "Test containers: lightweight Docker containers providing real databases and services for tests",
+          "Test databases: isolated database instances with known state, reset between tests",
+          "Big-bang integration: test all components together at once (risky, hard to debug)",
+          "Top-down integration: test from UI down, stubbing lower layers progressively",
+          "Bottom-up integration: test from data layer up, building on verified components",
+          "API integration tests: testing HTTP endpoints with realistic request/response cycles",
+          "Transactional test isolation: wrap each test in a transaction that rolls back, ensuring clean state"
         ],
-        "demonstration": "Set up a complete test automation suite: pytest unit tests, API integration tests with a test database, and Playwright end-to-end tests, all running in a GitHub Actions CI pipeline",
+        "demonstration": "Write integration tests for a REST API that manages a to-do list: (1) set up a PostgreSQL test container, (2) run database migrations, (3) test CRUD operations through HTTP endpoints, (4) verify database state after each operation, (5) ensure tests clean up after themselves. Show how testcontainers eliminates the 'works on my machine' problem.",
         "setup_requirements": [
-          "Python with pytest, requests, and playwright",
-          "GitHub repository with CI configured",
-          "Docker for test database"
+          "Python with pytest, requests, and testcontainers",
+          "Docker installed for test containers",
+          "Sample REST API application with database"
         ],
         "review": [
           {
-            "key": "Flaky Tests",
-            "value": "A test that sometimes passes and sometimes fails without code changes erodes trust in the entire test suite; teams start ignoring failures, defeating the purpose of automation. Quarantine and fix flaky tests immediately"
+            "key": "Contract Testing",
+            "value": "Contract tests verify that a service provider meets the expectations of its consumers. Pact is a popular tool: the consumer defines expected interactions, the provider verifies it satisfies them. This catches integration bugs without requiring both services to run simultaneously."
           },
           {
-            "key": "Test Independence",
-            "value": "Each test must be able to run in any order and produce the same result; shared state between tests (global variables, database rows, files) causes order-dependent failures that are extremely difficult to diagnose"
+            "key": "Test Container Benefits",
+            "value": "Test containers spin up real databases and services in Docker for each test run. This eliminates shared test databases (source of flaky tests), ensures consistent environments (eliminates works-on-my-machine), and allows testing against the same database engine used in production."
+          },
+          {
+            "key": "Integration Test Speed",
+            "value": "Integration tests are 10-100x slower than unit tests. Mitigate this by: (1) running only affected integration tests on each commit, (2) parallelizing tests across containers, (3) using in-memory databases for speed-critical tests. Run the full suite on merge to main."
+          },
+          {
+            "key": "Boundary Testing",
+            "value": "Most integration bugs occur at boundaries: data serialization/deserialization, encoding mismatches, timezone handling, null vs empty string, and concurrent access. Focus integration tests on these boundary conditions rather than re-testing logic already covered by unit tests."
           }
         ]
       }
     },
     {
       "week_number": 4,
-      "session_number": 7,
-      "topic": "Performance Testing and Security Testing",
-      "duration": "50 minutes",
+      "session_number": 4,
+      "topic": "System and Acceptance Testing",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Design and execute load tests to verify performance requirements",
-        "Identify performance bottlenecks using profiling and monitoring",
-        "Apply basic security testing techniques: SAST, DAST, fuzzing"
+        "Design system tests that verify end-to-end user journeys through the full application stack",
+        "Write acceptance tests from user stories using behavior-driven development (BDD)",
+        "Use browser automation tools (Playwright, Selenium) for UI testing",
+        "Manage test data and environment configuration for system-level tests"
       ],
       "readings": [
-        "Molyneaux, The Art of Application Performance Testing, Ch. 1-4",
-        "OWASP Testing Guide, Ch. 4"
+        "Wynne & Hellesoy, The Cucumber Book, Ch. 1-5",
+        "Playwright Documentation: Getting Started",
+        "Crispin & Gregory, Agile Testing, Ch. 6-8"
       ],
       "lecture_notes": {
-        "introduction": "Functional correctness is necessary but not sufficient. An application that produces correct results but takes 30 seconds to respond, or that leaks user data, is a failed application. Non-functional testing verifies these critical quality attributes.",
+        "introduction": "System tests and acceptance tests verify the application from the user's perspective. They exercise the complete stack: UI, API, business logic, database, and external services. System tests verify that the assembled system meets its technical requirements. Acceptance tests verify that the system meets the business requirements specified by stakeholders. Behavior-driven development (BDD) bridges the gap between technical and business perspectives by expressing tests in a human-readable Given-When-Then format that stakeholders can review and validate. While system tests provide the highest confidence that the application works correctly, they are also the most expensive to write, maintain, and execute. A single E2E test through a browser can take 30 seconds and break when a CSS class changes. This session teaches you to write system and acceptance tests that maximize confidence while minimizing maintenance cost, using page object models, stable selectors, and strategic test selection.",
         "key_concepts": [
-          "Load testing: verifying performance under expected and peak load",
-          "Stress testing: finding the breaking point beyond capacity",
-          "Performance metrics: response time, throughput, error rate, resource utilization",
-          "SAST (Static Application Security Testing): analyzing source code for vulnerabilities",
-          "DAST (Dynamic Application Security Testing): testing running applications for vulnerabilities",
-          "Fuzzing: feeding random/malformed inputs to find crashes and security flaws"
+          "System testing: verifying the complete integrated system against technical requirements",
+          "Acceptance testing: verifying the system meets business requirements from the user perspective",
+          "BDD (Behavior-Driven Development): Given-When-Then scenarios written in natural language",
+          "Browser automation: Playwright or Selenium controlling a real browser to simulate user actions",
+          "Page Object Model: encapsulating page structure in objects to isolate UI changes from test logic",
+          "Stable selectors: using data-testid attributes instead of CSS classes or XPath for reliable element selection",
+          "Test data management: factories, fixtures, and database seeding for reproducible test state",
+          "Visual regression testing: screenshot comparison to detect unintended UI changes",
+          "Smoke tests: a small subset of critical tests run after every deployment"
         ],
-        "demonstration": "Use k6 to load test a web API: ramp to 500 concurrent users, identify the throughput ceiling, profile the server to find the bottleneck, then optimize and retest",
+        "demonstration": "Write acceptance tests for a user registration flow using Playwright: (1) navigate to the registration page, (2) fill in the form with valid data, (3) submit and verify the success message, (4) attempt registration with an existing email and verify the error. Use the Page Object Model to encapsulate selectors. Show how data-testid attributes make tests resilient to UI redesigns.",
         "setup_requirements": [
-          "k6 load testing tool installed",
-          "Target API with monitoring configured",
-          "OWASP ZAP for DAST scanning"
+          "Python with pytest-playwright or JavaScript with Playwright",
+          "Sample web application running locally",
+          "Browser automation setup (Chromium, Firefox, or WebKit)"
         ],
         "review": [
           {
-            "key": "Performance Baselines",
-            "value": "Establish performance baselines before optimization; without a baseline, you cannot measure improvement. Run load tests regularly in CI to detect performance regressions early"
+            "key": "Page Object Model Benefits",
+            "value": "When the UI changes (a button moves, a class name changes), only the page object needs updating. All tests that use that page continue to work. Without POM, the same selector change breaks dozens of tests. POM is the single most important pattern for maintainable E2E tests."
           },
           {
-            "key": "Shift-Left Security",
-            "value": "Integrate SAST into the CI pipeline so security vulnerabilities are detected at commit time, not in production; DAST and penetration testing complement SAST by finding runtime and configuration issues that static analysis misses"
+            "key": "BDD as Communication Tool",
+            "value": "BDD's real value is not the test framework but the conversation it enables. Writing Given-When-Then scenarios with stakeholders before coding clarifies requirements, surfaces edge cases, and creates shared understanding. The executable specifications are a bonus."
+          },
+          {
+            "key": "Flaky E2E Tests",
+            "value": "E2E tests are inherently flaky: timing-dependent (animations, network latency), environment-dependent (screen size, browser version), and data-dependent (test database state). Use explicit waits (not sleeps), idempotent test data, and retry logic with investigation of root causes."
+          },
+          {
+            "key": "Strategic Test Selection",
+            "value": "Do not automate every user journey as an E2E test. Automate the critical happy paths (login, purchase, core workflow) and the highest-risk scenarios. Test edge cases at the unit and integration level where they are faster and more reliable."
           }
         ]
       }
     },
     {
       "week_number": 5,
-      "session_number": 9,
-      "topic": "Test Strategy and Quality Metrics",
-      "duration": "50 minutes",
+      "session_number": 5,
+      "topic": "Test Automation Frameworks",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Design a comprehensive test strategy for a software project",
-        "Select and interpret quality metrics: defect density, MTTR, code coverage",
-        "Build a quality culture through process and tooling"
+        "Architect a test automation framework that scales with the codebase",
+        "Implement test fixtures, factories, and data builders for consistent test data",
+        "Design a test suite structure that supports parallel execution and selective runs",
+        "Evaluate popular frameworks: pytest, JUnit, Jest, Playwright, Cypress"
       ],
       "readings": [
-        "Whittaker, How Google Tests Software, Ch. 1-3",
-        "Forsgren, Accelerate, Ch. 4-6"
+        "Meszaros, xUnit Test Patterns, Ch. 6-12",
+        "pytest Documentation: Fixtures and Parameterization",
+        "Fowler, 'Test Pyramid' (blog post)"
       ],
       "lecture_notes": {
-        "introduction": "Testing is not just about writing tests; it is about building a quality culture. A test strategy defines what to test, how much to test, and who tests what. Quality metrics provide visibility into the health of the codebase and the effectiveness of testing.",
+        "introduction": "A test automation framework is the infrastructure that supports writing, organizing, running, and reporting on automated tests. A well-designed framework makes writing new tests easy, running tests fast, and maintaining tests cheap. A poorly designed framework creates a maintenance burden that slows development instead of protecting it. This session covers the engineering of test infrastructure. We examine test fixtures that provide consistent, isolated test data without duplication. We study factory patterns that generate realistic test objects with sensible defaults. We design suite structures that support running tests in parallel, selecting tests by tag or path, and failing fast on critical errors. We evaluate the strengths and weaknesses of popular frameworks across languages: pytest's fixture system (dependency injection for tests), JUnit 5's extension model, Jest's snapshot testing, and Playwright's auto-waiting and tracing. The goal is to build test infrastructure that your team actually uses, because the best test framework is one that makes writing tests the path of least resistance.",
         "key_concepts": [
-          "Test strategy document: scope, approach, resources, schedule, risk areas",
-          "Risk-based testing: allocating more effort to higher-risk areas",
-          "Quality metrics: defect density, defect escape rate, MTTR, deployment frequency",
-          "Code coverage: statement, branch, mutation testing",
-          "Quality culture: shared ownership, blameless postmortems, continuous improvement"
+          "Test fixtures: reusable setup/teardown code providing consistent preconditions",
+          "Fixture scoping: function (per test), class, module, session scopes for controlling lifecycle",
+          "Factory pattern: generating test objects with sensible defaults and selective overrides",
+          "Test organization: by feature, by test level, by speed, enabling selective execution",
+          "Parallel execution: running tests concurrently with isolated state (pytest-xdist, JUnit parallel)",
+          "Test selection: running subsets by tag, path, or changed-file analysis",
+          "Assertion libraries: rich assertion messages that show expected vs actual with diff",
+          "Test reporting: JUnit XML, HTML reports, CI integration for failure visibility",
+          "Snapshot testing: recording expected output and comparing against future runs (Jest, syrupy)"
         ],
-        "demonstration": "Write a test strategy for a payment processing system: identify risk areas, allocate testing effort, define coverage targets, and establish quality gates for the CI pipeline",
+        "demonstration": "Build a test framework for a REST API: (1) create pytest fixtures for database setup/teardown, (2) implement a factory that generates user objects with random but valid data, (3) structure the suite with markers for unit/integration/e2e, (4) configure parallel execution, (5) generate an HTML report. Show how the framework reduces boilerplate in individual test files to just the test logic.",
         "setup_requirements": [
-          "Test strategy template",
-          "Metrics dashboard tool",
-          "Sample project for strategy exercise"
+          "Python with pytest, pytest-xdist, pytest-html, and factory_boy",
+          "Sample REST API application",
+          "CI pipeline configuration file"
         ],
         "review": [
           {
-            "key": "Mutation Testing",
-            "value": "Introduce small changes (mutations) to the code and verify that tests detect them; mutations that survive indicate gaps in the test suite. Mutation testing measures test effectiveness more accurately than code coverage alone"
+            "key": "pytest Fixtures as DI",
+            "value": "pytest fixtures are dependency injection for tests: declare what you need as function parameters, and pytest provides it. Fixture scoping controls lifecycle: function-scoped fixtures reset per test (isolation), session-scoped fixtures are created once (speed). This is simpler and more flexible than setUp/tearDown."
           },
           {
-            "key": "Goodhart's Law",
-            "value": "When a metric becomes a target, it ceases to be a good metric; 100% code coverage achieved by writing meaningless assertions is worse than 80% coverage of meaningful tests. Use metrics as indicators, not targets"
+            "key": "Factory Pattern for Test Data",
+            "value": "Factories generate test objects with sensible defaults: UserFactory() creates a valid user with random name, email, etc. Override specific fields for your test: UserFactory(email='duplicate@test.com'). This eliminates brittle test data setup and makes tests self-documenting about which fields matter."
+          },
+          {
+            "key": "Parallel Test Execution",
+            "value": "Running 3000 tests sequentially takes 45 minutes; running them on 6 parallel workers takes 8 minutes. But tests must be independent: no shared database state, no shared files, no order dependencies. Fixture scoping and test containers enable safe parallelism."
+          },
+          {
+            "key": "Framework Selection Criteria",
+            "value": "Choose a framework based on: community size (documentation, plugins), CI integration, assertion quality, fixture/setup model, parallel execution support, and debugging experience. pytest dominates Python, JUnit dominates Java, Jest dominates JavaScript, and Playwright is becoming the default for browser testing."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Mocking, Stubbing, and Test Doubles",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Distinguish between fakes, stubs, mocks, and spies and when to use each",
+        "Use mocking libraries to isolate units from external dependencies",
+        "Design code for testability: dependency injection and interface-based design",
+        "Recognize over-mocking as a code smell indicating poor architecture"
+      ],
+      "readings": [
+        "Meszaros, xUnit Test Patterns, Ch. 11 (Test Doubles)",
+        "Freeman & Pryce, Growing Object-Oriented Software, Ch. 20-21",
+        "Fowler, 'Mocks Aren't Stubs' (blog post)"
+      ],
+      "lecture_notes": {
+        "introduction": "Testing a function that sends an email, charges a credit card, or queries a database presents a dilemma: you want to verify the function's logic without actually sending emails, charging cards, or requiring a live database. Test doubles solve this by replacing real dependencies with controlled substitutes. Stubs provide canned responses to calls made during a test. Mocks verify that specific interactions occurred. Fakes provide a lightweight working implementation (like an in-memory database). Spies record calls for later assertion. Each has a distinct purpose, and using the wrong one leads to brittle, misleading tests. This session covers the mechanics of test doubles and, more importantly, the design principles that make code testable. Code that is hard to test is usually hard to maintain, because the same coupling that prevents testing also prevents modification. Dependency injection, interface-based design, and the ports-and-adapters pattern all improve testability by decoupling business logic from infrastructure. The goal is not to mock everything but to design code so that mocking is rarely needed.",
+        "key_concepts": [
+          "Test doubles: generic term for any substitute used in place of a real dependency during testing",
+          "Stub: returns pre-programmed responses to calls; does not verify interactions",
+          "Mock: pre-programmed with expected calls; fails the test if unexpected calls occur",
+          "Fake: a working implementation with shortcuts (in-memory database, fake SMTP server)",
+          "Spy: wraps a real object, recording calls for later assertion without changing behavior",
+          "Dependency injection: passing dependencies as parameters rather than hardcoding them",
+          "Interface-based design: depending on abstractions (interfaces/protocols) not concrete implementations",
+          "Over-mocking: excessive mocking indicates tight coupling; refactor the design instead of adding more mocks",
+          "Mockist vs classicist: testing interaction patterns vs testing state after execution",
+          "unittest.mock.patch: Python's built-in mocking for replacing objects during tests"
+        ],
+        "demonstration": "Test a payment processing service that depends on a payment gateway API and a database: (1) use a stub for the payment gateway that returns a successful response, (2) use a fake in-memory repository instead of a real database, (3) use a spy to verify that a notification email was requested. Then refactor the service to use dependency injection, showing how it simplifies the test setup.",
+        "setup_requirements": [
+          "Python with pytest and unittest.mock",
+          "Sample service with external dependencies",
+          "Dependency injection refactoring examples"
+        ],
+        "review": [
+          {
+            "key": "Stubs vs Mocks",
+            "value": "Stubs answer questions: 'when the test asks for the current user, return this fake user.' Mocks verify behavior: 'assert that the email service was called exactly once with these arguments.' Use stubs when you care about the output; use mocks when you care about the interaction."
+          },
+          {
+            "key": "Over-Mocking Smell",
+            "value": "If a test requires 10 mocks to set up, the code under test has too many dependencies. This is a design problem, not a testing problem. Refactor to reduce coupling. Well-designed code typically needs 0-2 test doubles per test."
+          },
+          {
+            "key": "Dependency Injection for Testability",
+            "value": "Instead of 'self.db = PostgresDatabase()', accept the dependency: 'def __init__(self, db: Database)'. In production, pass a real database. In tests, pass a fake. This pattern makes testing trivial and also makes the code more flexible and maintainable."
+          },
+          {
+            "key": "Don't Mock What You Don't Own",
+            "value": "Mocking third-party APIs directly couples your tests to their implementation. Instead, create a thin adapter (wrapper) around the third-party API. Mock your adapter. If the third party changes their API, only the adapter changes, not all your tests."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Code Coverage Analysis",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Measure and interpret code coverage metrics: statement, branch, path, MC/DC",
+        "Use coverage tools to identify untested code paths",
+        "Apply mutation testing to measure test suite effectiveness beyond coverage",
+        "Set meaningful coverage targets based on risk analysis, not arbitrary percentages"
+      ],
+      "readings": [
+        "Ammann & Offutt, Introduction to Software Testing, Ch. 2-3",
+        "Zhu, Hall, & May, 'Software Unit Test Coverage and Adequacy'",
+        "Pitest Documentation (mutation testing)"
+      ],
+      "lecture_notes": {
+        "introduction": "Code coverage measures how much of your code executes during testing. It is the most widely used metric for test adequacy, and also the most widely misunderstood. 100% statement coverage means every line ran during tests, but it does not mean every bug was found. A line can execute without being verified: if you call calculate_total() but never assert the result, coverage counts it as covered even though the test proves nothing. Branch coverage is stronger: it requires every conditional branch (true and false) to be taken. MC/DC (Modified Condition/Decision Coverage) is stronger still: each condition must independently affect the decision outcome. Even MC/DC can miss bugs that depend on specific input values. Mutation testing addresses this limitation by introducing small changes (mutations) to the code and checking whether tests detect them. A mutation that survives means the test suite has a gap. This session teaches you to use coverage as a tool for finding untested code, mutation testing for measuring test quality, and risk analysis for setting appropriate coverage targets. The goal is meaningful coverage, not maximum coverage.",
+        "key_concepts": [
+          "Statement coverage: percentage of code statements executed during tests",
+          "Branch coverage: percentage of conditional branches (true/false) taken during tests",
+          "Path coverage: percentage of distinct execution paths taken (usually infeasible to achieve 100%)",
+          "MC/DC coverage: each condition independently affects the decision outcome (required for aviation software)",
+          "Mutation testing: introduce small code changes (mutations) and verify tests detect them",
+          "Mutation operators: replace operators (+/-), negate conditions, delete statements, change constants",
+          "Mutation score: percentage of mutations killed (detected) by the test suite",
+          "Coverage tools: coverage.py, Istanbul/nyc, JaCoCo, lcov, and their CI integration",
+          "Coverage gaps: code that is difficult to cover may indicate design problems (dead code, god objects)"
+        ],
+        "demonstration": "Measure branch coverage for a date validation function. Start at 60% coverage, use the coverage report to identify untested branches (leap year logic, month boundaries), add tests to reach 95%. Then run mutation testing with mutmut to find surviving mutations (tests that do not detect a sign change from < to <=), and add assertion-focused tests to kill them.",
+        "setup_requirements": [
+          "Python with coverage.py and mutmut (mutation testing)",
+          "Sample code with known coverage gaps",
+          "CI pipeline with coverage reporting configured"
+        ],
+        "review": [
+          {
+            "key": "Coverage Is Necessary Not Sufficient",
+            "value": "100% branch coverage means every branch was executed, not that every branch was verified. Coverage measures what ran, not what was asserted. Always pair coverage measurement with assertion quality. A test that calls a function without asserting anything achieves coverage but proves nothing."
+          },
+          {
+            "key": "Mutation Testing Effectiveness",
+            "value": "Mutation testing measures how well tests detect real changes. If changing 'x > 0' to 'x >= 0' does not fail any test, your tests have a gap at that boundary. Mutation testing is more expensive than coverage analysis but provides a much more accurate measure of test quality."
+          },
+          {
+            "key": "Goodhart's Law for Coverage",
+            "value": "When coverage becomes a target (e.g., 'all code must have 90% coverage'), developers write low-quality tests to hit the number. Coverage should be used as a diagnostic tool to find untested code, not as a compliance metric. Use it to inform decisions, not to enforce quotas."
+          },
+          {
+            "key": "Risk-Based Coverage Targets",
+            "value": "Set higher coverage targets for critical code (payment processing, authentication, data integrity) and lower targets for low-risk code (admin dashboards, static pages). A blanket 90% target wastes effort on low-risk code while potentially under-testing critical paths."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Performance Testing",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Design and execute load tests to verify performance under expected and peak conditions",
+        "Interpret performance metrics: response time percentiles, throughput, error rate",
+        "Identify performance bottlenecks using profiling, APM tools, and database query analysis",
+        "Establish performance baselines and detect regressions in CI"
+      ],
+      "readings": [
+        "Molyneaux, The Art of Application Performance Testing, Ch. 1-6",
+        "k6 Documentation: Load Testing Guide",
+        "Gregg, Systems Performance, Ch. 2"
+      ],
+      "lecture_notes": {
+        "introduction": "Functional correctness is necessary but not sufficient. An application that produces correct results but takes 30 seconds to respond under load is a failed application. Performance testing verifies that the system meets its non-functional requirements: response time, throughput, resource utilization, and scalability. Load testing applies expected peak traffic to verify the system handles it gracefully. Stress testing pushes beyond capacity to find the breaking point. Soak testing runs sustained load for hours to detect memory leaks, connection pool exhaustion, and gradual degradation. Each reveals different classes of defects that functional tests cannot find. Performance testing also requires understanding what to measure and how to interpret results. Average response time is misleading because it hides outliers; the 95th and 99th percentiles reveal the experience of your worst-affected users. Throughput (requests per second) shows capacity. Error rate under load shows stability. This session teaches you to design meaningful performance tests, run them with modern tools, interpret the results, and integrate performance testing into your CI pipeline for continuous regression detection.",
+        "key_concepts": [
+          "Load testing: applying expected peak traffic to verify the system meets performance SLAs",
+          "Stress testing: increasing load beyond capacity to find the breaking point and failure mode",
+          "Soak testing: sustained moderate load over hours/days to detect leaks and gradual degradation",
+          "Spike testing: sudden traffic spikes to verify auto-scaling and graceful degradation",
+          "Response time percentiles: p50, p95, p99 reveal the distribution better than averages",
+          "Throughput: requests per second the system can sustain at acceptable response times",
+          "Saturation point: the load at which response time degrades non-linearly (system is at capacity)",
+          "Performance baselines: measuring current performance to detect future regressions",
+          "Profiling under load: identifying which functions/queries consume the most time under realistic traffic",
+          "k6 and Locust: modern load testing tools with scriptable scenarios"
+        ],
+        "demonstration": "Use k6 to load test a web API: (1) write a test script that simulates realistic user behavior, (2) ramp to 500 concurrent virtual users over 5 minutes, (3) analyze the results (p95 response time, throughput, error rate), (4) identify the bottleneck using database query timing, (5) add an index to the slow query, (6) retest and verify the improvement. Show how to run k6 in CI for regression detection.",
+        "setup_requirements": [
+          "k6 load testing tool installed",
+          "Sample API with monitoring and logging configured",
+          "Database with slow query log enabled",
+          "Grafana or equivalent for metrics visualization"
+        ],
+        "review": [
+          {
+            "key": "Percentiles Over Averages",
+            "value": "Average response time of 200ms may hide that 5% of requests take 5 seconds. The p95 and p99 percentiles show the worst-case experience for real users. Always report percentiles in performance testing. SLAs should be defined on percentiles, not averages."
+          },
+          {
+            "key": "Performance Baselines in CI",
+            "value": "Run a standardized load test after each deployment and compare against the baseline. If p95 response time increases by more than 10%, fail the pipeline. This catches performance regressions before they reach production, just like functional test failures."
+          },
+          {
+            "key": "Little's Law",
+            "value": "L = lambda * W: the average number of concurrent requests (L) equals the arrival rate (lambda) times the average time in system (W). If your API handles 100 req/s with 200ms average, you have 20 concurrent requests. This helps size thread pools and connection pools."
+          },
+          {
+            "key": "Performance Anti-Patterns",
+            "value": "N+1 queries (loading 100 items with 101 database queries instead of 2), unbounded result sets (SELECT * with no LIMIT), synchronous external calls in the request path, and no caching of expensive computations are the most common performance bugs. Load testing reveals them."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "Security Testing",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Apply OWASP Top 10 vulnerability categories to test planning",
+        "Use SAST tools to find vulnerabilities in source code",
+        "Use DAST tools to find vulnerabilities in running applications",
+        "Implement fuzz testing to discover crash-inducing and security-critical inputs"
+      ],
+      "readings": [
+        "OWASP Testing Guide v4.2, Ch. 4",
+        "OWASP Top 10 (2021 edition)",
+        "Takanen, Demott, & Miller, Fuzzing for Software Security Testing"
+      ],
+      "lecture_notes": {
+        "introduction": "Security testing verifies that the system protects data confidentiality, integrity, and availability against malicious attacks. Unlike functional testing, which asks 'does the system do what it should?', security testing asks 'does the system resist what it should not do?' This adversarial mindset requires different techniques. Static Application Security Testing (SAST) analyzes source code for known vulnerability patterns: SQL injection, cross-site scripting, insecure deserialization, hardcoded secrets. Dynamic Application Security Testing (DAST) tests the running application by sending malicious inputs and observing responses: does the login form accept SQL injection? Does the API return stack traces to unauthenticated users? Fuzz testing generates random or semi-random inputs to find crashes, memory corruption, and unexpected behavior. Each approach finds different vulnerability types. SAST catches coding mistakes early but produces false positives. DAST finds runtime vulnerabilities but requires a running application. Fuzzing finds edge cases that no human would think to test. A comprehensive security testing strategy uses all three, integrated into the CI pipeline.",
+        "key_concepts": [
+          "OWASP Top 10: the most critical web application security risks (injection, broken auth, XSS, etc.)",
+          "SAST (Static Application Security Testing): analyzing source code without executing it",
+          "DAST (Dynamic Application Security Testing): testing the running application with malicious inputs",
+          "IAST (Interactive Application Security Testing): instrumenting the runtime to detect vulnerabilities during testing",
+          "Fuzz testing: generating random/mutated inputs to find crashes, hangs, and security flaws",
+          "SQL injection: inserting SQL commands through user input to manipulate database queries",
+          "XSS (Cross-Site Scripting): injecting malicious scripts into web pages viewed by other users",
+          "CSRF (Cross-Site Request Forgery): tricking authenticated users into performing unintended actions",
+          "Dependency scanning: checking third-party libraries for known vulnerabilities (CVEs)",
+          "Security testing in CI: SAST on every commit, DAST on staging, dependency scan on every build"
+        ],
+        "demonstration": "Test a deliberately vulnerable web application (OWASP Juice Shop): (1) use Bandit (Python SAST) to find hardcoded secrets and SQL injection patterns, (2) use OWASP ZAP to scan the running application for XSS and injection vulnerabilities, (3) write a custom fuzzer that generates malformed JSON payloads to crash an API endpoint. Categorize findings by OWASP Top 10 category.",
+        "setup_requirements": [
+          "OWASP Juice Shop running locally via Docker",
+          "Bandit (Python SAST tool) installed",
+          "OWASP ZAP proxy for DAST scanning",
+          "Python with hypothesis library for property-based fuzzing"
+        ],
+        "review": [
+          {
+            "key": "Shift-Left Security",
+            "value": "Integrate SAST into the CI pipeline so vulnerabilities are detected at commit time. Developers fix issues while the code is fresh. DAST and penetration testing complement SAST by finding runtime and configuration issues that static analysis cannot detect."
+          },
+          {
+            "key": "Dependency Vulnerabilities",
+            "value": "Most applications depend on hundreds of third-party libraries, any of which may contain known vulnerabilities. Tools like Dependabot, Snyk, and Trivy scan dependencies against CVE databases and alert on vulnerable versions. This is one of the highest-ROI security practices."
+          },
+          {
+            "key": "Fuzz Testing Effectiveness",
+            "value": "Fuzz testing has found critical vulnerabilities in every major browser, operating system, and protocol implementation. It excels at finding edge cases humans miss: buffer overflows, integer overflows, format string bugs, and deserialization exploits. Even a simple random input generator finds bugs."
+          },
+          {
+            "key": "Security Testing Limitations",
+            "value": "Security testing finds known vulnerability patterns and random crashes. It does not find logic flaws (like a privilege escalation that requires a specific sequence of valid actions) or social engineering vulnerabilities. Penetration testing by skilled humans complements automated tools."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "CI/CD Testing Pipelines",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Design a CI/CD pipeline with layered test execution and quality gates",
+        "Configure parallel test execution, test selection, and caching for fast feedback",
+        "Implement quality gates: coverage thresholds, zero failing tests, security scan pass",
+        "Set up deployment verification tests (smoke tests, canary releases)"
+      ],
+      "readings": [
+        "Humble & Farley, Continuous Delivery, Ch. 5-8",
+        "GitHub Actions Documentation",
+        "Forsgren, Accelerate, Ch. 2-4"
+      ],
+      "lecture_notes": {
+        "introduction": "Continuous integration (CI) automatically builds and tests every code change. Continuous deployment (CD) automatically deploys changes that pass all quality gates. Together, CI/CD is the delivery backbone that turns tests into deployment decisions. Without CI, tests rot: developers skip running them, tests break silently, and the test suite becomes untrustworthy. With CI, every commit is tested, every failure is visible, and the test suite stays healthy. The design of the CI pipeline determines how quickly developers get feedback and how confidently code can be deployed. A naive pipeline that runs all tests sequentially takes 45 minutes and frustrates developers. A well-designed pipeline provides feedback in layers: unit tests in 2 minutes, integration tests in 10 minutes, E2E tests in 20 minutes. Each layer is a quality gate: if unit tests fail, do not run integration tests. This session covers pipeline architecture, test parallelization, selective test execution, caching strategies, and deployment verification. You will build a complete pipeline that balances speed with confidence.",
+        "key_concepts": [
+          "CI pipeline stages: build, lint, unit test, integration test, security scan, E2E test, deploy",
+          "Quality gates: conditions that must pass before code advances to the next stage",
+          "Layered feedback: fast tests first (2 min), slower tests after (10 min), E2E last (20 min)",
+          "Test parallelization: splitting the test suite across multiple CI runners",
+          "Test selection: running only tests affected by changed files (test impact analysis)",
+          "Caching: caching dependencies, Docker images, and build artifacts between pipeline runs",
+          "Flaky test management: quarantining flaky tests, tracking flake rate, requiring fixes",
+          "Deployment verification: smoke tests after deployment, canary releases, rollback triggers",
+          "Pipeline as code: defining the entire pipeline in version-controlled YAML/code"
+        ],
+        "demonstration": "Build a complete GitHub Actions CI/CD pipeline: (1) run linting and unit tests in parallel as the first stage, (2) run integration tests with a PostgreSQL service container if unit tests pass, (3) run E2E tests with Playwright if integration tests pass, (4) enforce quality gates (coverage > 80%, zero failures, no critical security findings), (5) deploy to staging and run smoke tests, (6) promote to production on manual approval.",
+        "setup_requirements": [
+          "GitHub repository with Actions enabled",
+          "Sample application with unit, integration, and E2E tests",
+          "Docker for service containers in CI",
+          "Deployment target (Heroku, Vercel, or AWS for demonstration)"
+        ],
+        "review": [
+          {
+            "key": "Fast Feedback Loop",
+            "value": "The goal is for developers to learn about failures within 10 minutes of pushing code. Anything longer and they context-switch to other work, making the fix more expensive. Optimize for speed: parallelize tests, cache dependencies, run fast tests first."
+          },
+          {
+            "key": "Quality Gates as Safety Nets",
+            "value": "Quality gates are automated decisions: if coverage drops below threshold, block the merge. If any security scan finds a critical vulnerability, block the deploy. These gates remove the human tendency to rationalize shipping known issues under deadline pressure."
+          },
+          {
+            "key": "Flaky Test Discipline",
+            "value": "A test that fails intermittently without code changes erodes trust in the entire suite. Teams start ignoring failures. Quarantine flaky tests immediately (mark them as known-flaky), track the flake rate, and require fixes within a sprint. Never let flakiness become normalized."
+          },
+          {
+            "key": "Canary Deployments",
+            "value": "Route 5% of production traffic to the new version. Monitor error rates, latency, and business metrics. If the canary is healthy after 30 minutes, gradually increase to 100%. If not, roll back automatically. This catches production-only bugs with minimal user impact."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "Regression Testing",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Design regression test suites that catch bugs reintroduced by code changes",
+        "Implement test impact analysis to select relevant tests for each change",
+        "Build visual regression testing for UI components",
+        "Maintain regression suites: pruning obsolete tests, updating for requirement changes"
+      ],
+      "readings": [
+        "Harrold, 'Testing: A Roadmap' (ICSE paper)",
+        "Chromatic Documentation: Visual Regression Testing",
+        "Orso & Rothermel, 'Software Testing: A Research Travelogue'"
+      ],
+      "lecture_notes": {
+        "introduction": "Regression testing verifies that previously working functionality has not been broken by recent changes. Every bug fix, feature addition, and refactoring carries the risk of introducing new defects into existing code. The regression test suite is the safety net that catches these regressions before they reach users. As a codebase grows, the regression suite grows too, eventually taking hours to run. This creates tension between thorough testing and fast feedback. Test impact analysis addresses this by mapping code changes to affected tests, running only the relevant subset. For a change to a payment module, run the payment tests, not the entire 10,000-test suite. Visual regression testing extends this concept to UIs: capture screenshots of components, compare against baselines, and flag pixel-level differences that may indicate unintended visual changes. This session covers strategies for building, maintaining, and optimizing regression test suites that remain useful as the codebase scales.",
+        "key_concepts": [
+          "Regression testing: verifying existing functionality after code changes",
+          "Test impact analysis: mapping code changes to affected tests using dependency graphs",
+          "Change-based test selection: running only tests affected by the current changeset",
+          "Visual regression testing: screenshot comparison detecting unintended UI changes",
+          "Test suite maintenance: removing obsolete tests, updating for requirement changes",
+          "Regression test prioritization: running highest-risk tests first for faster feedback",
+          "Automated bisection: git bisect + test suite to find which commit introduced a regression",
+          "Characterization tests: tests that document existing behavior of legacy code for safe refactoring",
+          "Test debt: accumulated fragile, slow, or redundant tests that slow down the pipeline"
+        ],
+        "demonstration": "Set up visual regression testing for a React component library: (1) capture baseline screenshots with Storybook + Chromatic, (2) make an intentional CSS change, (3) review the visual diff, (4) approve or reject. Then demonstrate git bisect with a test suite to automatically find which of 50 commits introduced a bug.",
+        "setup_requirements": [
+          "React component library with Storybook",
+          "Chromatic or Percy for visual regression",
+          "Git repository with test suite for bisection demo"
+        ],
+        "review": [
+          {
+            "key": "Every Bug Fix Gets a Regression Test",
+            "value": "When you fix a bug, write a test that would have caught it. This test prevents the bug from ever returning. Over time, the regression suite accumulates the team's collective knowledge of past failures, becoming an increasingly valuable safety net."
+          },
+          {
+            "key": "Test Impact Analysis ROI",
+            "value": "If 90% of changes affect less than 10% of the codebase, running only affected tests cuts CI time by 80-90%. The investment in building a dependency graph pays off quickly in developer productivity. Tools: jest --changedSince, pytest-testmon, Bazel's test caching."
+          },
+          {
+            "key": "Visual Regression Catches What Unit Tests Cannot",
+            "value": "A CSS change can make a button overlap a form field. No unit test or API test catches this. Visual regression testing compares screenshots pixel by pixel. It is especially valuable for design systems where visual consistency across components is critical."
+          },
+          {
+            "key": "Pruning Regression Suites",
+            "value": "Regression suites grow monotonically: tests are added but rarely removed. Periodically review the suite: remove tests for deleted features, merge redundant tests, and rewrite slow tests that can be covered at a lower test level. A lean suite runs faster and is easier to maintain."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Exploratory Testing",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Apply exploratory testing techniques to discover defects that scripted tests miss",
+        "Design exploratory testing charters with clear scope, approach, and time limits",
+        "Document exploratory findings systematically for reproducibility and regression",
+        "Combine exploratory and automated testing for comprehensive coverage"
+      ],
+      "readings": [
+        "Whittaker, Exploratory Software Testing, Ch. 1-5",
+        "Bach, 'Session-Based Test Management'",
+        "Kaner, 'Exploratory Testing' (tutorial)"
+      ],
+      "lecture_notes": {
+        "introduction": "Automated tests verify what you expect. Exploratory testing discovers what you did not expect. It is the creative, investigative side of testing where the tester simultaneously designs tests, executes them, and learns about the system. Unlike scripted testing where test cases are defined in advance, exploratory testing adapts in real time based on what the tester observes. If a form rejects a valid email, the tester immediately investigates: what about emails with plus signs? Dots? Very long domains? Unicode characters? This adaptive approach discovers categories of defects that no predetermined test script would cover. Exploratory testing is not random clicking. It is skilled, disciplined investigation guided by charters (defined scope and objectives), heuristics (systematic variation techniques), and session management (timeboxed with documented notes). James Bach and Cem Kaner formalized these techniques into Session-Based Test Management (SBTM), which provides structure and accountability while preserving the creative freedom that makes exploratory testing effective.",
+        "key_concepts": [
+          "Exploratory testing: simultaneous test design, execution, and learning",
+          "Test charters: focused missions defining what to explore, why, and for how long",
+          "Session-based management: timeboxed sessions (60-90 min) with structured debriefs",
+          "Heuristics: systematic variation techniques (boundary, CRUD, workflow, error handling)",
+          "Touring metaphors: guidebook tour, money tour, landmark tour, garbage collector's tour",
+          "Note-taking: documenting observations, questions, and bugs during exploration",
+          "Pairing: two testers exploring together for knowledge sharing and idea generation",
+          "Charter examples: 'Explore file upload with malformed files to discover handling gaps'",
+          "Transitioning findings: converting exploratory discoveries into automated regression tests"
+        ],
+        "demonstration": "Conduct a live 30-minute exploratory testing session on a web application: (1) define a charter targeting the search feature, (2) explore boundary conditions, special characters, empty states, and concurrent usage, (3) document 3-5 defects found, (4) write automated regression tests for the most important findings. Show the session notes format used in SBTM.",
+        "setup_requirements": [
+          "Web application for exploration (can use OWASP Juice Shop or a class project)",
+          "Session note template",
+          "Screen recording tool for session documentation"
+        ],
+        "review": [
+          {
+            "key": "Exploratory vs Scripted Testing",
+            "value": "Scripted tests verify that the system does what it should (confirmation). Exploratory tests discover what the system actually does (investigation). Both are necessary. Use scripted tests for regression and compliance; use exploratory tests for discovery and edge cases."
+          },
+          {
+            "key": "Charter-Based Focus",
+            "value": "A good charter is specific enough to be actionable but broad enough to allow discovery. 'Test the login page' is too vague. 'Explore login with SQL injection attempts and unusual characters in the password field, focusing on error handling and information leakage' is actionable."
+          },
+          {
+            "key": "Heuristic Toolbox",
+            "value": "Systematic exploration heuristics: test with zero, one, many items. Test with min, max, and beyond-max values. Test CRUD operations in every order. Test interruptions (network drop, browser close, back button). Test with concurrent users. These heuristics guide exploration without scripting it."
+          },
+          {
+            "key": "Converting Findings to Automation",
+            "value": "The most valuable exploratory finding is one that becomes an automated regression test. If you discover that the search breaks on queries with a single quote, write an automated test for it. Exploratory testing feeds the automated suite with cases no one thought to script in advance."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "Test Management and Reporting",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Organize test artifacts: plans, cases, runs, defects, and traceability matrices",
+        "Generate actionable test reports for different audiences: developers, managers, stakeholders",
+        "Implement test traceability from requirements through test cases to defects",
+        "Manage test environments and test data across multiple testing stages"
+      ],
+      "readings": [
+        "IEEE 829 Standard for Software Test Documentation",
+        "Crispin & Gregory, Agile Testing, Ch. 10-12",
+        "TestRail or Zephyr Documentation (test management tools)"
+      ],
+      "lecture_notes": {
+        "introduction": "Testing produces more than pass/fail results. It produces data: which requirements are tested, which are not, which tests pass consistently, which flake, which areas have the most defects, and how quality trends over time. Test management is the discipline of organizing this data into actionable information for different audiences. Developers need detailed failure logs with stack traces and reproduction steps. Managers need trends: is quality improving? Are we ready to release? Stakeholders need confidence: does the system meet the acceptance criteria? Good test management tools and practices make this information accessible without manual effort. This session covers test plans (what, when, how, who), traceability matrices (linking requirements to test cases to defects), test environment management (ensuring consistent, reliable test infrastructure), and reporting (dashboards, trends, and release readiness assessments). The goal is to transform raw test data into decision-making tools.",
+        "key_concepts": [
+          "Test plan: scope, approach, resources, schedule, risk areas, entry/exit criteria",
+          "Test case management: organizing cases by feature, priority, and automation status",
+          "Traceability matrix: mapping requirements to test cases to defects, ensuring complete coverage",
+          "Test runs and results: tracking execution status, pass rates, and defect associations",
+          "Defect lifecycle: open, assigned, in-progress, resolved, verified, closed",
+          "Test environment management: provisioning, configuration, and isolation of test environments",
+          "Test data management: creating, maintaining, and refreshing test data across environments",
+          "Release readiness report: aggregating quality metrics to support release decisions",
+          "Dashboards: real-time visibility into test execution, coverage, and defect trends"
+        ],
+        "demonstration": "Build a test management workflow for a sprint: (1) create a test plan linking user stories to test cases, (2) execute test runs and record results, (3) file defects with reproduction steps and link to failing tests, (4) generate a release readiness report showing coverage, pass rate, open defect count, and risk assessment. Use a lightweight tool (GitHub Issues + labels or a spreadsheet) to avoid tool overhead.",
+        "setup_requirements": [
+          "Test management template (spreadsheet or GitHub project board)",
+          "Sample project with user stories and test cases",
+          "Defect tracking system (GitHub Issues or Jira)"
+        ],
+        "review": [
+          {
+            "key": "Traceability Justification",
+            "value": "Traceability answers: for each requirement, what tests cover it? For each defect, which requirement is affected? For each test failure, which requirements are at risk? Without traceability, you cannot assess release readiness or prioritize test execution."
+          },
+          {
+            "key": "Test Reports for Different Audiences",
+            "value": "Developers need: which tests failed, stack traces, reproduction steps. QA leads need: test execution progress, flaky test trends, coverage gaps. Product managers need: which features are tested, which have open defects, release readiness. Tailor reports to the audience."
+          },
+          {
+            "key": "Test Environment Challenges",
+            "value": "Inconsistent test environments cause 'works on my machine' failures. Use infrastructure-as-code (Docker, Terraform) to provision identical environments. Use test containers for database consistency. Use feature flags to test in production-like conditions without affecting users."
+          },
+          {
+            "key": "Lightweight Test Management",
+            "value": "Do not buy a heavyweight test management tool unless your organization requires it. GitHub Issues with labels, a shared spreadsheet, or a simple Markdown file in the repo can manage test cases for small teams. The overhead of a tool should not exceed the overhead of the testing itself."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "Quality Metrics and Processes",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Select and interpret quality metrics: defect density, MTTR, deployment frequency, change failure rate",
+        "Apply the DORA metrics framework for measuring software delivery performance",
+        "Build a quality culture: shared ownership, blameless postmortems, continuous improvement",
+        "Evaluate organizational testing maturity and create improvement roadmaps"
+      ],
+      "readings": [
+        "Forsgren, Accelerate, Ch. 4-8",
+        "Whittaker, How Google Tests Software, Ch. 1-3",
+        "Humble & Farley, Continuous Delivery, Ch. 14-15"
+      ],
+      "lecture_notes": {
+        "introduction": "Quality is not just a technical concern; it is an organizational one. The best testing tools and frameworks are ineffective if the organization does not value quality, if developers are not incentivized to write tests, if managers prioritize features over stability, or if blame culture discourages reporting problems. This final content session examines quality from the organizational perspective. We study the DORA (DevOps Research and Assessment) metrics that correlate software delivery performance with organizational outcomes: deployment frequency, lead time for changes, change failure rate, and time to restore service. We examine how high-performing teams build quality culture through shared code ownership, automated quality gates, blameless postmortems, and continuous improvement practices. We discuss quality metrics: which ones drive good behavior and which ones drive gaming. And we create maturity assessment frameworks for evaluating and improving an organization's testing practices. The goal is to understand that quality is a system property, not an individual responsibility, and that building quality into the process is more effective than testing quality in at the end.",
+        "key_concepts": [
+          "DORA metrics: deployment frequency, lead time, change failure rate, time to restore service",
+          "Defect density: defects per thousand lines of code (a measure of code quality over time)",
+          "Defect escape rate: percentage of defects found by users vs found by testing (lower is better)",
+          "Mean time to recovery (MTTR): average time from failure detection to service restoration",
+          "Test effectiveness: defects found / (defects found + defects escaped)",
+          "Blameless postmortems: analyzing incidents for systemic causes, not individual fault",
+          "Quality culture: shared ownership where developers own quality, not a separate QA team",
+          "Testing maturity model: levels from ad-hoc testing to fully automated continuous delivery",
+          "Continuous improvement: retrospectives, action items, and measurable progress on quality goals"
+        ],
+        "demonstration": "Analyze DORA metrics from a real team's CI/CD pipeline data: calculate deployment frequency, lead time, change failure rate, and MTTR from git logs and incident reports. Identify the team as low, medium, high, or elite performing. Create an improvement plan with specific, measurable actions to advance one level.",
+        "setup_requirements": [
+          "Git log data from a sample project (or the class project)",
+          "Incident/defect tracking data",
+          "DORA metrics calculation spreadsheet",
+          "Quality maturity assessment template"
+        ],
+        "review": [
+          {
+            "key": "DORA Metrics Research",
+            "value": "The Accelerate research (2014-2023) shows that high-performing teams deploy 973x more frequently than low performers, have 6570x faster lead times, 3x lower change failure rates, and 6570x faster recovery times. Quality and speed are not trade-offs; they are correlated. Fast teams are also reliable teams."
+          },
+          {
+            "key": "Goodhart's Law Revisited",
+            "value": "When a metric becomes a target, it ceases to be a good metric. 100% coverage achieved with meaningless assertions is worse than 80% coverage of meaningful tests. Lines of test code per developer incentivizes verbose tests. Use metrics as diagnostic indicators, not performance targets."
+          },
+          {
+            "key": "Blameless Postmortems",
+            "value": "After an incident, ask 'why did the system allow this to happen?' not 'who made the mistake?' Individuals make errors because the system permits them. Fix the system: add automated checks, improve monitoring, strengthen quality gates. Blame-free analysis produces better outcomes than blame-driven punishment."
+          },
+          {
+            "key": "Quality Ownership",
+            "value": "Quality is not a QA team's responsibility; it is everyone's. Developers write tests, review each other's code, and own the monitoring of their services in production. QA engineers focus on test strategy, tooling, and coaching rather than manually testing developer output."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Course Review and Capstone Presentations",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Synthesize all course topics into a coherent quality assurance philosophy",
+        "Present and defend a comprehensive QA strategy for a real software project",
+        "Evaluate peer QA strategies with constructive feedback",
+        "Identify areas for continued professional development in quality engineering"
+      ],
+      "readings": [
+        "Course notes review: all previous sessions",
+        "Selected team QA strategy documents for peer review"
+      ],
+      "lecture_notes": {
+        "introduction": "This final session brings together all 14 weeks of material through capstone presentations where each team presents their comprehensive QA strategy and demonstrates their testing infrastructure. Teams have been applying course concepts to a real software project throughout the semester, building a multi-level test suite, CI/CD pipeline, and quality monitoring system. Each presentation covers the team's testing philosophy, test strategy document, automated test suite at all levels (unit, integration, E2E), CI/CD pipeline with quality gates, performance and security testing results, and quality metrics dashboard. The class evaluates each presentation against the principles learned throughout the course, providing constructive feedback. This session also serves as a comprehensive review, connecting each week's topic to the others: how TDD from Week 2 feeds the regression suite from Week 11, how security testing from Week 9 integrates into the CI pipeline from Week 10, how quality metrics from Week 14 measure the effectiveness of all other testing activities. The goal is to demonstrate not just knowledge of individual testing techniques but the ability to design and implement a cohesive quality strategy for a real project.",
+        "key_concepts": [
+          "QA strategy synthesis: combining all testing levels, techniques, and processes into a cohesive plan",
+          "Risk-based test allocation: investing testing effort proportionally to risk and impact",
+          "Continuous quality: quality built into every stage of development, not bolted on at the end",
+          "Test automation ROI: measuring the value of automation investment against manual testing cost",
+          "Quality engineering career: roles, skills, certifications, and industry trends",
+          "Shift-left and shift-right: testing earlier in development and monitoring later in production",
+          "Testing in production: feature flags, canary releases, A/B testing, and observability",
+          "DevOps and quality: how CI/CD, infrastructure as code, and monitoring enable quality at speed"
+        ],
+        "demonstration": "Team capstone presentations: each team demonstrates their complete QA implementation including automated test suites, CI/CD pipeline, quality dashboards, and a live exploratory testing session. Followed by peer review using a standardized evaluation rubric.",
+        "setup_requirements": [
+          "Team capstone projects prepared and deployed",
+          "Presentation setup with live demonstration capability",
+          "Peer evaluation rubrics distributed"
+        ],
+        "review": [
+          {
+            "key": "Course Synthesis",
+            "value": "Testing is a system: unit tests catch logic errors, integration tests catch interface errors, E2E tests catch workflow errors, performance tests catch scalability errors, security tests catch vulnerability errors, and quality metrics measure how well it all works. Each level catches what the others miss."
+          },
+          {
+            "key": "Quality as Competitive Advantage",
+            "value": "Companies with strong quality practices deploy faster, recover quicker, and have higher customer satisfaction. Netflix, Google, and Amazon invest heavily in testing infrastructure because it enables rapid, reliable delivery. Quality is not a cost center; it is a competitive advantage."
+          },
+          {
+            "key": "Continuous Learning",
+            "value": "Testing tools and practices evolve rapidly. AI-assisted test generation, mutation testing at scale, production testing with feature flags, and chaos engineering are active areas of development. Stay current through conferences (STAREAST, Agile Testing Days), communities, and continuous experimentation."
+          },
+          {
+            "key": "The Testing Mindset",
+            "value": "Good testers are curious, skeptical, and systematic. They ask 'what if?' and 'what else?' They explore boundaries, challenge assumptions, and think adversarially. This mindset is valuable not just in testing but in software design, security, and product development."
           }
         ]
       }
@@ -221,96 +847,371 @@
     "quizzes": [
       {
         "quiz": 1,
-        "week": 2,
-        "topic": "Test Design and Coverage",
-        "duration": "20 minutes",
+        "week": 3,
+        "topic": "Testing Fundamentals, Unit Testing, and Integration Testing",
+        "duration": "30 minutes",
         "questions": [
           {
-            "question": "A function calculates shipping cost based on weight (in kg). Rules: weight <= 0 is invalid, 0 < weight <= 5 costs $5, 5 < weight <= 20 costs $10, weight > 20 costs $10 + $0.50 per kg over 20. Design test cases using equivalence partitioning and boundary value analysis.",
+            "question": "A function calculates shipping cost based on weight (in kg). Rules: weight <= 0 is invalid, 0 < weight <= 5 costs $5, 5 < weight <= 20 costs $10, weight > 20 costs $10 + $0.50 per kg over 20. Design test cases using equivalence partitioning and boundary value analysis. List all equivalence classes and at least 8 test cases with expected results.",
             "type": "short_answer",
             "points": 10,
-            "answer": "Equivalence classes: (1) Invalid: weight <= 0 (2) Tier 1: 0 < weight <= 5 (3) Tier 2: 5 < weight <= 20 (4) Tier 3: weight > 20.\n\nBoundary values and test cases:\n- weight = -1: invalid (error/exception)\n- weight = 0: boundary, invalid\n- weight = 0.01: just above 0, expect $5\n- weight = 3: middle of tier 1, expect $5\n- weight = 5: upper boundary of tier 1, expect $5\n- weight = 5.01: just above 5, expect $10\n- weight = 12: middle of tier 2, expect $10\n- weight = 20: upper boundary of tier 2, expect $10\n- weight = 20.01: just above 20, expect $10.005\n- weight = 30: middle of tier 3, expect $15",
+            "answer": "Equivalence classes: (1) Invalid: weight <= 0 (2) Tier 1: 0 < weight <= 5 (3) Tier 2: 5 < weight <= 20 (4) Tier 3: weight > 20.\n\nBoundary values and test cases:\n1. weight = -1: invalid (error/exception)\n2. weight = 0: boundary, invalid\n3. weight = 0.01: just above 0, expect $5\n4. weight = 3: middle of tier 1, expect $5\n5. weight = 5: upper boundary of tier 1, expect $5\n6. weight = 5.01: just above 5, expect $10\n7. weight = 12: middle of tier 2, expect $10\n8. weight = 20: upper boundary of tier 2, expect $10\n9. weight = 20.01: just above 20, expect $10.005\n10. weight = 50: middle of tier 3, expect $10 + $0.50*30 = $25",
             "rubric": [
               {
-                "key": "Correct equivalence classes identified",
+                "key": "Correct equivalence classes identified (all four)",
                 "value": 3
               },
               {
-                "key": "Boundary values at each class edge",
+                "key": "Boundary values at each class edge (0, 5, 20)",
                 "value": 4
               },
               {
-                "key": "Expected results for each test case",
+                "key": "Expected results for each test case are correct",
                 "value": 3
               }
             ]
           },
           {
-            "question": "Explain the difference between statement coverage and branch coverage. Give an example where 100% statement coverage does not achieve 100% branch coverage.",
+            "question": "Explain the difference between a stub and a mock with a concrete example. When would you use each?",
             "type": "short_answer",
-            "points": 10,
-            "answer": "Statement coverage requires every line of code to execute at least once. Branch coverage requires every branch (true and false) of every decision point to be taken at least once. Example:\n\ndef check(x):\n    result = 'default'\n    if x > 0:\n        result = 'positive'\n    return result\n\nTest case: check(5) achieves 100% statement coverage (all three lines execute). But branch coverage is only 50%: the if-branch is taken (true), but the fall-through (false, when x <= 0) is not. Adding check(-1) achieves 100% branch coverage.",
+            "points": 8,
+            "answer": "A stub provides canned answers to calls made during a test: stub_payment_gateway.charge() always returns {'status': 'success', 'id': 'fake-123'}. You use a stub when the test needs a dependency to return specific data but you do not care how or how many times it was called.\n\nA mock is pre-programmed with expectations about how it will be called: mock_email_service.send.assert_called_once_with(to='user@example.com', subject='Welcome'). The test fails if the expected call does not happen. You use a mock when the test needs to verify that a specific interaction occurred.\n\nUse stubs when testing return values and state changes. Use mocks when testing side effects and interactions.",
             "rubric": [
               {
-                "key": "Correct definitions of both coverage types",
-                "value": 4
+                "key": "Correct definition with concrete example for stub",
+                "value": 3
               },
               {
-                "key": "Valid example showing the gap",
-                "value": 4
+                "key": "Correct definition with concrete example for mock",
+                "value": 3
               },
               {
-                "key": "Explains which test case closes the gap",
+                "key": "Explains when to use each with reasoning",
                 "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Describe three strategies to make integration tests faster and more reliable while maintaining their value. For each, explain the trade-off involved.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "1. Use test containers instead of shared test databases. Each test run gets a fresh, isolated database. Trade-off: startup time for containers (mitigated by caching images) and requires Docker on CI.\n\n2. Use transactional test isolation: wrap each test in a database transaction that rolls back after the test. Trade-off: does not test commit-level behavior and some operations (DDL, multi-transaction workflows) cannot be wrapped.\n\n3. Parallel test execution with isolated database schemas or containers per worker. Trade-off: increased CI resource consumption and requires tests to be truly independent with no shared state.",
+            "rubric": [
+              {
+                "key": "Three distinct, viable strategies",
+                "value": 3
+              },
+              {
+                "key": "Clear trade-off for each strategy",
+                "value": 3
+              },
+              {
+                "key": "Demonstrates understanding of integration test challenges",
+                "value": 1
               }
             ]
           }
         ],
-        "total_points": 20
+        "total_points": 25
       },
       {
         "quiz": 2,
-        "week": 4,
-        "topic": "Test Automation and Non-Functional Testing",
-        "duration": "25 minutes",
+        "week": 5,
+        "topic": "System Testing, Automation Frameworks, and Mocking",
+        "duration": "30 minutes",
         "questions": [
           {
-            "question": "A CI pipeline runs 3000 tests taking 45 minutes total. Development team velocity has slowed because developers wait for CI results. Propose three strategies to reduce feedback time while maintaining test quality.",
-            "type": "short_answer",
-            "points": 15,
-            "answer": "1. Test parallelization: split the test suite across multiple CI runners/containers; with 6 runners, 45 minutes becomes approximately 8 minutes. Ensure tests are independent and do not share state. 2. Test selection: run only tests affected by the changed files (using dependency analysis or test impact analysis); most changes affect a small subset of tests. Run the full suite on merge to main, not on every commit. 3. Layered feedback: run fast unit tests first (should complete in 1-2 minutes), report those results immediately, then run slower integration and E2E tests. Developers get initial feedback quickly and can start fixing issues while the full suite finishes.",
+            "question": "Explain the Page Object Model pattern for E2E testing. Write a Page Object class in Python (using Playwright) for a login page with email, password, and submit button. Show how a test would use this page object.",
+            "type": "code",
+            "points": 12,
+            "answer": "class LoginPage:\n    def __init__(self, page):\n        self.page = page\n        self.email_input = page.locator('[data-testid=\"email\"]')\n        self.password_input = page.locator('[data-testid=\"password\"]')\n        self.submit_button = page.locator('[data-testid=\"login-submit\"]')\n        self.error_message = page.locator('[data-testid=\"login-error\"]')\n\n    async def navigate(self):\n        await self.page.goto('/login')\n\n    async def login(self, email, password):\n        await self.email_input.fill(email)\n        await self.password_input.fill(password)\n        await self.submit_button.click()\n\n    async def get_error(self):\n        return await self.error_message.text_content()\n\n# Test using the page object:\nasync def test_login_with_invalid_credentials(page):\n    login = LoginPage(page)\n    await login.navigate()\n    await login.login('bad@email.com', 'wrongpass')\n    error = await login.get_error()\n    assert error == 'Invalid email or password'\n\nBenefits: If selectors change, only the page object is updated. Tests remain readable and focused on behavior.",
             "rubric": [
               {
-                "key": "Three distinct, viable strategies",
-                "value": 6
+                "key": "Page object class encapsulates selectors",
+                "value": 3
               },
               {
-                "key": "Explains implementation approach for each",
-                "value": 5
+                "key": "Uses data-testid for stable selectors",
+                "value": 2
               },
               {
-                "key": "Addresses quality maintenance alongside speed",
-                "value": 4
+                "key": "Methods represent user actions, not page internals",
+                "value": 3
+              },
+              {
+                "key": "Test uses page object cleanly without accessing internals",
+                "value": 2
+              },
+              {
+                "key": "Explains the benefit (isolation of UI changes)",
+                "value": 2
               }
             ]
           },
           {
-            "question": "Explain what a load test, stress test, and soak test each measure, and give a real-world scenario where each is needed.",
+            "question": "A CI pipeline runs 3000 tests taking 45 minutes total. Developers complain about slow feedback. Propose three strategies to reduce feedback time while maintaining test quality, ordered by implementation difficulty.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "1. (Easy) Layered execution: run fast unit tests first (2 min), report results immediately, then run slower integration and E2E tests. Developers get initial feedback quickly and can start fixing while the full suite runs.\n\n2. (Medium) Parallel execution: split tests across 6 CI runners using pytest-xdist or similar. 45 min / 6 = ~8 min. Requires tests to be independent (no shared state, no order dependencies).\n\n3. (Hard) Test impact analysis: use dependency tracking to run only tests affected by changed files. Most commits affect <10% of code, so only ~300 of 3000 tests need to run. Requires building a code-to-test dependency graph. Run full suite on merge to main as a safety net.",
+            "rubric": [
+              {
+                "key": "Three distinct strategies in order of difficulty",
+                "value": 3
+              },
+              {
+                "key": "Each strategy has implementation details",
+                "value": 3
+              },
+              {
+                "key": "Addresses quality maintenance alongside speed",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "What is 'over-mocking' and why is it a code smell? Give a concrete example of a test with too many mocks and explain what refactoring would reduce the need for mocking.",
+            "type": "short_answer",
+            "points": 5,
+            "answer": "Over-mocking means a test requires so many mocks that it is testing interactions with mocks rather than real behavior. Example: testing OrderService.place_order() requires mocking the database, payment gateway, email service, inventory service, logging service, and metrics service. The test becomes a mirror of the implementation rather than a verification of behavior.\n\nThis is a code smell because it indicates OrderService has too many responsibilities (violates Single Responsibility Principle). Refactoring: extract a PaymentProcessor class that handles payment + email notification, an InventoryManager that handles stock checks, etc. Now OrderService coordinates these, and each can be tested with 0-1 mocks. The over-mocking was caused by tight coupling, not by the testing tool.",
+            "rubric": [
+              {
+                "key": "Correct definition of over-mocking",
+                "value": 1.5
+              },
+              {
+                "key": "Concrete example showing excessive mocks",
+                "value": 1.5
+              },
+              {
+                "key": "Identifies root cause as design/coupling problem",
+                "value": 1
+              },
+              {
+                "key": "Proposes refactoring that reduces mock count",
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "total_points": 25
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "Code Coverage, Performance Testing, and Security Testing",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Explain the difference between statement coverage and branch coverage. Give a Python code example where 100% statement coverage does NOT achieve 100% branch coverage. Then explain what mutation testing adds beyond both.",
             "type": "short_answer",
             "points": 10,
-            "answer": "Load test: measures system behavior under expected peak load (e.g., 1000 concurrent users). Scenario: verifying an e-commerce site handles Black Friday traffic without degradation. Stress test: finds the breaking point by increasing load beyond expected capacity until the system fails. Scenario: determining how many concurrent video streams a server can handle before response times exceed SLA. Soak test (endurance test): runs the system under sustained moderate load for an extended period (hours/days) to detect memory leaks, connection pool exhaustion, and gradual degradation. Scenario: verifying a banking API does not leak memory over a 72-hour weekend with continuous transaction processing.",
+            "answer": "Statement coverage requires every line to execute at least once. Branch coverage requires every conditional branch (true and false) to be taken.\n\nExample:\ndef check(x):\n    result = 'default'\n    if x > 0:\n        result = 'positive'\n    return result\n\nTest: check(5) achieves 100% statement coverage (all lines execute). But branch coverage is 50%: the true branch is taken, but the fall-through (x <= 0) is not. Adding check(-1) achieves 100% branch coverage.\n\nMutation testing goes further: it modifies the source code (e.g., changes 'x > 0' to 'x >= 0') and checks if any test detects the change. If check(0) is not tested, the mutation 'x >= 0' survives because check(5) and check(-1) both produce the same results. Mutation testing measures whether tests actually verify the correct behavior at boundaries, not just that code executed.",
+            "rubric": [
+              {
+                "key": "Correct definitions of statement and branch coverage",
+                "value": 3
+              },
+              {
+                "key": "Valid code example showing the gap",
+                "value": 3
+              },
+              {
+                "key": "Explains what mutation testing adds beyond coverage",
+                "value": 2
+              },
+              {
+                "key": "Concrete mutation example",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain what a load test, stress test, and soak test each measure. For each, give a real-world scenario where it would detect a critical defect that the other two would miss.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Load test: measures system behavior under expected peak load. Scenario: verifying an e-commerce site handles 10,000 concurrent users on Black Friday without response time exceeding 500ms. Detects: capacity limits under normal peak conditions.\n\nStress test: finds the breaking point by increasing load beyond capacity. Scenario: determining how many concurrent video streams a media server can handle before it crashes vs degrades gracefully. Detects: failure modes (does it crash, slow down, or shed load?) that only appear beyond capacity.\n\nSoak test: runs sustained moderate load for 12-72 hours to detect gradual degradation. Scenario: a banking API processing transactions continuously for a weekend reveals a connection pool that leaks 1 connection per hour, exhausting the pool after 48 hours. Detects: memory leaks, connection leaks, log file growth, and resource exhaustion that only manifest over time.",
             "rubric": [
               {
                 "key": "Correct definition of all three test types",
-                "value": 5
+                "value": 3
               },
               {
-                "key": "Appropriate real-world scenario for each",
+                "key": "Valid unique scenario for each showing what only it would detect",
                 "value": 3
               },
               {
                 "key": "Distinguishes what each uniquely reveals",
                 "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Name three OWASP Top 10 vulnerability categories and for each, describe a specific test you would write to detect it.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "1. A01 Broken Access Control: Test that a regular user cannot access admin endpoints. Send an authenticated request as user_role='viewer' to DELETE /api/admin/users/123. Assert that the response is 403 Forbidden, not 200 OK.\n\n2. A03 Injection (SQL): Test that user input in a search field does not execute SQL. Submit the search query \"'; DROP TABLE users; --\" and verify that (a) the response is a normal search result or validation error, (b) the users table still exists, (c) the application logs the suspicious input.\n\n3. A07 Identification and Authentication Failures: Test brute force protection. Send 10 rapid login attempts with wrong passwords for the same account. Verify that the account is temporarily locked or that CAPTCHA is triggered after the 5th attempt. Assert that the 11th attempt returns 429 Too Many Requests.",
+            "rubric": [
+              {
+                "key": "Three valid OWASP Top 10 categories identified",
+                "value": 2
+              },
+              {
+                "key": "Specific, executable test for each category",
+                "value": 3
+              },
+              {
+                "key": "Tests verify both positive and negative outcomes",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 25
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "CI/CD Pipelines, Regression Testing, and Exploratory Testing",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Design a CI/CD pipeline for a web application with 5 stages. For each stage, specify what tests run, the quality gate condition, and the approximate duration target. Explain what happens when a quality gate fails.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Stage 1 - Lint & Unit Tests (target: 2 min): Run ESLint/flake8 and all unit tests in parallel. Gate: zero lint errors, all unit tests pass, coverage >= 80%. On failure: block the pipeline, notify the developer.\n\nStage 2 - Integration Tests (target: 8 min): Run API integration tests with test containers (PostgreSQL, Redis). Gate: all integration tests pass. On failure: block, notify developer with test failure details.\n\nStage 3 - Security Scan (target: 5 min): Run SAST (Bandit/Semgrep) and dependency vulnerability scan (Trivy). Gate: no critical or high vulnerabilities. On failure: block, notify developer and security team.\n\nStage 4 - E2E Tests (target: 15 min): Deploy to staging, run Playwright E2E tests for critical user journeys. Gate: all E2E tests pass, no visual regressions. On failure: block, notify team with screenshots.\n\nStage 5 - Deploy to Production (manual gate): Deploy canary (5% traffic), monitor error rate and latency for 30 min. Gate: error rate < 0.1%, p99 latency < 500ms. On failure: automatic rollback, notify on-call.",
+            "rubric": [
+              {
+                "key": "Five distinct stages with appropriate tests",
+                "value": 3
+              },
+              {
+                "key": "Quality gate conditions are specific and measurable",
+                "value": 3
+              },
+              {
+                "key": "Duration targets are realistic",
+                "value": 2
+              },
+              {
+                "key": "Failure handling is actionable",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Write an exploratory testing charter for the search feature of an e-commerce website. Include the mission, areas to explore, techniques to apply, and how you will document findings.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Charter: Explore the product search feature to discover defects in input handling, result accuracy, and performance.\n\nMission: Investigate how search handles edge cases, special characters, and concurrent usage. Focus on data integrity and user experience.\n\nAreas: (1) Input handling: empty search, single character, very long queries (1000+ chars), SQL injection attempts, XSS payloads, unicode/emoji, HTML tags. (2) Result accuracy: misspellings, partial matches, synonym handling, out-of-stock items, recently added products. (3) Performance: search with 0 results, search returning 10,000 results, rapid repeated searches, search during high server load. (4) Filters and sorting: combining multiple filters, clearing filters, sorting with active filters, boundary prices.\n\nTechniques: Boundary value analysis for input length, CRUD operations on search terms, error guessing for special characters, soap opera testing for emotional user journeys.\n\nDocumentation: Session notes with timestamps, screenshots of each bug, severity classification, and a list of bugs to convert to automated regression tests.\n\nTimeframe: 60-minute session.",
+            "rubric": [
+              {
+                "key": "Clear, focused mission statement",
+                "value": 2
+              },
+              {
+                "key": "Comprehensive areas with specific examples",
+                "value": 3
+              },
+              {
+                "key": "Named exploration techniques",
+                "value": 1.5
+              },
+              {
+                "key": "Documentation plan for findings",
+                "value": 1.5
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between regression testing and retesting. Then describe how test impact analysis can reduce regression test execution time by 80% without reducing defect detection.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Retesting: re-executing a specific test case that previously failed, after the defect has been fixed, to verify the fix works. It targets a specific known bug.\n\nRegression testing: re-executing the broader test suite (or a relevant subset) to verify that the fix did not break anything else. It targets unknown side effects of changes.\n\nTest impact analysis maps source code to tests: changing payment_service.py affects test_payment.py, test_checkout.py, and test_order.py (20 tests), not test_search.py or test_profile.py (2980 tests). By analyzing import graphs and call chains, the system determines that only 20 of 3000 tests are relevant to the change. Running only those 20 tests takes 0.3 minutes instead of 45 minutes (99.3% reduction) while catching any regression in the changed code. The full suite runs on merge to main as a safety net, catching any inter-module regressions the analysis missed.",
+            "rubric": [
+              {
+                "key": "Correct distinction between retesting and regression testing",
+                "value": 2
+              },
+              {
+                "key": "Explains test impact analysis mechanism",
+                "value": 3
+              },
+              {
+                "key": "Addresses how defect detection is maintained",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 25
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "Test Management, Quality Metrics, and Quality Culture",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "A team has the following DORA metrics: deploys once per month, lead time of 3 weeks, change failure rate of 25%, and MTTR of 48 hours. Classify their performance level, identify the two most impactful areas for improvement, and propose specific actions for each.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Performance level: Low performer (per Accelerate benchmarks: elite teams deploy multiple times per day with <1 hour lead time, <5% failure rate, and <1 hour MTTR).\n\nMost impactful improvement area 1: Change failure rate (25%). This means 1 in 4 deployments causes an incident. Actions: (a) Add automated test quality gates to CI - block merges if coverage drops or tests fail. (b) Require code review before merge. (c) Add integration and E2E tests for critical paths. Target: reduce to <15% in 3 months.\n\nMost impactful improvement area 2: MTTR (48 hours). This means incidents take 2 full days to resolve. Actions: (a) Implement structured logging and distributed tracing for faster diagnosis. (b) Set up alerting on error rate spikes so issues are detected immediately, not by users. (c) Create runbooks for common failure modes. (d) Practice incident response with periodic drills. Target: reduce to <4 hours in 3 months.\n\nImproving these two metrics (lower failure rate means fewer incidents, lower MTTR means faster recovery) will also improve confidence, enabling more frequent deployments and shorter lead times.",
+            "rubric": [
+              {
+                "key": "Correct performance classification with benchmark reference",
+                "value": 2
+              },
+              {
+                "key": "Two most impactful areas identified with reasoning",
+                "value": 3
+              },
+              {
+                "key": "Specific, actionable improvement proposals for each",
+                "value": 3
+              },
+              {
+                "key": "Measurable targets included",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain why Goodhart's Law is particularly dangerous for testing metrics. Give two concrete examples of metrics that drive perverse behavior when used as targets, and propose better alternatives.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Goodhart's Law: when a measure becomes a target, it ceases to be a good measure. People optimize for the metric rather than the underlying goal.\n\nExample 1: Code coverage as a target (e.g., 'all code must have 95% coverage'). Perverse behavior: developers write tests that call functions without asserting anything, or add trivial tests for getters/setters while ignoring complex business logic. The metric hits 95% but test quality is poor. Better alternative: use mutation testing score for critical modules (measures whether tests actually detect changes) and code coverage as a diagnostic tool to find untested areas.\n\nExample 2: Number of bugs found as a tester performance metric. Perverse behavior: testers report trivial issues (typos, cosmetic) to inflate their count, or split one bug into multiple reports. Time is spent on low-value findings instead of discovering critical defects. Better alternative: measure defect escape rate (bugs found by users / total bugs). This rewards finding important bugs before users do, regardless of count.",
+            "rubric": [
+              {
+                "key": "Correct explanation of Goodhart's Law for testing",
+                "value": 2
+              },
+              {
+                "key": "Two concrete examples with perverse behaviors",
+                "value": 3
+              },
+              {
+                "key": "Better alternative metrics proposed for each",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "What is a blameless postmortem and why does it produce better outcomes than blame-driven incident response? Describe the structure of a postmortem document.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "A blameless postmortem analyzes an incident to understand systemic causes and prevent recurrence, without assigning blame to individuals. It produces better outcomes because: (1) People report incidents and near-misses honestly when they are not punished, giving the organization more data. (2) Focus shifts from 'who made the mistake' to 'why did the system allow this' - leading to systematic fixes (automation, guardrails, monitoring) rather than individual warnings. (3) Teams learn from failures rather than hiding them.\n\nPostmortem document structure:\n- Title and date\n- Summary: what happened, when, and impact (users affected, duration, severity)\n- Timeline: chronological sequence of events from detection to resolution\n- Root cause analysis: systemic factors that allowed the incident (not 'Bob pushed bad code' but 'the CI pipeline did not run integration tests on this path')\n- Action items: specific, assigned, time-bound improvements (e.g., 'Add integration test for payment flow by March 15 - assigned to team X')\n- Lessons learned: what worked well in the response, what could be improved\n- Follow-up: schedule for reviewing action item completion",
+            "rubric": [
+              {
+                "key": "Correct definition of blameless postmortem",
+                "value": 2
+              },
+              {
+                "key": "Explains why blame-free analysis produces better outcomes",
+                "value": 2
+              },
+              {
+                "key": "Complete postmortem document structure",
+                "value": 3
               }
             ]
           }
@@ -321,60 +1222,206 @@
     "major_assignments": [
       {
         "assignment": 1,
-        "title": "Quality Assurance Strategy and Implementation",
+        "title": "Test Strategy and Multi-Level Test Suite",
         "week_assigned": 3,
-        "week_due": 5,
-        "points": 100,
-        "description": "Design a comprehensive test strategy for a provided web application, then implement the strategy: write unit tests, integration tests, and E2E tests, set up CI with quality gates, perform load testing, and deliver a quality assessment report.",
+        "week_due": 7,
+        "points": 150,
+        "description": "Design a comprehensive test strategy for a provided web application, then implement it: write unit tests with TDD, integration tests with test containers, and E2E tests with Playwright. Achieve meaningful coverage targets based on risk analysis. Deliver a test strategy document, the automated test suite, and a quality assessment report.",
         "objectives": [
-          "Design a risk-based test strategy with clear coverage targets",
-          "Implement automated tests at unit, integration, and E2E levels",
-          "Configure CI pipeline with test automation and quality gates",
-          "Conduct load testing and report on non-functional quality"
+          "Design a risk-based test strategy with justified coverage targets for each component",
+          "Implement automated tests at unit, integration, and E2E levels using TDD",
+          "Set up test infrastructure: fixtures, factories, test containers, page objects",
+          "Measure and report on coverage, mutation score, and test execution time"
         ],
         "requirements": {},
         "deliverables": [
-          "Test strategy document (3-4 pages) with risk analysis and coverage targets",
-          "Automated test suite: unit, integration, and E2E tests",
-          "CI pipeline configuration with quality gates (coverage threshold, no failing tests)",
-          "Load test results and performance analysis",
-          "Quality assessment report summarizing findings and recommendations"
+          "Test strategy document (4-5 pages) with risk analysis, coverage targets, and test allocation",
+          "Unit test suite with at least 50 tests covering core business logic via TDD",
+          "Integration test suite with test containers for database and API interactions",
+          "E2E test suite with Playwright covering 5 critical user journeys using Page Object Model",
+          "Quality assessment report with coverage metrics, mutation testing results, and findings"
         ],
         "grading_rubric": {
           "test_strategy": {
-            "points": 25,
+            "points": 35,
             "criteria": [
-              "Risk areas identified with severity and likelihood",
-              "Testing effort allocated proportionally to risk",
-              "Coverage targets are justified, not arbitrary",
-              "Strategy addresses all testing levels"
+              "Risk areas identified with severity and likelihood assessment",
+              "Testing effort allocated proportionally to risk (not equally across all features)",
+              "Coverage targets are justified by risk analysis, not arbitrary percentages",
+              "Strategy addresses all testing levels with clear boundaries between them"
             ]
           },
           "test_implementation": {
-            "points": 35,
+            "points": 50,
             "criteria": [
               "Unit tests cover core business logic with meaningful assertions",
-              "Integration tests verify component interactions",
-              "E2E tests cover critical user journeys",
-              "All tests pass and are not flaky"
+              "TDD evidence: git history shows test-first commits",
+              "Integration tests verify component interactions with real dependencies (test containers)",
+              "E2E tests cover critical user journeys with Page Object Model",
+              "All tests are independent, non-flaky, and run in under 10 minutes total"
             ]
           },
-          "ci_pipeline": {
-            "points": 20,
+          "test_infrastructure": {
+            "points": 30,
             "criteria": [
-              "Pipeline runs all test levels automatically",
-              "Quality gates enforce coverage and pass-rate thresholds",
-              "Failure reporting is clear and actionable",
-              "Pipeline completes in reasonable time"
+              "Fixtures provide reusable, isolated test setup",
+              "Factories generate realistic test data with sensible defaults",
+              "Test containers provide consistent database environments",
+              "Page objects encapsulate UI selectors and actions"
             ]
           },
           "quality_report": {
+            "points": 35,
+            "criteria": [
+              "Coverage metrics reported with analysis (not just numbers)",
+              "Mutation testing results identify gaps in the test suite",
+              "Findings are prioritized by risk and severity",
+              "Recommendations are specific and actionable"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Comprehensive risk-based test strategy with justified targets",
+                "Multi-level automated test suite with TDD evidence",
+                "Well-designed test infrastructure (fixtures, factories, page objects)",
+                "Professional quality assessment with data-driven recommendations"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "CI/CD Pipeline with Performance and Security Testing",
+        "week_assigned": 8,
+        "week_due": 11,
+        "points": 150,
+        "description": "Build a complete CI/CD pipeline for the application tested in Assignment 1. The pipeline must include layered test execution, quality gates, performance testing with k6, security scanning with SAST and dependency checks, and deployment verification. Document the pipeline architecture and analyze the quality data it produces.",
+        "objectives": [
+          "Configure a CI/CD pipeline with layered test execution and quality gates",
+          "Implement performance testing that detects regressions against baselines",
+          "Integrate SAST and dependency scanning into the pipeline",
+          "Set up deployment verification with smoke tests and monitoring"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "CI/CD pipeline configuration (GitHub Actions YAML) with all stages",
+          "k6 load test scripts with baseline comparisons and performance analysis",
+          "Security scan configuration and vulnerability report with remediation plan",
+          "Pipeline architecture document (3-4 pages) explaining design decisions",
+          "Quality dashboard showing test results, coverage trends, and performance metrics"
+        ],
+        "grading_rubric": {
+          "pipeline_design": {
+            "points": 40,
+            "criteria": [
+              "Pipeline has at least 4 stages with appropriate quality gates",
+              "Layered execution provides fast feedback (unit tests < 3 min)",
+              "Parallel execution configured where appropriate",
+              "Pipeline completes in under 20 minutes total"
+            ]
+          },
+          "performance_testing": {
+            "points": 35,
+            "criteria": [
+              "k6 scripts simulate realistic user behavior with multiple scenarios",
+              "Baselines established and regression detection configured",
+              "Results analyzed: p95/p99 latency, throughput, error rate reported",
+              "At least one bottleneck identified, fixed, and verified with re-test"
+            ]
+          },
+          "security_testing": {
+            "points": 35,
+            "criteria": [
+              "SAST tool configured and running on every commit",
+              "Dependency vulnerability scanning configured",
+              "Findings categorized by severity with remediation plan",
+              "False positives documented and suppressed with justification"
+            ]
+          },
+          "documentation": {
+            "points": 40,
+            "criteria": [
+              "Pipeline architecture clearly documented with rationale for each decision",
+              "Quality dashboard shows meaningful trends over multiple pipeline runs",
+              "Performance analysis includes before/after optimization data",
+              "Security remediation plan prioritizes fixes by risk"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Complete CI/CD pipeline with layered execution and quality gates",
+                "Effective performance testing with baseline regression detection",
+                "Security scanning integrated with actionable remediation",
+                "Clear documentation connecting pipeline design to quality goals"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Quality Assessment and Process Improvement Report",
+        "week_assigned": 12,
+        "week_due": 15,
+        "points": 100,
+        "description": "Conduct a comprehensive quality assessment of the application and testing infrastructure built in Assignments 1 and 2. Analyze DORA metrics from the CI/CD pipeline, conduct an exploratory testing session, perform a testing maturity assessment, and produce a quality improvement roadmap with specific, prioritized recommendations.",
+        "objectives": [
+          "Calculate and interpret DORA metrics from the project's CI/CD pipeline data",
+          "Conduct a structured exploratory testing session and document findings",
+          "Assess testing maturity against a standard framework",
+          "Create a prioritized quality improvement roadmap with measurable goals"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "DORA metrics analysis with team performance classification and trend analysis",
+          "Exploratory testing session notes (at least 60 minutes) with bug reports and regression tests",
+          "Testing maturity assessment against the Testing Maturity Model",
+          "Quality improvement roadmap (5-6 pages) with prioritized actions, timelines, and success metrics"
+        ],
+        "grading_rubric": {
+          "dora_analysis": {
+            "points": 25,
+            "criteria": [
+              "All four DORA metrics calculated correctly from pipeline data",
+              "Performance level classified with reference to industry benchmarks",
+              "Trends over the project duration analyzed and visualized",
+              "Bottlenecks in the delivery pipeline identified"
+            ]
+          },
+          "exploratory_testing": {
+            "points": 25,
+            "criteria": [
+              "Charter-based session with clear mission and scope",
+              "At least 3 defects discovered and documented with reproduction steps",
+              "Session notes follow SBTM format with timestamps and observations",
+              "Key findings converted to automated regression tests"
+            ]
+          },
+          "maturity_assessment": {
             "points": 20,
             "criteria": [
-              "Load test results reported with analysis",
-              "Defect density and coverage metrics presented",
-              "Recommendations are specific and prioritized",
-              "Report is professional and well-structured"
+              "Assessment covers all testing levels and practices",
+              "Current maturity level identified with evidence",
+              "Gaps between current and target maturity identified",
+              "Assessment is honest about weaknesses"
+            ]
+          },
+          "improvement_roadmap": {
+            "points": 30,
+            "criteria": [
+              "Recommendations are specific, actionable, and prioritized by impact",
+              "Each recommendation has measurable success criteria",
+              "Timeline is realistic with dependencies identified",
+              "Roadmap connects improvements to DORA metric targets"
             ]
           }
         },
@@ -383,10 +1430,10 @@
             "attributes": {
               "points": 100,
               "criteria": [
-                "Comprehensive risk-based test strategy",
-                "Effective multi-level automated test suite",
-                "CI pipeline with quality gates and fast feedback",
-                "Professional quality assessment with data-driven recommendations"
+                "Accurate DORA metrics analysis with actionable insights",
+                "Productive exploratory testing with documented findings",
+                "Honest maturity assessment with gap analysis",
+                "Prioritized improvement roadmap with measurable goals"
               ]
             }
           }
@@ -396,31 +1443,31 @@
   },
   "grading_breakdown": {
     "weekly_quizzes": {
-      "percentage": 15,
-      "description": "Regular assessment of testing concepts and techniques"
+      "percentage": 20,
+      "description": "Five quizzes (weeks 3, 5, 8, 11, 14) testing concepts, test design, and practical knowledge"
     },
     "lab_assignments": {
-      "percentage": 25,
-      "description": "Weekly test design and automation exercises"
+      "percentage": 15,
+      "description": "Weekly lab exercises applying testing techniques to provided code and applications"
     },
     "major_assignments": {
-      "percentage": 25,
-      "description": "QA strategy and implementation project"
+      "percentage": 30,
+      "description": "Three major projects: test strategy/suite, CI/CD pipeline, and quality assessment"
     },
     "midterm_examination": {
       "percentage": 15,
-      "description": "Written exam on test design and automation"
+      "description": "Written exam on test design, automation, coverage, and test doubles"
     },
-    "final_examination": {
+    "final_project": {
       "percentage": 20,
-      "description": "Comprehensive exam covering all QA topics"
+      "description": "Quality assessment capstone presented in Week 15 with peer evaluation"
     }
   },
   "course_policies": {
-    "attendance": "Attendance is expected for lectures and mandatory for lab sessions.",
-    "late_submissions": "Late assignments lose 10% per day. No submissions accepted more than 5 days late.",
-    "collaboration": "Discussion of testing approaches is encouraged. All test code and reports must be individual work.",
-    "academic_integrity": "All submitted work must be your own. Copying test code from other students or external sources constitutes plagiarism.",
-    "technology_requirements": "Students need Python with pytest, a CI platform (GitHub Actions), Docker, and k6 for load testing. Lab computers are available."
+    "attendance": "Attendance is expected for lectures and mandatory for lab sessions. More than 3 unexcused absences may result in a reduced participation grade.",
+    "late_submissions": "Late assignments lose 10% per day. No submissions accepted more than 5 days late. Extensions granted only for documented emergencies.",
+    "collaboration": "Discussion of testing approaches and strategies is encouraged. All test code, reports, and analysis must be individual work unless explicitly designated as group work.",
+    "academic_integrity": "All submitted work must be your own. Copying test code from other students or external sources without attribution constitutes plagiarism. AI-generated test code must be reviewed, understood, and disclosed.",
+    "technology_requirements": "Students need Python 3.12+ with pytest, Docker for test containers, a CI platform (GitHub Actions), Playwright for E2E testing, and k6 for load testing. Lab computers are available with all tools configured."
   }
 }

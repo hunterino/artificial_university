@@ -13,40 +13,54 @@
     {
       "week_number": 1,
       "session_number": 1,
-      "topic": "Introduction to Data Science and the Analytics Pipeline",
+      "topic": "Data Science Pipeline",
       "duration": "50 minutes",
       "learning_objectives": [
-        "Understand the end-to-end data science workflow",
-        "Set up a Python data science environment with pandas and Jupyter",
-        "Perform exploratory data analysis on a real dataset"
+        "Understand the end-to-end data science workflow from problem formulation to deployment",
+        "Set up a Python data science environment with Jupyter, pandas, numpy, and matplotlib",
+        "Perform initial exploratory data analysis on a real-world dataset"
       ],
       "readings": [
         "McKinney, Python for Data Analysis, Ch. 1-4",
-        "Wickham, R for Data Science, Ch. 1 (for the tidy data philosophy)"
+        "Wickham, 'Tidy Data' (Journal of Statistical Software, 2014)",
+        "Donoho, '50 Years of Data Science' (2017)"
       ],
       "lecture_notes": {
-        "introduction": "Data science turns raw data into actionable insights. This course teaches the full pipeline: acquiring data, cleaning it, exploring it, modeling it, and communicating findings. You will work with real messy datasets, not textbook clean ones.",
+        "introduction": "Data science is the discipline of extracting actionable knowledge from data through a combination of domain expertise, programming skills, and statistical reasoning. Unlike traditional software engineering where the problem and solution are well-defined, data science begins with ambiguous questions and messy data, requiring iterative exploration before any modeling or analysis. The data science pipeline, from problem formulation through data acquisition, cleaning, exploration, modeling, and communication, provides the framework for this iterative process. This course teaches the full pipeline using Python's data science ecosystem, emphasizing that the majority of a data scientist's time (estimates range from 60-80%) is spent on data cleaning and wrangling rather than building models. We work exclusively with real-world messy datasets, not pre-cleaned textbook examples, because the skills that matter most in practice are the skills for handling the unexpected: missing values, inconsistent formats, duplicate records, implicit assumptions, and data that does not match its documentation.",
         "key_concepts": [
-          "Data science pipeline: acquire, clean, explore, model, communicate",
-          "Pandas DataFrame: the workhorse data structure for tabular data",
-          "Exploratory Data Analysis (EDA): summary statistics, distributions, correlations",
-          "Data quality issues: missing values, duplicates, inconsistent formats",
-          "Tidy data principles: each variable is a column, each observation is a row"
+          "Data science pipeline: formulate question, acquire data, clean/wrangle, explore, model, communicate, deploy, monitor",
+          "Pandas DataFrame: the core data structure for tabular data manipulation, built on NumPy arrays",
+          "NumPy arrays: homogeneous n-dimensional arrays with vectorized operations for numerical computation",
+          "Jupyter Notebooks: interactive computing environment combining code, output, and narrative for reproducible analysis",
+          "Exploratory Data Analysis (EDA): using summary statistics and visualizations to understand data before modeling",
+          "Data quality dimensions: completeness, accuracy, consistency, timeliness, validity, and uniqueness",
+          "Tidy data principles: each variable is a column, each observation is a row, each value is a cell",
+          "Reproducibility: version-controlled code, documented data sources, fixed random seeds, and environment specifications",
+          "Data types in pandas: int64, float64, object, category, datetime64, and their memory and performance implications"
         ],
-        "demonstration": "Load a messy real-world CSV dataset into pandas, identify data quality issues, clean them, compute summary statistics, and create initial visualizations",
+        "demonstration": "Load a messy real-world CSV dataset (NYC taxi trip data) into pandas, examine its shape and dtypes, identify data quality issues (missing values, impossible trip distances, zero fares), compute summary statistics and distributions, create initial visualizations of trip patterns, and document findings in a structured Jupyter notebook",
         "setup_requirements": [
-          "Python 3.12+ with pandas, numpy, matplotlib, seaborn",
-          "Jupyter Notebook configured",
-          "Sample datasets downloaded"
+          "Python 3.12+ with pandas, numpy, matplotlib, seaborn, jupyter",
+          "Jupyter Notebook or JupyterLab configured",
+          "NYC taxi trip dataset downloaded (sample of 1 million records)",
+          "VS Code with Python and Jupyter extensions"
         ],
         "review": [
           {
-            "key": "Tidy Data",
-            "value": "A dataset is tidy when each variable has its own column, each observation has its own row, and each value has its own cell; most data wrangling effort goes into getting data into tidy form"
+            "key": "Tidy Data Foundation",
+            "value": "A dataset is tidy when each variable forms a column, each observation forms a row, and each value has its own cell. Most data wrangling effort involves reshaping data from messy formats into tidy form. Once tidy, the same tools (groupby, merge, pivot) work consistently across datasets"
           },
           {
-            "key": "EDA Before Modeling",
-            "value": "Always explore data before building models; visualizations reveal patterns, outliers, and data quality issues that summary statistics miss. A model built on data you have not explored is built on sand"
+            "key": "EDA Before Everything",
+            "value": "Never build a model before exploring the data. Visualizations reveal patterns, outliers, and data quality issues that summary statistics alone miss. A model built on data you have not explored will encode the data's problems as if they were patterns, producing confidently wrong predictions"
+          },
+          {
+            "key": "Pandas Memory Optimization",
+            "value": "A DataFrame of strings stored as 'object' dtype consumes far more memory than the same data stored as 'category'. Converting appropriate columns to category, downsampling numeric types (float64 to float32), and using read_csv with dtype specifications can reduce memory usage by 50-90%"
+          },
+          {
+            "key": "Notebook Discipline",
+            "value": "Notebooks are powerful but can become disorganized. Follow conventions: imports at the top, data loading in the first section, clear markdown headers between sections, cells that run top-to-bottom without errors, and a 'Restart and Run All' check before sharing"
           }
         ]
       }
@@ -54,39 +68,54 @@
     {
       "week_number": 2,
       "session_number": 3,
-      "topic": "Data Wrangling and Feature Engineering",
+      "topic": "Python for Data Science: Pandas and NumPy",
       "duration": "50 minutes",
       "learning_objectives": [
-        "Transform messy data into analysis-ready format using pandas",
-        "Engineer informative features from raw data",
-        "Handle missing data with appropriate imputation strategies"
+        "Perform complex data transformations using pandas groupby, merge, pivot, and apply operations",
+        "Leverage NumPy vectorized operations for efficient numerical computation over loops",
+        "Handle common data manipulation challenges: reshaping, combining datasets, and window functions"
       ],
       "readings": [
-        "McKinney, Ch. 7-8 - Data Cleaning and Wrangling",
-        "Feature Engineering for Machine Learning, Ch. 1-3"
+        "McKinney, Python for Data Analysis, Ch. 5-8",
+        "NumPy Documentation: Quickstart Tutorial",
+        "Pandas Documentation: 10 Minutes to Pandas"
       ],
       "lecture_notes": {
-        "introduction": "Data scientists spend 80% of their time cleaning and transforming data. Feature engineering — creating new variables from existing ones — is often the difference between a mediocre model and an excellent one.",
+        "introduction": "Pandas and NumPy form the computational foundation of Python data science. NumPy provides the array computing substrate with C-speed vectorized operations, and pandas builds on it to provide the DataFrame abstraction that makes tabular data manipulation intuitive and efficient. Mastery of these libraries is non-negotiable for any data scientist working in Python: you will use them daily in every project, from initial data loading through feature engineering to final result formatting. This session focuses on the operations that appear most frequently in real analysis work: selecting and filtering data, grouping and aggregating, joining multiple datasets, reshaping between wide and long formats, and applying custom functions efficiently. We emphasize the pandas way of thinking: express operations on entire columns or groups rather than iterating row by row, because vectorized operations are typically 100-1000x faster than Python loops and produce cleaner, more readable code.",
         "key_concepts": [
-          "Pandas operations: merge, join, groupby, pivot, melt",
-          "String manipulation and datetime parsing",
-          "Missing data strategies: drop, fill forward, mean impute, model-based imputation",
-          "Feature engineering: binning, encoding categoricals, interaction terms, lag features",
-          "Data validation: asserting data quality invariants programmatically"
+          "DataFrame selection: loc (label-based), iloc (position-based), boolean indexing, query method for complex filters",
+          "GroupBy operations: split-apply-combine pattern for aggregation, transformation, and filtering by groups",
+          "Merge and join: inner, outer, left, right joins on one or more keys, with indicator columns for debugging",
+          "Pivot and melt: reshaping between wide format (one column per variable) and long format (one row per observation)",
+          "Apply and map: applying custom functions to rows, columns, or elements with vectorized alternatives",
+          "Window functions: rolling averages, cumulative sums, and rank operations for time-series and ordered data",
+          "NumPy broadcasting: automatic expansion of arrays with different shapes for element-wise operations",
+          "Vectorized string operations: str accessor for pattern matching, splitting, and extraction without Python loops",
+          "Method chaining: composing multiple operations in a readable pipeline using assign, pipe, and query",
+          "Performance: avoiding iterrows (extremely slow), using vectorized operations, and applying when vectorization is not possible"
         ],
-        "demonstration": "Take a raw e-commerce dataset with multiple tables, join them, handle missing values, engineer features (days since last purchase, average order value, purchase frequency), and validate the result",
+        "demonstration": "Analyze an e-commerce dataset with multiple tables: merge customers, orders, and products, group by customer to calculate lifetime value, pivot to show monthly revenue by product category, compute 3-month rolling average revenue, and compare Python loop performance against vectorized pandas for the same calculation (demonstrating 100x speedup)",
         "setup_requirements": [
-          "Python with pandas",
-          "Multi-table dataset provided"
+          "Python with pandas 2.x and numpy",
+          "Multi-table e-commerce dataset (customers, orders, products CSVs)",
+          "Jupyter with timing magic commands (%timeit)"
         ],
         "review": [
           {
-            "key": "One-Hot Encoding",
-            "value": "Convert categorical variables to binary columns (one per category); this is necessary for algorithms that require numeric input. Use drop_first=True to avoid the dummy variable trap in linear models"
+            "key": "GroupBy Mental Model",
+            "value": "GroupBy splits the DataFrame into groups by key columns, applies a function (sum, mean, custom) to each group independently, and combines the results. Think of it as: for each unique value of the group key, calculate something. This replaces dozens of lines of loop-based code with a single expression"
           },
           {
-            "key": "Target Leakage",
-            "value": "Features that contain information about the target that would not be available at prediction time; this causes artificially high accuracy during training but fails in production. Always verify feature availability at prediction time"
+            "key": "Merge Debugging with Indicator",
+            "value": "Always use indicator=True when developing merge operations. This adds a '_merge' column showing 'left_only', 'right_only', or 'both' for each row. Unexpected 'left_only' or 'right_only' rows indicate key mismatches that need investigation before proceeding"
+          },
+          {
+            "key": "Never Use iterrows",
+            "value": "iterrows is 100-1000x slower than vectorized operations because it converts each row to a Series object. Instead: use vectorized column operations for math, str accessor for strings, apply with axis=1 only as a last resort, and np.where for conditional logic"
+          },
+          {
+            "key": "Method Chaining for Readability",
+            "value": "Chain operations like df.query('amount > 0').groupby('category')['amount'].sum().sort_values(ascending=False). Each step is readable independently. Use parentheses for multi-line chains. Assign intermediate results to variables when the chain exceeds 5-6 steps for debuggability"
           }
         ]
       }
@@ -94,40 +123,54 @@
     {
       "week_number": 3,
       "session_number": 5,
-      "topic": "Statistical Analysis and Hypothesis Testing",
+      "topic": "Data Cleaning and Wrangling",
       "duration": "50 minutes",
       "learning_objectives": [
-        "Conduct hypothesis tests for comparing groups and detecting relationships",
-        "Interpret p-values, confidence intervals, and effect sizes correctly",
-        "Avoid common statistical pitfalls: multiple testing, p-hacking"
+        "Develop systematic strategies for identifying and resolving data quality issues",
+        "Handle missing data with appropriate imputation strategies based on missingness mechanism",
+        "Detect and resolve duplicates, inconsistencies, and outliers in real-world datasets"
       ],
       "readings": [
-        "Diez, OpenIntro Statistics, Ch. 5-7",
-        "Wasserstein, 'The ASA Statement on p-Values' (2016)"
+        "McKinney, Ch. 7 - Data Cleaning and Preparation",
+        "Van Buuren, 'Flexible Imputation of Missing Data', Ch. 1-2",
+        "Dasu & Johnson, 'Exploratory Data Mining and Data Cleaning'"
       ],
       "lecture_notes": {
-        "introduction": "Statistical analysis provides the rigor that separates data science from data anecdotes. Hypothesis testing tells you whether observed patterns are likely real or just noise. Understanding statistics is essential for making defensible data-driven decisions.",
+        "introduction": "Data cleaning is the least glamorous and most important skill in data science. Analyses built on dirty data produce wrong results regardless of how sophisticated the model is. Real-world data is invariably messy: fields that should be numeric contain text, dates arrive in multiple formats, categories have inconsistent naming, records are duplicated with slight variations, and values are missing for reasons that affect their interpretation. The type of missingness matters enormously: data Missing Completely At Random (MCAR) can be safely dropped, data Missing At Random (MAR) conditioned on observed variables can be imputed from those variables, but data Missing Not At Random (MNAR) where the missingness depends on the missing value itself requires careful modeling or domain knowledge to handle. This session teaches systematic approaches to data quality assessment, cleaning strategies for each type of problem, and validation techniques that ensure your cleaning did not introduce new errors while fixing old ones.",
         "key_concepts": [
-          "Null and alternative hypotheses",
-          "t-tests: comparing two group means",
-          "Chi-square test: testing independence of categorical variables",
-          "Correlation vs causation: observational data limitations",
-          "Multiple testing correction: Bonferroni, FDR",
-          "Effect size: practical significance beyond statistical significance"
+          "Data quality assessment: profiling every column for type, completeness, cardinality, distribution, and anomalies",
+          "Missing data mechanisms: MCAR (random), MAR (depends on observed data), MNAR (depends on the missing value itself)",
+          "Imputation strategies: deletion (listwise/pairwise), simple imputation (mean/median/mode), model-based (KNN, iterative)",
+          "Duplicate detection: exact duplicates, fuzzy matching for near-duplicates using edit distance or record linkage",
+          "Outlier detection: statistical (z-score, IQR), visual (box plots, scatter), domain-based (impossible values)",
+          "String standardization: consistent casing, whitespace trimming, abbreviation expansion, fuzzy matching for typos",
+          "Date parsing: handling multiple date formats, time zones, and ambiguous dates (01/02/03) with explicit format specification",
+          "Data validation: programmatic assertions (assert all prices > 0, assert no null in required fields) after each cleaning step",
+          "Feature engineering from cleaning: creating 'is_imputed' indicator columns, binning outliers, creating missingness flags",
+          "Cleaning pipeline: encapsulating cleaning steps in functions for reproducibility and reuse across datasets"
         ],
-        "demonstration": "Analyze an A/B test dataset: formulate hypotheses, conduct a t-test, calculate confidence intervals and effect size, and make a recommendation accounting for both statistical and practical significance",
+        "demonstration": "Clean a messy hospital readmission dataset: profile all columns to identify issues, resolve inconsistent diagnosis codes using fuzzy matching, handle 18% missing income data (MAR, depends on insurance type) with grouped median imputation, detect and remove duplicate patient records with slightly different spellings, validate cleaning results with programmatic assertions, and compare analysis results before and after cleaning",
         "setup_requirements": [
-          "Python with scipy.stats",
-          "A/B test dataset provided"
+          "Python with pandas, fuzzywuzzy, scikit-learn (for IterativeImputer)",
+          "Messy dataset with intentional quality issues",
+          "Data profiling tool (pandas-profiling or ydata-profiling)"
         ],
         "review": [
           {
-            "key": "p-Value Interpretation",
-            "value": "The p-value is NOT the probability that the null hypothesis is true; it is the probability of observing data this extreme if the null hypothesis were true. A small p-value means the data is unlikely under H0, not that H0 is false"
+            "key": "Missingness Mechanism Matters",
+            "value": "If income is missing because high-income patients decline to report it (MNAR), imputing with the mean underestimates average income. If it is missing because a form field was added later (MCAR), mean imputation is reasonable. Always investigate why data is missing before choosing an imputation strategy"
           },
           {
-            "key": "Effect Size",
-            "value": "A statistically significant result with a tiny effect size may not be practically important; always report effect size alongside p-values. With large enough samples, any trivial difference becomes statistically significant"
+            "key": "Cleaning Validation Pattern",
+            "value": "After every cleaning operation, validate: (1) Row count changed as expected (drops should decrease, no unexpected increases). (2) Column types are correct. (3) Value ranges are valid. (4) No new nulls were introduced. Write these as assertions in code so they run automatically and catch regressions"
+          },
+          {
+            "key": "Documenting Cleaning Decisions",
+            "value": "Every cleaning decision is an assumption that affects downstream analysis. Document: what was the problem, what decision was made, why, and what the impact is. Dropping all rows with missing income versus imputing the median produces different results. Transparency about these choices is a professional obligation"
+          },
+          {
+            "key": "Outlier Handling Decision",
+            "value": "Not all outliers are errors. A $50,000 hospital bill is unusual but valid. A -$500 bill is an error. Domain knowledge distinguishes real outliers (keep or winsorize) from data errors (fix or remove). Never blindly remove values beyond 3 standard deviations without domain validation"
           }
         ]
       }
@@ -135,39 +178,54 @@
     {
       "week_number": 4,
       "session_number": 7,
-      "topic": "Data Visualization and Storytelling",
+      "topic": "Exploratory Data Analysis",
       "duration": "50 minutes",
       "learning_objectives": [
-        "Create effective visualizations using matplotlib, seaborn, and plotly",
-        "Design dashboards that communicate insights to stakeholders",
-        "Apply data storytelling principles to present findings persuasively"
+        "Conduct systematic EDA that reveals patterns, anomalies, and relationships in data",
+        "Select and create appropriate visualizations for different data types and questions",
+        "Generate hypotheses from exploration that guide subsequent modeling and analysis"
       ],
       "readings": [
-        "Knaflic, Storytelling with Data, Ch. 1-5",
-        "Tufte, The Visual Display of Quantitative Information, Ch. 1-2"
+        "Tukey, 'Exploratory Data Analysis' (selected chapters)",
+        "Knaflic, 'Storytelling with Data', Ch. 1-3",
+        "Seaborn Documentation: Tutorial"
       ],
       "lecture_notes": {
-        "introduction": "The best analysis is useless if stakeholders do not understand or act on it. Data visualization and storytelling are how you translate complex findings into decisions. A good chart communicates in seconds what a table of numbers cannot communicate at all.",
+        "introduction": "Exploratory Data Analysis is the detective phase of data science: systematically examining data to discover patterns, detect anomalies, test assumptions, and develop intuitions that guide subsequent analysis. John Tukey, who coined the term, argued that EDA is fundamentally different from confirmatory analysis: rather than testing predetermined hypotheses, EDA generates hypotheses by letting the data reveal its own stories. Effective EDA combines summary statistics with visualization, because each reveals aspects the other misses. A histogram reveals distribution shape that a mean and standard deviation obscure. A scatter plot reveals non-linear relationships that correlation coefficients cannot capture. A box plot comparison reveals group differences that t-tests report as a single number. This session teaches a systematic EDA framework: start with univariate exploration of each variable, move to bivariate relationships between pairs, then examine multivariate interactions, always using visualizations alongside statistics to build a rich understanding of the dataset before any modeling begins.",
         "key_concepts": [
-          "Chart selection: when to use bar, line, scatter, box, heatmap",
-          "Decluttering: removing chart junk to focus attention on data",
-          "Color usage: sequential, diverging, and categorical palettes",
-          "Interactive dashboards with plotly and Streamlit",
-          "Narrative structure: situation, complication, resolution for data stories"
+          "Univariate analysis: distributions (histogram, KDE), central tendency (mean, median), spread (std, IQR, range)",
+          "Bivariate analysis: relationships (scatter, heatmap), associations (correlation, cross-tabulation), comparisons (box plot, violin plot)",
+          "Multivariate analysis: pair plots, parallel coordinates, dimensionality reduction (PCA) for high-dimensional exploration",
+          "Distribution shapes: normal, skewed, bimodal, uniform, heavy-tailed and their implications for modeling choices",
+          "Correlation matrix: Pearson for linear relationships, Spearman for monotonic, visualized as heatmap for pattern detection",
+          "Segmentation discovery: finding natural groups in data through cluster analysis and visual inspection",
+          "Temporal patterns: time series decomposition into trend, seasonality, and residual components",
+          "Anomaly detection: visual (scatter plots with outlier highlighting) and statistical (z-score, IQR method) identification",
+          "Hypothesis generation: translating observed patterns into testable questions for confirmatory analysis",
+          "EDA documentation: recording findings, hypotheses, and open questions in a structured notebook for future reference"
         ],
-        "demonstration": "Take an EDA analysis and transform it into a stakeholder presentation: replace exploratory charts with publication-quality visuals, add context and narrative, and build an interactive dashboard",
+        "demonstration": "Conduct comprehensive EDA on Airbnb listing data: explore price distributions (revealing strong right skew), compare prices across neighborhoods with violin plots, discover the relationship between reviews and occupancy with scatter plots, identify seasonal patterns in availability, find suspicious listings with anomalous characteristics (zero-review superhosts, impossibly low prices), and generate five hypotheses for further investigation",
         "setup_requirements": [
-          "Python with matplotlib, seaborn, plotly, streamlit",
-          "Presentation tool (slides or notebook)"
+          "Python with pandas, matplotlib, seaborn, plotly",
+          "Airbnb listing dataset (Inside Airbnb project)",
+          "Jupyter notebook configured with inline matplotlib"
         ],
         "review": [
           {
-            "key": "Pre-Attentive Attributes",
-            "value": "Size, color, position, and orientation are processed by the brain before conscious thought; use these strategically to draw attention to the key insight in your chart without requiring the viewer to study it"
+            "key": "Summary Statistics Lie Without Visualizations",
+            "value": "Anscombe's quartet demonstrates four datasets with identical means, variances, and correlations but completely different visual patterns (linear, curved, outlier-driven, clustered). Always visualize. The mean of a bimodal distribution describes a point where no data exists"
           },
           {
-            "key": "Data-Ink Ratio",
-            "value": "Maximize the proportion of ink used to display data vs non-data elements; remove gridlines, excessive labels, 3D effects, and decorative elements that do not carry information"
+            "key": "Log Transform for Skewed Data",
+            "value": "Many real-world variables (income, price, population, web traffic) follow log-normal or power-law distributions with extreme right skew. Applying log transform makes patterns visible, enables use of linear methods, and reduces outlier influence. Always check for skew before modeling"
+          },
+          {
+            "key": "Correlation is Not Causation",
+            "value": "A strong correlation between ice cream sales and drowning deaths does not mean ice cream causes drowning; both increase in summer. EDA identifies correlations; establishing causation requires controlled experiments, natural experiments, or careful causal inference methodology. Report correlations as associations"
+          },
+          {
+            "key": "EDA as Iterative Process",
+            "value": "EDA is not a single pass through the data. Each visualization raises new questions that require new explorations. The price distribution looks bimodal; split by property type and each mode is a different type. This iterative drilling into patterns is how real understanding develops"
           }
         ]
       }
@@ -175,40 +233,605 @@
     {
       "week_number": 5,
       "session_number": 9,
-      "topic": "Big Data Technologies and Scalable Analytics",
+      "topic": "Statistical Inference",
       "duration": "50 minutes",
       "learning_objectives": [
-        "Understand distributed computing frameworks for big data",
-        "Write PySpark jobs for data processing at scale",
-        "Identify when big data tools are needed vs when pandas suffices"
+        "Formulate null and alternative hypotheses for common analytical questions",
+        "Conduct appropriate hypothesis tests (t-test, chi-square, ANOVA) and interpret results correctly",
+        "Avoid common statistical pitfalls: p-hacking, multiple testing, and confusing significance with importance"
       ],
       "readings": [
-        "Karau, Learning Spark, Ch. 1-3",
-        "Google, 'MapReduce: Simplified Data Processing on Large Datasets' (2004)"
+        "Diez, OpenIntro Statistics, Ch. 5-7",
+        "Wasserstein, 'The ASA Statement on p-Values' (2016)",
+        "Nuzzo, 'Statistical Errors' (Nature, 2014)"
       ],
       "lecture_notes": {
-        "introduction": "When your data exceeds the memory of a single machine, you need distributed processing. Spark and similar frameworks let you apply the same analytical thinking to terabytes that you apply to megabytes, but with different performance trade-offs.",
+        "introduction": "Statistical inference provides the mathematical framework for drawing conclusions about populations from samples, distinguishing real patterns from noise. When an A/B test shows a 2% conversion lift, is that a real improvement or random fluctuation? When hospital readmission rates differ across departments, is the difference meaningful or due to patient mix? Statistical inference answers these questions through hypothesis testing and confidence intervals, giving us tools to quantify uncertainty and make defensible decisions. However, statistics is widely misused: p-values are misinterpreted, multiple testing inflates false positive rates, and statistically significant results are confused with practically important ones. The replication crisis in science demonstrates the consequences of statistical misunderstanding at scale. This session teaches both the mechanics of hypothesis testing and the conceptual understanding required to interpret and communicate results correctly, with emphasis on the practical significance of results and the limitations of purely statistical conclusions.",
         "key_concepts": [
-          "MapReduce paradigm: map (transform), shuffle (redistribute), reduce (aggregate)",
-          "Apache Spark: RDDs, DataFrames, lazy evaluation, in-memory processing",
-          "PySpark: Spark with Python API, SQL interface",
-          "Partitioning and shuffling: where performance bottlenecks live",
-          "When to use Spark vs pandas: the 10GB rule of thumb"
+          "Null hypothesis (H0): the default assumption of no effect or no difference to be tested",
+          "Alternative hypothesis (H1): the claim that there is an effect or difference, supported by rejecting H0",
+          "p-value: the probability of observing data this extreme if H0 were true (NOT the probability that H0 is true)",
+          "Type I error (false positive): rejecting H0 when it is true, controlled by significance level alpha (typically 0.05)",
+          "Type II error (false negative): failing to reject H0 when it is false, related to statistical power",
+          "t-test: comparing means of two groups (independent samples) or before/after (paired samples)",
+          "Chi-square test: testing independence between two categorical variables in a contingency table",
+          "ANOVA: comparing means across three or more groups with F-statistic, followed by post-hoc tests",
+          "Confidence intervals: range of plausible values for a parameter, providing both estimate and uncertainty",
+          "Effect size: magnitude of a difference (Cohen's d, odds ratio) independent of sample size, measuring practical significance",
+          "Multiple testing correction: Bonferroni and Benjamini-Hochberg FDR to control false positive rate when testing many hypotheses"
         ],
-        "demonstration": "Process a 5GB web log dataset with PySpark: read from S3, filter, aggregate page views by hour and country, and write results to Parquet format, all in a Jupyter notebook connected to a Spark cluster",
+        "demonstration": "Analyze an A/B test for an e-commerce checkout flow: formulate hypotheses, check sample size for adequate power (80%), run an independent samples t-test on conversion rate, compute a 95% confidence interval for the lift, calculate Cohen's d effect size, assess practical significance given business context (is a 0.5% lift worth the implementation cost?), and demonstrate how p-hacking through repeated testing inflates false positives",
         "setup_requirements": [
-          "PySpark installed (local mode or cluster)",
-          "Sample large dataset available",
-          "Jupyter with PySpark kernel"
+          "Python with scipy.stats, statsmodels, and pingouin",
+          "A/B test dataset with control and treatment groups",
+          "Power analysis calculator or statsmodels power module"
         ],
         "review": [
           {
-            "key": "Lazy Evaluation",
-            "value": "Spark builds a computation graph (DAG) but does not execute until an action (collect, write, count) is called; this enables optimization like predicate pushdown and column pruning before any data is processed"
+            "key": "p-Value Misinterpretation",
+            "value": "The p-value is NOT the probability that H0 is true, NOT the probability the result is due to chance, and NOT the probability of making an error. It IS the probability of observing data this extreme or more extreme if H0 were true. This subtlety is frequently misunderstood, even by published researchers"
           },
           {
-            "key": "Shuffle Cost",
-            "value": "Shuffling data across nodes (during groupBy, join, sort) is the most expensive operation in distributed processing; minimizing shuffles through proper partitioning and broadcast joins is the key to Spark performance"
+            "key": "Statistical vs Practical Significance",
+            "value": "With large enough samples, any trivial difference becomes statistically significant. A drug that lowers blood pressure by 0.1mmHg may be significant at p<0.001 with 100,000 patients but is clinically meaningless. Always report effect size alongside p-values and evaluate whether the magnitude of the effect matters for the decision at hand"
+          },
+          {
+            "key": "Power Analysis Before Data Collection",
+            "value": "Statistical power is the probability of detecting a real effect. Low power (small sample) means you probably will not detect the effect even if it exists. Calculate required sample size before starting an experiment: specify the minimum detectable effect size, desired power (80%), and significance level (0.05)"
+          },
+          {
+            "key": "Multiple Testing Trap",
+            "value": "Testing 20 hypotheses at alpha=0.05 means you expect 1 false positive by chance alone. Running A/B tests on 15 metrics guarantees at least one will be significant by luck. Apply Bonferroni (alpha/n) for strict control or BH-FDR for a less conservative adjustment. Pre-register your primary metric before looking at results"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 11,
+      "topic": "Data Visualization with Matplotlib and Seaborn",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Create publication-quality visualizations using matplotlib, seaborn, and plotly",
+        "Apply data visualization best practices for choosing chart types, colors, and layout",
+        "Build interactive dashboards with Streamlit for stakeholder data exploration"
+      ],
+      "readings": [
+        "Knaflic, Storytelling with Data, Ch. 4-8",
+        "Tufte, The Visual Display of Quantitative Information, Ch. 1-4",
+        "Matplotlib Documentation: Tutorials"
+      ],
+      "lecture_notes": {
+        "introduction": "A data visualization is a communication tool: its purpose is to transfer understanding from the data scientist's mind to the viewer's mind in seconds. The best analysis in the world is useless if stakeholders cannot understand or act on it. Data visualization occupies a critical position in the data science pipeline because it serves two distinct purposes: exploration (finding patterns for yourself during EDA) and communication (explaining findings to others). These purposes demand different visualization strategies. Exploratory charts can be quick, rough, and numerous. Communicative charts must be polished, focused, and few, with every element contributing to the message. This session teaches the principles of effective data visualization, covering chart type selection, color theory, layout design, and annotation strategy. You will learn to transform exploratory EDA output into stakeholder-ready visualizations and to build interactive dashboards that let non-technical users explore data independently.",
+        "key_concepts": [
+          "Chart type selection: bar for comparison, line for trends, scatter for relationships, histogram for distributions, heatmap for matrices",
+          "Matplotlib architecture: Figure, Axes, and Artists hierarchy for full control over every chart element",
+          "Seaborn statistical plots: violin plot, swarm plot, joint plot, pair plot for statistical distributions and relationships",
+          "Pre-attentive attributes: size, color, position, orientation are processed before conscious thought; use strategically",
+          "Data-ink ratio: maximize the proportion of ink displaying data vs non-data elements (gridlines, borders, legends)",
+          "Color theory: sequential palettes for ordered data, diverging for data with a meaningful center, qualitative for categories",
+          "Accessibility: colorblind-safe palettes, sufficient contrast, text alternatives for chart content",
+          "Interactive visualization: plotly for hover details, zoom, and pan; Streamlit for building data apps without frontend code",
+          "Small multiples: repeated charts showing different subsets for easy comparison without overlapping data",
+          "Annotation: highlighting key data points, trend lines, and contextual labels that draw attention to the insight"
+        ],
+        "demonstration": "Transform an EDA notebook into a stakeholder presentation: replace a default matplotlib histogram with a polished distribution chart using appropriate binning and annotation, turn a correlation scatter plot into a narrative visualization highlighting the key relationship with a trend line and confidence band, build a Streamlit dashboard with interactive filters that let stakeholders explore sales data by region, product, and time period, applying Tufte's principles to minimize chart junk throughout",
+        "setup_requirements": [
+          "Python with matplotlib, seaborn, plotly, and streamlit",
+          "Sales dataset for dashboard demonstration",
+          "Presentation template for publication-quality charts"
+        ],
+        "review": [
+          {
+            "key": "Chart Type Decision Matrix",
+            "value": "Comparing values: bar chart. Showing trends over time: line chart. Exploring relationships: scatter plot. Displaying distributions: histogram or violin plot. Showing composition: stacked bar (not pie). Showing spatial data: choropleth map. When in doubt, use the simplest chart type that conveys the message"
+          },
+          {
+            "key": "Decluttering Checklist",
+            "value": "Remove: chart borders, background fill, excessive gridlines, redundant legends, 3D effects. Add: descriptive title (stating the insight, not the chart type), axis labels with units, direct annotation of key data points. Every element must earn its place by contributing to understanding"
+          },
+          {
+            "key": "Colorblind-Safe Design",
+            "value": "8% of men and 0.5% of women have color vision deficiency. Never use red-green as the only distinguishing feature. Use seaborn's colorblind palette, add pattern/shape redundancy, and test with colorblind simulation tools. Diverging palettes using blue-orange are safe for most types of color blindness"
+          },
+          {
+            "key": "Streamlit for Data Apps",
+            "value": "Streamlit turns a Python script into a web application with zero frontend code. Add st.slider for parameters, st.selectbox for filters, and Streamlit reruns the script on every interaction. Deploy to Streamlit Cloud for free. This is the fastest way to make analysis interactive for non-technical stakeholders"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 13,
+      "topic": "SQL for Analytics",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Write advanced SQL queries using window functions, CTEs, and subqueries for analytical questions",
+        "Optimize SQL query performance with proper indexing and execution plan analysis",
+        "Connect SQL databases to Python pandas for integrated analysis workflows"
+      ],
+      "readings": [
+        "Molinaro, 'SQL Cookbook', Ch. 7-12 (Window Functions, Advanced Queries)",
+        "PostgreSQL Documentation: Window Functions",
+        "SQLAlchemy Documentation: Core Tutorial"
+      ],
+      "lecture_notes": {
+        "introduction": "SQL remains the lingua franca of data access, and analytical SQL goes far beyond the SELECT-FROM-WHERE basics covered in introductory database courses. Modern analytical work requires window functions for running totals, rankings, and moving averages; Common Table Expressions for breaking complex queries into readable components; and advanced aggregation patterns for cohort analysis, funnel metrics, and retention calculations. Data scientists who master analytical SQL can answer many business questions directly in the database, where computation runs orders of magnitude faster than pulling all data into Python. This session teaches the analytical SQL patterns that data scientists use daily: computing metrics over partitions without collapsing rows, building multi-step analytical pipelines with CTEs, writing self-joins for sequential event analysis, and connecting SQL results seamlessly into pandas for further manipulation and visualization. Understanding when to compute in SQL versus pandas is a practical skill that significantly affects analysis efficiency.",
+        "key_concepts": [
+          "Window functions: ROW_NUMBER, RANK, DENSE_RANK for ordered rankings within partitions",
+          "Aggregate window functions: SUM, AVG, COUNT with OVER(PARTITION BY ... ORDER BY ...) for running totals and moving averages",
+          "LAG and LEAD: accessing previous and next row values for sequential analysis (day-over-day changes, session gaps)",
+          "Common Table Expressions (CTEs): WITH clauses for breaking complex queries into named, readable subqueries",
+          "Cohort analysis in SQL: grouping users by acquisition period and tracking behavior over time",
+          "Funnel analysis: using conditional aggregation and window functions to measure conversion between steps",
+          "Self-joins: joining a table to itself for event sequence analysis (time between events, sessionization)",
+          "Query optimization: EXPLAIN ANALYZE output, index selection, avoiding SELECT *, and materializing CTEs when necessary",
+          "SQLAlchemy and pandas: read_sql for executing queries and loading results directly into DataFrames",
+          "SQL vs pandas decision: compute aggregations and filters in SQL (fast, scales to billions), reshape and visualize in pandas"
+        ],
+        "demonstration": "Analyze a SaaS application database: use window functions to rank customers by revenue within each region, compute month-over-month growth with LAG, build a cohort retention analysis with CTEs showing what percentage of users acquired each month are still active N months later, create a conversion funnel from signup to paid subscription, and load the results into pandas for visualization",
+        "setup_requirements": [
+          "PostgreSQL database with sample SaaS analytics data",
+          "SQL client (psql, DBeaver, or pgAdmin)",
+          "Python with sqlalchemy and pandas for database-to-DataFrame pipeline"
+        ],
+        "review": [
+          {
+            "key": "Window Function vs GroupBy",
+            "value": "GroupBy collapses rows: one output row per group. Window functions compute over a partition but return a value for every input row. Use window functions when you need per-row detail alongside group-level context (each sale with its percentage of the category total)"
+          },
+          {
+            "key": "CTE for Query Readability",
+            "value": "Break complex queries into named CTEs that each solve one step: WITH active_users AS (...), user_revenue AS (...), ranked_users AS (...) SELECT ... FROM ranked_users. Each CTE is testable independently. This is far more maintainable than nested subqueries five levels deep"
+          },
+          {
+            "key": "Index Impact on Analytics",
+            "value": "A query scanning 10 million rows takes minutes without an index and milliseconds with one. Create indexes on columns used in WHERE, JOIN, and ORDER BY clauses. Use EXPLAIN ANALYZE to verify the query uses your index. Composite indexes match left-to-right: an index on (user_id, date) helps queries filtering on user_id but not queries filtering only on date"
+          },
+          {
+            "key": "SQL in Data Science Workflow",
+            "value": "Compute in SQL what SQL does best: filtering, joining, aggregating, and windowing over large datasets. Pull aggregated results into pandas for what pandas does best: reshaping, visualization, and statistical modeling. Pulling 50 million raw rows into pandas is slow and wasteful when a SQL aggregate returns 500 rows"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 15,
+      "topic": "Time Series Analysis",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Decompose time series data into trend, seasonal, and residual components",
+        "Detect and handle stationarity using differencing and transformation techniques",
+        "Build forecasting models using exponential smoothing and ARIMA methodologies"
+      ],
+      "readings": [
+        "Hyndman & Athanasopoulos, Forecasting: Principles and Practice, Ch. 1-8",
+        "Pandas Documentation: Time Series / Date Functionality",
+        "statsmodels Documentation: Time Series Analysis"
+      ],
+      "lecture_notes": {
+        "introduction": "Time series data, observations ordered by time, is ubiquitous in business and science: stock prices, website traffic, temperature readings, sales figures, sensor measurements. Time series analysis differs from cross-sectional analysis because observations are not independent: today's value depends on yesterday's value, and there may be daily, weekly, monthly, and yearly patterns embedded in the data. This temporal dependence is both a challenge (standard statistical methods assume independence) and an opportunity (we can use past patterns to forecast the future). This session covers the fundamental concepts of time series analysis: decomposing a series into trend, seasonal, and residual components to understand its structure; testing for stationarity, the property that statistical properties do not change over time; and building forecasting models that capture the patterns in historical data to predict future values. We focus on exponential smoothing and ARIMA, the two workhouse forecasting methodologies that handle the vast majority of practical forecasting problems.",
+        "key_concepts": [
+          "Time series components: trend (long-term direction), seasonality (repeating patterns), cyclical (irregular oscillations), residual (noise)",
+          "Decomposition: additive (Y = T + S + R) when seasonal amplitude is constant, multiplicative (Y = T * S * R) when it grows with trend",
+          "Stationarity: constant mean, variance, and autocorrelation over time; required by most time series models",
+          "Augmented Dickey-Fuller test: statistical test for stationarity, with differencing to achieve stationarity when needed",
+          "Autocorrelation (ACF) and partial autocorrelation (PACF): measuring correlation between a series and its lagged values",
+          "Exponential smoothing: weighted average of past observations with exponentially decreasing weights, capturing level, trend, and seasonality",
+          "ARIMA(p,d,q): combining autoregression (past values), differencing (stationarity), and moving average (past errors) for forecasting",
+          "Seasonal ARIMA (SARIMA): extending ARIMA with seasonal components for data with periodic patterns",
+          "Forecast evaluation: train/test split respecting temporal order, metrics (MAE, RMSE, MAPE), residual analysis",
+          "Cross-validation for time series: expanding or sliding window validation, never shuffling temporal data"
+        ],
+        "demonstration": "Analyze monthly airline passenger data: decompose into trend, seasonal, and residual components, test for stationarity with ADF (non-stationary), difference once to achieve stationarity, examine ACF/PACF plots to identify ARIMA parameters, fit SARIMA model, generate 12-month forecast with confidence intervals, and evaluate forecast accuracy on held-out test data",
+        "setup_requirements": [
+          "Python with pandas, statsmodels, matplotlib, and pmdarima",
+          "Monthly airline passenger dataset (classic Box-Jenkins dataset)",
+          "Jupyter notebook with time series visualization utilities"
+        ],
+        "review": [
+          {
+            "key": "Stationarity Requirement",
+            "value": "ARIMA and most time series models assume stationarity. A trending series has a changing mean; a seasonal series has changing variance patterns. Differencing (subtracting consecutive observations) removes trend. Seasonal differencing (subtracting the value from the same season last year) removes seasonality. The 'd' in ARIMA is the number of differences applied"
+          },
+          {
+            "key": "ACF/PACF Interpretation",
+            "value": "ACF shows correlation at each lag; PACF shows correlation at each lag after removing the effect of shorter lags. For ARIMA model selection: if ACF cuts off at lag q and PACF tails off, use MA(q). If PACF cuts off at lag p and ACF tails off, use AR(p). If both tail off, use ARMA(p,q). Use auto_arima from pmdarima to automate this"
+          },
+          {
+            "key": "Never Shuffle Time Series Data",
+            "value": "Standard cross-validation shuffles data randomly, which mixes future data into the training set (data leakage). Time series cross-validation must respect temporal order: train on past, test on future. Use expanding window (grow training set) or sliding window (fixed-size moving window) validation"
+          },
+          {
+            "key": "Forecast Uncertainty Communication",
+            "value": "Always report prediction intervals alongside point forecasts. A forecast of 1,000 units with a 95% interval of (800, 1200) communicates very differently than the same point forecast with an interval of (200, 1800). Uncertainty grows with forecast horizon; long-range forecasts are inherently less precise"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 17,
+      "topic": "Regression Analysis",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Build and interpret linear and multiple regression models for prediction and inference",
+        "Diagnose regression model problems through residual analysis and multicollinearity detection",
+        "Apply regularization (Ridge, Lasso) to handle high-dimensional data and prevent overfitting"
+      ],
+      "readings": [
+        "James et al., Introduction to Statistical Learning, Ch. 3 (Linear Regression)",
+        "Hastie et al., Elements of Statistical Learning, Ch. 3.4 (Regularization)",
+        "statsmodels Documentation: OLS Regression"
+      ],
+      "lecture_notes": {
+        "introduction": "Regression analysis is the foundational supervised learning technique for predicting continuous outcomes and understanding the relationships between variables. Linear regression, despite its simplicity, remains one of the most widely used methods in data science because it is interpretable (each coefficient tells you the effect of changing one variable while holding others constant), fast to train, and provides built-in statistical inference through confidence intervals and hypothesis tests on coefficients. Multiple regression extends this to many predictor variables, enabling you to isolate the effect of each variable while controlling for others, a critical capability for observational studies where controlled experiments are not possible. However, regression models can mislead when their assumptions are violated, when predictors are correlated (multicollinearity), or when the model is overfit to training data. This session covers the complete regression workflow from model specification through fitting, diagnostics, and interpretation, including regularization techniques for the increasingly common scenario of more predictors than the model can reliably estimate.",
+        "key_concepts": [
+          "Simple linear regression: Y = beta_0 + beta_1*X + epsilon, estimated by minimizing sum of squared residuals (OLS)",
+          "Multiple regression: extending to multiple predictors with interpretation of each coefficient as a partial effect (holding others constant)",
+          "R-squared and adjusted R-squared: proportion of variance explained, adjusted for number of predictors to penalize complexity",
+          "Regression assumptions: linearity, independence, normality of residuals, constant variance (homoscedasticity)",
+          "Residual diagnostics: residual vs fitted plot (linearity, homoscedasticity), Q-Q plot (normality), leverage plot (influential points)",
+          "Multicollinearity: correlated predictors inflating coefficient standard errors, detected by VIF (Variance Inflation Factor > 10)",
+          "Categorical predictors: one-hot encoding with reference category, interpretation as differences from the reference",
+          "Interaction terms: modeling the effect of one variable depending on the level of another (X1 * X2 coefficient)",
+          "Ridge regression (L2): shrinking coefficients toward zero by adding penalty proportional to sum of squared coefficients",
+          "Lasso regression (L1): shrinking coefficients with penalty proportional to sum of absolute values, performing automatic feature selection"
+        ],
+        "demonstration": "Build a regression model predicting house prices: start with simple regression on square footage, add multiple predictors (bedrooms, location, age), diagnose multicollinearity between square footage and number of rooms, examine residual plots revealing non-linearity in the price-age relationship, add an interaction term between location and square footage, apply Lasso to select the most important features from 50 predictors, and compare model performance on test data",
+        "setup_requirements": [
+          "Python with statsmodels, scikit-learn, pandas, and matplotlib",
+          "House price dataset (Ames Housing or similar)",
+          "Jupyter notebook for iterative model building"
+        ],
+        "review": [
+          {
+            "key": "Coefficient Interpretation",
+            "value": "In multiple regression, beta_1 is the expected change in Y for a one-unit increase in X1 holding all other predictors constant. This 'holding constant' is critical: the coefficient of education on salary in a model that also includes experience is the effect of education beyond what experience already explains"
+          },
+          {
+            "key": "Residual Plot Patterns",
+            "value": "Random scatter around zero: assumptions met. Funnel shape: heteroscedasticity (variance increases with predicted value). Curved pattern: non-linearity (add polynomial terms or transform). Clusters: missing categorical variable. Always examine residual plots; R-squared can look good while assumptions are severely violated"
+          },
+          {
+            "key": "Lasso for Feature Selection",
+            "value": "Lasso's L1 penalty drives some coefficients to exactly zero, performing automatic feature selection. Cross-validate the penalty parameter (alpha) to find the right level of sparsity. Start with Lasso to identify important features, then refit with OLS on the selected features for unbiased coefficient estimates and standard errors"
+          },
+          {
+            "key": "Prediction vs Inference Trade-off",
+            "value": "OLS regression gives interpretable coefficients with uncertainty estimates (p-values, confidence intervals) for inference about relationships. Ridge and Lasso improve prediction accuracy by introducing bias but lose interpretability and valid standard errors. Choose based on whether the goal is understanding (OLS) or prediction (regularized)"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 19,
+      "topic": "Classification Problems",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Build classification models using logistic regression, decision trees, and random forests",
+        "Evaluate classifier performance using precision, recall, F1-score, ROC curves, and confusion matrices",
+        "Handle class imbalance using resampling, cost-sensitive learning, and threshold optimization"
+      ],
+      "readings": [
+        "James et al., Introduction to Statistical Learning, Ch. 4 (Classification)",
+        "scikit-learn Documentation: Classification",
+        "He & Garcia, 'Learning from Imbalanced Data' (IEEE TKDE, 2009)"
+      ],
+      "lecture_notes": {
+        "introduction": "Classification predicts which category an observation belongs to: spam or not spam, fraudulent or legitimate, churning or staying. While regression predicts a continuous value, classification predicts a discrete label, and this seemingly simple difference changes everything about how we build, evaluate, and deploy models. Accuracy, the most intuitive metric, is often misleading: a model that predicts 'no fraud' for every transaction achieves 99.9% accuracy because only 0.1% of transactions are fraudulent, but it catches zero fraud. Classification requires a richer evaluation framework built on the confusion matrix: precision (of predicted positives, how many are correct), recall (of actual positives, how many were found), and the F1-score balancing them. This session covers the most important classification algorithms, from logistic regression (the interpretable baseline) through decision trees (non-linear with intuitive visualization) to random forests (powerful ensemble with minimal tuning), with particular attention to the class imbalance problem that pervades real-world classification tasks.",
+        "key_concepts": [
+          "Logistic regression: linear model for probability estimation using the sigmoid function, interpretable odds ratios",
+          "Decision trees: recursive binary splits on feature thresholds, naturally handles non-linearity and interactions",
+          "Random forests: ensemble of many decision trees trained on bootstrap samples with random feature subsets, reducing overfitting",
+          "Confusion matrix: true positives, false positives, true negatives, false negatives in a 2x2 table",
+          "Precision and recall: precision = TP/(TP+FP), recall = TP/(TP+FN), trade-off controlled by classification threshold",
+          "F1-score: harmonic mean of precision and recall, balancing both when neither should dominate",
+          "ROC curve and AUC: plotting true positive rate vs false positive rate across all thresholds, area under curve summarizes overall performance",
+          "Class imbalance: when one class dominates (99% negative), model learns to predict majority class; addressed by resampling, weighting, or threshold adjustment",
+          "Cross-validation: k-fold splitting for reliable performance estimation, stratified folds to maintain class proportions",
+          "Feature importance: random forest importances, permutation importance for model-agnostic feature ranking"
+        ],
+        "demonstration": "Build a credit card fraud detection model: explore the heavily imbalanced dataset (0.17% fraud), train logistic regression as baseline, train random forest, compare with precision-recall curves (not ROC, which is misleading for imbalanced data), apply SMOTE oversampling and evaluate improvement, optimize the classification threshold to balance business cost of false positives (customer friction) vs false negatives (fraud loss), and compute feature importances to understand what drives fraud predictions",
+        "setup_requirements": [
+          "Python with scikit-learn, imbalanced-learn, pandas, and matplotlib",
+          "Credit card fraud dataset (Kaggle anonymized dataset)",
+          "Jupyter notebook for iterative model development"
+        ],
+        "review": [
+          {
+            "key": "Accuracy Paradox",
+            "value": "When classes are imbalanced (99% negative), predicting all negative gives 99% accuracy. This useless model has 0% recall for the positive class. Always evaluate with precision, recall, F1, or area under the precision-recall curve for imbalanced problems. Accuracy is meaningful only when classes are roughly balanced"
+          },
+          {
+            "key": "Precision-Recall Trade-off",
+            "value": "Lowering the classification threshold increases recall (catching more positives) but decreases precision (more false positives). The right threshold depends on the cost of errors: fraud detection favors high recall (missing fraud is costly), spam filtering favors high precision (blocking real email is costly)"
+          },
+          {
+            "key": "Random Forest Advantages",
+            "value": "Random forests handle non-linear relationships, interactions, mixed data types, and missing values with minimal preprocessing. They are resistant to overfitting because averaging many trees reduces variance. The main limitation is lack of interpretability: you get predictions and feature importances but not a clear decision rule"
+          },
+          {
+            "key": "SMOTE with Caution",
+            "value": "SMOTE generates synthetic minority examples by interpolating between existing minority neighbors. Apply SMOTE only to the training set, never the test set. Evaluate performance on the original (unmodified) test set. SMOTE can create unrealistic examples in high-dimensional spaces where interpolation crosses class boundaries"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 21,
+      "topic": "Clustering and Segmentation",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Apply k-means, hierarchical, and DBSCAN clustering to discover natural groupings in data",
+        "Evaluate cluster quality using silhouette scores, inertia, and domain validation",
+        "Translate clustering results into actionable business segments with profiling and interpretation"
+      ],
+      "readings": [
+        "James et al., Introduction to Statistical Learning, Ch. 12.4 (Clustering)",
+        "scikit-learn Documentation: Clustering",
+        "Punj & Stewart, 'Cluster Analysis in Marketing Research' (Journal of Marketing Research)"
+      ],
+      "lecture_notes": {
+        "introduction": "Clustering is unsupervised learning: finding natural groups in data without labeled examples. Unlike classification where you know the categories in advance, clustering discovers the categories from the data itself. Customer segmentation, anomaly detection, document topic discovery, and genomic analysis all rely on clustering. The challenge is that clustering has no single correct answer: the number of clusters, their boundaries, and their interpretation depend on the algorithm, the distance metric, the features used, and the domain context. K-means finds spherical clusters of similar size, hierarchical clustering reveals nested cluster structure at multiple scales, and DBSCAN discovers clusters of arbitrary shape while identifying outliers. This session teaches when to use each algorithm, how to evaluate cluster quality (a fundamentally harder problem than evaluating supervised models because there are no ground-truth labels), and critically, how to translate clusters from mathematical abstractions into meaningful, actionable business segments that drive real decisions.",
+        "key_concepts": [
+          "K-means: partition n observations into k clusters by minimizing within-cluster sum of squared distances to centroids",
+          "K-means initialization: k-means++ for better initial centroids, multiple restarts to avoid local optima",
+          "Elbow method: plotting inertia vs k to find the number of clusters where improvement diminishes (the elbow)",
+          "Silhouette score: measuring how similar each point is to its own cluster vs neighboring clusters, ranging from -1 to 1",
+          "Hierarchical clustering: agglomerative (bottom-up) merging of clusters, visualized as a dendrogram showing merge distances",
+          "DBSCAN: density-based clustering that finds clusters of arbitrary shape and labels sparse points as noise (outliers)",
+          "Feature scaling: standardizing features before clustering so that variables measured in different units contribute equally",
+          "Cluster profiling: computing summary statistics and visualizations for each cluster to understand what makes them distinct",
+          "Dimensionality reduction for visualization: PCA or t-SNE to project high-dimensional clusters into 2D for visual inspection",
+          "Business segmentation: translating clusters into actionable segments with names, descriptions, and recommended actions"
+        ],
+        "demonstration": "Segment retail customers using RFM (Recency, Frequency, Monetary) features: standardize features, run k-means with k=2 through k=8, select k=4 using elbow and silhouette analysis, profile each cluster with box plots and radar charts, name the segments (Champions, Loyal, At Risk, Lost), visualize clusters with PCA, and compare against hierarchical clustering and DBSCAN results",
+        "setup_requirements": [
+          "Python with scikit-learn, pandas, matplotlib, and seaborn",
+          "Retail transaction dataset for RFM analysis",
+          "Jupyter notebook for iterative clustering exploration"
+        ],
+        "review": [
+          {
+            "key": "Feature Scaling is Mandatory",
+            "value": "K-means uses Euclidean distance. If salary is measured in thousands (range 30-200) and age in years (range 18-65), salary dominates the distance calculation and age is effectively ignored. Always standardize (z-score) or normalize (min-max) features before clustering"
+          },
+          {
+            "key": "K-Means Assumptions and Limitations",
+            "value": "K-means assumes spherical clusters of similar size. It fails on elongated clusters, clusters with different densities, and clusters with non-convex shapes. DBSCAN handles arbitrary shapes; Gaussian Mixture Models handle elliptical clusters. Try multiple algorithms and compare results"
+          },
+          {
+            "key": "Cluster Validation Challenge",
+            "value": "Without ground-truth labels, cluster quality is assessed by internal metrics (silhouette, inertia) and external validation (do the clusters make domain sense?). High silhouette score does not guarantee useful clusters. A domain expert must validate that the clusters are meaningful and actionable"
+          },
+          {
+            "key": "From Clusters to Segments",
+            "value": "Clusters are mathematical groupings. Segments are business concepts. The gap between them requires interpretation: analyze each cluster's feature distributions, compare against business knowledge, give each segment a descriptive name, and recommend specific actions for each. A cluster is useless until someone acts on it"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 23,
+      "topic": "Text Analytics and NLP",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Process text data using tokenization, stopword removal, stemming, and TF-IDF vectorization",
+        "Build text classification models for sentiment analysis and topic categorization",
+        "Apply topic modeling with Latent Dirichlet Allocation to discover themes in document collections"
+      ],
+      "readings": [
+        "Bird et al., Natural Language Processing with Python (NLTK Book), Ch. 1-6",
+        "scikit-learn Documentation: Text Feature Extraction",
+        "Blei et al., 'Latent Dirichlet Allocation' (JMLR, 2003) - simplified version"
+      ],
+      "lecture_notes": {
+        "introduction": "Text is the most abundant form of unstructured data: customer reviews, social media posts, support tickets, medical records, legal documents, and scientific papers generate billions of text documents daily. Text analytics transforms this unstructured information into structured insights using Natural Language Processing (NLP) techniques. The fundamental challenge is representation: machine learning algorithms require numerical input, but text is inherently symbolic and variable-length. The bag-of-words model and its refinement TF-IDF convert text into fixed-length numerical vectors by treating each document as a collection of word frequencies, deliberately ignoring word order in exchange for computational tractability. This representation, despite its simplicity, powers effective sentiment analysis, document classification, and information retrieval. Topic modeling goes further, discovering latent themes that organize a document collection without predefined categories. This session covers the complete text analytics pipeline from raw text preprocessing through vectorization to classification and topic discovery.",
+        "key_concepts": [
+          "Text preprocessing pipeline: lowercasing, punctuation removal, tokenization, stopword removal, stemming/lemmatization",
+          "Bag-of-words model: representing a document as a vector of word frequencies, ignoring word order",
+          "TF-IDF: Term Frequency-Inverse Document Frequency, weighting words by their importance in a document relative to the corpus",
+          "N-grams: capturing multi-word phrases (bigrams, trigrams) to partially restore word order information",
+          "Text classification: using TF-IDF features with logistic regression or Naive Bayes for sentiment analysis and categorization",
+          "Naive Bayes: probabilistic classifier particularly effective for text due to its handling of high-dimensional sparse features",
+          "Topic modeling with LDA: discovering latent topics as probability distributions over words, each document as a mixture of topics",
+          "Word embeddings: dense vector representations (Word2Vec, GloVe) that capture semantic relationships (king - man + woman = queen)",
+          "Evaluation for text: accuracy, precision, recall for classification; coherence scores for topic quality; human evaluation for subjective tasks",
+          "Regular expressions: pattern matching for structured text extraction (emails, dates, phone numbers, URLs)"
+        ],
+        "demonstration": "Analyze Amazon product reviews: preprocess text (tokenize, remove stopwords, lemmatize), create TF-IDF matrix, build a sentiment classifier (positive vs negative) with logistic regression achieving 88% accuracy, examine the most predictive words for each sentiment, run LDA topic modeling on negative reviews to discover common complaint themes (shipping, quality, sizing), and visualize topics with pyLDAvis",
+        "setup_requirements": [
+          "Python with nltk, scikit-learn, gensim, and pyLDAvis",
+          "Amazon product review dataset",
+          "Jupyter notebook with text processing utilities"
+        ],
+        "review": [
+          {
+            "key": "TF-IDF Intuition",
+            "value": "TF (term frequency) measures how often a word appears in a document. IDF (inverse document frequency) measures how rare a word is across all documents. TF-IDF = TF * IDF, so words that are frequent in one document but rare overall get high scores (they characterize that document), while common words like 'the' get low scores"
+          },
+          {
+            "key": "Stopword Removal Trade-off",
+            "value": "Removing common words (the, is, at) reduces noise and dimensionality. However, some stopwords carry sentiment (not, never) or domain meaning (patient, case in medical text). Use domain-aware stopword lists and verify that removal does not discard meaningful words for your specific task"
+          },
+          {
+            "key": "LDA Topic Interpretation",
+            "value": "LDA discovers topics as probability distributions over words. Topic quality depends on the number of topics (try 5-20 and evaluate coherence), preprocessing quality, and corpus size. Topics require human interpretation: examine the top 20 words and representative documents to assign meaningful labels"
+          },
+          {
+            "key": "Embeddings vs Bag-of-Words",
+            "value": "Bag-of-words/TF-IDF treats each word independently; 'good' and 'great' are unrelated features. Word embeddings place semantically similar words close together in vector space, capturing relationships. Use TF-IDF for interpretable, traditional ML pipelines; use embeddings for tasks requiring semantic understanding"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 25,
+      "topic": "Big Data Tools with Spark",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Understand distributed computing frameworks and when they are necessary vs overkill",
+        "Write PySpark jobs for data processing that exceed single-machine memory capacity",
+        "Optimize Spark jobs by managing partitioning, caching, and shuffle operations"
+      ],
+      "readings": [
+        "Karau & Warren, High Performance Spark, Ch. 1-6",
+        "Spark Documentation: PySpark Getting Started",
+        "Dean & Ghemawat, 'MapReduce: Simplified Data Processing on Large Datasets' (2004)"
+      ],
+      "lecture_notes": {
+        "introduction": "Most data science work fits comfortably in pandas on a single machine: datasets under 10GB, computations completing in seconds to minutes. But some problems genuinely require distributed computing: processing terabytes of web logs, training models on billions of records, or running ETL pipelines on data lake-scale datasets. Apache Spark is the dominant distributed computing framework for these scenarios, providing a familiar DataFrame API that scales from a single laptop to clusters with thousands of cores. PySpark lets you write Spark jobs in Python using an API that deliberately mirrors pandas, making the transition from single-machine to distributed computing relatively smooth. However, distributed computing introduces entirely new performance considerations: data must be shuffled across a network between machines, operations that are trivial on a single machine (sorting, joining, counting distinct values) become expensive when data is distributed across hundreds of partitions. This session teaches when distributed tools are genuinely needed, how to write efficient PySpark code, and how to avoid the common performance pitfalls that turn a 5-minute Spark job into a 5-hour one.",
+        "key_concepts": [
+          "MapReduce paradigm: map (transform each record), shuffle (redistribute by key), reduce (aggregate per key) as the foundation of distributed processing",
+          "Spark architecture: driver program, cluster manager, executors, and the directed acyclic graph (DAG) of stages",
+          "RDDs and DataFrames: low-level RDD API vs high-level DataFrame/SQL API with Catalyst optimizer",
+          "Lazy evaluation: Spark builds a computation DAG but executes only when an action (collect, count, write) is triggered",
+          "Transformations vs actions: narrow transformations (map, filter) vs wide transformations (groupBy, join) requiring shuffle",
+          "Partitioning: how data is distributed across executors, impact on parallelism and shuffle costs",
+          "Caching and persistence: storing intermediate DataFrames in memory to avoid recomputation in iterative workflows",
+          "Broadcast joins: sending a small table to all executors to avoid shuffling the large table during join",
+          "PySpark API: read, select, filter, groupBy, agg, join, window functions mirroring pandas with distributed execution",
+          "When to use Spark vs pandas: the practical threshold is around 10GB (pandas) to 100GB+ (Spark), with a gray zone depending on hardware and operation complexity"
+        ],
+        "demonstration": "Process a 5GB web server log dataset with PySpark: read from Parquet files in S3, parse log entries, filter for HTTP 500 errors, aggregate error counts by hour and endpoint, join with an endpoint metadata table using a broadcast join, compute 24-hour rolling error rates with window functions, and write results to Parquet, comparing execution time against an equivalent pandas analysis on a 500MB sample",
+        "setup_requirements": [
+          "PySpark installed (local mode with 4 cores for development)",
+          "Large log dataset (5GB Parquet files)",
+          "Jupyter with PySpark kernel (findspark or pyspark shell)",
+          "Spark UI access for monitoring job execution"
+        ],
+        "review": [
+          {
+            "key": "Lazy Evaluation Benefits",
+            "value": "Spark builds a DAG of all transformations before executing anything. This enables optimization: predicate pushdown (filtering before joining), column pruning (reading only needed columns from Parquet), and stage fusion (combining multiple operations into one pass). The Catalyst optimizer makes these decisions automatically"
+          },
+          {
+            "key": "Shuffle Is the Enemy",
+            "value": "Shuffling data across the network (required by groupBy, join, distinct, sort) is the most expensive operation in Spark. Minimize shuffles: use broadcast joins for small tables, pre-partition data by join keys, avoid unnecessary distinct or sort operations, and coalesce (not repartition) when reducing partitions"
+          },
+          {
+            "key": "Spark vs Pandas Decision",
+            "value": "If your data fits in RAM with room to spare (dataset < 25% of available memory), use pandas. It is faster for small data because there is no distributed overhead. If data exceeds memory, use Spark. In the gray zone (5-20GB), try pandas first with chunked reading or Polars (single-machine parallel DataFrame library)"
+          },
+          {
+            "key": "Spark UI for Debugging",
+            "value": "The Spark UI (port 4040) shows the DAG of stages, time spent in each stage, shuffle read/write sizes, and task distribution. When a Spark job is slow, the UI reveals whether the bottleneck is data skew (one partition much larger than others), excessive shuffling, or insufficient parallelism"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 27,
+      "topic": "Ethics in Data Science",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Identify sources of bias in data collection, model training, and deployment",
+        "Apply fairness metrics and bias mitigation techniques to classification models",
+        "Navigate ethical dilemmas in data science with established frameworks and professional responsibility"
+      ],
+      "readings": [
+        "O'Neil, Weapons of Math Destruction, Ch. 1-5",
+        "Barocas & Selbst, 'Big Data's Disparate Impact' (California Law Review, 2016)",
+        "ACM Code of Ethics and Professional Conduct"
+      ],
+      "lecture_notes": {
+        "introduction": "Data science models increasingly make decisions that affect people's lives: who gets a loan, who gets hired, who gets paroled, who sees which ads, and who receives medical treatment. These models can perpetuate and amplify societal biases present in historical data, creating systematic disadvantage for already marginalized groups. A recidivism prediction model trained on biased policing data will predict higher risk for communities that were over-policed, not communities with higher actual crime rates. A hiring model trained on a company's historical hiring decisions will replicate the company's historical biases. A medical model trained on data from predominantly white patients will perform poorly on Black patients. These are not hypothetical concerns; they are documented failures with real harm. This session covers the ethical dimensions of data science: how bias enters the pipeline (biased data, biased features, biased labels, biased evaluation), how to measure fairness (demographic parity, equalized odds, calibration), how to mitigate bias (pre-processing, in-processing, post-processing), and how to navigate the ethical dilemmas that arise when fairness, accuracy, and business objectives conflict.",
+        "key_concepts": [
+          "Sources of bias: historical bias in training data, representation bias in sampling, measurement bias in features, aggregation bias from averaging across groups",
+          "Protected attributes: race, gender, age, disability, and other characteristics that should not influence decisions unfairly",
+          "Proxy variables: features that correlate with protected attributes (zip code as proxy for race) enabling indirect discrimination",
+          "Fairness metrics: demographic parity (equal positive rate across groups), equalized odds (equal TPR and FPR), calibration (equal accuracy across groups)",
+          "Impossibility theorem: it is mathematically impossible to satisfy all fairness metrics simultaneously except in trivial cases",
+          "Bias mitigation: pre-processing (resampling, reweighting training data), in-processing (fairness constraints during training), post-processing (adjusting thresholds per group)",
+          "Model interpretability: using SHAP values and LIME to explain individual predictions and detect discriminatory patterns",
+          "Privacy considerations: anonymization limitations (re-identification attacks), differential privacy, GDPR right to explanation",
+          "Informed consent: ensuring data subjects understand how their data will be used, especially for vulnerable populations",
+          "Professional responsibility: data scientists' obligation to consider societal impact, refuse unethical projects, and advocate for fairness"
+        ],
+        "demonstration": "Audit a loan approval model for bias: examine approval rates by race and gender, compute disparate impact ratios, measure equalized odds across groups, identify proxy features (zip code correlating with race), apply reweighting to the training data to improve demographic parity, measure the accuracy-fairness trade-off, and use SHAP values to explain individual decisions that were impacted by bias mitigation",
+        "setup_requirements": [
+          "Python with scikit-learn, fairlearn, shap, and aif360",
+          "HMDA mortgage lending dataset or synthetic lending data",
+          "Jupyter notebook for bias analysis workflow"
+        ],
+        "review": [
+          {
+            "key": "Bias in, Bias Out",
+            "value": "Models learn patterns from historical data. If the data reflects discriminatory practices (redlining in lending, biased policing, gender gaps in hiring), the model will reproduce those patterns as predictions. The model is not 'objective' just because it is mathematical; it encodes whatever biases exist in its training data"
+          },
+          {
+            "key": "Fairness Metric Selection",
+            "value": "Different fairness metrics embody different ethical philosophies. Demographic parity says equal rates regardless of qualifications (equity). Equalized odds says equal accuracy regardless of group (equal treatment). Calibration says equal reliability of predictions. The choice is a value judgment, not a technical one. Stakeholders must be involved"
+          },
+          {
+            "key": "Accuracy-Fairness Trade-off",
+            "value": "Improving fairness often slightly reduces overall accuracy because the model can no longer exploit discriminatory correlations. This trade-off must be explicit and accepted by decision-makers. A model that is 2% less accurate but does not discriminate is often the ethically correct choice"
+          },
+          {
+            "key": "Ongoing Monitoring Obligation",
+            "value": "Bias can emerge or change over time as population distributions shift. Deploying a fair model is not enough; monitor fairness metrics continuously in production. Establish alerts for disparate impact ratios exceeding thresholds and audit model decisions regularly with diverse review teams"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 29,
+      "topic": "Capstone Project Presentations",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Present a complete data science project demonstrating all course concepts from data acquisition through actionable insights",
+        "Critically evaluate peer projects for methodology rigor, visualization quality, and ethical considerations",
+        "Synthesize the data science skillset into a framework for approaching new analytical problems"
+      ],
+      "readings": [
+        "Provost & Fawcett, Data Science for Business, Ch. 1-3 (review)",
+        "Davenport & Patil, 'Data Scientist: The Sexiest Job of the 21st Century' (HBR, updated 2022)",
+        "Your Capstone Project Materials"
+      ],
+      "lecture_notes": {
+        "introduction": "The capstone project brings together every skill developed in this course into a cohesive, end-to-end data science project. Each student presents their complete analysis: from the initial question formulation and data acquisition through cleaning, exploration, modeling, and visualization to a final set of actionable recommendations supported by evidence. Projects are evaluated not only on technical correctness but on the quality of the analytical question (is it specific, answerable, and valuable?), the rigor of the methodology (are assumptions checked, alternatives considered, and limitations acknowledged?), the effectiveness of the communication (do the visualizations tell a clear story?), and the ethical awareness (were potential biases identified and addressed?). After presentations, we review the complete data science toolkit and discuss the evolving landscape: the impact of large language models on traditional NLP, the growing importance of causal inference, the operationalization challenge of deploying models in production, and the career paths available to data science graduates.",
+        "key_concepts": [
+          "Project structure: question, data, methodology, results, conclusions, limitations, future work",
+          "Reproducibility requirements: complete notebook runs top-to-bottom, data sources documented, random seeds fixed, environment specified",
+          "Methodology defense: justifying every choice (why this model, why these features, why this evaluation metric) with alternatives considered",
+          "Limitation honesty: acknowledging what the analysis cannot conclude, potential confounders, data quality issues, and generalizability boundaries",
+          "Actionable recommendations: translating statistical findings into specific, implementable actions for stakeholders",
+          "Data science career paths: analyst, data scientist, ML engineer, research scientist, data engineer, analytics manager",
+          "Emerging trends: LLMs for text analysis, causal ML, MLOps for model deployment, real-time analytics, and automated ML (AutoML)",
+          "Continuous learning: staying current with new methods, tools, and best practices in a rapidly evolving field"
+        ],
+        "demonstration": "Walk through an exemplary capstone project: predicting customer churn for a subscription service, from initial EDA revealing seasonal patterns, through feature engineering (usage trends, support ticket sentiment), logistic regression and random forest comparison, SHAP-based model interpretation, fairness audit across customer demographics, to a stakeholder presentation with specific retention strategies for each risk segment",
+        "setup_requirements": [
+          "Presentation slides or notebook in presentation mode",
+          "Complete Jupyter notebook for code review",
+          "Peer evaluation rubric forms",
+          "Interactive dashboard for live demonstration"
+        ],
+        "review": [
+          {
+            "key": "Data Science Is a Process, Not a Model",
+            "value": "The value of data science lies in the complete process: asking the right question, finding and cleaning the right data, exploring rigorously, choosing and evaluating appropriate methods, communicating clearly, and deploying responsibly. A sophisticated model built on the wrong data for the wrong question produces zero value"
+          },
+          {
+            "key": "Communication Is Half the Job",
+            "value": "A data scientist who cannot communicate findings to non-technical stakeholders is only half effective. The best analysis, ununderstood, is indistinguishable from no analysis. Invest as much effort in visualization, writing, and presentation as in modeling. Translate confidence intervals into business language"
+          },
+          {
+            "key": "Ethical Responsibility Is Non-Negotiable",
+            "value": "Every model that affects people's lives carries ethical obligations. Check for bias, consider privacy, acknowledge limitations, and refuse to deploy models that cause unjust harm. Professional ethics are not optional; they are the foundation of trust in data science as a discipline"
+          },
+          {
+            "key": "The T-Shaped Data Scientist",
+            "value": "Breadth across the full pipeline (data engineering, statistics, ML, visualization, communication, ethics) combined with depth in one or two areas (NLP, time series, causal inference, deep learning). This course provides the breadth; your career provides the depth. Identify your areas of interest and invest deeply"
           }
         ]
       }
@@ -218,175 +841,574 @@
     "quizzes": [
       {
         "quiz": 1,
-        "week": 2,
-        "topic": "Data Wrangling and EDA",
-        "duration": "20 minutes",
-        "questions": [
-          {
-            "question": "Given a DataFrame with columns [user_id, purchase_date, amount, category], write pandas code to calculate the total spend per user per month, then find the top 5 users by total spend.",
-            "type": "code",
-            "points": 10,
-            "answer": "df['month'] = df['purchase_date'].dt.to_period('M')\nmonthly_spend = df.groupby(['user_id', 'month'])['amount'].sum().reset_index()\ntop_users = df.groupby('user_id')['amount'].sum().nlargest(5)\n# Or combined:\ntop_users = df.groupby('user_id')['amount'].sum().sort_values(ascending=False).head(5)",
-            "rubric": [
-              {
-                "key": "Correct groupby with proper columns",
-                "value": 4
-              },
-              {
-                "key": "Correct aggregation function",
-                "value": 3
-              },
-              {
-                "key": "Correct top-5 selection",
-                "value": 3
-              }
-            ]
-          },
-          {
-            "question": "A dataset has 15% missing values in a numeric column. Describe three different imputation strategies and when each is appropriate.",
-            "type": "short_answer",
-            "points": 10,
-            "answer": "1. Mean/median imputation: Replace missing values with the column mean (median for skewed data). Appropriate when data is missing completely at random and the column distribution is roughly normal. Fast but reduces variance and can bias correlations.\n2. Forward fill: Replace missing values with the previous non-missing value. Appropriate for time series data where the last known value is a reasonable estimate.\n3. Model-based imputation (e.g., KNN or iterative imputer): Use other features to predict missing values. Appropriate when missingness depends on other variables (MAR) and when preserving multivariate relationships matters. Most accurate but most complex.",
-            "rubric": [
-              {
-                "key": "Three distinct strategies named and described",
-                "value": 4
-              },
-              {
-                "key": "Correct conditions for each strategy",
-                "value": 4
-              },
-              {
-                "key": "Mentions trade-offs or limitations",
-                "value": 2
-              }
-            ]
-          }
-        ],
-        "total_points": 20
-      },
-      {
-        "quiz": 2,
-        "week": 4,
-        "topic": "Statistics and Visualization",
+        "week": 3,
+        "topic": "Data Wrangling and Cleaning",
         "duration": "25 minutes",
         "questions": [
           {
-            "question": "An A/B test comparing a new checkout flow (B) against the original (A) shows: A conversion rate = 3.2%, B conversion rate = 3.8%, p-value = 0.04, sample size = 50,000 per group. Should the team launch variant B? Justify your answer considering both statistical and practical significance.",
-            "type": "short_answer",
-            "points": 15,
-            "answer": "The p-value of 0.04 < 0.05 suggests the difference is statistically significant. However, the absolute lift is only 0.6 percentage points (3.8% - 3.2%). Before launching, consider: (1) Is a 0.6pp lift practically significant for the business? At 50K users, this is 300 additional conversions. (2) Calculate the 95% confidence interval for the lift to understand the range of plausible effect sizes. (3) Check the effect size (Cohen's h or relative lift of 18.75%). (4) Consider the cost of implementing and maintaining the new flow. If 300 additional conversions per period is valuable and the implementation cost is low, launch B. If the margin of error includes zero or the lift is too small to justify the engineering cost, consider running the test longer for a more precise estimate.",
+            "question": "Given a DataFrame with columns [user_id, purchase_date, amount, category], write pandas code to calculate the total spend per user per month, then find the top 5 users by total lifetime spend.",
+            "type": "code",
+            "points": 10,
+            "answer": "# Monthly spend per user\ndf['month'] = df['purchase_date'].dt.to_period('M')\nmonthly_spend = df.groupby(['user_id', 'month'])['amount'].sum().reset_index()\n\n# Top 5 users by lifetime spend\ntop_users = (\n    df.groupby('user_id')['amount']\n    .sum()\n    .sort_values(ascending=False)\n    .head(5)\n)\n\n# Alternative with nlargest:\ntop_users = df.groupby('user_id')['amount'].sum().nlargest(5)",
             "rubric": [
               {
-                "key": "Correctly interprets p-value and statistical significance",
+                "key": "Correct groupby with user_id and month for monthly aggregation",
                 "value": 4
               },
               {
-                "key": "Considers practical significance and business impact",
-                "value": 5
-              },
-              {
-                "key": "Mentions confidence interval or uncertainty",
+                "key": "Correct sum aggregation function on amount",
                 "value": 3
               },
               {
-                "key": "Makes a justified recommendation",
+                "key": "Correct top-5 selection with sort or nlargest",
                 "value": 3
               }
             ]
           },
           {
-            "question": "Explain why a bar chart is more appropriate than a pie chart for comparing 8 categories, and when a pie chart might be acceptable.",
+            "question": "A dataset has 15% missing values in an income column. The missingness appears to correlate with education level (higher education respondents are less likely to have missing income). Identify the type of missingness and recommend an appropriate imputation strategy with justification.",
             "type": "short_answer",
             "points": 10,
-            "answer": "Bar charts use position along a common axis to encode value, which the human visual system compares more accurately than the angles and areas used by pie charts. With 8 categories, pie slices become too small to compare reliably, and similar-sized slices are nearly indistinguishable. Bar charts also support easy sorting (largest to smallest) and comparison across charts. A pie chart is acceptable only when: (1) there are 2-3 categories, (2) the goal is to show parts of a whole rather than compare values, and (3) one category dominates (e.g., 70/20/10 split).",
+            "answer": "Type: Missing At Random (MAR). The probability of income being missing depends on an observed variable (education level), not on the income value itself. If the missingness depended on the income value (e.g., high earners refuse to disclose), it would be MNAR. Recommended strategy: Model-based imputation conditional on education level, such as: (1) Group-wise median imputation: compute median income for each education level and impute missing values with their group's median. This preserves the education-income relationship. (2) Better: KNN imputation using education, age, and other predictors to find similar respondents and impute from their incomes. (3) Best: Multiple Imputation by Chained Equations (MICE) which generates multiple plausible values and propagates imputation uncertainty through downstream analysis. Simple mean imputation across all records would bias the result because it ignores the education-income relationship that drives the missingness pattern.",
             "rubric": [
               {
-                "key": "Explains position encoding is more accurate than angle",
+                "key": "Correctly identifies MAR with reasoning",
                 "value": 4
               },
               {
-                "key": "Notes difficulty comparing many small pie slices",
+                "key": "Recommends conditional imputation strategy using education level",
+                "value": 4
+              },
+              {
+                "key": "Explains why unconditional mean imputation would introduce bias",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "You merge two DataFrames on customer_id and the result has 20% more rows than the left DataFrame. What happened and how do you diagnose and fix it?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "What happened: The right DataFrame has duplicate customer_id values. When merging, each row in the left table matches multiple rows in the right table, causing row multiplication (a many-to-one merge becomes many-to-many). For example, if customer 123 appears once in left and 3 times in right, the merge creates 3 rows for customer 123. Diagnosis steps: (1) Check for duplicates in the merge key: right_df['customer_id'].duplicated().sum(). (2) Use merge with indicator=True to see which rows came from which source. (3) Examine duplicate customer_ids in the right table to understand why they exist (multiple orders, data entry errors, different record types). Fix depends on cause: (1) If right table should have one row per customer (e.g., customer demographics), deduplicate first: right_df.drop_duplicates(subset='customer_id', keep='last'). (2) If right table legitimately has multiple rows per customer (e.g., orders), the row multiplication may be correct but you should aggregate first: right_df.groupby('customer_id').agg(...) before merging. (3) Use validate='one_to_one' or validate='many_to_one' in the merge call to catch unexpected duplicates automatically.",
+            "rubric": [
+              {
+                "key": "Identifies duplicate merge keys as the cause",
+                "value": 4
+              },
+              {
+                "key": "Provides diagnostic steps including duplicated() check",
                 "value": 3
               },
               {
-                "key": "Identifies acceptable pie chart conditions",
+                "key": "Suggests fix with deduplication or pre-aggregation depending on context",
                 "value": 3
               }
             ]
           }
         ],
-        "total_points": 25
+        "total_points": 30
+      },
+      {
+        "quiz": 2,
+        "week": 5,
+        "topic": "EDA and Statistical Inference",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "An A/B test comparing a new checkout flow (B) against the original (A) shows: A conversion rate = 3.2%, B conversion rate = 3.8%, p-value = 0.04, sample size = 50,000 per group. Should the team launch variant B? Justify your answer considering statistical significance, practical significance, and business context.",
+            "type": "short_answer",
+            "points": 15,
+            "answer": "The p-value of 0.04 < 0.05 indicates statistical significance: the difference is unlikely due to random chance. However, the decision requires more analysis: (1) Practical significance: The absolute lift is 0.6 percentage points (3.8% - 3.2%). The relative lift is 18.75%. At 50,000 users per group, this translates to roughly 300 additional conversions. Is 300 conversions per period valuable? Depends on average order value and implementation cost. (2) Confidence interval: Calculate the 95% CI for the difference. If the lower bound includes very small values (e.g., 0.01%), the true lift might be negligibly small. (3) Effect size: Cohen's h for proportions gives the standardized effect size, helping compare against other experiments. (4) Secondary metrics: Does variant B increase conversion but decrease average order value or increase returns? Check guardrail metrics. (5) Implementation cost: If B requires significant engineering investment, the lift must justify the cost. Recommendation: If the CI lower bound shows meaningful lift and secondary metrics are neutral or positive, launch B with continued monitoring. If the CI lower bound is near zero, consider extending the test for a more precise estimate before committing resources.",
+            "rubric": [
+              {
+                "key": "Correctly interprets p-value as statistically significant",
+                "value": 3
+              },
+              {
+                "key": "Evaluates practical significance with business impact calculation",
+                "value": 5
+              },
+              {
+                "key": "Considers confidence interval and secondary metrics",
+                "value": 4
+              },
+              {
+                "key": "Makes a justified, nuanced recommendation",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain Anscombe's quartet and its implications for data analysis practice. What lesson does it teach about the relationship between summary statistics and data visualization?",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Anscombe's quartet consists of four datasets that have identical summary statistics: same mean of x (9), same mean of y (7.50), same variance of x (11), same variance of y (4.12), same correlation (0.816), and same linear regression line (y = 3 + 0.5x). However, when plotted, the four datasets look completely different: (1) a normal linear relationship, (2) a clear non-linear (quadratic) relationship, (3) a perfect linear relationship with one extreme outlier, (4) a vertical cluster with one far-right point that creates the apparent correlation. Implications for practice: (1) Never rely solely on summary statistics. Two datasets with identical means, standard deviations, and correlations can have completely different structures. (2) Always visualize data before modeling. The quadratic relationship in dataset 2 is obvious in a scatter plot but invisible in statistics. (3) Outlier influence is hidden in summaries. Dataset 3's regression is entirely driven by one point, which summary statistics do not reveal. (4) Make EDA visualization a mandatory first step, not an optional luxury.",
+            "rubric": [
+              {
+                "key": "Correctly describes Anscombe's quartet with identical statistics and different visuals",
+                "value": 3
+              },
+              {
+                "key": "Describes at least two of the four dataset patterns",
+                "value": 3
+              },
+              {
+                "key": "Draws correct implications for visualization as a mandatory practice",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between correlation and causation using a specific example from data science. Describe one methodology that can establish causation from observational data.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Correlation means two variables move together; causation means one variable causes the other to change. Example: data shows a strong positive correlation between the number of firefighters at a fire and the amount of property damage. This does not mean firefighters cause damage. The confounding variable is fire severity: bigger fires attract more firefighters AND cause more damage. The correlation is real; the causal interpretation is wrong. Methodology for causation from observational data: Instrumental Variables (IV) estimation. Find a variable (the instrument) that affects the treatment variable but does not directly affect the outcome except through the treatment. Example: does education increase earnings? Using distance to the nearest college as an instrument (it affects how much education someone gets but does not directly affect earnings otherwise), we can estimate the causal effect of education on earnings. IV removes the confounding bias from unobserved variables (motivation, ability) that correlate with both education and earnings. Other valid approaches include Regression Discontinuity Design, Difference-in-Differences, and Propensity Score Matching, each with specific assumptions about the data-generating process.",
+            "rubric": [
+              {
+                "key": "Clear explanation of correlation vs causation with confounding variable example",
+                "value": 4
+              },
+              {
+                "key": "Specific, correct example demonstrating the distinction",
+                "value": 3
+              },
+              {
+                "key": "Describes a valid causal methodology for observational data",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 33
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "SQL Analytics and Time Series",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Write a SQL query using window functions to compute the month-over-month revenue growth rate for each product category. The table 'orders' has columns: order_id, order_date, category, amount.",
+            "type": "code",
+            "points": 12,
+            "answer": "WITH monthly_revenue AS (\n    SELECT \n        category,\n        DATE_TRUNC('month', order_date) AS month,\n        SUM(amount) AS revenue\n    FROM orders\n    GROUP BY category, DATE_TRUNC('month', order_date)\n),\nwith_prev AS (\n    SELECT \n        category,\n        month,\n        revenue,\n        LAG(revenue) OVER (PARTITION BY category ORDER BY month) AS prev_revenue\n    FROM monthly_revenue\n)\nSELECT \n    category,\n    month,\n    revenue,\n    prev_revenue,\n    CASE \n        WHEN prev_revenue IS NOT NULL AND prev_revenue > 0\n        THEN ROUND((revenue - prev_revenue) * 100.0 / prev_revenue, 2)\n        ELSE NULL\n    END AS growth_rate_pct\nFROM with_prev\nORDER BY category, month;",
+            "rubric": [
+              {
+                "key": "Correct monthly aggregation with SUM and DATE_TRUNC",
+                "value": 4
+              },
+              {
+                "key": "Correct LAG window function with PARTITION BY category ORDER BY month",
+                "value": 4
+              },
+              {
+                "key": "Correct growth rate calculation with null/zero handling",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between additive and multiplicative time series decomposition. Given a retail sales dataset where holiday spikes grow proportionally larger each year as the business grows, which decomposition would you choose and why?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Additive decomposition: Y = Trend + Seasonal + Residual. The seasonal component has a constant amplitude regardless of the trend level. Appropriate when seasonal fluctuations remain roughly the same size over time. Multiplicative decomposition: Y = Trend * Seasonal * Residual. The seasonal component is proportional to the trend level. Appropriate when seasonal fluctuations grow (or shrink) as the overall level of the series changes. For the retail sales scenario: multiplicative decomposition is correct. If the business is growing (increasing trend) and holiday spikes are growing proportionally larger (Black Friday in year 1 is +$10K over baseline, in year 5 is +$50K over a 5x-larger baseline), the seasonal effect is proportional to the level, not additive. Using additive decomposition would underestimate seasonal effects in recent periods and overestimate them in early periods because it assumes the same absolute spike size regardless of the baseline. A practical test: if plotting the series shows the seasonal amplitude increasing with the level, use multiplicative. If constant amplitude, use additive. Taking the log of a multiplicative series converts it to additive.",
+            "rubric": [
+              {
+                "key": "Correctly defines both decomposition types with formulas",
+                "value": 3
+              },
+              {
+                "key": "Chooses multiplicative with correct reasoning about proportional growth",
+                "value": 4
+              },
+              {
+                "key": "Explains consequence of wrong choice and log transformation shortcut",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Why must time series cross-validation respect temporal ordering? Describe the expanding window cross-validation method and how it differs from standard k-fold.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Standard k-fold cross-validation randomly shuffles data into folds, which means future observations can appear in the training set while past observations appear in the test set. For time series, this creates data leakage: the model sees the future during training, producing unrealistically optimistic performance estimates that do not reflect real forecasting conditions. Expanding window cross-validation respects time: Fold 1: Train on months 1-12, test on month 13. Fold 2: Train on months 1-13, test on month 14. Fold 3: Train on months 1-14, test on month 15. ... and so on. Each fold trains on all available history up to the test point and evaluates on the next unseen time period. The training set grows with each fold (expanding window). Alternative: sliding window uses a fixed training size (e.g., always 12 months of training), dropping old data as new data enters. Key differences from k-fold: (1) Test sets are always after training sets temporally. (2) Folds are not randomly created. (3) Training sets grow (or slide). (4) Results reflect actual forecasting conditions where you train on the past and predict the future.",
+            "rubric": [
+              {
+                "key": "Explains data leakage from shuffling temporal data",
+                "value": 4
+              },
+              {
+                "key": "Correctly describes expanding window with specific fold examples",
+                "value": 3
+              },
+              {
+                "key": "Contrasts key differences from standard k-fold",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 32
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "Regression, Classification, and Clustering",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "A fraud detection model has the following test set results: Precision = 0.85, Recall = 0.40, F1 = 0.54. The business wants to catch at least 70% of fraud (recall >= 0.70). What changes would you make to the model, and what trade-off would you expect?",
+            "type": "short_answer",
+            "points": 12,
+            "answer": "The model is precise (85% of flagged transactions are actually fraud) but has low recall (only catching 40% of actual fraud). To increase recall to 70%: Primary approach: Lower the classification threshold. The model outputs a probability score. Currently the threshold might be 0.5 (flag as fraud if probability > 50%). Lowering it to, say, 0.3 means more transactions are flagged, catching more real fraud (higher recall) but also flagging more legitimate transactions (lower precision). Expected trade-off: Precision will decrease, perhaps to 0.50-0.65. This means more false positives (legitimate transactions flagged for review), increasing operational cost for the fraud review team. Secondary approaches: (1) Retrain with class-weight adjustment to penalize missing fraud more than false alarms. (2) Apply SMOTE to oversample fraud cases in training. (3) Engineer additional features that help distinguish fraud from legitimate transactions. (4) Try ensemble methods (Random Forest, XGBoost) that may find better decision boundaries. The business must decide the acceptable precision level: if the fraud review team can handle 2x the volume, a lower threshold is the simplest solution.",
+            "rubric": [
+              {
+                "key": "Identifies threshold adjustment as the primary approach",
+                "value": 4
+              },
+              {
+                "key": "Correctly predicts precision decrease as the trade-off",
+                "value": 3
+              },
+              {
+                "key": "Suggests additional model improvements and business context consideration",
+                "value": 3
+              },
+              {
+                "key": "Quantifies the operational impact of more false positives",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between L1 (Lasso) and L2 (Ridge) regularization in regression. When would you choose each, and what happens to features with Lasso that does not happen with Ridge?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Both add a penalty term to the regression loss function to prevent overfitting. Ridge (L2) adds lambda * sum(beta_i^2): penalty proportional to the sum of squared coefficients. Ridge shrinks all coefficients toward zero but never sets them exactly to zero. All features remain in the model with reduced influence. Choose Ridge when you believe all features are relevant (or most are), and you want to reduce multicollinearity and overfitting without feature elimination. Lasso (L1) adds lambda * sum(|beta_i|): penalty proportional to the sum of absolute coefficient values. Lasso shrinks coefficients toward zero AND can set some exactly to zero. This performs automatic feature selection. Features with zero coefficients are effectively removed from the model. Choose Lasso when you have many features and suspect only a subset are truly relevant, or when you want an interpretable model with fewer features. What Lasso does that Ridge does not: drives coefficients to exactly zero, producing a sparse model. With 100 features, Lasso might select 15 as important and zero out 85. Ridge would keep all 100 with small but non-zero coefficients. Elastic Net combines both penalties (alpha * L1 + (1-alpha) * L2) and is often the best default choice.",
+            "rubric": [
+              {
+                "key": "Correctly defines both penalty formulas and their effects",
+                "value": 4
+              },
+              {
+                "key": "Identifies Lasso's unique feature selection (coefficients exactly zero)",
+                "value": 3
+              },
+              {
+                "key": "Provides appropriate use cases for choosing each",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "You run k-means clustering with k=5 on customer data. The silhouette scores for each cluster are: [0.72, 0.68, 0.15, 0.71, 0.65]. What does the low score for cluster 3 indicate, and what should you investigate?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "The silhouette score ranges from -1 to 1. A score of 0.15 for cluster 3 means its members are, on average, barely more similar to their own cluster than to the nearest neighboring cluster. This indicates cluster 3 is poorly defined, overlapping significantly with one or more adjacent clusters. Investigations: (1) Visualize cluster 3 in 2D using PCA: are its points scattered between two other clusters rather than forming a cohesive group? (2) Examine which neighboring cluster has the most overlap. Perhaps cluster 3 should be merged with that neighbor (try k=4 and compare overall silhouette). (3) Profile cluster 3's characteristics: if its members have widely varying attributes, k-means may be forcing diverse points into one cluster because k is too low, or the data has a non-spherical structure that DBSCAN would handle better. (4) Check for outliers within cluster 3 that are poorly assigned. (5) Try running k-means with different random seeds (n_init parameter) to verify cluster 3 is stable and not an artifact of initialization. A single poorly-defined cluster does not invalidate the other four. Consider keeping the well-defined clusters and treating cluster 3 members as 'unclassified' for further investigation.",
+            "rubric": [
+              {
+                "key": "Correctly interprets low silhouette as poor cluster cohesion",
+                "value": 3
+              },
+              {
+                "key": "Suggests visualization and overlap analysis with neighbors",
+                "value": 4
+              },
+              {
+                "key": "Proposes actionable next steps (merge, change k, try different algorithm)",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 32
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "NLP, Big Data, and Ethics",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Explain TF-IDF and why it is more useful than raw word counts for text classification. Calculate the TF-IDF score for the word 'algorithm' appearing 3 times in a document of 100 words, given that 'algorithm' appears in 10 out of 10,000 documents in the corpus.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "TF-IDF combines Term Frequency (how often a word appears in a document) with Inverse Document Frequency (how rare the word is across the corpus). Raw word counts are problematic because common words like 'the' and 'is' dominate, despite carrying little information. TF-IDF downweights common words and upweights distinctive words. Calculation: TF = 3/100 = 0.03 (word frequency in the document). IDF = log(10000/10) = log(1000) = 3.0 (using natural log: ln(1000) = 6.91, or log10(1000) = 3.0). TF-IDF = TF * IDF = 0.03 * 3.0 = 0.09 (with log10) or 0.03 * 6.91 = 0.207 (with natural log). The high IDF reflects that 'algorithm' is rare (only in 0.1% of documents), so it is very informative when it appears. A word like 'the' appearing in most documents would have IDF near 0, giving it a low TF-IDF regardless of frequency. This makes TF-IDF better for classification because distinctive words (those that characterize a specific topic or sentiment) naturally receive higher weights.",
+            "rubric": [
+              {
+                "key": "Correctly explains TF-IDF and why it improves over raw counts",
+                "value": 3
+              },
+              {
+                "key": "Correct TF and IDF calculation",
+                "value": 4
+              },
+              {
+                "key": "Explains how the score reflects word distinctiveness",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "A machine learning model for hiring decisions is found to have a 15% lower approval rate for female applicants compared to male applicants with similar qualifications. The model does not use gender as a feature. How is this possible, and what should be done?",
+            "type": "short_answer",
+            "points": 12,
+            "answer": "How this is possible despite not using gender directly: (1) Proxy variables: features that correlate with gender serve as indirect proxies. Examples: name (gendered names), university major (gender-skewed fields), years of experience (career gap patterns), hobbies, pronoun usage in resumes. The model learns to use these proxies even without the gender feature. (2) Historical bias in training data: if the company historically hired fewer women, the training labels encode that bias. The model learns to replicate historical hiring patterns, which include the gender disparity. (3) Feature engineering bias: features like 'leadership experience' or 'prestigious internships' may reflect structural advantages that correlate with gender. What should be done: (1) Audit: Compute disparate impact ratio (female approval rate / male approval rate). A ratio below 0.8 violates the four-fifths rule used in US employment law. (2) Identify proxy features: Use SHAP values or permutation importance separately for male and female applicants to find features driving the disparity. (3) Mitigation: Apply fairness constraints during training (equalized odds), reweight training data, or adjust thresholds per group. (4) Remove or transform the strongest proxy features if they do not have legitimate business justification. (5) Ongoing monitoring: Continuously audit approval rates by gender in production. (6) Human oversight: Flag borderline decisions for human review rather than relying entirely on the model.",
+            "rubric": [
+              {
+                "key": "Identifies proxy variables as the mechanism for indirect discrimination",
+                "value": 4
+              },
+              {
+                "key": "Mentions historical bias in training labels",
+                "value": 3
+              },
+              {
+                "key": "Proposes concrete mitigation steps including audit, proxy identification, and fairness constraints",
+                "value": 3
+              },
+              {
+                "key": "Recommends ongoing monitoring and human oversight",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Your pandas analysis on a 500MB CSV takes 30 seconds. The production dataset is 50GB. Should you switch to PySpark? What alternatives would you consider first, and how would you decide?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Not necessarily. Spark has significant overhead (cluster setup, serialization, task scheduling) that makes it slower than pandas for data that fits on a single machine. For 50GB, consider alternatives first: (1) Polars: single-machine parallel DataFrame library in Rust, handles 10-50GB efficiently without distributed overhead. Often 5-10x faster than pandas on the same hardware. Try this first. (2) Chunked pandas: read the CSV in chunks (pd.read_csv(chunksize=100000)), process each chunk, and aggregate. Works if the analysis is reducible to per-chunk operations. (3) DuckDB: SQL-based analytics engine that processes larger-than-memory data efficiently. Install as a Python package and query directly on Parquet files. (4) Column selection: if you only need 5 of 50 columns, read only those columns (usecols parameter). Switching to Parquet format reduces file size 5-10x and enables column pruning. (5) Upgrade hardware: a machine with 128GB RAM handles 50GB in pandas comfortably (data + working memory). Cloud VMs with high memory are cheap. Decision framework: Try Polars or DuckDB first (single-machine, no distributed complexity). If the data exceeds 100GB or grows continuously, invest in Spark. The operational complexity of a Spark cluster is only justified when single-machine tools genuinely cannot handle the scale.",
+            "rubric": [
+              {
+                "key": "Does not reflexively recommend Spark, explains overhead concerns",
+                "value": 3
+              },
+              {
+                "key": "Suggests at least two single-machine alternatives (Polars, DuckDB, chunked pandas)",
+                "value": 4
+              },
+              {
+                "key": "Provides a clear decision framework for when to use Spark",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 32
       }
     ],
     "major_assignments": [
       {
         "assignment": 1,
-        "title": "End-to-End Data Science Project",
+        "title": "Exploratory Data Analysis and Statistical Report",
         "week_assigned": 3,
-        "week_due": 5,
-        "points": 100,
-        "description": "Conduct a complete data science project on a real-world dataset: from data acquisition and cleaning through analysis and modeling to a final presentation. Your analysis must answer a specific, well-defined question with evidence-based conclusions.",
+        "week_due": 6,
+        "points": 150,
+        "description": "Conduct a complete exploratory data analysis on a real-world messy dataset of your choice: clean the data, explore patterns, conduct appropriate statistical tests, create publication-quality visualizations, and deliver a stakeholder-ready report with evidence-based conclusions and recommendations.",
         "objectives": [
-          "Formulate a clear analytical question and design a methodology to answer it",
-          "Clean, explore, and engineer features from a messy real-world dataset",
-          "Apply appropriate statistical tests and build predictive models",
-          "Communicate findings through visualizations and a stakeholder presentation"
+          "Clean a messy dataset with documented data quality decisions and validation",
+          "Conduct systematic EDA revealing patterns, anomalies, and relationships",
+          "Apply appropriate statistical tests with correct interpretation of results",
+          "Create publication-quality visualizations and a clear narrative report"
         ],
         "requirements": {},
         "deliverables": [
-          "Jupyter Notebook with complete reproducible analysis",
-          "Stakeholder presentation (10 slides) summarizing findings and recommendations",
-          "Interactive dashboard deployed on Streamlit",
-          "Analysis report (4-5 pages) with methodology, findings, and limitations"
+          "Reproducible Jupyter notebook with complete analysis (runs top-to-bottom without errors)",
+          "Data cleaning log documenting every quality issue found and the resolution applied",
+          "Stakeholder report (5-7 pages) with executive summary, key findings, and actionable recommendations",
+          "Interactive dashboard on Streamlit allowing exploration of the key findings"
         ],
         "grading_rubric": {
-          "data_preparation": {
-            "points": 25,
+          "technical_implementation": {
+            "points": 40,
             "criteria": [
-              "Data cleaning is thorough and well-documented",
-              "Missing data handled with appropriate strategies",
-              "Feature engineering creates informative variables",
-              "Data quality is validated programmatically"
+              "Data cleaning is thorough with appropriate handling of missing values, duplicates, and outliers",
+              "Statistical tests are appropriate for the data types and questions asked",
+              "Results are interpreted correctly with effect sizes and confidence intervals",
+              "Code is clean, efficient, and uses pandas/numpy idiomatically"
             ]
           },
-          "analysis": {
+          "visual_quality": {
+            "points": 40,
+            "criteria": [
+              "Visualizations follow best practices: appropriate chart types, decluttered design, accessible colors",
+              "Charts communicate insights rather than just displaying data",
+              "Interactive dashboard provides meaningful exploration capability for stakeholders",
+              "Figures are publication-quality with proper labels, titles, and annotations"
+            ]
+          },
+          "performance_optimization": {
             "points": 30,
             "criteria": [
-              "Statistical tests are appropriate for the question",
-              "Results are interpreted correctly with effect sizes",
-              "Modeling approach is justified and properly validated",
-              "Limitations are acknowledged honestly"
+              "Analysis is reproducible: fixed random seeds, documented data sources, requirements.txt",
+              "Notebook runs end-to-end without manual intervention",
+              "Data processing is efficient without unnecessary loops over DataFrame rows",
+              "Streamlit dashboard loads and responds to interactions within 2 seconds"
             ]
           },
-          "visualization": {
-            "points": 25,
+          "documentation": {
+            "points": 40,
             "criteria": [
-              "Charts are appropriate for the data type and message",
-              "Visualizations follow best practices (decluttered, labeled, accessible)",
-              "Interactive dashboard provides useful exploration capability",
-              "Data story has a clear narrative arc"
-            ]
-          },
-          "communication": {
-            "points": 20,
-            "criteria": [
-              "Stakeholder presentation is clear and actionable",
-              "Technical depth is appropriate for the audience",
-              "Methodology is reproducible from the notebook",
-              "Report is well-written and professionally formatted"
+              "Data cleaning log is complete with rationale for every decision",
+              "Stakeholder report has clear executive summary, methodology, findings, and limitations",
+              "Statistical results are communicated in accessible language for non-technical readers",
+              "Limitations and potential confounders are honestly acknowledged"
             ]
           }
         },
         "rubric": [
           {
             "attributes": {
-              "points": 100,
+              "points": 150,
               "criteria": [
-                "Complete data science project with rigorous methodology",
-                "Accurate analysis with appropriate statistical rigor",
-                "Effective visualizations and stakeholder communication",
-                "Professional documentation with honest limitations"
+                "Thorough data cleaning with validated, documented decisions",
+                "Rigorous statistical analysis with correctly interpreted results",
+                "Publication-quality visualizations communicating clear insights",
+                "Professional stakeholder report with actionable recommendations"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Predictive Modeling Project",
+        "week_assigned": 8,
+        "week_due": 12,
+        "points": 200,
+        "description": "Build and evaluate predictive models for a real-world classification or regression problem. Compare multiple modeling approaches, handle class imbalance or feature selection as appropriate, validate rigorously with proper cross-validation, interpret model decisions using explainability tools, and audit for potential bias.",
+        "objectives": [
+          "Engineer informative features from raw data with documented rationale",
+          "Train and compare at least three modeling approaches with appropriate evaluation metrics",
+          "Validate model performance with proper cross-validation and test set evaluation",
+          "Interpret model decisions with SHAP or LIME and audit for potential fairness issues"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Jupyter notebook with complete modeling pipeline from feature engineering through evaluation",
+          "Model comparison report documenting performance of each approach with error analysis",
+          "Model interpretability analysis using SHAP values with feature importance visualization",
+          "Fairness audit report examining model performance across relevant demographic groups"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 60,
+            "criteria": [
+              "Feature engineering creates informative variables with clear rationale for each",
+              "At least three models compared with appropriate hyperparameter tuning",
+              "Cross-validation methodology is correct (stratified for classification, temporal for time series)",
+              "Final model evaluated on a held-out test set that was never used during development"
+            ]
+          },
+          "visual_quality": {
+            "points": 40,
+            "criteria": [
+              "Model comparison visualizations clearly show relative performance (ROC curves, precision-recall, residual plots)",
+              "SHAP analysis presented with clear feature importance plots and individual prediction explanations",
+              "Error analysis identifies patterns in misclassified/mispredicted cases",
+              "Fairness audit visualizations show performance across demographic groups"
+            ]
+          },
+          "performance_optimization": {
+            "points": 50,
+            "criteria": [
+              "Hyperparameter tuning uses systematic approach (grid search, random search, or Bayesian optimization)",
+              "Class imbalance handled appropriately if present (resampling, weighting, threshold optimization)",
+              "Feature selection reduces dimensionality without losing predictive power",
+              "Model achieves reasonable performance relative to the problem difficulty and dataset size"
+            ]
+          },
+          "documentation": {
+            "points": 50,
+            "criteria": [
+              "Model comparison report explains why each approach was tried and why the final model was selected",
+              "Error analysis identifies actionable patterns that could improve the model with more data or features",
+              "Fairness audit is thorough with clear metrics and mitigation recommendations",
+              "Limitations section honestly assesses generalizability, data quality impacts, and deployment considerations"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 200,
+              "criteria": [
+                "Rigorous predictive modeling with proper feature engineering and validation",
+                "Thorough model comparison with appropriate evaluation metrics",
+                "Interpretable model decisions with SHAP-based explainability",
+                "Honest fairness audit with bias mitigation recommendations"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "End-to-End Data Science Capstone",
+        "week_assigned": 12,
+        "week_due": 15,
+        "points": 200,
+        "description": "Conduct a complete data science project answering a specific analytical question: acquire and clean data, explore and visualize, build and evaluate models, communicate findings to stakeholders, and address ethical implications. The project must demonstrate mastery of the complete data science pipeline.",
+        "objectives": [
+          "Formulate a clear analytical question and design a methodology to answer it",
+          "Execute the complete data science pipeline from raw data to actionable insights",
+          "Communicate findings through an interactive dashboard and stakeholder presentation",
+          "Address ethical implications including bias, privacy, and responsible use of results"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Complete Jupyter notebook with reproducible end-to-end analysis",
+          "Interactive Streamlit dashboard deployed for stakeholder exploration",
+          "Stakeholder presentation (12-15 slides) with executive summary and recommendations",
+          "Technical report (6-8 pages) covering methodology, results, limitations, and ethics"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 60,
+            "criteria": [
+              "Analytical question is specific, answerable, and demonstrates genuine insight",
+              "Data pipeline is complete: acquisition, cleaning, feature engineering, modeling, evaluation",
+              "Modeling approach is appropriate and rigorously validated",
+              "Code is clean, documented, and fully reproducible"
+            ]
+          },
+          "visual_quality": {
+            "points": 40,
+            "criteria": [
+              "Visualizations tell a compelling data story with appropriate chart types and design",
+              "Interactive dashboard provides genuine exploration value for non-technical users",
+              "Stakeholder presentation is polished, clear, and actionable",
+              "All figures are publication-quality with proper labeling and annotation"
+            ]
+          },
+          "performance_optimization": {
+            "points": 50,
+            "criteria": [
+              "Analysis handles the dataset efficiently without unnecessary computation",
+              "Model performance is competitive for the problem, with honest assessment of limitations",
+              "Dashboard loads quickly and responds smoothly to user interactions",
+              "Entire notebook reproduces in under 10 minutes on standard hardware"
+            ]
+          },
+          "documentation": {
+            "points": 50,
+            "criteria": [
+              "Technical report covers methodology with sufficient detail for reproduction",
+              "Limitations section identifies specific weaknesses, confounders, and generalizability boundaries",
+              "Ethics section addresses potential bias, privacy implications, and responsible use",
+              "Recommendations are specific, actionable, and supported by the analysis evidence"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 200,
+              "criteria": [
+                "Complete end-to-end data science project with rigorous methodology",
+                "Effective communication through visualizations, dashboard, and presentation",
+                "Honest assessment of limitations and ethical implications",
+                "Actionable recommendations supported by evidence"
               ]
             }
           }
@@ -396,31 +1418,31 @@
   },
   "grading_breakdown": {
     "weekly_quizzes": {
-      "percentage": 10,
-      "description": "Regular assessment of data science concepts"
+      "percentage": 20,
+      "description": "Five quizzes assessing data science concepts, statistical reasoning, and practical coding skills"
     },
     "lab_assignments": {
-      "percentage": 25,
-      "description": "Weekly data analysis exercises"
+      "percentage": 15,
+      "description": "Weekly hands-on data analysis exercises using real-world datasets"
     },
     "major_assignments": {
       "percentage": 30,
-      "description": "End-to-end data science project"
+      "description": "Three major projects progressing from EDA through modeling to a complete capstone project"
     },
     "midterm_examination": {
       "percentage": 15,
-      "description": "Written exam on statistics and data wrangling"
+      "description": "Written and coding exam on data wrangling, statistics, visualization, and SQL analytics"
     },
-    "final_examination": {
+    "final_project": {
       "percentage": 20,
-      "description": "Comprehensive exam covering all data science topics"
+      "description": "Comprehensive capstone project demonstrating mastery of the complete data science pipeline"
     }
   },
   "course_policies": {
-    "attendance": "Attendance is expected for lectures and mandatory for lab sessions.",
-    "late_submissions": "Late assignments lose 10% per day. No submissions accepted more than 5 days late.",
-    "collaboration": "Discussion of analytical approaches is encouraged. All analysis and reports must be individual work.",
-    "academic_integrity": "All submitted work must be your own. Copying analysis code from Kaggle or other sources without attribution is plagiarism.",
-    "technology_requirements": "Students need Python 3.12+ with pandas, numpy, scipy, scikit-learn, matplotlib, seaborn, plotly, and Jupyter. PySpark will be used in the final unit."
+    "attendance": "Attendance is expected for lectures and mandatory for lab sessions. Collaborative data analysis exercises require physical presence.",
+    "late_submissions": "Late assignments lose 10% per day. No submissions accepted more than 5 days late. Capstone presentation date is firm.",
+    "collaboration": "Discussion of analytical approaches is encouraged. All analysis, code, and reports must be individual work. Sharing cleaned datasets between students is prohibited.",
+    "academic_integrity": "All submitted work must be your own. Copying analysis code from Kaggle, StackOverflow, or AI tools without attribution is plagiarism. Using pre-built solutions defeats the learning purpose.",
+    "technology_requirements": "Students need Python 3.12+ with pandas, numpy, scipy, scikit-learn, matplotlib, seaborn, plotly, streamlit, nltk, and Jupyter. PySpark is used in week 13. PostgreSQL access is provided for SQL labs."
   }
 }

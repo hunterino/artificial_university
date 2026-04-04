@@ -13,202 +13,844 @@
     {
       "week_number": 1,
       "session_number": 1,
-      "topic": "Introduction to Computer Networks and the Internet",
-      "duration": "50 minutes",
+      "topic": "Network Models: OSI and TCP/IP",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Understand the layered network architecture (OSI and TCP/IP models)",
-        "Identify the role of each layer in network communication",
-        "Use network diagnostic tools: ping, traceroute, nslookup"
+        "Understand the layered network architecture and the motivation for protocol layering",
+        "Compare the OSI 7-layer model with the TCP/IP 4-layer model and identify the role of each layer",
+        "Distinguish between circuit switching and packet switching and evaluate their trade-offs",
+        "Use network diagnostic tools (ping, traceroute, nslookup) to probe network behavior"
       ],
       "readings": [
-        "Kurose & Ross, Computer Networking, Ch. 1",
-        "RFC 1122 - Requirements for Internet Hosts"
+        "Kurose & Ross, Computer Networking: A Top-Down Approach, 8th Ed., Ch. 1",
+        "RFC 1122 - Requirements for Internet Hosts: Communication Layers",
+        "Tanenbaum & Wetherall, Computer Networks, 6th Ed., Ch. 1.3-1.4"
       ],
       "lecture_notes": {
-        "introduction": "Every application you build communicates over a network. This course teaches you how networks actually work, from electrical signals on a wire to the HTTP requests your browser sends. Understanding networking is essential for building reliable distributed systems.",
+        "introduction": "Every application you build today communicates over a network. When your browser loads a web page, it resolves a domain name through DNS, establishes a TCP connection, negotiates TLS encryption, sends an HTTP request, receives the response, and renders the result — all within a fraction of a second, across physical infrastructure spanning continents. Understanding how networks actually work, from the electrical signals on a fiber optic cable to the HTTP headers in your API call, is essential for building reliable, performant, and secure distributed systems. The complexity of network communication is managed through layering: each layer provides services to the layer above it and uses services from the layer below. The OSI model defines seven layers (physical, data link, network, transport, session, presentation, application), while the TCP/IP model, which reflects the actual Internet architecture, uses four layers (link, internet, transport, application). Layering enables modular design: the physical layer engineers who design fiber optic cables do not need to understand HTTP, and the web developers who use HTTP do not need to understand signal propagation. Each layer has its own protocols, its own header format, and its own set of problems to solve. This course traverses the stack from bottom to top, teaching you what each layer does, why it exists, and how its design decisions affect the applications you build.",
         "key_concepts": [
-          "Layered architecture: physical, data link, network, transport, application",
-          "TCP/IP model vs OSI model",
-          "Packet switching vs circuit switching",
-          "Throughput, latency, bandwidth, and jitter",
-          "The end-to-end principle: intelligence at the edges, simplicity in the network"
+          "Protocol layering: decomposing network communication into independent layers, each solving a specific problem (reliable delivery, addressing, encoding), enabling modular development and technology evolution",
+          "OSI 7-layer model: Physical (bits on wire), Data Link (frames between adjacent nodes), Network (packets across networks), Transport (end-to-end segments), Session, Presentation, Application — Session and Presentation are merged into Application in practice",
+          "TCP/IP 4-layer model: Link (physical and data link combined), Internet (IP), Transport (TCP/UDP), Application (HTTP, DNS, SMTP, etc.) — the model that reflects the actual Internet architecture",
+          "Encapsulation: each layer wraps the data from the layer above with its own header; an HTTP message becomes a TCP segment, which becomes an IP packet, which becomes an Ethernet frame",
+          "Circuit switching vs packet switching: circuits reserve a dedicated path (guaranteed bandwidth, wasted capacity when idle); packets share links (statistical multiplexing, efficient use of bandwidth, variable delay)",
+          "Key metrics: throughput (actual data rate), bandwidth (maximum theoretical rate), latency (time for a bit to traverse the network), jitter (variation in latency), packet loss (percentage of packets not delivered)",
+          "The end-to-end principle: application-specific functionality should be implemented at endpoints, not in the network core; the network should be simple and general, enabling innovation at the edges",
+          "Protocol standards: RFCs (Requests for Comments) published by the IETF define Internet protocols; standards enable interoperability between implementations from different vendors",
+          "Network edge vs core: edge devices (hosts, servers) run applications; core devices (routers, switches) forward packets; the design philosophy keeps intelligence at the edge",
+          "Internet structure: a network of networks — ISPs peer at Internet Exchange Points (IXPs), content providers (Google, Netflix) connect directly to ISPs, the result is a hierarchical topology"
         ],
-        "demonstration": "Use Wireshark to capture and analyze packets during a web browsing session, identifying HTTP, TCP, IP, and Ethernet headers at each layer",
+        "demonstration": "Use Wireshark to capture and analyze packets during a web browsing session: (1) Start capture on the network interface. (2) Navigate to a website. (3) Filter by HTTP and identify the GET request and 200 response. (4) Follow the TCP stream to see the full conversation. (5) Examine the Ethernet frame, IP packet, TCP segment, and HTTP message headers, identifying encapsulation at each layer. (6) Use ping to measure latency to various hosts, traceroute to trace the path packets take, and nslookup to resolve domain names.",
         "setup_requirements": [
-          "Wireshark installed",
-          "Terminal with ping, traceroute, nslookup",
-          "Network access for packet capture"
+          "Wireshark installed with capture permissions (admin/root)",
+          "Terminal with ping, traceroute, nslookup utilities",
+          "Network access for packet capture (campus or home network)",
+          "Protocol header reference card (Ethernet, IP, TCP, HTTP)"
         ],
         "review": [
           {
             "key": "End-to-End Principle",
-            "value": "Application-specific functionality should be implemented at the endpoints, not in the network core; this keeps the network simple and general, enabling innovation at the application layer"
+            "value": "Application-specific functionality should be implemented at the endpoints, not in the network core. This keeps the network simple and general, enabling innovation at the application layer without requiring changes to the network infrastructure."
           },
           {
             "key": "Packet Switching",
-            "value": "Data is divided into packets that share network links with other traffic; no dedicated path is reserved, enabling efficient use of bandwidth but introducing variable delay"
+            "value": "Data is divided into packets that share network links with other traffic. No dedicated path is reserved, enabling efficient use of bandwidth through statistical multiplexing. The cost is variable delay and potential congestion."
+          },
+          {
+            "key": "Encapsulation",
+            "value": "Each layer adds its own header to the data from the layer above. An HTTP message becomes a TCP segment (adds port numbers), which becomes an IP packet (adds IP addresses), which becomes an Ethernet frame (adds MAC addresses). Each header is consumed by the corresponding layer at the receiver."
+          },
+          {
+            "key": "OSI vs TCP/IP",
+            "value": "The OSI model is a theoretical reference with 7 layers. The TCP/IP model is the practical architecture of the Internet with 4 layers. The OSI model's Session and Presentation layers do not have distinct protocols in practice and are merged into the Application layer."
           }
         ]
       }
     },
     {
       "week_number": 2,
-      "session_number": 3,
-      "topic": "Application Layer: HTTP, DNS, and Socket Programming",
-      "duration": "50 minutes",
+      "session_number": 2,
+      "topic": "Physical Layer and Transmission Media",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Understand HTTP request/response semantics and connection management",
-        "Explain DNS resolution process and record types",
-        "Write a simple client-server application using TCP sockets"
+        "Understand how digital data is encoded and transmitted over physical media",
+        "Compare guided media (copper, fiber) and unguided media (wireless) characteristics",
+        "Calculate theoretical channel capacity using Nyquist and Shannon formulas",
+        "Analyze the effects of attenuation, noise, and interference on signal quality"
       ],
       "readings": [
-        "Kurose & Ross, Ch. 2 - Application Layer",
-        "Beej's Guide to Network Programming, Ch. 1-5"
+        "Kurose & Ross, Ch. 1.2 (Network Edge and Physical Media)",
+        "Tanenbaum & Wetherall, Ch. 2 (The Physical Layer)",
+        "Forouzan, Data Communications and Networking, Ch. 3-4"
       ],
       "lecture_notes": {
-        "introduction": "The application layer is where developers spend most of their time. HTTP drives the web, DNS translates names to addresses, and sockets are the API through which all network communication happens.",
+        "introduction": "The physical layer is where bits become signals. Every network communication ultimately reduces to electromagnetic signals propagating through a medium: electrical voltage changes on copper wire, light pulses in fiber optic cable, or radio waves through air. The physical layer's job is to convert a stream of bits (0s and 1s) into signals that can traverse the medium, and to recover bits from received signals at the other end. This conversion is not trivial: signals degrade as they travel (attenuation), they are corrupted by external electromagnetic energy (noise), and the medium itself limits the rate at which signals can change (bandwidth). Understanding these physical constraints is essential because they set the fundamental limits on network performance. No amount of clever protocol design can make data travel faster than light through fiber or push more bits through a channel than Shannon's theorem allows. The Nyquist theorem tells us the maximum symbol rate for a noiseless channel: 2B symbols per second for bandwidth B Hz. Shannon's theorem tells us the maximum data rate for a noisy channel: B * log2(1 + S/N) bits per second, where S/N is the signal-to-noise ratio. These are theoretical upper bounds that physical layer engineering works to approach through sophisticated encoding, modulation, and error correction techniques.",
         "key_concepts": [
-          "HTTP/1.1, HTTP/2, HTTP/3: evolution of the web protocol",
-          "DNS hierarchy: root, TLD, authoritative servers, caching",
-          "DNS record types: A, AAAA, CNAME, MX, TXT",
-          "BSD socket API: socket, bind, listen, accept, connect, send, recv",
-          "TCP vs UDP sockets: connection-oriented vs connectionless"
+          "Signal encoding: NRZ (Non-Return to Zero), Manchester encoding (embedded clock), 4B/5B encoding (balance between clock recovery and efficiency); the choice affects bandwidth efficiency and clock synchronization",
+          "Guided media: twisted pair (Cat5e/Cat6, 1-10 Gbps over 100m, susceptible to EMI), coaxial cable (shielded, used for cable TV and older Ethernet), fiber optic (single-mode for long distance, multi-mode for short distance, immune to EMI, 100+ Gbps)",
+          "Unguided media: radio (WiFi 2.4/5/6 GHz), microwave (point-to-point links, line of sight), satellite (GEO for broadcast, LEO for low-latency — Starlink), infrared (short range, line of sight)",
+          "Nyquist theorem: maximum symbol rate = 2B symbols/second for bandwidth B Hz; with M signal levels, data rate = 2B * log2(M) bits/second; applies to noiseless channels",
+          "Shannon-Hartley theorem: maximum data rate C = B * log2(1 + S/N) bits/second; fundamental limit for noisy channels regardless of encoding scheme; SNR in dB = 10 * log10(S/N)",
+          "Attenuation: signal power decreases with distance; measured in dB/km; copper attenuates more than fiber; repeaters and amplifiers restore signal strength",
+          "Noise types: thermal noise (random electron motion, unavoidable), crosstalk (interference from adjacent wires), impulse noise (sudden bursts from electrical equipment)",
+          "Multiplexing: sharing a medium among multiple signals — FDM (frequency division: each signal uses a different frequency band), TDM (time division: each signal gets a time slot), WDM (wavelength division: each signal uses a different light wavelength in fiber)",
+          "Digital modulation: ASK (amplitude shift keying), FSK (frequency shift keying), PSK (phase shift keying), QAM (quadrature amplitude modulation — combines amplitude and phase for high bit rates)"
         ],
-        "demonstration": "Build a simple TCP echo server and client in Python using the socket module, then extend it to handle multiple concurrent clients",
+        "demonstration": "Calculate channel capacity for three scenarios: (1) A noiseless channel with 4 MHz bandwidth and 16 signal levels: Nyquist = 2 * 4M * log2(16) = 32 Mbps. (2) A noisy channel with 4 MHz bandwidth and SNR of 30 dB: Shannon = 4M * log2(1 + 1000) = 39.86 Mbps. (3) Compare: the lower bound limits practical throughput. Then examine actual Ethernet specifications: Cat5e achieves 1 Gbps over 100m using PAM-5 encoding with 4 pairs, and single-mode fiber achieves 100 Gbps using WDM with multiple wavelengths.",
         "setup_requirements": [
-          "Python 3.12+ or C with socket libraries",
-          "Wireshark for packet analysis",
-          "dig or nslookup for DNS queries"
+          "Scientific calculator for Nyquist/Shannon calculations",
+          "Physical samples of Cat5e, Cat6, fiber optic cable (if available)",
+          "Wireshark for observing physical layer effects on captured packets",
+          "Network cable tester for demonstration (optional)"
         ],
         "review": [
           {
-            "key": "DNS Caching",
-            "value": "DNS responses include a TTL (time to live); resolvers cache results for that duration, reducing query latency and root/TLD server load. Most DNS lookups are served from cache"
+            "key": "Shannon's Theorem",
+            "value": "The maximum data rate of a noisy channel is C = B * log2(1 + S/N). This is a hard physical limit: no encoding scheme can exceed it. It tells us that increasing bandwidth or signal-to-noise ratio are the only ways to increase channel capacity."
           },
           {
-            "key": "Socket Lifecycle",
-            "value": "Server: socket -> bind -> listen -> accept -> send/recv -> close. Client: socket -> connect -> send/recv -> close. accept() blocks until a client connects, creating a new socket for that connection"
+            "key": "Fiber vs Copper",
+            "value": "Fiber optic cable transmits light pulses, providing higher bandwidth (100+ Gbps), longer distance (100+ km without repeaters), immunity to electromagnetic interference, and better security (harder to tap). Copper is cheaper, easier to terminate, and sufficient for short distances (100m at 10 Gbps)."
+          },
+          {
+            "key": "Multiplexing Efficiency",
+            "value": "Multiplexing allows multiple signals to share a single medium. FDM divides the frequency spectrum (used in cable TV), TDM divides time into slots (used in telephone networks), WDM divides light wavelengths (used in fiber networks to carry hundreds of channels on one fiber)."
+          },
+          {
+            "key": "Encoding Trade-offs",
+            "value": "NRZ is simple but loses clock synchronization on long runs of 0s or 1s. Manchester encoding embeds the clock (transition every bit) but uses twice the bandwidth. 4B/5B balances efficiency (80%) with guaranteed transitions for clock recovery."
           }
         ]
       }
     },
     {
       "week_number": 3,
-      "session_number": 5,
-      "topic": "Transport Layer: TCP and UDP",
-      "duration": "50 minutes",
+      "session_number": 3,
+      "topic": "Data Link Layer and MAC Protocols",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Explain TCP connection establishment, flow control, and congestion control",
-        "Contrast TCP and UDP and identify appropriate use cases for each",
-        "Analyze TCP behavior using packet captures"
+        "Understand the data link layer's role in framing, error detection, and medium access control",
+        "Calculate and verify CRC (Cyclic Redundancy Check) for error detection",
+        "Compare MAC protocols: CSMA/CD (Ethernet), CSMA/CA (WiFi), and token passing",
+        "Analyze how ARP maps IP addresses to MAC addresses on a local network"
       ],
       "readings": [
-        "Kurose & Ross, Ch. 3 - Transport Layer",
-        "RFC 793 - TCP Specification (selected sections)"
+        "Kurose & Ross, Ch. 6.1-6.4 (Link Layer and LANs)",
+        "Tanenbaum & Wetherall, Ch. 3 (The Data Link Layer)",
+        "IEEE 802.3 Ethernet Standard Overview"
       ],
       "lecture_notes": {
-        "introduction": "TCP and UDP are the two workhorses of the transport layer. TCP provides reliable, ordered delivery at the cost of latency; UDP provides fast, best-effort delivery. Every networked application chooses between them based on its needs.",
+        "introduction": "The data link layer solves the problem of reliable communication between two directly connected nodes. While the physical layer transmits raw bits, the data link layer organizes those bits into frames (delimited data units with headers and trailers), detects transmission errors (using checksums or CRC), and controls access to the shared medium when multiple devices want to transmit simultaneously. Error detection is critical because physical media are imperfect: noise corrupts bits in transit, and without detection, corrupted data propagates up the stack causing application-level failures. CRC (Cyclic Redundancy Check) is the most widely used error detection mechanism at the link layer, providing strong detection of burst errors that are common in real networks. Medium access control (MAC) protocols solve the contention problem: when multiple devices share a network segment (a WiFi channel, an old Ethernet hub), they must coordinate to avoid collisions where simultaneous transmissions garble each other. CSMA/CD (Carrier Sense Multiple Access with Collision Detection), used by classic Ethernet, listens before transmitting and detects collisions to retry. CSMA/CA (Collision Avoidance), used by WiFi, cannot detect collisions in wireless media and instead uses acknowledgments and optional RTS/CTS (Request to Send / Clear to Send) to reduce collision probability. Modern switched Ethernet eliminates collisions entirely by giving each device a dedicated link to the switch, making CSMA/CD unnecessary for full-duplex connections.",
         "key_concepts": [
-          "TCP three-way handshake: SYN, SYN-ACK, ACK",
-          "TCP flow control: sliding window, receiver advertised window",
-          "TCP congestion control: slow start, congestion avoidance, fast retransmit",
-          "UDP: no connection, no reliability, no ordering, minimal overhead",
-          "Use cases: TCP for web, email, file transfer; UDP for video streaming, DNS, gaming"
+          "Framing: dividing a bit stream into discrete units (frames) with delimiters, headers (source/destination MAC addresses, type field), and trailers (error detection code); enables error detection and multiplexing",
+          "Error detection: parity (detects single-bit errors, misses even-bit errors), checksums (sum of data segments, catches most errors), CRC (polynomial division, catches all burst errors shorter than the CRC length)",
+          "CRC calculation: treat the data as a polynomial, divide by a generator polynomial using XOR arithmetic, append the remainder to the data; the receiver performs the same division and checks for zero remainder",
+          "MAC addresses: 48-bit hardware addresses burned into NICs (e.g., AA:BB:CC:DD:EE:FF); used for local delivery within a single network segment (LAN); globally unique but only relevant on the local link",
+          "CSMA/CD (Ethernet): listen before transmitting (carrier sense), anyone can transmit (multiple access), detect collisions and stop (collision detection), wait a random exponential backoff time before retrying",
+          "CSMA/CA (WiFi): listen before transmitting, wait for a random backoff, transmit and wait for ACK, retransmit if no ACK received; optional RTS/CTS to reserve the channel and solve the hidden terminal problem",
+          "ARP (Address Resolution Protocol): maps IP addresses to MAC addresses on a local network; broadcast ARP request ('who has 192.168.1.5?'), target responds with its MAC address; results are cached in the ARP table",
+          "Full-duplex switched Ethernet: each port on a switch has a dedicated collision domain; devices can send and receive simultaneously; CSMA/CD is not needed; this is how all modern Ethernet works",
+          "MTU (Maximum Transmission Unit): the largest frame size the link layer can carry (1500 bytes for Ethernet); larger packets must be fragmented by the network layer or rejected (Path MTU Discovery)"
         ],
-        "demonstration": "Capture a TCP connection in Wireshark, identify the three-way handshake, observe the sliding window growing during slow start, and trigger a retransmission by dropping a packet",
+        "demonstration": "Perform CRC calculation by hand: (1) Given data bits 1010001101 and generator polynomial 110101 (CRC-5), perform polynomial long division using XOR, producing the 5-bit remainder. (2) Append the remainder to the data and verify that division by the generator yields zero remainder. (3) Introduce a single-bit error and show that the remainder is non-zero, detecting the error. Then use Wireshark to examine Ethernet frames: identify source and destination MAC addresses, EtherType field, and observe ARP request/reply exchanges on the local network.",
         "setup_requirements": [
           "Wireshark with capture permissions",
-          "Network traffic generator tool"
+          "CRC calculation worksheet for hand calculations",
+          "Network with multiple devices for ARP observation",
+          "arp command-line tool for viewing and clearing the ARP cache"
         ],
         "review": [
           {
-            "key": "TCP Congestion Control",
-            "value": "TCP starts with a small congestion window (slow start), doubles it each RTT until loss occurs, then reduces the window. This probing behavior ensures TCP does not overwhelm the network while utilizing available bandwidth"
+            "key": "CRC Error Detection",
+            "value": "CRC treats data as a polynomial and divides by a generator polynomial. The remainder is appended to the data. The receiver performs the same division; a non-zero remainder indicates an error. CRC detects all burst errors shorter than the CRC length and nearly all longer bursts."
           },
           {
-            "key": "Head-of-Line Blocking",
-            "value": "In TCP, if one packet is lost, all subsequent packets are buffered until the lost packet is retransmitted; this delays the entire stream. UDP avoids this by delivering packets independently, which is why real-time applications prefer UDP"
+            "key": "CSMA/CD vs CSMA/CA",
+            "value": "CSMA/CD (wired Ethernet) detects collisions during transmission and stops immediately. CSMA/CA (WiFi) cannot detect collisions (wireless signals interfere differently) so it avoids them by waiting random times and requiring acknowledgments."
+          },
+          {
+            "key": "ARP as Bridge",
+            "value": "ARP bridges the network layer (IP addresses) and the link layer (MAC addresses). When a host wants to send a packet to an IP address on its local network, it needs the destination MAC address. ARP broadcasts a request and caches the response."
+          },
+          {
+            "key": "Switched vs Shared Ethernet",
+            "value": "Hubs share bandwidth among all ports (shared collision domain). Switches give each port a dedicated collision domain with full bandwidth. Modern Ethernet is switched: every connection is point-to-point, full-duplex, and collision-free."
           }
         ]
       }
     },
     {
       "week_number": 4,
-      "session_number": 7,
-      "topic": "Network Layer: IP Addressing and Routing",
-      "duration": "50 minutes",
+      "session_number": 4,
+      "topic": "Ethernet and Switching",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Perform subnetting calculations with CIDR notation",
-        "Understand how routers forward packets using routing tables",
-        "Compare distance-vector and link-state routing algorithms"
+        "Understand Ethernet frame format, addressing, and evolution from 10 Mbps to 400 Gbps",
+        "Explain how Ethernet switches learn MAC addresses and forward frames using MAC address tables",
+        "Analyze VLANs (Virtual LANs) for logical network segmentation and broadcast domain control",
+        "Design small to medium network topologies using switches with redundancy and STP"
       ],
       "readings": [
-        "Kurose & Ross, Ch. 4-5 - Network Layer",
-        "CIDR subnetting tutorial"
+        "Kurose & Ross, Ch. 6.4-6.6 (Switched LANs, VLANs)",
+        "Tanenbaum & Wetherall, Ch. 4.3-4.4 (Ethernet, Bridges and Switches)",
+        "IEEE 802.1Q VLAN Tagging Standard Overview"
       ],
       "lecture_notes": {
-        "introduction": "The network layer is responsible for getting packets from source to destination across multiple networks. IP addressing and routing are the mechanisms that make global Internet communication possible.",
+        "introduction": "Ethernet is the dominant local area network technology, connecting virtually every wired device in homes, offices, and data centers. Originally developed at Xerox PARC in 1973 and standardized as IEEE 802.3, Ethernet has evolved from a shared coaxial cable running at 3 Mbps to point-to-point switched connections running at 400 Gbps, while maintaining backward compatibility through a consistent frame format. This remarkable evolution was possible because Ethernet's design separates the frame format (which has remained largely unchanged) from the physical layer (which has been upgraded repeatedly). An Ethernet switch operates at Layer 2 (data link layer), forwarding frames based on MAC addresses. When a frame arrives on a port, the switch examines the destination MAC address, looks it up in its MAC address table (also called a forwarding table), and sends the frame out only the port where the destination device is connected. If the destination is unknown, the switch floods the frame to all ports except the source port. The switch learns MAC-to-port mappings by observing the source MAC address of incoming frames. This self-learning behavior means switches require no manual configuration for basic operation. VLANs (Virtual LANs) add logical segmentation: devices on the same physical switch can be in different VLANs, which are separate broadcast domains. VLANs improve security (isolate sensitive traffic), reduce broadcast overhead, and provide organizational flexibility without rewiring.",
         "key_concepts": [
-          "IPv4 addressing: 32-bit addresses, dotted decimal notation",
-          "CIDR notation and subnet masks",
-          "Subnetting: dividing address spaces for organizational and routing efficiency",
-          "Routing tables: longest prefix match forwarding",
-          "Distance-vector (RIP, Bellman-Ford) vs link-state (OSPF, Dijkstra) algorithms",
-          "IPv6: 128-bit addresses, simplified header, no fragmentation"
+          "Ethernet frame format: preamble (synchronization), destination MAC (6 bytes), source MAC (6 bytes), EtherType/length (2 bytes, identifies the network layer protocol), payload (46-1500 bytes), FCS (4 bytes, CRC-32 error detection)",
+          "Ethernet evolution: 10BASE-T (10 Mbps, twisted pair), 100BASE-TX (Fast Ethernet), 1000BASE-T (Gigabit over Cat5e), 10GBASE-T (10 Gigabit over Cat6a), 25/40/100/400 GbE (data center standards using fiber)",
+          "Switch operation: receive frame, check destination MAC in address table, forward to the correct port (unicast), flood to all ports if unknown (broadcast/unknown unicast), learn source MAC-to-port mapping",
+          "MAC address table: entries map MAC addresses to switch ports with aging timers; entries expire after a timeout (typically 300 seconds) to handle devices moving between ports; table capacity varies (8K-128K entries on enterprise switches)",
+          "VLANs: logical broadcast domains independent of physical topology; configured per switch port (access port: one VLAN) or per frame (trunk port: carries multiple VLANs with 802.1Q tags); inter-VLAN routing requires a Layer 3 device (router or L3 switch)",
+          "802.1Q VLAN tagging: inserts a 4-byte tag after the source MAC in the Ethernet frame containing the VLAN ID (12 bits, supporting 4094 VLANs) and priority field; trunk links carry tagged frames between switches",
+          "Spanning Tree Protocol (STP, IEEE 802.1D): prevents broadcast loops in networks with redundant switch links by electing a root bridge and blocking redundant paths; RSTP (802.1w) converges faster (seconds vs minutes)",
+          "Broadcast storms: without STP, a broadcast frame on a looped topology is forwarded endlessly, consuming all bandwidth and crashing the network; STP prevents this by ensuring a loop-free active topology",
+          "Link aggregation (802.3ad/LACP): bundling multiple physical links between two switches into one logical link for increased bandwidth and redundancy; traffic is distributed across member links using a hash of addresses"
         ],
-        "demonstration": "Subnet a /24 network into four /26 subnets, calculate the network address, broadcast address, and usable host range for each, then trace a packet through a 3-router network using routing tables",
+        "demonstration": "Simulate a switched network: (1) Set up a 3-switch topology in GNS3 or Packet Tracer with 6 hosts. (2) Observe the MAC address table building as hosts communicate (show mac address-table). (3) Configure VLANs: VLAN 10 (Engineering) and VLAN 20 (Marketing) on the switches with trunk links between switches. (4) Verify VLAN isolation: hosts in VLAN 10 can ping each other but not hosts in VLAN 20. (5) Create a broadcast loop by adding a redundant link without STP, observe the broadcast storm (packet counters skyrocket), then enable STP and observe convergence to a loop-free topology.",
         "setup_requirements": [
-          "Subnetting calculator for verification",
-          "Network topology diagram handout"
+          "GNS3 or Cisco Packet Tracer for network simulation",
+          "Wireshark for capturing switch-to-switch trunk traffic showing 802.1Q tags",
+          "Network topology diagram handout",
+          "Switch CLI reference card for VLAN and STP configuration"
         ],
         "review": [
           {
-            "key": "Longest Prefix Match",
-            "value": "When a router has multiple matching entries for a destination, it uses the one with the longest (most specific) prefix; this enables hierarchical aggregation of routes while still allowing specific overrides"
+            "key": "Self-Learning Switches",
+            "value": "Switches learn which MAC address is on which port by observing the source MAC of incoming frames. No manual configuration is needed for basic forwarding. When the destination is unknown, the switch floods to all ports — this is why switches converge quickly after being powered on."
           },
           {
-            "key": "Distance-Vector vs Link-State",
-            "value": "Distance-vector: each router shares its distance table with neighbors, converges slowly (count-to-infinity problem). Link-state: each router floods its link costs to all routers, each computes shortest paths independently, converges faster"
+            "key": "VLAN Benefits",
+            "value": "VLANs provide: security (isolate sensitive traffic without physical separation), broadcast control (limit broadcast domain size, reducing unnecessary traffic), and flexibility (move devices between logical networks by changing switch port configuration, not by rewiring)."
+          },
+          {
+            "key": "STP Necessity",
+            "value": "Redundant links are essential for reliability, but they create loops. A broadcast frame on a loop circulates forever, consuming all bandwidth (broadcast storm). STP prevents storms by blocking redundant links while keeping them available for failover."
+          },
+          {
+            "key": "Trunking",
+            "value": "A trunk link carries traffic for multiple VLANs between switches using 802.1Q tags. Access ports (connected to end devices) are in one VLAN and send/receive untagged frames. The switch adds/removes 802.1Q tags at the boundary between access and trunk ports."
           }
         ]
       }
     },
     {
       "week_number": 5,
-      "session_number": 9,
-      "topic": "Network Security Fundamentals",
-      "duration": "50 minutes",
+      "session_number": 5,
+      "topic": "Network Layer and IP Addressing",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Understand common network attacks and their mitigations",
-        "Explain how TLS provides confidentiality, integrity, and authentication",
-        "Configure firewalls and understand network perimeter defense"
+        "Perform subnetting calculations with CIDR notation including network address, broadcast address, and host range",
+        "Understand the IPv4 header format and the role of each field in packet forwarding",
+        "Compare IPv4 and IPv6 addressing, header simplification, and transition mechanisms",
+        "Analyze NAT (Network Address Translation) and its impact on end-to-end connectivity"
       ],
       "readings": [
-        "Kurose & Ross, Ch. 8 - Security in Computer Networks",
+        "Kurose & Ross, Ch. 4 (Network Layer: Data Plane)",
+        "RFC 791 - Internet Protocol (IPv4 specification, selected sections)",
+        "RFC 8200 - IPv6 Specification (selected sections)"
+      ],
+      "lecture_notes": {
+        "introduction": "The network layer solves the most fundamental problem in internetworking: getting a packet from source to destination across multiple networks that may use different link-layer technologies. IP (Internet Protocol) provides two essential services: addressing (every device on the Internet has a unique IP address that identifies it for routing) and forwarding (each router examines the destination IP address and decides which outgoing link to send the packet on). IPv4 uses 32-bit addresses, providing approximately 4.3 billion unique addresses — a number that seemed inexhaustible in the 1980s but was effectively exhausted by the 2010s. NAT (Network Address Translation) extended IPv4's life by allowing many devices behind a single public IP address, but NAT breaks end-to-end connectivity and complicates protocols that embed IP addresses in their payloads. IPv6, with 128-bit addresses providing 3.4 x 10^38 unique addresses, is the long-term solution, but IPv4-to-IPv6 transition has been slow because the two protocols are not directly interoperable. Subnetting is the practice of dividing an IP address space into smaller blocks for organizational and routing efficiency. CIDR (Classless Inter-Domain Routing) notation expresses a subnet as a network address and prefix length (e.g., 192.168.1.0/24), replacing the old classful addressing system. Every network engineer must be able to calculate subnet addresses quickly and correctly.",
+        "key_concepts": [
+          "IPv4 addressing: 32-bit addresses in dotted decimal notation (192.168.1.100); address spaces are divided into network prefix (identifies the subnet) and host portion (identifies the device within the subnet)",
+          "CIDR notation: network_address/prefix_length (e.g., 192.168.1.0/24 means the first 24 bits are the network prefix, the last 8 bits are host addresses); replaces classful A/B/C addressing",
+          "Subnetting: dividing a larger address block into smaller subnets; a /24 can be split into two /25s, four /26s, eight /27s, etc.; each subnet has a network address (all host bits 0), a broadcast address (all host bits 1), and usable host addresses",
+          "Subnet mask: 255.255.255.0 = /24, 255.255.255.128 = /25, 255.255.255.192 = /26; the mask ANDed with an address yields the network address",
+          "IPv4 header: version, IHL, total length, TTL (decremented at each router, prevents infinite loops), protocol (6=TCP, 17=UDP), source IP, destination IP, header checksum, options (optional)",
+          "IPv6 addressing: 128-bit addresses in colon-hexadecimal notation (2001:0db8:85a3::8a2e:0370:7334); provides 3.4 x 10^38 addresses, eliminating the need for NAT",
+          "IPv6 header simplification: fixed 40-byte header (no options field, no header checksum, no fragmentation by routers), extension headers for optional features; faster router processing",
+          "NAT (Network Address Translation): maps private IP addresses (10.x.x.x, 172.16-31.x.x, 192.168.x.x) to a single public IP address using port numbers; enables many devices to share one public address",
+          "DHCP (Dynamic Host Configuration Protocol): automatically assigns IP addresses, subnet masks, default gateways, and DNS server addresses to devices when they join a network; operates via broadcast (DISCOVER, OFFER, REQUEST, ACK)",
+          "Private vs public IP addresses: RFC 1918 defines private address ranges (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) used inside organizations; these addresses are not routable on the public Internet"
+        ],
+        "demonstration": "Subnetting exercise: (1) Given 192.168.10.0/24, subnet it into 8 equal subnets (/27). Calculate network address, broadcast address, first usable host, last usable host, and subnet mask for each of the 8 subnets. (2) Given a host address 172.16.45.130/26, determine which subnet it belongs to, the network address, broadcast address, and the number of usable hosts. (3) Design an addressing scheme for a small office: 3 departments (Engineering: 50 hosts, Sales: 25 hosts, Management: 10 hosts) from a /24 block, using variable-length subnet masking (VLSM) to minimize address waste. Then use Wireshark to capture IP packets, identify header fields, and observe NAT translation using the home router's NAT table.",
+        "setup_requirements": [
+          "Subnetting calculator for verification (ipcalc or online tool)",
+          "Wireshark for capturing IP packets",
+          "Network topology diagram handout for addressing exercise",
+          "Access to a NAT router's configuration interface"
+        ],
+        "review": [
+          {
+            "key": "Subnetting Formula",
+            "value": "For a /n subnet: number of subnets from a /m network = 2^(n-m). Hosts per subnet = 2^(32-n) - 2 (subtract network and broadcast addresses). A /26 from a /24 gives 4 subnets of 62 usable hosts each."
+          },
+          {
+            "key": "NAT Trade-offs",
+            "value": "NAT conserves IPv4 addresses and provides a basic firewall effect (unsolicited inbound traffic is dropped). But it breaks end-to-end connectivity (devices behind NAT cannot receive incoming connections without port forwarding), complicates protocols like SIP and FTP, and prevents true peer-to-peer communication."
+          },
+          {
+            "key": "IPv6 Adoption",
+            "value": "IPv6 eliminates NAT (every device gets a globally unique address), simplifies the header (no checksum, no fragmentation in routers), and adds built-in security (IPsec mandatory). Adoption is gradual because IPv4 and IPv6 are not interoperable; dual-stack (running both) is the transition mechanism."
+          },
+          {
+            "key": "TTL Purpose",
+            "value": "The TTL (Time to Live) field in the IP header is decremented by each router. When it reaches zero, the packet is discarded and an ICMP Time Exceeded message is sent back. This prevents packets from circulating forever due to routing loops. Traceroute exploits this by sending packets with incrementing TTL values."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Routing Algorithms and Protocols",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Implement Dijkstra's algorithm for shortest-path routing (link-state approach)",
+        "Implement the Bellman-Ford algorithm for distance-vector routing",
+        "Compare OSPF (link-state) and RIP (distance-vector) routing protocols and their convergence properties",
+        "Analyze routing tables and trace packet forwarding through multi-router networks"
+      ],
+      "readings": [
+        "Kurose & Ross, Ch. 5 (Network Layer: Control Plane)",
+        "RFC 2328 - OSPF Version 2 (selected sections)",
+        "Tanenbaum & Wetherall, Ch. 5.2-5.4 (Routing Algorithms)"
+      ],
+      "lecture_notes": {
+        "introduction": "Routing is the process of determining the path packets take from source to destination across a network of interconnected routers. Each router maintains a routing table that maps destination network prefixes to the next-hop router and outgoing interface. The routing table is populated either statically (manually configured by an administrator, suitable for small, stable networks) or dynamically (computed by routing algorithms that exchange information between routers, necessary for large, changing networks). Two fundamental approaches dominate dynamic routing: link-state algorithms (each router has a complete map of the network topology and independently computes shortest paths using Dijkstra's algorithm) and distance-vector algorithms (each router shares its distance estimates with neighbors and iteratively converges to shortest paths using the Bellman-Ford algorithm). OSPF (Open Shortest Path First) is the most widely deployed link-state protocol in enterprise networks, providing fast convergence, loop-free routing, and support for hierarchical network design through areas. RIP (Routing Information Protocol) is a simpler distance-vector protocol limited to small networks (maximum 15 hops) and slow to converge. BGP (Border Gateway Protocol), the protocol that holds the Internet together, is a path-vector protocol used between autonomous systems (ISPs, large organizations) and makes routing decisions based on policy (business relationships) rather than pure shortest-path metrics.",
+        "key_concepts": [
+          "Routing table: maps destination network prefixes to next-hop router addresses and outgoing interfaces; routers use longest prefix match to select the most specific matching entry for each packet",
+          "Link-state routing: each router floods its link costs to all routers in the network; every router has a complete topology map; each router independently runs Dijkstra's algorithm to compute shortest paths to all destinations",
+          "Dijkstra's algorithm: given a graph with weighted edges, finds the shortest path from a source to all other nodes; maintains a priority queue of unvisited nodes; time complexity O((V + E) log V) with a binary heap",
+          "Distance-vector routing: each router maintains a distance vector (estimated cost to every destination); periodically exchanges distance vectors with neighbors; updates routes using the Bellman-Ford equation: dx(y) = min over all neighbors v of { c(x,v) + dv(y) }",
+          "Count-to-infinity problem: in distance-vector routing, when a link fails, two routers may keep incrementing their distance estimates by routing through each other; mitigated by split horizon (do not advertise a route back to the neighbor you learned it from) and poison reverse (advertise infinity for routes learned from a neighbor)",
+          "OSPF: link-state protocol for intra-domain routing; uses Hello packets for neighbor discovery, Link State Advertisements (LSAs) flooded to all routers, Dijkstra's algorithm for SPF calculation; supports areas for hierarchical scalability",
+          "RIP: distance-vector protocol using hop count as metric (maximum 15 hops); updates every 30 seconds; simple but slow convergence and limited scalability; largely replaced by OSPF in enterprise networks",
+          "BGP: path-vector protocol for inter-domain routing (between ISPs); makes routing decisions based on AS path length, local preference, and business policies (customer, peer, provider relationships); the critical protocol for Internet-wide routing",
+          "Autonomous Systems (AS): a network under a single administrative authority (an ISP, a large enterprise); interior gateway protocols (OSPF, RIP) route within an AS; BGP routes between ASes",
+          "Convergence: the time for all routers to agree on a consistent set of routes after a topology change; link-state protocols converge faster (each router recomputes independently) than distance-vector protocols (iterative exchange with neighbors)"
+        ],
+        "demonstration": "Work through routing algorithms on a 6-router network topology: (1) Run Dijkstra's algorithm by hand from router A: initialize distances, greedily select the closest unvisited node, update neighbor distances, repeat until all nodes are visited. Record the routing table: destination, next hop, cost. (2) Run Bellman-Ford by hand for 3 iterations: each router shares its distance vector with neighbors, updates its estimates, and exchanges again until convergence. (3) Simulate a link failure between two routers: observe Dijkstra reconverging immediately (new SPF calculation), while Bellman-Ford exhibits the count-to-infinity problem for several iterations before stabilizing with split horizon.",
+        "setup_requirements": [
+          "Network topology diagram with 6 routers and weighted links",
+          "Dijkstra and Bellman-Ford algorithm worksheets",
+          "GNS3 or Packet Tracer for OSPF/RIP configuration (optional)",
+          "Wireshark for capturing OSPF Hello and LSA packets (optional)"
+        ],
+        "review": [
+          {
+            "key": "Longest Prefix Match",
+            "value": "When a router has multiple matching entries for a destination, it uses the one with the longest (most specific) prefix. This enables hierarchical route aggregation (advertising /16 blocks) while allowing specific overrides (/24 entries for special routing)."
+          },
+          {
+            "key": "Link-State vs Distance-Vector",
+            "value": "Link-state: each router has a complete topology map and computes routes independently; converges fast, no loops during convergence, but requires more memory and CPU. Distance-vector: each router knows only its neighbors' distances; simpler, less memory, but slow convergence and potential loops."
+          },
+          {
+            "key": "OSPF Areas",
+            "value": "OSPF divides large networks into areas to limit the size of the link-state database. All areas connect to the backbone area (Area 0). Area Border Routers (ABRs) summarize routes between areas, reducing the topology information each router must store and process."
+          },
+          {
+            "key": "BGP and Internet Routing",
+            "value": "BGP is the glue that holds the Internet together. It enables ISPs to exchange routing information based on business policies, not just shortest paths. A route learned from a customer is preferred over a route learned from a peer, which is preferred over a route from a provider."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Transport Layer: TCP and UDP",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Explain TCP connection establishment, data transfer, flow control, and congestion control in detail",
+        "Contrast TCP and UDP protocols and identify appropriate use cases for each",
+        "Analyze TCP behavior (window size, retransmissions, congestion window) using packet captures",
+        "Calculate TCP throughput given bandwidth-delay product and window size"
+      ],
+      "readings": [
+        "Kurose & Ross, Ch. 3 (Transport Layer)",
+        "RFC 793 - Transmission Control Protocol (selected sections)",
+        "RFC 768 - User Datagram Protocol"
+      ],
+      "lecture_notes": {
+        "introduction": "TCP and UDP are the two transport layer protocols that virtually all Internet applications use. They sit between the application layer (HTTP, DNS, SMTP) and the network layer (IP), providing end-to-end communication between processes on different machines. IP provides best-effort delivery: packets may be lost, reordered, duplicated, or corrupted, and IP makes no attempt to fix these problems. TCP adds reliability on top of IP's best-effort service: it guarantees that data arrives completely, in order, without errors, and without duplication. To achieve this, TCP uses sequence numbers (to detect reordering and duplication), acknowledgments (to detect loss), checksums (to detect corruption), retransmission timers (to recover from loss), flow control (to prevent the sender from overwhelming the receiver), and congestion control (to prevent the sender from overwhelming the network). This reliability comes at a cost: the three-way handshake adds one round-trip time of latency before data transfer begins, acknowledgments consume bandwidth, and congestion control limits throughput during the slow start phase. UDP provides none of these guarantees: it simply sends datagrams with source and destination port numbers and an optional checksum. What UDP lacks in reliability, it gains in simplicity and speed. Applications that need low latency (real-time video, gaming, DNS lookups) or that implement their own reliability mechanisms (QUIC, which runs over UDP) prefer UDP.",
+        "key_concepts": [
+          "TCP three-way handshake: SYN (client sends initial sequence number), SYN-ACK (server acknowledges and sends its own sequence number), ACK (client acknowledges); establishes bidirectional communication with agreed-upon sequence numbers",
+          "TCP sequence numbers and acknowledgments: each byte of data has a sequence number; ACKs are cumulative (ACK N means all bytes up to N-1 have been received); duplicate ACKs signal packet loss",
+          "TCP flow control: receiver advertises its receive window size (rwnd) in each ACK, telling the sender how much buffer space is available; sender limits unacknowledged data to min(rwnd, cwnd); prevents receiver buffer overflow",
+          "TCP congestion control: slow start (cwnd starts at 1 MSS, doubles each RTT until ssthresh), congestion avoidance (cwnd increases by 1 MSS per RTT after ssthresh), fast retransmit (3 duplicate ACKs trigger retransmission without waiting for timeout), fast recovery (cwnd halved after fast retransmit)",
+          "TCP Reno vs Cubic vs BBR: Reno (classic AIMD), Cubic (default in Linux, uses a cubic function for window growth), BBR (models the network path's bandwidth and delay for more efficient congestion control)",
+          "UDP: connectionless, no reliability, no ordering, no flow control, no congestion control; 8-byte header (source port, destination port, length, checksum); minimal overhead for latency-sensitive applications",
+          "Port numbers: 16-bit values identifying the application process; well-known ports 0-1023 (HTTP:80, HTTPS:443, DNS:53, SSH:22), registered ports 1024-49151, ephemeral ports 49152-65535",
+          "Bandwidth-delay product: the amount of data that can be in flight (unacknowledged) in the network; BDP = bandwidth x RTT; the TCP window size must be at least BDP to fully utilize the link",
+          "TCP connection teardown: FIN from initiator, ACK from responder, FIN from responder, ACK from initiator (four-way handshake); TIME_WAIT state (2 x MSL) ensures all segments have been delivered",
+          "Head-of-line blocking: in TCP, if one packet is lost, all subsequent packets are buffered until the lost packet is retransmitted; this delays the entire stream. UDP avoids this by delivering packets independently."
+        ],
+        "demonstration": "Analyze TCP behavior in Wireshark: (1) Capture a TCP connection to a web server. Identify the three-way handshake (SYN, SYN-ACK, ACK) with initial sequence numbers. (2) Observe the sliding window growing during slow start: plot the TCP window size over time and identify the exponential growth phase. (3) Trigger a retransmission by transferring a large file over a lossy link (use tc netem to add 5% packet loss on Linux); observe duplicate ACKs, fast retransmit, and congestion window reduction. (4) Calculate BDP: for a 100 Mbps link with 20ms RTT, BDP = 100M * 0.020 = 250 KB; verify the TCP window grows to at least 250 KB to fully utilize the link.",
+        "setup_requirements": [
+          "Wireshark with TCP stream analysis enabled",
+          "Network traffic generator for large file transfer (iperf3)",
+          "Linux system with tc netem for simulating packet loss (optional)",
+          "TCP window size and congestion graphing tool"
+        ],
+        "review": [
+          {
+            "key": "TCP Congestion Control",
+            "value": "TCP starts with a small congestion window (slow start), doubles it each RTT until loss occurs or ssthresh is reached, then switches to linear growth (congestion avoidance). Loss is detected by timeout or 3 duplicate ACKs. This probing behavior balances throughput with fairness."
+          },
+          {
+            "key": "Head-of-Line Blocking",
+            "value": "In TCP, if one packet is lost, all subsequent packets are buffered at the receiver until the lost packet is retransmitted. This delays the entire stream. UDP delivers packets independently, which is why real-time applications (video, gaming) prefer UDP."
+          },
+          {
+            "key": "Bandwidth-Delay Product",
+            "value": "BDP = bandwidth x RTT. If the TCP window is smaller than BDP, the link is underutilized. For a 1 Gbps link with 50ms RTT, BDP = 6.25 MB. The TCP window must grow to 6.25 MB to fully utilize the link."
+          },
+          {
+            "key": "TCP vs UDP Selection",
+            "value": "Use TCP when reliability is required (web, email, file transfer, database). Use UDP when low latency matters more than guaranteed delivery (video streaming, gaming, DNS, VoIP) or when the application implements its own reliability (QUIC)."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Application Layer: HTTP, DNS, and SMTP",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Understand HTTP request/response semantics, connection management, and the evolution from HTTP/1.1 to HTTP/3",
+        "Trace the complete DNS resolution process and understand record types, caching, and security extensions",
+        "Analyze email delivery using SMTP, POP3, and IMAP protocols",
+        "Write a simple client-server application using TCP sockets"
+      ],
+      "readings": [
+        "Kurose & Ross, Ch. 2 (Application Layer)",
+        "RFC 9110 - HTTP Semantics (selected sections)",
+        "Beej's Guide to Network Programming, Ch. 1-5"
+      ],
+      "lecture_notes": {
+        "introduction": "The application layer is where developers spend most of their time, and where network protocols directly serve human needs. HTTP (HyperText Transfer Protocol) drives the web and most API communication. DNS (Domain Name System) translates human-readable domain names into IP addresses, functioning as the Internet's phone book. SMTP (Simple Mail Transfer Protocol) delivers email between servers. These protocols share a common design pattern: a client sends a request in a text-based format, and a server sends a response. Understanding these protocols at the packet level reveals what your application frameworks abstract away and enables debugging network issues that framework-level thinking cannot explain. HTTP has evolved significantly: HTTP/1.1 sends requests sequentially over a single TCP connection (or multiple connections for parallelism), HTTP/2 multiplexes multiple requests over a single TCP connection using binary framing, and HTTP/3 replaces TCP with QUIC (which runs over UDP) to eliminate TCP's head-of-line blocking at the transport layer. DNS resolution involves a hierarchical system of servers: root servers, top-level domain (TLD) servers, and authoritative servers, with aggressive caching at every level. The BSD socket API is the fundamental interface through which all network communication happens: socket, bind, listen, accept, connect, send, recv. Every HTTP library, every database driver, every message queue client ultimately calls these system functions.",
+        "key_concepts": [
+          "HTTP request: method (GET, POST, PUT, DELETE), URL path, HTTP version, headers (Host, Content-Type, Authorization, Accept), optional body; each method has specific semantics and idempotency guarantees",
+          "HTTP response: status code (1xx informational, 2xx success, 3xx redirection, 4xx client error, 5xx server error), headers (Content-Type, Cache-Control, Set-Cookie), body",
+          "HTTP/1.1 vs HTTP/2 vs HTTP/3: HTTP/1.1 (text-based, one request per connection at a time), HTTP/2 (binary framing, multiplexed streams on one TCP connection, header compression), HTTP/3 (QUIC over UDP, eliminates TCP head-of-line blocking, 0-RTT connection establishment)",
+          "DNS hierarchy: root servers (13 logical, hundreds of physical), TLD servers (.com, .org, .net), authoritative servers (ns1.example.com); recursive resolvers query the hierarchy on behalf of clients",
+          "DNS record types: A (IPv4 address), AAAA (IPv6 address), CNAME (alias to another domain), MX (mail server), NS (authoritative name server), TXT (arbitrary text, used for SPF, DKIM, domain verification)",
+          "DNS caching and TTL: each DNS response includes a TTL (time to live); resolvers cache responses for TTL duration; lower TTL enables faster changes but increases query load on authoritative servers",
+          "SMTP: text-based protocol for email delivery; HELO/EHLO (identify sender), MAIL FROM (sender address), RCPT TO (recipient), DATA (message content); port 25 (relay), port 587 (submission with authentication)",
+          "Socket API: socket() creates an endpoint, bind() assigns an address, listen() marks a socket as passive (server), accept() accepts a connection, connect() initiates a connection (client), send()/recv() transfer data, close() terminates",
+          "HTTP caching: Cache-Control headers (max-age, no-cache, no-store, public, private), ETag/If-None-Match for conditional requests, CDNs as caching proxies; proper caching dramatically reduces latency and server load"
+        ],
+        "demonstration": "Build a TCP echo server and client in Python: (1) Server: create a socket, bind to port 8000, listen for connections, accept a client, receive data, echo it back, close. (2) Client: create a socket, connect to the server, send a message, receive the echo, close. (3) Extend to handle multiple clients using threading. (4) Use Wireshark to capture the TCP handshake, data exchange, and connection teardown. Then capture and analyze real HTTP/2 traffic: identify the binary framing, multiplexed streams, and header compression compared to HTTP/1.1. Run dig or nslookup to trace a DNS resolution: query root, TLD, and authoritative servers showing the iterative resolution process.",
+        "setup_requirements": [
+          "Python 3.12+ for socket programming",
+          "Wireshark for protocol analysis",
+          "dig or nslookup command-line tool for DNS queries",
+          "curl with verbose output for HTTP protocol analysis"
+        ],
+        "review": [
+          {
+            "key": "HTTP/2 Multiplexing",
+            "value": "HTTP/2 sends multiple requests and responses simultaneously over a single TCP connection using binary frames with stream identifiers. This eliminates the need for multiple TCP connections (HTTP/1.1 workaround) and reduces connection setup overhead."
+          },
+          {
+            "key": "DNS Caching",
+            "value": "DNS responses include a TTL. Resolvers cache results for that duration, serving subsequent queries locally without contacting authoritative servers. Most DNS lookups are served from cache, reducing resolution latency from hundreds of milliseconds to under 1 millisecond."
+          },
+          {
+            "key": "Socket Lifecycle",
+            "value": "Server: socket() -> bind() -> listen() -> accept() -> send()/recv() -> close(). Client: socket() -> connect() -> send()/recv() -> close(). accept() blocks until a client connects, creating a new socket for that conversation while the original socket continues listening."
+          },
+          {
+            "key": "HTTP/3 and QUIC",
+            "value": "HTTP/3 replaces TCP with QUIC (built on UDP). QUIC provides its own reliability and multiplexing, eliminating TCP's head-of-line blocking (where one lost packet delays all streams). QUIC also supports 0-RTT connection establishment for repeat connections."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "Network Security and TLS",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Understand symmetric and asymmetric encryption and their roles in network security",
+        "Trace the TLS 1.3 handshake step by step and explain certificate verification",
+        "Identify common network attacks (MITM, DDoS, DNS spoofing, ARP poisoning) and their mitigations",
+        "Configure firewall rules for network perimeter defense"
+      ],
+      "readings": [
+        "Kurose & Ross, Ch. 8 (Security in Computer Networks)",
+        "RFC 8446 - TLS 1.3 (selected sections)",
         "Cloudflare Learning Center: What is TLS?"
       ],
       "lecture_notes": {
-        "introduction": "Every network is hostile. Data can be intercepted, modified, or faked. Network security provides the tools to protect communication: encryption for confidentiality, MACs for integrity, and certificates for authentication.",
+        "introduction": "Every network is hostile until proven otherwise. When data travels from your laptop to a server, it passes through dozens of intermediate devices (routers, switches, access points) controlled by entities you do not trust. Without encryption, anyone with access to any intermediate link can read your data (eavesdropping), modify it in transit (tampering), or impersonate the server (spoofing). Network security provides three fundamental properties: confidentiality (only the intended recipient can read the data, achieved through encryption), integrity (the data has not been modified in transit, achieved through message authentication codes), and authentication (the parties are who they claim to be, achieved through digital certificates and public key infrastructure). TLS (Transport Layer Security) provides all three properties for TCP connections. The TLS handshake negotiates cipher suites, verifies the server's certificate against trusted certificate authorities, exchanges key material using Diffie-Hellman key agreement, and establishes a symmetric encryption key for the session. TLS 1.3 simplified the handshake from two round trips to one (and zero for repeat connections), removed support for weak cipher suites, and made forward secrecy mandatory. Beyond TLS, network security encompasses firewall configuration (controlling which traffic is allowed into and out of a network), intrusion detection (monitoring for suspicious patterns), and defense against specific attacks: DDoS (overwhelming a target with traffic), DNS spoofing (returning false DNS responses), ARP poisoning (redirecting local network traffic), and man-in-the-middle attacks (intercepting and potentially modifying communication between two parties).",
         "key_concepts": [
-          "Symmetric encryption (AES) vs asymmetric encryption (RSA, ECDSA)",
-          "TLS handshake: certificate verification, key exchange, encrypted channel",
-          "Certificate authorities and the chain of trust",
-          "Common attacks: man-in-the-middle, DDoS, DNS spoofing, ARP poisoning",
-          "Firewalls: packet filtering, stateful inspection, application-layer gateways"
+          "Symmetric encryption: same key for encryption and decryption (AES-256-GCM); fast, used for bulk data encryption; the key distribution problem: how do two parties who have never communicated agree on a secret key?",
+          "Asymmetric encryption: public key for encryption/verification, private key for decryption/signing (RSA, ECDSA); solves key distribution but is 100-1000x slower than symmetric; used for key exchange and digital signatures",
+          "TLS 1.3 handshake: ClientHello (supported cipher suites, key share), ServerHello (chosen suite, key share, certificate, certificate verify, finished), client derives session keys and sends finished; one round trip total",
+          "Certificate authorities (CAs) and chain of trust: CAs sign server certificates with their private key; browsers trust a set of root CAs; the server's certificate is verified by checking the signature chain up to a trusted root",
+          "Diffie-Hellman key exchange: two parties compute a shared secret over an insecure channel without ever transmitting the secret; each party generates a random private value, computes a public value, exchanges public values, and independently computes the same shared secret",
+          "Forward secrecy: using ephemeral Diffie-Hellman keys ensures that compromising the server's long-term private key does not compromise past session keys; TLS 1.3 requires forward secrecy for all connections",
+          "Common attacks: Man-in-the-Middle (attacker intercepts communication, presenting fake certificates), DDoS (flooding with traffic to exhaust resources), DNS spoofing (returning false DNS records), ARP poisoning (associating attacker's MAC with victim's IP on LAN), SYN flood (exhausting server's half-open connection table)",
+          "Firewalls: packet filtering (allow/deny based on IP, port, protocol), stateful inspection (track connection state, allow only packets belonging to established connections), application-layer gateways (inspect protocol content)",
+          "DNSSEC: DNS Security Extensions that add digital signatures to DNS records, enabling resolvers to verify that responses are authentic and unmodified; prevents DNS spoofing and cache poisoning"
         ],
-        "demonstration": "Capture a TLS handshake in Wireshark, examine the certificate exchange, verify the certificate chain, and observe that payload data is encrypted",
+        "demonstration": "Capture and analyze a TLS 1.3 handshake in Wireshark: (1) Navigate to an HTTPS website. (2) Filter by tls in Wireshark. (3) Identify the ClientHello (cipher suites offered), ServerHello (cipher suite selected), Certificate (server's X.509 certificate), and Change Cipher Spec messages. (4) Use openssl s_client -connect example.com:443 to inspect the certificate chain: verify the issuer, subject, validity dates, and signature algorithm. (5) Attempt to view the encrypted application data and confirm it is unreadable. (6) Demonstrate the consequence of a self-signed certificate: the browser shows a warning because the certificate is not signed by a trusted CA.",
         "setup_requirements": [
-          "Wireshark with TLS dissector",
-          "openssl command-line tool for certificate inspection"
+          "Wireshark with TLS dissector configured",
+          "openssl command-line tool for certificate inspection",
+          "Browser for HTTPS browsing during capture",
+          "Self-signed certificate for demonstration (generated with openssl)"
         ],
         "review": [
           {
             "key": "TLS Handshake",
-            "value": "Client sends supported cipher suites; server responds with its certificate and chosen cipher; client verifies certificate chain to a trusted CA; both derive session keys; all subsequent data is encrypted and integrity-protected"
+            "value": "Client sends supported cipher suites and a key share. Server responds with chosen suite, its certificate, and a key share. Both derive session keys independently from the exchanged key material. All subsequent data is encrypted and integrity-protected."
+          },
+          {
+            "key": "Forward Secrecy",
+            "value": "Ephemeral Diffie-Hellman keys are generated per session and discarded afterward. If the server's long-term private key is compromised later, past sessions cannot be decrypted because the ephemeral keys no longer exist."
           },
           {
             "key": "Defense in Depth",
-            "value": "No single security measure is sufficient; layered defenses (firewalls, TLS, authentication, input validation, monitoring) ensure that bypassing one layer does not compromise the entire system"
+            "value": "No single security measure is sufficient. Layered defenses (firewalls, TLS encryption, authentication, input validation, monitoring, intrusion detection) ensure that bypassing one layer does not compromise the entire system."
+          },
+          {
+            "key": "Certificate Trust Model",
+            "value": "Browsers trust approximately 150 root CAs. A server certificate is trusted if its signature chain leads to one of these roots. If any CA is compromised, all certificates it has signed are potentially fraudulent. Certificate Transparency logs provide a public audit trail."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "Wireless Networks",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Understand IEEE 802.11 (WiFi) standards, frequency bands, and channel allocation",
+        "Analyze the hidden terminal and exposed terminal problems and their solutions",
+        "Compare WiFi generations (802.11a/b/g/n/ac/ax/be) and their throughput capabilities",
+        "Evaluate wireless security protocols (WEP, WPA, WPA2, WPA3) and their vulnerabilities"
+      ],
+      "readings": [
+        "Kurose & Ross, Ch. 7 (Wireless and Mobile Networks)",
+        "IEEE 802.11 Standard Overview (WiFi Alliance)",
+        "Tanenbaum & Wetherall, Ch. 4.4 (Wireless LANs)"
+      ],
+      "lecture_notes": {
+        "introduction": "Wireless networking has fundamentally changed how we interact with the Internet. The majority of Internet-connected devices today connect wirelessly: smartphones, laptops, tablets, smart home devices, and IoT sensors. WiFi (IEEE 802.11) is the dominant wireless LAN technology, operating in the 2.4 GHz, 5 GHz, and 6 GHz frequency bands. Wireless communication introduces challenges that do not exist in wired networks: the signal propagates in all directions (making it available to eavesdroppers), the medium is inherently shared (all devices in range share the same frequency band), signal strength decreases with distance (path loss) and encounters obstacles (walls, furniture, people), and devices cannot detect collisions during transmission (because they are transmitting and receiving on the same frequency, their own transmission drowns out other signals). CSMA/CA (Collision Avoidance) addresses the inability to detect collisions by using acknowledgments and optional RTS/CTS handshakes. The hidden terminal problem (two devices that cannot hear each other transmit simultaneously to the same access point) and the exposed terminal problem (a device unnecessarily defers transmission because it hears a transmission not directed at its access point) are fundamental wireless-specific challenges. WiFi has evolved through multiple generations: from 802.11b (11 Mbps in 1999) to 802.11be (WiFi 7, 46 Gbps theoretical in 2024), each generation improving throughput through wider channels, more spatial streams (MIMO), more efficient modulation (256-QAM, 1024-QAM, 4096-QAM), and better medium access (OFDMA in WiFi 6). Security has also evolved: WEP was broken in 2001, WPA/WPA2 improved security with TKIP and AES-CCMP, and WPA3 adds Simultaneous Authentication of Equals (SAE) that resists offline dictionary attacks and provides forward secrecy.",
+        "key_concepts": [
+          "WiFi architecture: infrastructure mode (devices connect through an access point), ad-hoc mode (devices connect directly); BSS (Basic Service Set, one AP), ESS (Extended Service Set, multiple APs with same SSID for roaming)",
+          "Frequency bands: 2.4 GHz (longer range, more interference, 3 non-overlapping channels), 5 GHz (shorter range, less interference, 25 non-overlapping channels), 6 GHz (WiFi 6E/7 only, 59 channels, least interference)",
+          "CSMA/CA: listen before transmitting, wait for DIFS (Distributed Inter-Frame Space), select a random backoff, transmit, wait for ACK from receiver; retransmit if no ACK received; RTS/CTS optional handshake to reserve the channel",
+          "Hidden terminal problem: two stations out of range of each other transmit simultaneously to the same AP, causing collision at the AP; solved by RTS/CTS (both stations hear the CTS from the AP)",
+          "WiFi generations: 802.11b (11 Mbps, 2.4 GHz), 802.11g (54 Mbps, 2.4 GHz), 802.11n/WiFi 4 (600 Mbps, MIMO), 802.11ac/WiFi 5 (6.9 Gbps, 5 GHz, MU-MIMO), 802.11ax/WiFi 6 (9.6 Gbps, OFDMA), 802.11be/WiFi 7 (46 Gbps, 320 MHz channels)",
+          "MIMO (Multiple Input Multiple Output): using multiple antennas to transmit multiple data streams simultaneously; MU-MIMO serves multiple users simultaneously; beamforming directs signal energy toward specific devices",
+          "OFDMA (Orthogonal Frequency Division Multiple Access): divides a channel into subcarriers that can be assigned to different users simultaneously; WiFi 6 feature that reduces latency for many concurrent devices",
+          "Wireless security evolution: WEP (RC4, broken — trivially crackable), WPA (TKIP, temporary fix), WPA2 (AES-CCMP, standard for 15+ years), WPA3 (SAE handshake, 192-bit security mode, forward secrecy, resistance to offline dictionary attacks)",
+          "Roaming: when a mobile device moves between APs in an ESS, it reassociates with a new AP; 802.11r (Fast BSS Transition) pre-authenticates with the target AP to minimize handoff latency"
+        ],
+        "demonstration": "Analyze WiFi behavior: (1) Use a WiFi analyzer app to scan nearby networks: identify SSIDs, channels, signal strength, security protocols, and channel overlap. (2) Demonstrate the effect of distance and obstacles on signal strength: measure throughput at 1m, 5m, 10m, and through a wall using iperf3 over WiFi. (3) Capture WiFi management frames in Wireshark (monitor mode): identify Beacon frames (AP advertising SSID), Probe Request/Response, Authentication, and Association frames. (4) Compare WPA2 and WPA3 handshakes: WPA2's 4-way handshake vs WPA3's SAE (Dragonfly) handshake, explaining why SAE resists offline dictionary attacks.",
+        "setup_requirements": [
+          "WiFi analyzer app (WiFi Analyzer on Android, Airport Utility on iOS/Mac)",
+          "iperf3 for wireless throughput measurement",
+          "Wireshark with monitor mode capable WiFi adapter (optional, for management frame capture)",
+          "Multiple WiFi access points for roaming demonstration (optional)"
+        ],
+        "review": [
+          {
+            "key": "Hidden Terminal Problem",
+            "value": "Two devices out of range of each other transmit simultaneously to the same AP, causing a collision at the AP that neither device detects. RTS/CTS solves this: the AP's CTS broadcast reaches both devices, so the non-transmitting device knows to wait."
+          },
+          {
+            "key": "WiFi 6 Improvements",
+            "value": "OFDMA allows the AP to serve multiple clients simultaneously on different subcarriers within the same channel. BSS Coloring reduces interference from neighboring networks. Target Wake Time reduces power consumption for IoT devices. These features improve dense-environment performance."
+          },
+          {
+            "key": "WPA3 Security",
+            "value": "WPA3's SAE handshake replaces WPA2's PSK (Pre-Shared Key) 4-way handshake. SAE is a zero-knowledge proof that verifies both parties know the password without transmitting it. Even if the handshake is captured, offline dictionary attacks cannot recover the password."
+          },
+          {
+            "key": "2.4 GHz vs 5 GHz vs 6 GHz",
+            "value": "2.4 GHz: longest range, most interference (microwave ovens, Bluetooth), only 3 non-overlapping channels. 5 GHz: shorter range, less interference, many channels. 6 GHz: shortest range, cleanest spectrum (only WiFi 6E/7 devices), widest channels (320 MHz). Choose based on range, device density, and throughput needs."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "Network Programming with Sockets",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Build multi-threaded TCP server applications that handle concurrent client connections",
+        "Implement UDP client-server communication for low-latency applications",
+        "Apply non-blocking I/O and event-driven programming models for scalable servers",
+        "Handle common network programming challenges: partial sends, connection resets, and timeouts"
+      ],
+      "readings": [
+        "Beej's Guide to Network Programming, Ch. 5-9",
+        "Stevens, Fenner & Rudoff, Unix Network Programming, Vol. 1, Ch. 4-6 (selected)",
+        "Python socket module documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Network programming is the practice of writing applications that communicate over the network using the socket API. Every web server, database client, message queue, and distributed system is built on sockets. The BSD socket API, first implemented in 4.2BSD Unix in 1983, has become the universal interface for network programming across all operating systems and languages. A socket is an endpoint for communication, identified by an IP address and port number. Creating a TCP server involves creating a socket, binding it to an address and port, listening for connections, and accepting incoming connections — each of which creates a new socket for that conversation. A TCP client creates a socket and connects to the server's address and port. Once connected, both sides send and receive data as byte streams. The challenge in network programming is handling concurrency: a server must handle many clients simultaneously without one slow client blocking the others. Three approaches dominate: multi-threading (one thread per connection, simple but limited by thread overhead), event-driven with select/poll/epoll (one thread monitors many sockets and processes events as they occur, efficient but complex), and async/await (combines the efficiency of event-driven with the readability of sequential code). This session builds practical socket programming skills, focusing on the patterns and pitfalls that arise in real network applications.",
+        "key_concepts": [
+          "TCP server pattern: socket(AF_INET, SOCK_STREAM) -> bind((host, port)) -> listen(backlog) -> accept() returns (client_socket, address) -> recv()/send() -> close()",
+          "TCP client pattern: socket(AF_INET, SOCK_STREAM) -> connect((host, port)) -> send()/recv() -> close()",
+          "UDP server/client: socket(AF_INET, SOCK_DGRAM) -> bind() for server -> sendto(data, address) / recvfrom(bufsize); no connection establishment, no guaranteed delivery",
+          "Concurrency models: multi-threaded (one thread per connection, simple, limited to ~1000 connections), select/poll (monitor multiple sockets in one thread, efficient, complex code), epoll/kqueue (kernel-level event notification, scales to 100K+ connections), async/await (asyncio in Python, event loop with coroutines)",
+          "Partial sends and receives: send() and recv() may transfer fewer bytes than requested; always loop until all data is sent/received; use sendall() when available for convenience",
+          "Framing: TCP is a byte stream with no message boundaries; the application must define its own framing protocol (length prefix, delimiter, fixed-size messages) to determine where one message ends and the next begins",
+          "Connection handling: handle ConnectionResetError (client disconnected), TimeoutError (no response within deadline), BrokenPipeError (writing to a closed connection); set socket timeouts with settimeout()",
+          "DNS resolution in code: socket.getaddrinfo(host, port) resolves hostnames to addresses; supports both IPv4 and IPv6; always use getaddrinfo instead of gethostbyname for protocol-independent code",
+          "Non-blocking I/O: socket.setblocking(False) makes operations return immediately instead of waiting; EAGAIN/EWOULDBLOCK errors indicate no data available; combined with select()/poll() for event-driven programming",
+          "Protocol design: define message format (binary or text), request-response pattern, error handling, and connection lifecycle; document with a protocol specification (wire format, state machine, error codes)"
+        ],
+        "demonstration": "Build a multi-client chat server: (1) Create a TCP server that accepts connections and spawns a thread for each client. (2) Each client thread receives messages and broadcasts them to all other connected clients using a shared client list with proper locking. (3) Handle client disconnection gracefully (remove from client list, notify others). (4) Add a simple protocol: messages are newline-delimited UTF-8 strings; /quit disconnects; /list shows connected users. (5) Build the corresponding client that connects, sends user input, and displays received messages. (6) Test with 3+ simultaneous clients. Then build a UDP-based ping utility: send a timestamp in a UDP datagram to a server, receive the echo, and calculate round-trip time.",
+        "setup_requirements": [
+          "Python 3.12+ with socket and threading modules",
+          "Multiple terminal windows for running server and multiple clients",
+          "Wireshark for observing socket communication at the packet level",
+          "netcat (nc) for quick socket testing"
+        ],
+        "review": [
+          {
+            "key": "TCP is a Byte Stream",
+            "value": "TCP does not preserve message boundaries. If you send 'Hello' then 'World', recv() might return 'HelloWorld' or 'Hell' then 'oWorld'. You must implement your own framing: prepend message length, use delimiters (newline), or use fixed-size messages."
+          },
+          {
+            "key": "Thread-per-Connection Limits",
+            "value": "Each thread consumes ~1 MB of stack memory. At 1000 connections, that is 1 GB of memory for stack alone. For high-concurrency servers (10K+ connections), use event-driven (select/epoll) or async (asyncio) approaches instead of threads."
+          },
+          {
+            "key": "Always Handle Errors",
+            "value": "Network connections fail: clients disconnect unexpectedly, networks partition, servers crash. Every recv() can return 0 (clean disconnect) or raise an exception (reset, timeout). Production servers must handle all failure modes gracefully."
+          },
+          {
+            "key": "UDP for Low Latency",
+            "value": "UDP has no connection setup (no handshake latency), no retransmission delays, and no head-of-line blocking. For applications where occasional packet loss is acceptable (real-time gaming, VoIP, video streaming), UDP provides lower latency than TCP."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Cloud Networking and SDN",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Understand virtual networking in cloud environments (VPCs, subnets, security groups)",
+        "Explain Software-Defined Networking (SDN) architecture and the separation of control and data planes",
+        "Compare cloud networking models (AWS VPC, Azure VNet, GCP VPC) and their capabilities",
+        "Design a cloud network architecture with proper security zones, load balancing, and redundancy"
+      ],
+      "readings": [
+        "Kurose & Ross, Ch. 5.5 (SDN Control Plane)",
+        "AWS VPC Documentation: VPC Concepts",
+        "Goransson & Black, Software Defined Networks, Ch. 1-4"
+      ],
+      "lecture_notes": {
+        "introduction": "Cloud computing has transformed networking from a hardware-centric discipline (buying, racking, and cabling physical switches and routers) to a software-defined, API-driven practice. In a cloud environment, you define networks, subnets, routing tables, firewalls, and load balancers through code or a web console, and the cloud provider provisions the underlying infrastructure automatically. This shift has two profound implications: networking becomes programmable (you can create, modify, and destroy network resources with API calls, enabling infrastructure as code), and networking becomes an application developer concern (you cannot build a cloud application without understanding VPCs, security groups, and load balancers). Software-Defined Networking (SDN) is the architectural paradigm that enables this programmability. SDN separates the control plane (the brain that decides how packets should be forwarded) from the data plane (the muscle that actually forwards packets). In traditional networks, every router and switch has its own control plane, making centralized management difficult. In SDN, a centralized controller makes forwarding decisions and programs the data plane devices (switches and routers) via a southbound API (like OpenFlow). The controller exposes a northbound API that applications use to request network services. This separation enables network automation, dynamic traffic engineering, and fine-grained security policies that would be impractical with traditional network management.",
+        "key_concepts": [
+          "Virtual Private Cloud (VPC): an isolated virtual network in the cloud with its own IP address range, subnets, routing tables, and internet gateways; the foundation of cloud networking",
+          "Subnets: public subnets (have a route to an Internet Gateway for inbound/outbound traffic) and private subnets (no direct Internet access, outbound via NAT Gateway); databases and internal services go in private subnets",
+          "Security groups: virtual firewalls that control inbound and outbound traffic at the instance level; stateful (return traffic for allowed connections is automatically allowed); define rules by protocol, port, and source IP/security group",
+          "Network ACLs: stateless firewalls at the subnet level; rules are evaluated in order; provide an additional layer of defense beyond security groups",
+          "Load balancers: distribute traffic across multiple instances for scalability and redundancy; Application Load Balancer (Layer 7, HTTP routing), Network Load Balancer (Layer 4, TCP/UDP), Gateway Load Balancer (Layer 3, network appliances)",
+          "SDN architecture: data plane (switches that forward packets based on flow tables), control plane (centralized controller that computes forwarding rules), management plane (applications that program the controller via northbound API)",
+          "OpenFlow: the southbound protocol between SDN controller and switches; defines flow table entries (match fields + actions: forward, drop, modify header, send to controller) and message types (packet-in, flow-mod, stats-request)",
+          "Network Function Virtualization (NFV): replacing dedicated hardware appliances (firewalls, load balancers, IDS) with software running on commodity hardware; enables on-demand scaling and rapid deployment",
+          "Cloud networking services: VPC peering (connect VPCs), Transit Gateway (hub-and-spoke VPC connectivity), VPN (encrypted tunnel to on-premises), Direct Connect/ExpressRoute (dedicated private link to cloud), PrivateLink (private access to services without Internet exposure)",
+          "Infrastructure as Code: defining network topology in Terraform, CloudFormation, or Pulumi; version-controlled, reviewed, reproducible network configurations"
+        ],
+        "demonstration": "Design and deploy a cloud network architecture: (1) Create a VPC with a /16 CIDR block (10.0.0.0/16). (2) Create a public subnet (10.0.1.0/24) with an Internet Gateway and a private subnet (10.0.2.0/24) with a NAT Gateway. (3) Deploy a web server in the public subnet and a database in the private subnet. (4) Configure security groups: web server allows HTTP/HTTPS from anywhere and SSH from your IP; database allows PostgreSQL only from the web server's security group. (5) Add an Application Load Balancer in front of two web server instances for redundancy. (6) Verify: the web server can reach the Internet, the database cannot be reached from the Internet, and the load balancer distributes requests between web servers.",
+        "setup_requirements": [
+          "AWS/Azure/GCP free tier account (or instructor-provided sandbox)",
+          "Terraform or AWS CloudFormation for infrastructure as code",
+          "AWS CLI or equivalent for cloud resource management",
+          "Network diagram tool for designing the architecture before deploying"
+        ],
+        "review": [
+          {
+            "key": "Public vs Private Subnets",
+            "value": "Public subnets have a route to an Internet Gateway (instances with public IPs can be reached from the Internet). Private subnets have no direct Internet access; outbound traffic goes through a NAT Gateway. Place web servers in public subnets, databases and internal services in private subnets."
+          },
+          {
+            "key": "SDN Separation",
+            "value": "SDN separates control (deciding how to forward) from data (actually forwarding). This enables centralized network management, programmability via APIs, and dynamic policy changes. Traditional networks embed the control plane in each device, making centralized management difficult."
+          },
+          {
+            "key": "Security Groups as Virtual Firewalls",
+            "value": "Security groups are stateful: if you allow inbound HTTP, return traffic is automatically allowed. Rules reference other security groups (e.g., database allows traffic from web-server security group, not from specific IPs). This is more maintainable than IP-based rules."
+          },
+          {
+            "key": "Infrastructure as Code",
+            "value": "Defining network resources in Terraform/CloudFormation means network configurations are version-controlled, reviewable, reproducible, and auditable. Changes go through the same PR process as application code, preventing ad-hoc manual changes that create inconsistencies."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "IoT Networking",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Understand the unique networking requirements of IoT devices (low power, low bandwidth, intermittent connectivity)",
+        "Compare IoT protocols (MQTT, CoAP, LoRaWAN, Zigbee) and their design trade-offs",
+        "Design IoT network architectures with gateways, brokers, and cloud backends",
+        "Address IoT security challenges including device authentication, firmware updates, and network isolation"
+      ],
+      "readings": [
+        "Kurose & Ross, Ch. 7.5 (Mobility and IoT)",
+        "MQTT v5.0 Specification Overview (OASIS)",
+        "RFC 7252 - The Constrained Application Protocol (CoAP)"
+      ],
+      "lecture_notes": {
+        "introduction": "The Internet of Things (IoT) connects physical devices — sensors, actuators, appliances, vehicles, industrial equipment — to the network, enabling remote monitoring, control, and automation. IoT devices have fundamentally different networking requirements than traditional computers: they are often battery-powered (requiring extremely low-power communication), have limited processing and memory (cannot run full TCP/IP stacks), communicate small amounts of data infrequently (a temperature reading every 5 minutes, not a video stream), may be in environments with poor network coverage (agricultural fields, industrial facilities, underground), and are deployed at massive scale (thousands to millions of devices per installation). These constraints have driven the development of specialized IoT networking protocols and architectures. MQTT (Message Queuing Telemetry Transport) is a lightweight publish-subscribe messaging protocol designed for constrained devices and unreliable networks. CoAP (Constrained Application Protocol) is a lightweight request-response protocol similar to HTTP but designed for constrained devices. LoRaWAN provides long-range (10+ km), low-power, low-bandwidth wireless communication for sensors that transmit small amounts of data. Zigbee and Thread provide short-range mesh networking for home and building automation. The typical IoT architecture involves edge devices (sensors/actuators) communicating through gateways that bridge IoT protocols to IP networks, with data flowing to cloud backends for storage, processing, and visualization. IoT security is particularly challenging because many devices lack the computing power for strong encryption, cannot be easily updated, and have long deployment lifetimes (10-20 years).",
+        "key_concepts": [
+          "MQTT: lightweight publish-subscribe protocol; clients publish messages to topics, other clients subscribe to topics; a broker routes messages from publishers to subscribers; three QoS levels (0: at most once, 1: at least once, 2: exactly once)",
+          "CoAP: constrained application protocol modeled after HTTP (GET, POST, PUT, DELETE) but designed for low-power devices; runs over UDP, supports multicast, built-in content negotiation and resource discovery",
+          "LoRaWAN: long-range (10-15 km), low-power (battery life 5-10 years), low-bandwidth (0.3-50 kbps) wireless protocol for sensor networks; star topology with gateways; three device classes (A: lowest power, B: scheduled receive, C: continuous receive)",
+          "Zigbee and Thread: short-range (10-100m) mesh networking protocols for home and building automation; devices can relay messages through neighbors, extending network coverage; low power but higher data rates than LoRaWAN",
+          "6LoWPAN: IPv6 over Low-Power Wireless Personal Area Networks; adapts IPv6 for constrained devices by compressing headers and supporting fragmentation; enables IoT devices to be addressable in the IPv6 Internet",
+          "IoT gateway architecture: edge devices communicate via IoT protocols (MQTT, LoRaWAN, Zigbee) to a gateway; the gateway bridges to IP networks and forwards data to cloud backends for storage and processing",
+          "Edge computing: processing data at or near the IoT device instead of sending everything to the cloud; reduces latency (critical for real-time control), bandwidth (only send processed results), and cloud costs",
+          "IoT security challenges: constrained devices lack resources for strong crypto, devices deployed in physically accessible locations (tampering), long deployment lifetimes (security patches over 10+ years), massive scale (managing credentials for millions of devices)",
+          "MQTT security: TLS for transport encryption, username/password or client certificates for authentication, access control lists for topic-level authorization, retained messages for last-known-good state"
+        ],
+        "demonstration": "Build a simple IoT monitoring system: (1) Set up a Mosquitto MQTT broker on a local machine. (2) Write a Python MQTT publisher that simulates a temperature sensor publishing readings to topic 'sensors/temp/room1' every 5 seconds. (3) Write a Python MQTT subscriber that subscribes to 'sensors/temp/#' (wildcard) and displays readings as they arrive. (4) Add QoS levels: publish at QoS 0 (fire and forget) and QoS 1 (acknowledged), observe the difference in reliability by killing and restarting the subscriber. (5) Add TLS: configure the broker with a self-signed certificate and configure clients to use TLS. (6) Demonstrate retained messages: the subscriber receives the last reading immediately on connection even if the publisher is not running.",
+        "setup_requirements": [
+          "Mosquitto MQTT broker (docker run -d -p 1883:1883 eclipse-mosquitto)",
+          "paho-mqtt Python library for MQTT client programming",
+          "Wireshark with MQTT dissector for protocol analysis",
+          "TLS certificates for MQTT encryption (generated with openssl)"
+        ],
+        "review": [
+          {
+            "key": "MQTT QoS Levels",
+            "value": "QoS 0 (at most once): fire and forget, no acknowledgment, messages may be lost. QoS 1 (at least once): acknowledged, messages may be duplicated. QoS 2 (exactly once): four-step handshake, guaranteed single delivery. Higher QoS costs more bandwidth and latency."
+          },
+          {
+            "key": "LoRaWAN vs WiFi",
+            "value": "LoRaWAN: 10+ km range, years of battery life, kilobits per second; ideal for remote sensors transmitting small data. WiFi: 50m range, requires constant power, megabits per second; ideal for devices needing high throughput and power access."
+          },
+          {
+            "key": "Edge vs Cloud Processing",
+            "value": "Edge computing processes data near the device, reducing latency and bandwidth. Cloud processing provides unlimited compute and storage. Most IoT architectures use both: edge for real-time decisions (stop the motor if temperature exceeds threshold) and cloud for analytics (trend analysis, anomaly detection)."
+          },
+          {
+            "key": "IoT Security Principle",
+            "value": "Assume every IoT device will be compromised. Design networks with device isolation (VLAN per device class), minimal permissions (each device can only publish to its own topics), encrypted communication (TLS), and over-the-air update capability for security patches."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "Network Management and Monitoring",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Implement network monitoring using SNMP, NetFlow, and modern observability tools",
+        "Design alerting strategies that detect real problems without causing alert fatigue",
+        "Troubleshoot common network problems using systematic diagnostic methodology",
+        "Analyze network performance metrics and capacity planning data"
+      ],
+      "readings": [
+        "Kurose & Ross, Ch. 5.7 (SNMP and Network Management)",
+        "RFC 3416 - SNMP v2c Protocol Operations",
+        "Google SRE Book, Ch. 6 (Monitoring Distributed Systems)"
+      ],
+      "lecture_notes": {
+        "introduction": "Network management is the ongoing practice of monitoring, configuring, troubleshooting, and optimizing network infrastructure. A network that is not monitored is a network waiting to fail in ways that no one will notice until users complain. Effective network management requires visibility: knowing which devices are up, how much bandwidth is being consumed, which links are approaching capacity, whether latency is increasing, and whether error rates are abnormal. SNMP (Simple Network Management Protocol) is the traditional protocol for network device monitoring: a management station polls network devices (routers, switches, firewalls) for operational data (interface status, packet counters, CPU utilization, memory usage) stored in a hierarchical Management Information Base (MIB). NetFlow and IPFIX provide flow-level traffic analysis: which source and destination IPs are communicating, on which ports, using how much bandwidth, enabling traffic engineering and security analysis. Modern observability platforms (Prometheus, Grafana, Datadog, Zabbix) aggregate metrics from network devices, servers, and applications into dashboards and alerting systems. The art of alerting is avoiding false positives (which cause alert fatigue and lead to ignored alerts) while catching real problems before they affect users. Alert on symptoms (user-facing impact: error rates, latency) rather than causes (CPU utilization, link utilization) to reduce noise. Troubleshooting network problems requires systematic methodology: define the problem precisely, gather data (pings, traceroutes, packet captures, log analysis), form a hypothesis, test it, and either confirm or reject it before trying the next hypothesis.",
+        "key_concepts": [
+          "SNMP: protocol for monitoring and managing network devices; management station sends GET/SET requests to agents on devices; agents store data in MIBs (Management Information Bases) organized as a tree of OIDs (Object Identifiers)",
+          "SNMP versions: v1 (community string authentication, plaintext), v2c (bulk operations, still plaintext), v3 (authentication and encryption, required for security); SNMP traps: unsolicited alerts from devices to the management station",
+          "NetFlow/IPFIX: routers export flow records (source/destination IP, ports, protocol, byte/packet counts, timestamps) to a collector; enables traffic analysis, capacity planning, anomaly detection, and billing",
+          "Monitoring metrics: availability (device up/down, interface status), utilization (bandwidth, CPU, memory), latency (round-trip time, one-way delay), error rates (packet loss, CRC errors, drops), throughput (actual data transfer rate)",
+          "Prometheus and Grafana: Prometheus scrapes metrics from exporters (SNMP exporter, node exporter) and stores time-series data; Grafana visualizes metrics in dashboards and supports alerting based on PromQL queries",
+          "Alerting strategy: alert on user-facing symptoms (error rate > 1%, latency > 500ms), not causes (CPU > 80%); use multiple severity levels (critical: page on-call, warning: create ticket, info: log); suppress alerts during maintenance windows",
+          "Troubleshooting methodology: (1) define the problem precisely ('users in building A cannot access the intranet' not 'the network is broken'), (2) gather data (ping, traceroute, interface status, error counters), (3) isolate the fault domain (layer, device, link), (4) form and test hypotheses, (5) implement and verify the fix, (6) document the root cause and prevention steps",
+          "Common network problems: misconfigured subnet masks (devices cannot communicate despite being on the same network), DNS resolution failures (devices can ping by IP but not by name), VLAN misconfiguration (devices in wrong VLAN), MTU mismatch (large packets dropped), routing loops (packets circulate until TTL expires)",
+          "Capacity planning: tracking utilization trends over time, projecting when links will reach capacity, planning upgrades before congestion causes performance degradation; the 70% utilization rule (plan upgrades when sustained utilization exceeds 70%)"
+        ],
+        "demonstration": "Set up network monitoring: (1) Install SNMP on a router/switch (or use a simulated device) and configure community strings. (2) Use snmpwalk to browse the device's MIB and retrieve interface status, uptime, and packet counters. (3) Set up Prometheus with the SNMP exporter to collect metrics automatically every 30 seconds. (4) Create a Grafana dashboard showing: device availability (up/down), interface bandwidth utilization over time, error rate graph, and latency measurement. (5) Configure alerting: alert when interface utilization exceeds 80% for 5 minutes, alert when packet loss exceeds 1%, page when a critical device is unreachable for 2 minutes. (6) Troubleshooting exercise: diagnose a connectivity problem using a systematic approach (check physical layer, check data link, check network layer, check transport layer, check application layer).",
+        "setup_requirements": [
+          "SNMP-enabled network device or net-snmp simulator",
+          "Prometheus and Grafana (Docker: docker-compose with prometheus and grafana images)",
+          "snmpwalk and snmpget command-line tools",
+          "Wireshark for capturing SNMP packets"
+        ],
+        "review": [
+          {
+            "key": "Alert on Symptoms",
+            "value": "Alert when users are affected: error rates up, latency increased, service unavailable. Avoid alerting on causes (CPU > 80%) because high CPU might be normal during peak hours and low CPU does not mean the service is healthy. Symptoms are what matter to users."
+          },
+          {
+            "key": "The Five Whys",
+            "value": "When troubleshooting, ask 'why' repeatedly to find the root cause. Network down -> why? Router interface down -> why? CRC errors on the link -> why? Damaged cable -> why? Cable run through a door hinge. Fix the root cause (reroute the cable), not the symptom."
+          },
+          {
+            "key": "SNMP Security",
+            "value": "SNMP v1 and v2c use community strings (essentially passwords) transmitted in plaintext. Anyone capturing traffic can read the community string and query/modify network devices. Always use SNMP v3 with authentication and encryption in production."
+          },
+          {
+            "key": "Capacity Planning",
+            "value": "Track bandwidth utilization trends over months. If a link is at 60% utilization and growing 5% per month, you have 2 months before it hits 70% (time to plan an upgrade) and 8 months before saturation. Proactive capacity planning prevents performance crises."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Course Review and Integration",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Trace a complete network communication from application layer to physical layer and back",
+        "Synthesize knowledge from all layers to diagnose complex network problems",
+        "Evaluate network design decisions considering performance, security, reliability, and cost",
+        "Prepare for professional networking roles with awareness of current trends and emerging technologies"
+      ],
+      "readings": [
+        "Review all course materials, lecture notes, and lab exercises",
+        "Kurose & Ross, Ch. 1 (revisit with full-stack understanding)",
+        "Prepare for comprehensive final examination"
+      ],
+      "lecture_notes": {
+        "introduction": "This final session integrates everything we have covered across the semester by tracing a complete network communication from start to finish, showing how each layer contributes to the successful delivery of a single web page request. When you type 'https://www.example.com' into your browser and press Enter, a remarkable sequence of events occurs involving every layer of the network stack. The browser checks its DNS cache; if no entry is found, the operating system's DNS resolver queries a recursive DNS server, which may query root, TLD, and authoritative DNS servers to resolve the domain to an IP address. The browser then initiates a TCP connection with a three-way handshake (SYN, SYN-ACK, ACK), adding one round-trip time of latency. On top of the TCP connection, TLS negotiates encryption with another handshake (ClientHello, ServerHello, key exchange, certificate verification). Only then does the browser send the HTTP GET request. The request data flows down the stack: the HTTP message becomes a TCP segment (with port numbers), the TCP segment becomes an IP packet (with IP addresses), and the IP packet becomes one or more Ethernet frames (with MAC addresses) as it traverses each link on the path. At each router, the Ethernet frame is stripped, the IP destination is looked up in the routing table (longest prefix match), a new Ethernet frame is created for the next link, and the packet is forwarded. The response follows the reverse path back. Understanding this complete flow, from keypress to rendered page, is the hallmark of a network engineer.",
+        "key_concepts": [
+          "Full-stack trace: DNS resolution -> TCP handshake -> TLS handshake -> HTTP request -> IP routing -> Ethernet switching -> physical transmission -> reverse path for response; each step adds latency and introduces potential failure points",
+          "Cross-layer interactions: TCP congestion control responds to network-layer congestion; application-layer HTTP/2 multiplexing mitigates transport-layer head-of-line blocking; physical-layer errors trigger data-link retransmission",
+          "Network design trade-offs: performance (minimize latency, maximize throughput) vs security (encryption adds processing overhead, firewalls add hop count) vs reliability (redundancy costs money) vs cost (higher bandwidth links are more expensive)",
+          "Troubleshooting with layers: when something breaks, identify which layer is failing; can you ping the IP (network layer works)? Can you connect to the port (transport layer works)? Does the HTTP response return correctly (application layer works)? Narrow down systematically.",
+          "Modern networking trends: HTTP/3 and QUIC (UDP-based transport), 5G and edge computing, zero-trust networking (verify every connection, not just the perimeter), network automation and intent-based networking, AI-driven network management",
+          "Professional certifications: CCNA (Cisco networking fundamentals), CompTIA Network+ (vendor-neutral networking), AWS Solutions Architect (cloud networking), JNCIA (Juniper networking); certifications validate practical knowledge",
+          "Career paths: network engineer (design and maintain network infrastructure), cloud architect (design cloud networking and security), site reliability engineer (maintain service availability), security engineer (protect network infrastructure and data)",
+          "Continuing education: networking evolves continuously; new protocols (QUIC, WireGuard), new paradigms (zero trust, service mesh), and new technologies (Wi-Fi 7, 5G-Advanced) require ongoing learning"
+        ],
+        "demonstration": "Complete end-to-end trace: (1) Open Wireshark and navigate to an HTTPS website. (2) Identify every protocol in the capture: DNS query/response, TCP three-way handshake, TLS 1.3 handshake, HTTP/2 request/response. (3) For each protocol, identify the layer, the addresses/identifiers used, and the purpose. (4) Calculate the total time from DNS query to rendered page, breaking it down by phase: DNS resolution time, TCP handshake time, TLS handshake time, HTTP request-response time. (5) Troubleshooting challenge: given a network topology diagram with a reported connectivity problem, systematically diagnose the issue by testing at each layer using ping (network), telnet (transport), and curl (application).",
+        "setup_requirements": [
+          "Wireshark for complete protocol analysis",
+          "Network topology diagram for troubleshooting exercise",
+          "Review materials from all previous sessions",
+          "Practice problems covering all layers"
+        ],
+        "review": [
+          {
+            "key": "Layers Work Together",
+            "value": "No single layer provides the complete communication service. Application protocols define what to communicate, transport protocols define how to deliver it reliably, network protocols define how to route it across networks, and link/physical protocols define how to transmit it across individual links. Each layer depends on the layers below."
+          },
+          {
+            "key": "Latency Budget",
+            "value": "A web page load involves: DNS (0-100ms, cached or not), TCP handshake (1 RTT, ~20-100ms), TLS handshake (1 RTT for TLS 1.3), HTTP request-response (1+ RTT plus server processing). Total: 3-4 RTTs minimum. Reducing RTT (via CDN) or eliminating handshakes (via keep-alive, 0-RTT) are the most impactful optimizations."
+          },
+          {
+            "key": "Security at Every Layer",
+            "value": "Physical: locked server rooms, cable management. Data link: 802.1X port authentication, MAC filtering. Network: firewalls, ACLs. Transport: TLS encryption. Application: authentication, input validation. Security must be applied at every layer because attackers target the weakest one."
+          },
+          {
+            "key": "Networking Fundamentals Are Durable",
+            "value": "Specific technologies change (new WiFi standards, new cloud services, new protocols), but fundamentals endure: layered architecture, addressing and routing, reliability mechanisms, security principles, and troubleshooting methodology. Master the fundamentals and you can learn any new technology quickly."
           }
         ]
       }
@@ -218,71 +860,91 @@
     "quizzes": [
       {
         "quiz": 1,
-        "week": 2,
-        "topic": "Application and Transport Layers",
-        "duration": "20 minutes",
+        "week": 3,
+        "topic": "Network Models, Physical Layer, and Data Link Layer",
+        "duration": "25 minutes",
         "questions": [
           {
-            "question": "Explain the TCP three-way handshake step by step. Why is a three-way handshake necessary instead of a two-way handshake?",
-            "type": "short_answer",
+            "question": "A channel has a bandwidth of 6 MHz and a signal-to-noise ratio of 20 dB. Calculate the maximum theoretical data rate using Shannon's theorem. Show your work including the conversion from dB to linear scale.",
+            "type": "calculation",
             "points": 10,
-            "answer": "Step 1: Client sends SYN with initial sequence number X. Step 2: Server responds with SYN-ACK, acknowledging X+1 and sending its own initial sequence number Y. Step 3: Client sends ACK acknowledging Y+1. A three-way handshake is necessary because both sides need to exchange and acknowledge initial sequence numbers. A two-way handshake would only confirm that the client can reach the server, but not that the server can reach the client, leaving the server unable to verify the client received its sequence number.",
+            "answer": "Step 1: Convert SNR from dB to linear: SNR(linear) = 10^(SNR_dB/10) = 10^(20/10) = 10^2 = 100\n\nStep 2: Apply Shannon's theorem: C = B * log2(1 + S/N) = 6,000,000 * log2(1 + 100) = 6,000,000 * log2(101)\n\nStep 3: Calculate log2(101) = ln(101)/ln(2) = 4.615/0.693 = 6.66 bits\n\nStep 4: C = 6,000,000 * 6.66 = 39.96 Mbps\n\nThe maximum theoretical data rate is approximately 39.96 Mbps.",
             "rubric": [
               {
-                "key": "Correctly describes all three steps with sequence numbers",
-                "value": 5
-              },
-              {
-                "key": "Explains why three steps are needed over two",
+                "key": "Correct dB to linear conversion: 10^(20/10) = 100",
                 "value": 3
               },
               {
-                "key": "Mentions bidirectional sequence number agreement",
-                "value": 2
+                "key": "Correct application of Shannon's formula with all values",
+                "value": 4
+              },
+              {
+                "key": "Correct final answer approximately 39.96 Mbps with units",
+                "value": 3
               }
             ]
           },
           {
-            "question": "A DNS resolver receives a query for www.example.com. Describe the iterative resolution process, listing each server queried in order.",
-            "type": "short_answer",
+            "question": "Explain the CRC error detection process. Given data bits 1101011 and generator polynomial 10011, perform the CRC calculation and show the transmitted data with the CRC appended.",
+            "type": "calculation",
             "points": 10,
-            "answer": "1. Client queries its local DNS resolver. 2. Resolver queries a root DNS server, which responds with the address of the .com TLD server. 3. Resolver queries the .com TLD server, which responds with the address of the example.com authoritative server. 4. Resolver queries the example.com authoritative server, which responds with the IP address for www.example.com. 5. Resolver returns the IP address to the client and caches the result.",
+            "answer": "CRC process: (1) Append (generator length - 1) = 4 zeros to the data: 11010110000. (2) Divide by generator 10011 using XOR division.\n\n11010110000 / 10011:\n11010 XOR 10011 = 01001 -> bring down 1 -> 10011\n10011 XOR 10011 = 00000 -> bring down 1 -> 00001\n00001 -> bring down 0 -> 00010\n00010 -> bring down 0 -> 00100\n00100 -> bring down 0 -> 01000\n\nWait, let me redo carefully:\n11010110000\n10011\n------\n01001110000\n 10011\n ------\n 00001010000\n    10011\n    ------\n    00001100\n      10011\n      -----\n      01111\n       1111 (remainder = 4 bits)\n\nRemainder: 1110\nTransmitted data: 1101011 + 1110 = 11010111110\n\nThe receiver divides 11010111110 by 10011. If the remainder is 0000, no error is detected.",
             "rubric": [
               {
-                "key": "Correct order: root, TLD, authoritative",
+                "key": "Correctly appends 4 zeros to the data before division",
+                "value": 2
+              },
+              {
+                "key": "Correct XOR polynomial long division steps",
                 "value": 5
               },
               {
-                "key": "Correctly describes iterative (not recursive) resolution",
+                "key": "Correct CRC remainder and transmitted data",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Compare CSMA/CD (used in Ethernet) and CSMA/CA (used in WiFi). Why can wireless networks not use collision detection? How does CSMA/CA handle the problem?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "CSMA/CD (wired Ethernet): a device listens to the medium (carrier sense), transmits if idle, and monitors the medium during transmission. If a collision is detected (the received signal differs from the transmitted signal), the device stops transmitting, sends a jam signal, and waits a random exponential backoff before retrying.\n\nWireless networks cannot use collision detection because: (1) A wireless device's own transmission signal is millions of times stronger than any incoming signal, making it impossible to detect collisions while transmitting (the transmitted signal drowns out everything else). (2) The hidden terminal problem means collisions may occur at the receiver but not at the sender.\n\nCSMA/CA (WiFi): listen before transmitting, wait for DIFS + random backoff, transmit the complete frame, wait for an ACK from the receiver. If no ACK is received (indicating a collision or loss), retransmit after a longer random backoff. Optional RTS/CTS handshake reserves the channel before data transmission, solving the hidden terminal problem.",
+            "rubric": [
+              {
+                "key": "Correctly explains CSMA/CD with collision detection and jam signal",
                 "value": 3
               },
               {
-                "key": "Mentions caching of the result",
-                "value": 2
+                "key": "Explains why collision detection is impossible in wireless (signal strength disparity)",
+                "value": 4
+              },
+              {
+                "key": "Explains CSMA/CA with ACK-based collision recovery and optional RTS/CTS",
+                "value": 3
               }
             ]
           }
         ],
-        "total_points": 20
+        "total_points": 30
       },
       {
         "quiz": 2,
-        "week": 4,
-        "topic": "Network Layer and Routing",
+        "week": 5,
+        "topic": "Ethernet, IP Addressing, and Routing",
         "duration": "25 minutes",
         "questions": [
           {
-            "question": "Given the network 192.168.10.0/24, subnet it into 8 equal subnets. For the third subnet, provide the network address, broadcast address, first usable host, last usable host, and subnet mask.",
+            "question": "Given the network 172.16.0.0/16, design a VLSM addressing scheme for three departments: Engineering (200 hosts), Marketing (50 hosts), and Executive (10 hosts). For each subnet, provide the network address, subnet mask, broadcast address, first usable host, and last usable host.",
             "type": "calculation",
             "points": 15,
-            "answer": "8 subnets require 3 additional bits (2^3=8), so /24 becomes /27. Each subnet has 32 addresses (2^5), 30 usable hosts.\n\nSubnet 3 (index 2, counting from 0): 192.168.10.64/27\nNetwork address: 192.168.10.64\nBroadcast address: 192.168.10.95\nFirst usable host: 192.168.10.65\nLast usable host: 192.168.10.94\nSubnet mask: 255.255.255.224",
+            "answer": "Allocate subnets largest first to minimize address waste:\n\nEngineering (200 hosts): needs at least 201 addresses (200 + network + broadcast). Next power of 2: 256 = 2^8, so /24.\n  Network: 172.16.0.0/24\n  Subnet mask: 255.255.255.0\n  Broadcast: 172.16.0.255\n  First usable: 172.16.0.1\n  Last usable: 172.16.0.254\n  Usable hosts: 254\n\nMarketing (50 hosts): needs 52 addresses. Next power of 2: 64 = 2^6, so /26.\n  Network: 172.16.1.0/26\n  Subnet mask: 255.255.255.192\n  Broadcast: 172.16.1.63\n  First usable: 172.16.1.1\n  Last usable: 172.16.1.62\n  Usable hosts: 62\n\nExecutive (10 hosts): needs 12 addresses. Next power of 2: 16 = 2^4, so /28.\n  Network: 172.16.1.64/28\n  Subnet mask: 255.255.255.240\n  Broadcast: 172.16.1.79\n  First usable: 172.16.1.65\n  Last usable: 172.16.1.78\n  Usable hosts: 14",
             "rubric": [
               {
-                "key": "Correct /27 prefix length for 8 subnets",
+                "key": "Correct prefix lengths for each department based on host requirements",
                 "value": 4
               },
               {
-                "key": "Correct network and broadcast addresses",
+                "key": "Correct network and broadcast addresses for all three subnets",
                 "value": 5
               },
               {
@@ -290,103 +952,485 @@
                 "value": 4
               },
               {
-                "key": "Correct subnet mask",
+                "key": "Subnets do not overlap and are allocated largest-first for VLSM",
                 "value": 2
               }
             ]
           },
           {
-            "question": "Explain the count-to-infinity problem in distance-vector routing and describe one technique to mitigate it.",
+            "question": "Explain the count-to-infinity problem in distance-vector routing using a concrete 3-router example. Describe how split horizon with poison reverse mitigates the problem.",
             "type": "short_answer",
             "points": 10,
-            "answer": "The count-to-infinity problem occurs when a link failure causes two routers to keep incrementing their distance estimates by routing through each other. For example, if the link from A to C fails, A updates its distance to C via B, but B's route to C goes through A. They keep incrementing each other's estimates until reaching infinity. Split horizon mitigates this by preventing a router from advertising a route back to the neighbor it learned it from, breaking the routing loop.",
+            "answer": "Example: Routers A, B, C in a line. A--B cost 1, B--C cost 1. All routers know: distance to C from A = 2 (via B), from B = 1 (direct).\n\nThe B-C link fails. B sets distance to C = infinity. Before B's update reaches A, A sends its distance vector to B: 'I can reach C with cost 2.' B thinks: I can reach C through A with cost 1 (A-B link) + 2 (A's distance to C) = 3. B updates its distance to C to 3. A then receives B's update and computes: cost to C = 1 (A-B) + 3 (B's distance) = 4. This continues, incrementing by 2 each iteration, until reaching infinity (16 in RIP).\n\nSplit horizon with poison reverse: when B learns its route to C via the direct link, it advertises distance to C = infinity to A (poison reverse: tell your neighbor that the route it gave you costs infinity). When the B-C link fails, A already has no alternative route through B, so it does not offer a false route back. The loop is broken immediately.",
             "rubric": [
               {
-                "key": "Correctly explains the loop causing distance increment",
+                "key": "Concrete 3-router example showing the looping behavior step by step",
                 "value": 5
               },
               {
-                "key": "Names a valid mitigation technique",
+                "key": "Explains split horizon: do not advertise a route back through the neighbor you learned it from",
                 "value": 3
               },
               {
-                "key": "Explains how the mitigation works",
+                "key": "Explains poison reverse: advertise infinity for routes learned from a neighbor",
                 "value": 2
+              }
+            ]
+          },
+          {
+            "question": "How does a switch learn MAC addresses? Describe the process when a switch receives a frame with an unknown destination MAC address and what happens differently on subsequent frames to the same destination.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "When a switch receives a frame:\n\n1. Learning: The switch records the source MAC address and the port it arrived on in its MAC address table, with an aging timer (typically 300 seconds). Every frame contributes to the switch's knowledge of which devices are on which ports.\n\n2. Unknown destination: If the destination MAC is not in the table, the switch floods the frame — it sends a copy out every port except the one the frame arrived on. This ensures the frame reaches the destination regardless of where it is.\n\n3. Known destination: When the destination device responds, the switch learns its MAC-to-port mapping from the response frame's source MAC. For subsequent frames to the same destination, the switch forwards the frame only to the specific port where the destination is connected (unicast forwarding), not to all ports.\n\nResult: After the first exchange, the switch knows both MAC addresses and their ports, and all subsequent communication between these two devices is forwarded only on the relevant ports, not flooded.",
+            "rubric": [
+              {
+                "key": "Explains source MAC learning with port association and aging timer",
+                "value": 4
+              },
+              {
+                "key": "Explains flooding for unknown destinations",
+                "value": 3
+              },
+              {
+                "key": "Explains unicast forwarding after learning and the efficiency improvement",
+                "value": 3
               }
             ]
           }
         ],
-        "total_points": 25
+        "total_points": 35
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "Transport Layer and Application Layer",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Explain TCP's three-way handshake step by step with sequence numbers. Then explain why a two-way handshake would be insufficient for reliable connection establishment.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Three-way handshake:\n1. SYN: Client sends a segment with SYN flag set and initial sequence number X (e.g., ISN=1000). This means 'I want to connect, my starting sequence number is 1000.'\n\n2. SYN-ACK: Server responds with SYN and ACK flags set, acknowledging X+1 (ACK=1001, meaning 'I received your SYN') and sending its own initial sequence number Y (e.g., ISN=5000).\n\n3. ACK: Client sends ACK for Y+1 (ACK=5001, meaning 'I received your SYN'). Connection is established; data transfer can begin.\n\nA two-way handshake would be insufficient because:\n- After step 1 and 2, the server has confirmed it can reach the client, but the client has not confirmed it received the server's sequence number.\n- Old duplicate SYN segments from previous connections could cause the server to establish a connection that the client never requested (the client would not send the third ACK for a stale SYN). The three-way handshake prevents half-open connections from stale segments.",
+            "rubric": [
+              {
+                "key": "Correctly describes all three steps with SYN, SYN-ACK, ACK and sequence numbers",
+                "value": 5
+              },
+              {
+                "key": "Explains why two-way is insufficient: bidirectional sequence number agreement needed",
+                "value": 3
+              },
+              {
+                "key": "Mentions stale SYN prevention or half-open connection problem",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A DNS resolver receives a query for mail.cs.stanford.edu. Describe the iterative resolution process, listing each server queried and the response received at each step.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "1. Client queries local DNS resolver for mail.cs.stanford.edu.\n\n2. Resolver queries a root DNS server. Root server responds: 'I don't know, but here are the .edu TLD servers' (returns NS records for .edu TLD).\n\n3. Resolver queries the .edu TLD server. TLD server responds: 'I don't know, but here are the authoritative servers for stanford.edu' (returns NS records like ns1.stanford.edu).\n\n4. Resolver queries the stanford.edu authoritative server for mail.cs.stanford.edu. The authoritative server may delegate to cs.stanford.edu if a subdomain zone exists, or it may directly return the A record with the IP address.\n\n5. Resolver caches the result with the TTL from the response and returns the IP address to the client.\n\nAt each step, the resolver follows referrals from one server to the next, performing the queries itself (iterative resolution). The client made one query; the resolver made 3-4 queries on its behalf.",
+            "rubric": [
+              {
+                "key": "Correct order: root, TLD (.edu), authoritative (stanford.edu)",
+                "value": 4
+              },
+              {
+                "key": "Each step describes the query and the referral response",
+                "value": 3
+              },
+              {
+                "key": "Mentions caching with TTL and the distinction between iterative and recursive",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Calculate the bandwidth-delay product for a 1 Gbps link with an RTT of 40 ms. Explain what this means for TCP window size and what happens if the TCP window is smaller than the BDP.",
+            "type": "calculation",
+            "points": 10,
+            "answer": "Bandwidth-Delay Product = Bandwidth x RTT\nBDP = 1,000,000,000 bits/sec x 0.040 sec = 40,000,000 bits = 5,000,000 bytes = 5 MB\n\nThis means 5 MB of data can be 'in flight' (sent but not yet acknowledged) at any time. The TCP window size must be at least 5 MB to fully utilize the 1 Gbps link.\n\nIf the TCP window is smaller than the BDP (e.g., 64 KB default):\n- The sender transmits 64 KB, then stops and waits for an ACK (it has filled its window).\n- The ACK takes 20 ms (half RTT) to arrive.\n- The sender can only send 64 KB per RTT = 64 KB / 0.040 s = 1.6 MB/s = 12.8 Mbps.\n- The link is utilized at only 12.8 / 1000 = 1.28% of its capacity.\n\nSolution: TCP window scaling option (RFC 7323) allows window sizes up to 1 GB, enabling full utilization of high-bandwidth, high-latency links.",
+            "rubric": [
+              {
+                "key": "Correct BDP calculation with units: 5 MB",
+                "value": 3
+              },
+              {
+                "key": "Explains that TCP window must be >= BDP for full utilization",
+                "value": 3
+              },
+              {
+                "key": "Shows the underutilization calculation with a small window and mentions TCP window scaling",
+                "value": 4
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "Network Security, Wireless, and Socket Programming",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Trace the TLS 1.3 handshake step by step. For each message, state who sends it, what it contains, and what it accomplishes. Why does TLS 1.3 require fewer round trips than TLS 1.2?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "TLS 1.3 Handshake (1-RTT):\n\n1. ClientHello (Client -> Server): Contains supported cipher suites, supported key exchange groups, and a key share (the client's Diffie-Hellman public value). The client guesses which key exchange the server will choose and sends its key share preemptively.\n\n2. ServerHello + EncryptedExtensions + Certificate + CertificateVerify + Finished (Server -> Client): Server selects cipher suite, sends its key share (DH public value), its X.509 certificate, a signature proving it owns the certificate's private key, and a Finished message. Everything after ServerHello is encrypted using the derived handshake keys.\n\n3. Finished (Client -> Server): Client verifies the certificate chain to a trusted CA, verifies the server's signature, derives the session keys, and sends Finished. Application data can now flow encrypted.\n\nTLS 1.3 is 1-RTT vs TLS 1.2's 2-RTT because the client sends its key share in ClientHello (preemptively), so the server can derive encryption keys from the first message. TLS 1.2 required a separate round trip for key exchange. TLS 1.3 also supports 0-RTT for repeat connections (client sends early data with the first message using a pre-shared key from a previous session).",
+            "rubric": [
+              {
+                "key": "Correctly describes all three steps with sender and content",
+                "value": 4
+              },
+              {
+                "key": "Explains the preemptive key share reducing round trips",
+                "value": 3
+              },
+              {
+                "key": "Mentions certificate verification and forward secrecy",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Write Python pseudocode for a TCP server that accepts connections from multiple clients concurrently using threading. The server should echo received messages back to the client and handle client disconnection gracefully.",
+            "type": "code",
+            "points": 10,
+            "answer": "import socket\nimport threading\n\ndef handle_client(client_socket, address):\n    print(f'Connected: {address}')\n    try:\n        while True:\n            data = client_socket.recv(4096)\n            if not data:  # Client disconnected cleanly\n                break\n            client_socket.sendall(data)  # Echo back\n    except ConnectionResetError:\n        print(f'Client {address} disconnected unexpectedly')\n    finally:\n        client_socket.close()\n        print(f'Closed: {address}')\n\ndef main():\n    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)\n    server.bind(('0.0.0.0', 8000))\n    server.listen(5)\n    print('Server listening on port 8000')\n    try:\n        while True:\n            client_socket, address = server.accept()\n            thread = threading.Thread(target=handle_client, args=(client_socket, address))\n            thread.daemon = True\n            thread.start()\n    finally:\n        server.close()\n\nmain()",
+            "rubric": [
+              {
+                "key": "Correct socket lifecycle: socket, bind, listen, accept loop",
+                "value": 3
+              },
+              {
+                "key": "Threading: spawns a thread per client connection",
+                "value": 3
+              },
+              {
+                "key": "Handles empty recv (clean disconnect) and ConnectionResetError",
+                "value": 2
+              },
+              {
+                "key": "Uses sendall for complete data transmission and closes sockets in finally",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A company has deployed IoT temperature sensors using MQTT with QoS 0. Occasionally, sensor readings are missing from the dashboard. Explain why this happens and recommend a solution with trade-offs.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "QoS 0 (at most once) provides no delivery guarantee. The publisher sends the message to the broker without waiting for an acknowledgment. If the message is lost due to network issues (WiFi interference, temporary disconnection, broker overload), it is simply gone. There is no retransmission.\n\nSolution: Upgrade to QoS 1 (at least once). The publisher sends the message and waits for a PUBACK from the broker. If no PUBACK is received within a timeout, the publisher retransmits. This guarantees the message is delivered at least once.\n\nTrade-offs:\n- QoS 1 uses more bandwidth (PUBACK for every message) and more battery (radio stays on longer waiting for ACK)\n- QoS 1 may deliver duplicate messages (if the PUBACK is lost, the publisher retransmits and the broker delivers twice); the subscriber must handle duplicates (idempotent processing or deduplication)\n- QoS 2 (exactly once) eliminates duplicates but requires a 4-message handshake, doubling the overhead; overkill for temperature readings where a duplicate is harmless\n\nRecommendation: QoS 1 with idempotent subscriber processing (overwrite the latest reading, not append). Additionally, enable MQTT retained messages so the dashboard shows the last known reading even after subscriber restart.",
+            "rubric": [
+              {
+                "key": "Correctly identifies QoS 0 as the cause: no delivery guarantee, no retransmission",
+                "value": 3
+              },
+              {
+                "key": "Recommends QoS 1 with clear explanation of the acknowledgment mechanism",
+                "value": 4
+              },
+              {
+                "key": "Discusses trade-offs: bandwidth, battery, potential duplicates, and mitigation",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "Cloud Networking, IoT, and Network Management",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Design a VPC architecture for a web application with a public-facing web tier, a private application tier, and a private database tier. Specify subnets, security group rules, and routing for each tier. Explain why the database should not have a public IP address.",
+            "type": "short_answer",
+            "points": 12,
+            "answer": "VPC: 10.0.0.0/16\n\nPublic subnet (web tier): 10.0.1.0/24\n  - Route table: 0.0.0.0/0 -> Internet Gateway\n  - Security group: Allow inbound HTTP (80) and HTTPS (443) from 0.0.0.0/0, SSH (22) from admin IP only\n  - Hosts: Application Load Balancer, bastion host\n\nPrivate subnet (app tier): 10.0.2.0/24\n  - Route table: 0.0.0.0/0 -> NAT Gateway (for outbound updates only)\n  - Security group: Allow inbound from web-tier security group on port 3000 (app port), SSH from bastion security group\n  - Hosts: Application servers\n\nPrivate subnet (database tier): 10.0.3.0/24\n  - Route table: no Internet route (fully isolated)\n  - Security group: Allow inbound PostgreSQL (5432) only from app-tier security group\n  - Hosts: RDS database instances\n\nThe database should not have a public IP because:\n1. Attack surface: A public IP exposes the database to brute-force attacks, SQL injection scanning, and exploitation of any database server vulnerabilities.\n2. Defense in depth: The database should only be reachable through the application tier, which validates and sanitizes all input.\n3. Compliance: PCI DSS, HIPAA, and SOC 2 require that sensitive data stores are not directly accessible from the Internet.",
+            "rubric": [
+              {
+                "key": "Three-tier architecture with correct subnet types (public, private, private)",
+                "value": 3
+              },
+              {
+                "key": "Security group rules using security group references (not IP addresses) between tiers",
+                "value": 4
+              },
+              {
+                "key": "Correct routing (IGW for public, NAT for app, no Internet for database)",
+                "value": 3
+              },
+              {
+                "key": "Clear explanation of why database needs no public IP (attack surface, defense in depth)",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Your monitoring system shows that a core router's CPU utilization is at 95%. Should you immediately alert the on-call engineer? Explain your reasoning and describe what additional data you would gather before escalating.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "No, high CPU alone should not trigger an immediate page. CPU utilization is a cause metric, not a symptom metric. A router at 95% CPU might be functioning perfectly if it is processing traffic within normal parameters. Alerting on causes creates alert fatigue.\n\nBefore escalating, I would check:\n1. User-facing symptoms: Are there packet drops, increased latency, or routing convergence delays? If users are not affected, the high CPU is not an incident.\n2. Historical baseline: Is 95% CPU normal for this router during peak hours? Compare against the same time on previous days/weeks.\n3. Traffic volume: Is there a legitimate traffic spike (a popular event, a software update rollout) that explains the increased CPU?\n4. Process breakdown: Which processes are consuming CPU? If it is routing protocol processing (OSPF SPF calculation) after a topology change, it is temporary. If it is control-plane policing from a DDoS, that is different.\n5. Error counters: Are there input/output queue drops? Increasing queue drops with high CPU indicates the router cannot keep up with traffic.\n\nI would alert if: user-facing metrics are degraded (packet loss >0.1%, latency >2x baseline), or if CPU has been above 95% for >15 minutes with increasing queue drops.",
+            "rubric": [
+              {
+                "key": "Correctly identifies that CPU is a cause metric, not a symptom — should not page alone",
+                "value": 3
+              },
+              {
+                "key": "Lists at least 3 specific additional data points to gather",
+                "value": 3
+              },
+              {
+                "key": "Defines clear criteria for when to escalate (symptom-based thresholds)",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between SDN's control plane and data plane. What problem does separating them solve that traditional networking cannot easily address?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Data plane: the hardware or software that actually forwards packets based on rules in a forwarding table. It operates at wire speed, examining packet headers and taking actions (forward to port, drop, modify header). This is what switches and routers do for every packet.\n\nControl plane: the logic that decides what rules go into the forwarding table. It runs routing algorithms, processes routing protocol messages, and populates forwarding tables. In traditional networking, the control plane runs on each individual device.\n\nIn traditional networking, each device runs its own control plane independently. This creates problems:\n1. Configuration consistency: Ensuring 1000 switches have consistent security policies requires configuring each one individually (error-prone, slow).\n2. Network-wide optimization: No device has a global view. Each router optimizes locally, which may not produce globally optimal paths.\n3. Rapid response: When a link fails, convergence depends on distributed protocol interaction (potentially slow).\n\nSDN separates the control plane into a centralized controller that has a global view of the network. The controller computes forwarding rules and programs all data plane devices via OpenFlow or similar protocols. This enables:\n- Centralized policy management (one place to define security rules for the entire network)\n- Global traffic optimization (the controller sees all links and can balance load optimally)\n- Programmability (applications request network services via the controller's API, enabling automation)",
+            "rubric": [
+              {
+                "key": "Correctly defines data plane (forwarding) and control plane (decision-making)",
+                "value": 3
+              },
+              {
+                "key": "Explains the problem with distributed control in traditional networking",
+                "value": 4
+              },
+              {
+                "key": "Explains benefits of centralized control: consistency, global optimization, programmability",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 30
       }
     ],
     "major_assignments": [
       {
         "assignment": 1,
-        "title": "Reliable File Transfer Protocol",
-        "week_assigned": 2,
-        "week_due": 5,
-        "points": 100,
-        "description": "Design and implement a reliable file transfer protocol on top of UDP. Your protocol must handle packet loss, reordering, and corruption by implementing acknowledgments, retransmission, and checksums. Test it over a simulated lossy network.",
+        "title": "Reliable File Transfer Protocol over UDP",
+        "week_assigned": 3,
+        "week_due": 7,
+        "points": 150,
+        "description": "Design and implement a reliable file transfer protocol on top of UDP. Your protocol must handle packet loss, reordering, and corruption by implementing sequence numbers, acknowledgments, retransmission timers, and checksums. Implement both stop-and-wait and sliding window (Go-Back-N or Selective Repeat) variants. Test over a simulated lossy network with configurable loss rate. Analyze and compare protocol performance under varying conditions.",
         "objectives": [
-          "Implement reliable delivery mechanisms on top of an unreliable transport",
-          "Design a protocol with sequence numbers, acknowledgments, and retransmission timers",
-          "Handle packet loss, corruption, and reordering gracefully",
-          "Analyze protocol performance under varying loss rates"
+          "Implement reliable delivery mechanisms on top of an unreliable transport protocol",
+          "Design a protocol with well-defined message formats, state machines, and error handling",
+          "Compare stop-and-wait and sliding window performance empirically",
+          "Analyze protocol behavior under varying network conditions (loss rate, RTT, bandwidth)"
         ],
         "requirements": {},
         "deliverables": [
-          "Source code for sender and receiver implementing the reliable protocol",
-          "Protocol specification document describing message formats and state machines",
-          "Performance analysis: throughput vs loss rate graph for 0%, 5%, 10%, 20% loss",
-          "Test results showing successful file transfer under all loss conditions"
+          "Source code for sender and receiver implementing both stop-and-wait and sliding window protocols",
+          "Protocol specification document describing message formats, state machines, and error handling procedures",
+          "Network simulator that introduces configurable packet loss, delay, and reordering",
+          "Performance analysis report: throughput vs loss rate graph for both protocols at 0%, 1%, 5%, 10%, 20% loss rates",
+          "Test results demonstrating successful file transfer (files match byte-for-byte) under all test conditions"
         ],
         "grading_rubric": {
           "protocol_design": {
-            "points": 30,
+            "points": 35,
             "criteria": [
-              "Protocol specification clearly defines message formats with headers",
-              "State machines for sender and receiver are well-defined",
-              "Sequence numbers and acknowledgments handle all edge cases",
-              "Checksum detects corruption reliably"
+              "Protocol specification clearly defines message formats with header fields (sequence number, ack number, checksum, flags, data length)",
+              "State machines for sender and receiver are well-defined with all transitions and edge cases",
+              "Sequence numbers and acknowledgments handle all scenarios: loss, duplication, reordering",
+              "Checksum calculation and verification detect corruption reliably"
             ]
           },
           "implementation": {
-            "points": 35,
+            "points": 50,
             "criteria": [
-              "Files transfer correctly with no byte errors under all loss rates",
-              "Retransmission timer handles packet loss efficiently",
-              "Protocol handles duplicate packets and out-of-order delivery",
-              "Clean shutdown with no hanging connections or lost data"
+              "Both stop-and-wait and sliding window variants are correctly implemented",
+              "Files transfer correctly with no byte errors under all loss rates (verified with checksums)",
+              "Retransmission timer adapts to network conditions or is tuned based on measured RTT",
+              "Protocol handles edge cases: duplicate packets, out-of-order delivery, connection reset, large files"
             ]
           },
-          "performance": {
-            "points": 20,
+          "performance_analysis": {
+            "points": 35,
             "criteria": [
-              "Throughput analysis under varying loss rates is provided",
-              "Protocol uses go-back-N or selective repeat for efficiency",
-              "Timer values are tuned based on measured RTT",
-              "Comparison with stop-and-wait shows improvement"
+              "Throughput measured at 5 different loss rates for both protocol variants",
+              "Clear graphs comparing stop-and-wait vs sliding window performance",
+              "Analysis explains why sliding window outperforms stop-and-wait and by how much",
+              "Window size tuning: experiments with different window sizes showing the effect on throughput"
             ]
           },
           "documentation": {
-            "points": 15,
+            "points": 30,
             "criteria": [
-              "Protocol specification is clear and complete",
-              "Performance analysis is presented with graphs",
-              "Code is well-documented",
-              "Test methodology is described"
+              "Protocol specification is clear enough for another developer to implement a compatible client/server",
+              "Performance analysis is presented with properly labeled graphs",
+              "Code is well-documented with clear function names and comments on non-obvious logic",
+              "README includes build instructions, usage examples, and test methodology"
             ]
           }
         },
         "rubric": [
           {
             "attributes": {
-              "points": 100,
+              "points": 150,
               "criteria": [
-                "Correct reliable file transfer over lossy UDP",
-                "Well-designed protocol with clear specification",
-                "Performance analysis demonstrating protocol efficiency",
-                "Thorough testing under multiple loss conditions"
+                "Correct reliable file transfer over lossy UDP with both stop-and-wait and sliding window",
+                "Well-designed protocol with clear specification suitable for independent implementation",
+                "Performance analysis demonstrating and explaining the advantage of sliding window",
+                "Thorough testing under multiple loss conditions with byte-accurate file verification"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Network Application: Multi-Client Chat System",
+        "week_assigned": 8,
+        "week_due": 11,
+        "points": 130,
+        "description": "Design and implement a multi-client chat system using TCP sockets. The system must support user registration, private messaging, group channels, and message history. Implement a custom application-layer protocol on top of TCP with proper framing, error handling, and a documented specification. The server must handle at least 20 concurrent clients efficiently.",
+        "objectives": [
+          "Design an application-layer protocol with defined message types, framing, and error responses",
+          "Build a concurrent TCP server that handles many simultaneous client connections",
+          "Implement proper network error handling: disconnections, timeouts, and malformed messages",
+          "Test the application under concurrent load to verify correctness and scalability"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Server application handling 20+ concurrent clients",
+          "Client application with command-line or simple GUI interface",
+          "Protocol specification document (message types, framing format, state diagram, error codes)",
+          "Load test results showing server behavior with 5, 10, and 20 concurrent clients",
+          "Wireshark capture analysis showing protocol messages in action"
+        ],
+        "grading_rubric": {
+          "protocol_design": {
+            "points": 30,
+            "criteria": [
+              "Protocol defines clear message types (LOGIN, MSG, PRIVMSG, JOIN, LEAVE, LIST, ERROR) with field specifications",
+              "Framing protocol (length prefix or delimiter) handles variable-length messages correctly",
+              "Error codes and responses are well-defined for all failure cases",
+              "Protocol specification is detailed enough for independent implementation"
+            ]
+          },
+          "server_implementation": {
+            "points": 40,
+            "criteria": [
+              "Server handles 20+ concurrent clients without blocking or crashing",
+              "Broadcast messages reach all clients in a channel, private messages reach only the target",
+              "Client disconnection is handled gracefully (removed from channels, other clients notified)",
+              "Server validates all input and responds with appropriate error codes for invalid requests"
+            ]
+          },
+          "client_implementation": {
+            "points": 30,
+            "criteria": [
+              "Client sends and receives messages concurrently (not blocking on input or output)",
+              "Client displays received messages with sender identification and timestamps",
+              "Client handles server disconnection gracefully with reconnection or clean exit",
+              "Commands are intuitive (/msg user, /join channel, /list, /quit)"
+            ]
+          },
+          "testing_and_documentation": {
+            "points": 30,
+            "criteria": [
+              "Load test with 5, 10, and 20 clients showing correct message delivery",
+              "Wireshark capture showing at least 3 different message types in the custom protocol",
+              "Documentation covers setup, usage, protocol specification, and known limitations",
+              "Edge cases tested: simultaneous messages, rapid connect/disconnect, long messages"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 130,
+              "criteria": [
+                "Working multi-client chat system with custom application-layer protocol",
+                "Server handles 20+ concurrent clients with proper error handling and graceful disconnection",
+                "Protocol specification is clear, complete, and demonstrated with Wireshark captures",
+                "Load testing verifies correctness and performance under concurrent usage"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Cloud Network Architecture Design and Security Audit",
+        "week_assigned": 12,
+        "week_due": 14,
+        "points": 120,
+        "description": "Design a production-ready cloud network architecture for a multi-tier web application serving 10,000 concurrent users. Deploy the architecture using Infrastructure as Code (Terraform or CloudFormation). Conduct a security audit of the deployed infrastructure, identifying and remediating vulnerabilities. Document the architecture, security findings, and remediation steps.",
+        "objectives": [
+          "Design a multi-tier VPC architecture with proper security zones and network segmentation",
+          "Deploy cloud infrastructure using Infrastructure as Code with version-controlled configuration",
+          "Conduct a network security audit identifying misconfigurations and vulnerabilities",
+          "Apply cloud networking best practices for scalability, security, and cost optimization"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Architecture diagram showing VPC, subnets, security groups, load balancers, NAT gateways, and routing",
+          "Infrastructure as Code files (Terraform or CloudFormation) defining all network resources",
+          "Security audit report identifying at least 5 potential vulnerabilities with severity ratings",
+          "Remediation documentation showing before/after configurations for each security finding",
+          "Cost estimate for the architecture at 10,000 concurrent users"
+        ],
+        "grading_rubric": {
+          "architecture_design": {
+            "points": 35,
+            "criteria": [
+              "Multi-AZ deployment for high availability with proper subnet placement across availability zones",
+              "Three-tier architecture: public (load balancer), private (application), private (database) with correct routing",
+              "Security groups reference each other (not IP addresses) for inter-tier communication",
+              "NAT Gateway for private subnet outbound access, no unnecessary public IP addresses"
+            ]
+          },
+          "infrastructure_as_code": {
+            "points": 30,
+            "criteria": [
+              "All network resources defined in IaC (VPC, subnets, route tables, security groups, NAT, IGW, ALB)",
+              "IaC is modular and parameterized (CIDR ranges, instance types, environment name as variables)",
+              "Resources have descriptive names and tags for cost tracking and operational clarity",
+              "IaC applies successfully and creates a functional network (terraform apply succeeds)"
+            ]
+          },
+          "security_audit": {
+            "points": 35,
+            "criteria": [
+              "At least 5 security findings identified with severity (critical, high, medium, low)",
+              "Each finding includes: description, risk explanation, affected resources, and remediation steps",
+              "Remediation is implemented and verified (before/after security group rules, network ACLs)",
+              "Audit covers: overly permissive security groups, public access to private resources, encryption in transit, logging"
+            ]
+          },
+          "documentation": {
+            "points": 20,
+            "criteria": [
+              "Architecture diagram is clear, accurate, and includes all network components",
+              "Design decisions are justified (why this subnet size, why this security group configuration)",
+              "Cost estimate is realistic and includes all billable network resources",
+              "Documentation enables another engineer to understand, deploy, and maintain the architecture"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 120,
+              "criteria": [
+                "Production-quality multi-tier VPC architecture with proper security zones",
+                "All infrastructure defined as code and successfully deployed",
+                "Security audit identifies real vulnerabilities with implemented remediations",
+                "Comprehensive documentation covering architecture, security, and cost"
               ]
             }
           }
@@ -396,31 +1440,31 @@
   },
   "grading_breakdown": {
     "weekly_quizzes": {
-      "percentage": 15,
-      "description": "Regular assessment of networking concepts and calculations"
+      "percentage": 20,
+      "description": "Five quizzes covering network models, switching/routing, transport/application, security/wireless, and cloud/management"
     },
     "lab_assignments": {
-      "percentage": 25,
-      "description": "Socket programming and network analysis labs"
+      "percentage": 15,
+      "description": "Weekly hands-on labs: packet capture analysis, subnetting exercises, socket programming, and network configuration"
     },
     "major_assignments": {
-      "percentage": 25,
-      "description": "Protocol design and implementation projects"
+      "percentage": 30,
+      "description": "Reliable file transfer protocol, multi-client chat system, and cloud network architecture"
     },
     "midterm_examination": {
       "percentage": 15,
-      "description": "Written exam covering layers 3-7"
+      "description": "Written exam covering layers 1-4: physical, data link, network, and transport protocols"
     },
-    "final_examination": {
+    "final_project": {
       "percentage": 20,
-      "description": "Comprehensive exam covering all networking topics"
+      "description": "Comprehensive final covering all networking topics with both theoretical and practical components"
     }
   },
   "course_policies": {
-    "attendance": "Attendance is expected for all lectures and mandatory for lab sessions. More than 3 unexcused absences may result in a reduced participation grade.",
-    "late_submissions": "Late assignments lose 10% per day. No submissions accepted more than 5 days late.",
-    "collaboration": "Discussion of networking concepts is encouraged. All code and protocol designs must be individual work.",
-    "academic_integrity": "All submitted work must be your own. Copying protocol implementations from the internet or other students constitutes plagiarism.",
-    "technology_requirements": "Students need a Linux environment, Wireshark, Python 3.12+ or C with socket libraries, and network access for packet capture experiments."
+    "attendance": "Attendance is expected for all lectures and mandatory for lab sessions where packet capture and network configuration exercises are conducted. More than 3 unexcused absences may result in a reduced participation grade.",
+    "late_submissions": "Late assignments lose 10% per day. No submissions accepted more than 5 days late. Protocol implementation assignments require working code; partial credit is given for correct protocol design with incomplete implementation.",
+    "collaboration": "Discussion of networking concepts is encouraged. All code, protocol designs, and analysis must be individual work unless pair programming is explicitly assigned. Discussing approaches is fine; sharing code or protocol specifications is not.",
+    "academic_integrity": "All submitted work must be your own. Copying protocol implementations from the Internet, other students, or AI tools without attribution constitutes plagiarism. AI tools may be used as learning aids but all submitted work must be understood and explainable by the student.",
+    "technology_requirements": "Students need a Linux environment (native, WSL, or VM), Wireshark, Python 3.12+ or C with socket libraries, and network access for packet capture experiments. A cloud provider free tier account (AWS, Azure, or GCP) is needed for the cloud networking assignment. Lab computers with all tools are available."
   }
 }

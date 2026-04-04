@@ -13,40 +13,53 @@
     {
       "week_number": 1,
       "session_number": 1,
-      "topic": "Mobile Development Landscape and Flutter Fundamentals",
+      "topic": "Mobile Platforms Overview and Development Landscape",
       "duration": "50 minutes",
       "learning_objectives": [
         "Compare native, hybrid, and cross-platform mobile development approaches",
-        "Set up a Flutter development environment",
-        "Build and run a first Flutter application"
+        "Analyze the mobile platform market including iOS, Android, and emerging platforms",
+        "Evaluate trade-offs between development speed, performance, and platform access"
       ],
       "readings": [
         "Flutter Documentation: Getting Started",
-        "Google Codelabs: Your First Flutter App"
+        "Google Codelabs: Your First Flutter App",
+        "Apple Human Interface Guidelines: Platform Overview"
       ],
       "lecture_notes": {
-        "introduction": "Mobile apps are the primary way billions of people interact with software. This course teaches cross-platform development with Flutter, enabling you to build native-quality iOS and Android apps from a single codebase.",
+        "introduction": "Mobile applications are the dominant interface through which billions of people interact with digital services daily. The global mobile app market generates over $500 billion annually, and the average smartphone user spends nearly four hours per day in apps. This course provides a comprehensive foundation in cross-platform mobile development, covering both the technical skills needed to build production-quality applications and the design thinking required to create compelling user experiences. We begin by surveying the mobile development landscape, understanding the fundamental architectural differences between native and cross-platform approaches, and establishing the criteria professionals use to select the right development strategy for a given project. By the end of this course, you will have the skills to design, build, test, and deploy a complete mobile application to both the Apple App Store and Google Play Store.",
         "key_concepts": [
-          "Native vs cross-platform: performance and development speed trade-offs",
-          "Flutter architecture: Dart language, widget tree, rendering engine",
-          "Widget fundamentals: StatelessWidget vs StatefulWidget",
-          "Material Design and Cupertino design systems",
-          "Hot reload for rapid iteration"
+          "Native development: platform-specific languages (Swift/Kotlin) with full API access and optimal performance",
+          "Cross-platform frameworks: React Native (JavaScript bridge), Flutter (compiled ARM), Kotlin Multiplatform (shared business logic)",
+          "Hybrid approaches: WebView-based apps (Ionic/Capacitor) trading performance for web technology reuse",
+          "Platform market share: Android dominates globally (72%), iOS leads in revenue per user in key markets",
+          "App distribution models: Apple App Store review process vs Google Play Store automated checks",
+          "Progressive Web Apps (PWAs): web technologies with native-like capabilities, limited platform integration",
+          "Development velocity vs runtime performance: the fundamental trade-off in framework selection",
+          "Total cost of ownership: initial development, maintenance, platform updates, and team expertise"
         ],
-        "demonstration": "Create a Flutter project, build a simple profile card with an image, name, and bio using Material widgets, and demonstrate hot reload for instant feedback",
+        "demonstration": "Survey three approaches by building a simple counter app in native Swift, React Native, and Flutter side by side, comparing the code structure, build process, hot reload experience, and resulting APK/IPA size for each",
         "setup_requirements": [
-          "Flutter SDK installed",
-          "Android Studio or VS Code with Flutter extension",
-          "Android emulator or iOS simulator configured"
+          "macOS with Xcode installed for iOS development",
+          "Android Studio with Android SDK and emulator",
+          "VS Code with Flutter and React Native extensions",
+          "Physical Android or iOS device recommended"
         ],
         "review": [
           {
-            "key": "Widget Tree",
-            "value": "In Flutter, everything is a widget: the app, layouts, text, buttons, even padding. Widgets compose into a tree that Flutter renders to native platform views using its own rendering engine"
+            "key": "Native vs Cross-Platform Decision",
+            "value": "Choose native when you need cutting-edge platform features, maximum performance (games, AR), or have dedicated platform teams. Choose cross-platform when time-to-market matters, the app is data-driven rather than GPU-intensive, and the team is small"
           },
           {
-            "key": "Hot Reload",
-            "value": "Flutter injects updated code into the running Dart VM and rebuilds the widget tree, preserving state; changes appear in under a second without restarting the app"
+            "key": "Flutter's Rendering Architecture",
+            "value": "Unlike React Native which bridges to native UI components, Flutter ships its own rendering engine (Skia/Impeller) and draws every pixel directly. This means identical visual behavior across platforms but no automatic adoption of platform-specific UI conventions"
+          },
+          {
+            "key": "App Size Considerations",
+            "value": "Cross-platform frameworks add baseline overhead: Flutter apps start at roughly 5-8MB, React Native at 7-10MB. Native apps can be under 2MB. For markets with limited bandwidth or device storage, this overhead matters"
+          },
+          {
+            "key": "Platform Fragmentation",
+            "value": "Android runs on thousands of device configurations with varying screen sizes, API levels, and hardware capabilities. iOS targets fewer devices but demands strict adherence to Human Interface Guidelines. Both require responsive design and thorough device testing"
           }
         ]
       }
@@ -54,39 +67,55 @@
     {
       "week_number": 2,
       "session_number": 3,
-      "topic": "State Management with Provider",
+      "topic": "React Native and Flutter Environment Setup",
       "duration": "50 minutes",
       "learning_objectives": [
-        "Manage application state using the Provider pattern",
-        "Distinguish between ephemeral (local) and application (shared) state",
-        "Implement ChangeNotifier for reactive UI updates"
+        "Configure a complete Flutter development environment with IDE integration",
+        "Set up a React Native development environment with Metro bundler",
+        "Build and run a first application on both Android emulator and iOS simulator"
       ],
       "readings": [
-        "Flutter Documentation: Simple State Management",
-        "Provider Package Documentation"
+        "Flutter Documentation: Install and Setup",
+        "React Native Documentation: Environment Setup",
+        "Dart Language Tour"
       ],
       "lecture_notes": {
-        "introduction": "State management is the hardest problem in mobile development. Provider offers a pragmatic approach that scales from simple apps to complex ones without the boilerplate of more heavyweight solutions.",
+        "introduction": "A properly configured development environment is the foundation of productive mobile development. Unlike web development where a browser and text editor suffice, mobile development requires platform-specific SDKs, device emulators, build toolchains, and framework-specific CLI tools that must all interoperate correctly. This session walks through the complete setup process for both Flutter and React Native, the two leading cross-platform frameworks. We will configure each environment from scratch, understand the role of every component in the toolchain, troubleshoot common setup issues, and establish the development workflow patterns you will use throughout the course. Students will leave this session with both frameworks fully functional and a first application running on simulated devices, ready to begin building real features in week three.",
         "key_concepts": [
-          "Ephemeral state: managed locally with setState",
-          "Application state: shared across widgets, managed with Provider",
-          "ChangeNotifier: notify listeners when state changes",
-          "ChangeNotifierProvider: providing state to the widget tree",
-          "Consumer and context.watch for reactive rebuilds"
+          "Flutter SDK: Dart runtime, framework libraries, flutter CLI tool, and the Dart DevTools suite",
+          "Flutter doctor: diagnostic command that verifies SDK, IDE, platform tools, and connected devices",
+          "React Native CLI vs Expo: managed workflow simplicity vs bare workflow flexibility",
+          "Metro bundler: React Native's JavaScript bundler that enables hot reload via WebSocket connection",
+          "Android SDK Manager: installing platform versions, build tools, system images for emulators",
+          "Xcode command line tools: iOS simulator, code signing certificates, provisioning profiles",
+          "Hot reload vs hot restart: preserving widget state vs reinitializing the app from main()",
+          "Project structure comparison: Flutter's lib/ directory vs React Native's src/ with platform folders",
+          "Dart language fundamentals: null safety, async/await, strong typing, named parameters",
+          "Package management: pub.dev for Flutter, npm/yarn for React Native"
         ],
-        "demonstration": "Build a shopping cart app with Provider: product list screen, cart screen, and a shared CartModel that updates both screens when items are added or removed",
+        "demonstration": "Walk through flutter create and npx react-native init, examine the generated project structures, run both on Android emulator and iOS simulator simultaneously, make a UI change and observe hot reload in each framework",
         "setup_requirements": [
-          "Flutter project configured",
-          "Provider package added to pubspec.yaml"
+          "Flutter SDK 3.x installed and on PATH",
+          "Android Studio with Flutter and Dart plugins",
+          "Node.js 18+ and npm for React Native",
+          "Xcode 15+ with iOS simulator"
         ],
         "review": [
           {
-            "key": "Lifting State Up",
-            "value": "When two widgets need the same state, move it to their nearest common ancestor and pass it down; Provider automates this pattern by making state available anywhere in the widget tree"
+            "key": "Flutter Hot Reload",
+            "value": "Flutter injects updated Dart code into the running VM and rebuilds the widget tree while preserving state. Changes appear in under a second. Hot restart reinitializes all state, useful when you change initialization logic or add new dependencies"
           },
           {
-            "key": "Selective Rebuilding",
-            "value": "Using Consumer or context.select rebuilds only the widgets that depend on the changed state, not the entire tree; this is critical for performance in large apps"
+            "key": "Expo vs Bare React Native",
+            "value": "Expo provides a managed environment with pre-configured native modules, OTA updates, and simpler builds. Bare React Native gives full access to native code but requires manual linking and native build configuration. Start with Expo; eject when you need custom native modules"
+          },
+          {
+            "key": "Android Virtual Device Configuration",
+            "value": "Create AVDs with hardware acceleration (HAXM/KVM) for acceptable performance. Match target API levels to your minimum supported version. Use x86_64 system images on Intel machines and arm64 images on Apple Silicon for best emulator speed"
+          },
+          {
+            "key": "Dart Null Safety",
+            "value": "Dart's sound null safety means variables are non-nullable by default. Use String? for nullable types, ! for null assertion, and ?? for default values. This eliminates entire categories of null reference errors at compile time"
           }
         ]
       }
@@ -94,39 +123,54 @@
     {
       "week_number": 3,
       "session_number": 5,
-      "topic": "Navigation, Routing, and Responsive Layouts",
+      "topic": "Mobile UI Components and Layout Systems",
       "duration": "50 minutes",
       "learning_objectives": [
-        "Implement declarative navigation with Go Router",
-        "Build responsive layouts that adapt to different screen sizes",
-        "Handle deep linking and route parameters"
+        "Build complex layouts using Flutter's widget composition model",
+        "Implement Material Design and Cupertino design system components",
+        "Create reusable custom widgets with proper separation of concerns"
       ],
       "readings": [
-        "Flutter Documentation: Navigation and Routing",
-        "go_router Package Documentation"
+        "Flutter Documentation: Building Layouts",
+        "Material Design 3 Component Guidelines",
+        "Flutter Widget Catalog"
       ],
       "lecture_notes": {
-        "introduction": "Navigation defines how users move through your app. Responsive layouts ensure your app looks great on phones, tablets, and desktops. Together, they create a polished user experience.",
+        "introduction": "Mobile UI development differs fundamentally from web development in its approach to layout and component composition. Where web developers think in terms of CSS box model and DOM elements, mobile developers work with constraint-based layout systems and deeply nested component trees. Flutter takes this further with its declarative widget model where everything from padding to gesture detection to the app itself is a widget. This session teaches you to think in widgets, master Flutter's layout system including Row, Column, Stack, and Flex, understand the constraint propagation model that determines how widgets size themselves, and build production-quality UI components that follow Material Design 3 guidelines. You will learn to create custom widgets that encapsulate business logic and presentation, making your code modular and testable.",
         "key_concepts": [
-          "Navigator 2.0 and declarative routing with go_router",
-          "Route parameters, query parameters, and path matching",
-          "LayoutBuilder and MediaQuery for responsive design",
-          "Adaptive layouts: different UI for phone vs tablet",
-          "Deep linking: opening specific screens from external URLs"
+          "Widget tree composition: combining small, focused widgets into complex interfaces",
+          "StatelessWidget vs StatefulWidget: immutable configuration vs mutable state with lifecycle",
+          "Layout widgets: Row, Column, Stack, Wrap, Expanded, Flexible, SizedBox, ConstrainedBox",
+          "Flutter constraint model: parent passes constraints down, child chooses size within constraints, parent positions child",
+          "Material Design 3: dynamic color, updated typography scale, new component variants",
+          "Cupertino widgets: iOS-style components for platform-appropriate design on Apple devices",
+          "Scaffold, AppBar, NavigationBar, NavigationRail: structural widgets for app chrome",
+          "ListView and GridView: scrollable lists with lazy building for performance",
+          "Custom widgets: extracting reusable components with configurable parameters and callbacks",
+          "Theme data: centralizing colors, typography, and component styles for consistent design"
         ],
-        "demonstration": "Build a master-detail layout that shows a list on phones and a side-by-side view on tablets, with deep linking support for sharing specific items",
+        "demonstration": "Build a social media profile screen with a header image, avatar overlay using Stack, follower statistics in a Row, a tab bar switching between grid and list views of posts, and a floating action button, all using Material Design 3 theming",
         "setup_requirements": [
-          "Flutter project with go_router",
-          "Multiple device sizes configured in emulator"
+          "Flutter project with Material Design 3 enabled",
+          "Sample image assets for the profile screen",
+          "Flutter DevTools for widget inspector"
         ],
         "review": [
           {
-            "key": "Declarative Routing",
-            "value": "Routes are defined as data structures mapping URL paths to widget builders; the framework handles push/pop animations and deep linking automatically, unlike imperative Navigator.push calls"
+            "key": "Constraint Propagation",
+            "value": "Flutter's layout algorithm is a single downward pass of constraints (min/max width and height) followed by an upward pass of sizes. A widget receives constraints from its parent, chooses a size within those constraints, and reports it back. Understanding this flow is essential for debugging layout issues"
           },
           {
-            "key": "Responsive Breakpoints",
-            "value": "Use LayoutBuilder to check available width: <600dp for phone, 600-900dp for tablet, >900dp for desktop. Build different widget trees for each breakpoint rather than scaling a single layout"
+            "key": "Expanded vs Flexible",
+            "value": "Both distribute available space in Row/Column. Expanded forces the child to fill all allocated space (tight constraint). Flexible allows the child to be smaller than the allocated space (loose constraint). Use Expanded for equal-width columns; Flexible when children should size to content"
+          },
+          {
+            "key": "Widget Extraction Principle",
+            "value": "Extract a new widget when a subtree has its own logical purpose, needs to be reused, or when the build method exceeds roughly 40 lines. Prefer extracting widgets over helper methods because widgets enable Flutter's rebuild optimization"
+          },
+          {
+            "key": "ListView.builder Performance",
+            "value": "ListView.builder creates items lazily as they scroll into view, recycling widgets that scroll out of view. For lists of 100+ items, always use builder constructors rather than passing a pre-built list of children to avoid creating all widgets at once"
           }
         ]
       }
@@ -134,39 +178,54 @@
     {
       "week_number": 4,
       "session_number": 7,
-      "topic": "API Integration and Local Storage",
+      "topic": "Navigation and Routing",
       "duration": "50 minutes",
       "learning_objectives": [
-        "Fetch data from REST APIs using the http package",
-        "Persist data locally with SQLite and shared preferences",
-        "Handle loading states, errors, and offline scenarios"
+        "Implement declarative navigation with Go Router including nested routes",
+        "Handle deep linking from external URLs and push notifications",
+        "Build responsive navigation that adapts between mobile and tablet layouts"
       ],
       "readings": [
-        "Flutter Documentation: Networking",
-        "sqflite Package Documentation"
+        "Flutter Documentation: Navigation and Routing",
+        "go_router Package Documentation",
+        "Material Design: Navigation Patterns"
       ],
       "lecture_notes": {
-        "introduction": "Most mobile apps are thin clients for backend services. This session covers fetching data from APIs, caching it locally for offline access, and handling the inevitable network failures that mobile environments present.",
+        "introduction": "Navigation is the skeleton of a mobile application, defining how users discover and move between features. Poor navigation creates confusion and frustration; excellent navigation feels invisible because users always know where they are and how to get where they want to go. Modern mobile apps must support multiple navigation paradigms simultaneously: stack-based push/pop for drill-down flows, tab-based navigation for top-level sections, modal presentation for focused tasks, and deep linking for external entry points from URLs, notifications, and other apps. This session covers Flutter's declarative routing system using go_router, which unifies all these navigation patterns under a URL-based model that naturally supports deep linking, browser history on web, and state restoration after app termination.",
         "key_concepts": [
-          "HTTP client: GET, POST, PUT, DELETE with error handling",
-          "JSON serialization and deserialization with model classes",
-          "Local storage: shared_preferences for settings, sqflite for structured data",
-          "Repository pattern: abstracting data sources behind a common interface",
-          "Connectivity awareness: online vs offline behavior"
+          "Navigator 2.0 declarative model: routes defined as data, framework manages the navigation stack",
+          "go_router configuration: route trees, path parameters, query parameters, redirects",
+          "Nested navigation: ShellRoute for persistent bottom navigation with independent sub-stacks",
+          "Deep linking: mapping URLs to specific screens with parameters for external entry",
+          "Route guards: redirect unauthenticated users to login, redirect based on onboarding state",
+          "Transition animations: custom page transitions, hero animations between routes",
+          "Responsive navigation: NavigationBar on phones, NavigationRail on tablets, drawer for overflow",
+          "State restoration: preserving navigation stack and scroll position across app restarts",
+          "Path parameters vs query parameters: /users/:id for required identifiers, ?tab=settings for optional state",
+          "Error routes: handling 404s and malformed URLs with graceful fallback screens"
         ],
-        "demonstration": "Build a news reader that fetches articles from an API, caches them in SQLite for offline reading, and shows a clear loading/error/empty state for each scenario",
+        "demonstration": "Build a master-detail layout that shows a list view on phones and a split-pane view on tablets, with deep linking support so sharing a URL opens the correct detail item, and route guards that redirect to login when unauthenticated",
         "setup_requirements": [
-          "Flutter project with http, sqflite, shared_preferences packages",
-          "REST API endpoint for testing"
+          "Flutter project with go_router package",
+          "Multiple device sizes configured in emulator",
+          "Sample data for list/detail content"
         ],
         "review": [
           {
-            "key": "Repository Pattern",
-            "value": "The repository provides a single interface for data access; it decides whether to fetch from the network, local cache, or both. UI code never knows or cares about the data source"
+            "key": "Declarative vs Imperative Navigation",
+            "value": "Imperative navigation (Navigator.push) tells Flutter what to do step by step. Declarative navigation (go_router) describes what the navigation state should look like for a given app state. Declarative is easier to reason about, test, and synchronize with deep links"
           },
           {
-            "key": "Error States",
-            "value": "Mobile apps must handle network timeout, server error, no connectivity, and invalid response. Every API call needs loading, success, and error states visible to the user"
+            "key": "ShellRoute for Persistent Navigation",
+            "value": "ShellRoute wraps child routes in a shared scaffold with a bottom navigation bar. Each tab maintains its own navigation stack independently. Switching tabs preserves the stack state so users can return to where they were"
+          },
+          {
+            "key": "Responsive Breakpoints",
+            "value": "Use LayoutBuilder to check available width: less than 600dp for phone layout, 600-840dp for small tablet, over 840dp for large tablet or desktop. Build different widget trees for each breakpoint rather than scaling a single layout"
+          },
+          {
+            "key": "Route Guard Pattern",
+            "value": "Define a redirect callback on GoRouter that checks authentication state before every navigation. Return a redirect path for unauthorized access or null to allow the navigation. This centralizes auth logic instead of checking in every screen"
           }
         ]
       }
@@ -174,41 +233,606 @@
     {
       "week_number": 5,
       "session_number": 9,
-      "topic": "Platform Integration and Publishing",
+      "topic": "State Management",
       "duration": "50 minutes",
       "learning_objectives": [
-        "Access platform features: camera, location, notifications",
-        "Prepare apps for App Store and Play Store submission",
-        "Implement platform channels for native code integration"
+        "Implement application state management using Provider and Riverpod",
+        "Distinguish ephemeral state from application state and manage each appropriately",
+        "Design state architectures that scale from simple apps to complex feature sets"
       ],
       "readings": [
-        "Flutter Documentation: Platform Integration",
-        "Apple App Store Review Guidelines (summary)",
-        "Google Play Store Policies (summary)"
+        "Flutter Documentation: Simple State Management",
+        "Provider Package Documentation",
+        "Riverpod Documentation: Getting Started"
       ],
       "lecture_notes": {
-        "introduction": "The final mile of mobile development is platform integration and publishing. Accessing device hardware, handling permissions, and meeting store review requirements are what turn a Flutter prototype into a production app.",
+        "introduction": "State management is widely regarded as the most challenging aspect of mobile application development. Every interaction the user has with your app modifies state: typing in a form field, scrolling a list, toggling a setting, receiving a push notification, fetching data from an API. How you organize, update, and propagate these state changes determines whether your codebase remains maintainable as features accumulate or degrades into an unmaintainable web of dependencies. This session covers the spectrum of state management approaches in Flutter, from the built-in setState for local widget state through Provider for shared application state to Riverpod for dependency-injected, testable state management. We examine when each approach is appropriate, how to avoid common pitfalls like unnecessary rebuilds and stale state, and how to architect state in a way that scales.",
         "key_concepts": [
-          "Platform channels: calling native iOS/Android code from Dart",
-          "Permissions: requesting camera, location, notification access at runtime",
-          "Push notifications: FCM setup and handling",
-          "App signing, versioning, and release builds",
-          "Store submission: screenshots, descriptions, review guidelines compliance"
+          "Ephemeral state: managed locally with setState, scoped to a single widget (form input, animation progress)",
+          "Application state: shared across multiple widgets, persists across navigation (user session, cart contents)",
+          "ChangeNotifier: mutable state container that notifies listeners when state changes via notifyListeners()",
+          "ChangeNotifierProvider: injects a ChangeNotifier into the widget tree, disposes it automatically",
+          "Consumer and context.watch: selective widget rebuilding when specific state values change",
+          "context.read vs context.watch: read for one-time access in callbacks, watch for reactive rebuilding",
+          "Riverpod providers: StateProvider, FutureProvider, StreamProvider, StateNotifierProvider",
+          "Provider scoping: overriding providers for different subtrees, essential for testing",
+          "State immutability: using copyWith patterns to create new state objects rather than mutating in place",
+          "Selector pattern: context.select to rebuild only when a specific field changes, not on every notification"
         ],
-        "demonstration": "Add camera capture and location tagging to an existing app using platform plugins, configure Firebase Cloud Messaging for push notifications, and build a release APK",
+        "demonstration": "Build a shopping cart application with Provider: product catalog screen with add-to-cart, cart screen with quantity adjustment and removal, and a checkout summary, demonstrating proper state separation between UI state and business state",
         "setup_requirements": [
-          "Flutter project with camera, geolocator, firebase_messaging packages",
-          "Firebase project configured",
-          "Physical device for testing hardware features"
+          "Flutter project with provider package",
+          "Product catalog sample data",
+          "Flutter DevTools for rebuild tracking"
         ],
         "review": [
           {
-            "key": "Runtime Permissions",
-            "value": "Both iOS and Android require requesting sensitive permissions (camera, location) at runtime with a clear explanation of why the app needs them; requesting without explanation results in store rejection"
+            "key": "When to Lift State Up",
+            "value": "When two widgets need the same state, move it to their nearest common ancestor and provide it down the tree. Provider automates this pattern. The rule of thumb: if a state change in widget A should affect widget B, that state belongs in a provider above both"
           },
           {
-            "key": "App Signing",
-            "value": "Release builds must be signed with a private key; the corresponding public key is registered with the app store. Losing the signing key means you cannot update the app, so it must be backed up securely"
+            "key": "Avoiding Unnecessary Rebuilds",
+            "value": "Using context.select rebuilds the widget only when the selected value changes, not when any field in the model changes. For a cart with 50 items, selecting cart.totalPrice avoids rebuilding when an unrelated item's quantity changes"
+          },
+          {
+            "key": "Testing with Provider Overrides",
+            "value": "Wrap widgets in ChangeNotifierProvider.value with a mock model for testing. This decouples the widget from real data sources and lets you test specific state scenarios, error conditions, and loading states in isolation"
+          },
+          {
+            "key": "State Immutability Benefits",
+            "value": "Immutable state with copyWith makes state changes explicit, enables undo/redo, prevents accidental mutation from multiple references, and makes it trivial to compare previous and current state for debugging"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 11,
+      "topic": "Data Persistence and Local Storage",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Implement local data persistence using SQLite, Hive, and SharedPreferences",
+        "Design database schemas appropriate for mobile app data patterns",
+        "Build a repository layer that abstracts storage implementation from business logic"
+      ],
+      "readings": [
+        "sqflite Package Documentation",
+        "Hive Package Documentation",
+        "Flutter Documentation: Data Persistence"
+      ],
+      "lecture_notes": {
+        "introduction": "Mobile applications operate in an environment of intermittent connectivity, limited bandwidth, and user expectations of instant responsiveness. Local data persistence bridges these gaps by caching network data for offline access, storing user preferences and settings, maintaining application state across sessions, and enabling features that work entirely without a network connection. Choosing the right persistence mechanism depends on the nature of the data: key-value pairs for simple settings, structured relational data for complex queries, document stores for flexible schemas, and encrypted storage for sensitive information. This session covers the full spectrum of mobile persistence options in Flutter, from the simplest shared preferences through SQLite relational databases to the Hive NoSQL store, and teaches you to design a repository pattern that lets you swap implementations without changing business logic.",
+        "key_concepts": [
+          "SharedPreferences: key-value storage for simple settings (theme, language, onboarding completion flags)",
+          "SQLite via sqflite: full relational database with SQL queries, transactions, and migrations",
+          "Hive: lightweight NoSQL key-value store with strong typing and no native dependencies",
+          "Database migrations: versioning schemas and writing upgrade scripts for existing user data",
+          "Repository pattern: abstracting data source behind an interface for testability and flexibility",
+          "Data Access Object (DAO) pattern: encapsulating SQL operations in dedicated classes per entity",
+          "Encryption at rest: encrypting sensitive local data with flutter_secure_storage backed by Keychain/Keystore",
+          "Cache invalidation strategies: time-based expiry, version-based invalidation, stale-while-revalidate"
+        ],
+        "demonstration": "Build a note-taking app with SQLite for structured note storage, SharedPreferences for user settings like sort order and theme, and a repository layer that loads from local database first and syncs with a remote API when online",
+        "setup_requirements": [
+          "Flutter project with sqflite, shared_preferences, and hive packages",
+          "Database browser tool for inspecting SQLite files",
+          "Sample data for seeding the database"
+        ],
+        "review": [
+          {
+            "key": "SQLite vs Hive Decision",
+            "value": "Use SQLite when you need relational queries, joins, and complex filtering. Use Hive when you need fast key-value access, have simple data structures, or want to avoid SQL overhead. For most apps, SQLite handles the primary data model while Hive handles caches and session data"
+          },
+          {
+            "key": "Database Migration Safety",
+            "value": "Never alter or drop columns in SQLite directly; instead, create a new table with the desired schema, copy data, drop the old table, and rename. Always test migrations against production-like data before releasing, as a failed migration can corrupt user data"
+          },
+          {
+            "key": "Repository Pattern Benefits",
+            "value": "The repository provides a single interface for data access. Business logic calls repository.getNotes() without knowing if data comes from SQLite, Hive, network, or memory cache. This enables swapping storage engines, adding caching layers, and writing unit tests with mock repositories"
+          },
+          {
+            "key": "Secure Storage for Credentials",
+            "value": "Never store tokens, passwords, or API keys in SharedPreferences or plain SQLite. Use flutter_secure_storage which delegates to iOS Keychain and Android Keystore, providing hardware-backed encryption that survives app reinstall on iOS"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 13,
+      "topic": "REST API Integration",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Build robust HTTP clients using Dio with interceptors for auth and logging",
+        "Implement JSON serialization and deserialization with type-safe model classes",
+        "Handle all API response states: loading, success, error, and empty"
+      ],
+      "readings": [
+        "Dio Package Documentation",
+        "Flutter Documentation: Networking",
+        "json_serializable Package Guide"
+      ],
+      "lecture_notes": {
+        "introduction": "The vast majority of mobile applications are thin clients that present data from and send data to backend services over REST APIs. The quality of your API integration layer determines the reliability of your entire application. Network calls can fail in dozens of ways: timeouts, server errors, malformed responses, authentication expiration, rate limiting, and intermittent connectivity. A production API client must handle all of these gracefully, provide clear feedback to the user for every failure mode, and maintain a clean separation between network concerns and business logic. This session teaches you to build a robust, maintainable API integration layer using Dio for HTTP operations, json_serializable for type-safe data parsing, and interceptors for cross-cutting concerns like authentication token injection and response logging.",
+        "key_concepts": [
+          "Dio HTTP client: GET, POST, PUT, DELETE with typed responses, timeouts, and cancellation",
+          "Request interceptors: injecting auth tokens, adding headers, logging requests and responses",
+          "Response interceptors: token refresh on 401, error transformation, response unwrapping",
+          "JSON serialization with json_serializable: fromJson/toJson code generation for type safety",
+          "Error handling hierarchy: network errors, HTTP errors, API business errors, parsing errors",
+          "Loading state management: AsyncValue pattern with loading, data, and error variants",
+          "Pagination: cursor-based and offset-based pagination with infinite scroll integration",
+          "Request cancellation: cancelling in-flight requests when the user navigates away",
+          "Retry logic: exponential backoff for transient failures with maximum retry limits",
+          "API client architecture: base client with interceptors, service classes per API domain"
+        ],
+        "demonstration": "Build an API client for a REST service with Dio interceptors for auth token injection and automatic 401 token refresh, type-safe response parsing with json_serializable, and a service layer that exposes loading/success/error states to the UI",
+        "setup_requirements": [
+          "Flutter project with dio, json_annotation, json_serializable, build_runner",
+          "REST API endpoint for testing (JSONPlaceholder or similar)",
+          "Charles Proxy or similar for inspecting HTTP traffic"
+        ],
+        "review": [
+          {
+            "key": "Interceptor Chain",
+            "value": "Dio interceptors form a chain: request interceptors run before the request (add auth headers), response interceptors run after a successful response (unwrap data), error interceptors run on failure (refresh token on 401, retry). This keeps cross-cutting concerns out of individual API calls"
+          },
+          {
+            "key": "Type-Safe Parsing",
+            "value": "Never cast API responses with 'as Map'. Use json_serializable to generate fromJson factories that validate types at parse time. A missing field or wrong type throws a clear error during parsing rather than a confusing null reference later in business logic"
+          },
+          {
+            "key": "Token Refresh Race Condition",
+            "value": "When multiple requests get 401 simultaneously, only one should trigger a token refresh. Queue subsequent requests and replay them after the refresh completes. Without this, you get multiple refresh attempts and potential token invalidation"
+          },
+          {
+            "key": "Cancel Token Usage",
+            "value": "Pass a CancelToken to every API call and cancel it in the widget's dispose method. This prevents setState-after-dispose errors and avoids wasting bandwidth on requests whose results will be discarded"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 15,
+      "topic": "Push Notifications",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Configure Firebase Cloud Messaging for both iOS and Android platforms",
+        "Handle notification delivery in foreground, background, and terminated states",
+        "Implement notification channels, deep linking from notifications, and local notifications"
+      ],
+      "readings": [
+        "Firebase Cloud Messaging Documentation",
+        "flutter_local_notifications Package Documentation",
+        "Apple Push Notification Service (APNs) Overview"
+      ],
+      "lecture_notes": {
+        "introduction": "Push notifications are one of the most powerful engagement tools in mobile development, with the ability to bring users back to your app even when it is not running. They are also one of the most complex features to implement correctly because they span the entire technology stack: your backend sends a message to a cloud service (FCM or APNs), which delivers it to the device operating system, which wakes your app (or displays the notification if the app is terminated), and your app must handle the notification differently depending on whether it was received in the foreground, background, or from a terminated state. Getting this right requires understanding the notification lifecycle across both platforms, managing device tokens, handling token refresh, implementing notification channels for Android, requesting permission on iOS, and routing users to the correct screen when they tap a notification. This session covers the complete push notification implementation from server-side message construction through client-side handling and deep linking.",
+        "key_concepts": [
+          "Firebase Cloud Messaging (FCM): Google's cross-platform push notification service supporting both Android and iOS",
+          "APNs: Apple Push Notification service, required intermediary for all iOS notifications even when using FCM",
+          "Device token registration: obtaining and storing the unique push token for each device installation",
+          "Token refresh handling: updating the server when a device token changes due to reinstall or OS update",
+          "Notification vs data messages: notification messages handled by OS when app is backgrounded, data messages always handled by app code",
+          "Foreground handling: displaying in-app banners or overlays when a notification arrives while the app is active",
+          "Background handling: processing data messages in an isolate without UI access",
+          "Notification channels (Android): grouping notifications by type with user-configurable importance levels",
+          "Local notifications: scheduling notifications without a server for reminders, timers, and offline events",
+          "Deep linking from notifications: routing to a specific screen with parameters when the user taps a notification"
+        ],
+        "demonstration": "Configure FCM in a Flutter app, implement foreground and background message handlers, create Android notification channels for different message types, set up deep linking so tapping a notification opens the relevant content screen, and test the full flow using the Firebase Console",
+        "setup_requirements": [
+          "Firebase project with FCM enabled",
+          "Flutter project with firebase_messaging and flutter_local_notifications",
+          "Physical device for push notification testing (emulators have limitations)",
+          "Firebase Console access for sending test messages"
+        ],
+        "review": [
+          {
+            "key": "Notification vs Data Messages",
+            "value": "Notification messages have a title and body displayed by the OS when the app is in the background. Data messages contain only custom key-value pairs and are always handled by your code. Use data messages when you need custom handling logic; use notification messages for simple alerts"
+          },
+          {
+            "key": "iOS Permission Request Timing",
+            "value": "iOS requires explicit user permission for notifications. Never request permission on first launch; wait until the user reaches a feature that benefits from notifications and explain why they should allow them. A denied permission is much harder to recover from than a deferred request"
+          },
+          {
+            "key": "Background Isolate Limitations",
+            "value": "Background message handlers run in a separate Dart isolate with no access to the widget tree, plugins, or shared state. They can perform network calls and local storage but cannot update the UI directly. Use a shared channel or local notification to communicate with the foreground"
+          },
+          {
+            "key": "Token Lifecycle Management",
+            "value": "Device tokens can change at any time: after reinstall, OS update, or when FCM rotates them. Listen for token refresh events and update your server immediately. Sending to a stale token wastes resources and the notification is silently dropped"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 17,
+      "topic": "Device APIs: Camera, GPS, and Sensors",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Access device camera for photo and video capture with preview and editing",
+        "Implement location services with GPS tracking, geofencing, and map integration",
+        "Read sensor data from accelerometer, gyroscope, and other hardware sensors"
+      ],
+      "readings": [
+        "camera Package Documentation",
+        "geolocator Package Documentation",
+        "sensors_plus Package Documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "What distinguishes mobile applications from web applications is direct access to device hardware: cameras, GPS receivers, accelerometers, gyroscopes, biometric sensors, and more. These capabilities enable entirely new categories of applications that are impossible on the web. A fitness tracker reads the accelerometer to count steps. A delivery app uses GPS for real-time location tracking. A document scanner uses the camera with edge detection. A health app uses the heart rate sensor. However, hardware access comes with significant complexity: each sensor has different APIs on iOS and Android, permissions must be requested at runtime with clear justification, background access has strict platform limitations, and battery consumption must be carefully managed. This session teaches you to integrate with the three most commonly used device capabilities (camera, location, and motion sensors) through Flutter plugins that abstract platform differences while still providing access to platform-specific features when needed.",
+        "key_concepts": [
+          "Camera plugin: preview stream, photo capture, video recording, flash control, zoom, focus",
+          "Image picker: simplified camera and gallery access when full camera control is not needed",
+          "Geolocator: current position, continuous position stream, distance calculation between coordinates",
+          "Geocoding: converting coordinates to addresses and addresses to coordinates",
+          "Geofencing: triggering actions when the device enters or exits a geographic region",
+          "Google Maps / Apple Maps integration: displaying maps with markers, polylines, and custom overlays",
+          "Accelerometer and gyroscope: raw sensor data for motion detection and orientation tracking",
+          "Runtime permissions: requesting camera, location, and sensor access with rationale dialogs",
+          "Background location: significant location changes vs continuous GPS tracking and battery implications",
+          "Platform channels: calling native camera or sensor APIs directly when plugins are insufficient"
+        ],
+        "demonstration": "Build a geotagged photo journal: use the camera plugin for photo capture, geolocator for automatic location tagging, Google Maps to display photo locations on a map, and accelerometer to detect device orientation for automatic photo rotation",
+        "setup_requirements": [
+          "Flutter project with camera, geolocator, google_maps_flutter, sensors_plus packages",
+          "Physical device with camera and GPS (required, emulators have limited sensor support)",
+          "Google Maps API key configured",
+          "Location simulation tool for testing GPS scenarios"
+        ],
+        "review": [
+          {
+            "key": "Permission Request Best Practices",
+            "value": "Request permissions only when the user initiates a feature that needs them, not on app launch. Show a pre-permission dialog explaining why the permission is needed before triggering the system dialog. Handle denial gracefully by disabling the feature with an explanation rather than crashing"
+          },
+          {
+            "key": "Background Location Battery Impact",
+            "value": "Continuous GPS tracking in the background can drain the battery in hours. Use significant location changes (iOS) or geofencing (both platforms) for most use cases. Only use continuous background tracking for navigation or fitness apps where the user expects it"
+          },
+          {
+            "key": "Camera Resource Management",
+            "value": "The camera is a shared system resource. Initialize it in initState and dispose it in dispose. Failing to dispose the camera controller causes resource leaks and can prevent other apps from accessing the camera. Handle lifecycle changes to release the camera when the app is backgrounded"
+          },
+          {
+            "key": "Sensor Data Sampling Rates",
+            "value": "Accelerometer and gyroscope deliver data at platform-determined rates (up to 100+ Hz). Always throttle or sample at the rate your feature actually needs. Processing every event at maximum frequency wastes CPU and battery. Use stream throttling or periodic sampling"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 19,
+      "topic": "Authentication and Security",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Implement authentication flows including email/password, OAuth, and biometric login",
+        "Securely store tokens and sensitive data using platform-specific secure storage",
+        "Apply mobile security best practices including certificate pinning and code obfuscation"
+      ],
+      "readings": [
+        "Firebase Authentication Documentation",
+        "OAuth 2.0 for Mobile and Native Apps (RFC 8252)",
+        "OWASP Mobile Security Testing Guide: Authentication"
+      ],
+      "lecture_notes": {
+        "introduction": "Authentication is the gateway to every personalized feature in a mobile application, and getting it wrong has severe consequences: leaked credentials, unauthorized account access, and regulatory penalties. Mobile authentication presents unique challenges compared to web authentication. The app binary can be decompiled and inspected. Network traffic can be intercepted on untrusted WiFi. Tokens stored insecurely on the device can be extracted with physical access. Users expect seamless authentication experiences including social login, biometric unlock, and automatic session persistence across app restarts. This session covers the full spectrum of mobile authentication: from implementing secure login flows with Firebase Auth and OAuth providers through proper token storage and refresh mechanisms to advanced security measures like certificate pinning and biometric authentication that protect against sophisticated attacks.",
+        "key_concepts": [
+          "Firebase Authentication: email/password, Google Sign-In, Apple Sign-In, phone number verification",
+          "OAuth 2.0 PKCE flow: the secure authorization flow for mobile apps that cannot store client secrets",
+          "JWT tokens: access tokens for API authorization, refresh tokens for obtaining new access tokens",
+          "Secure token storage: iOS Keychain and Android Keystore via flutter_secure_storage",
+          "Biometric authentication: Face ID, Touch ID, and Android BiometricPrompt for convenient local unlock",
+          "Session management: auto-login on app restart, token refresh before expiry, forced logout on compromise",
+          "Certificate pinning: validating the server's TLS certificate against a known hash to prevent MITM attacks",
+          "Code obfuscation: Dart obfuscation flags to make reverse engineering the app binary more difficult",
+          "App Transport Security (iOS): requiring HTTPS for all network connections with limited exceptions",
+          "Sensitive data in memory: clearing password fields after use, preventing screenshots on auth screens"
+        ],
+        "demonstration": "Implement a complete authentication flow with Firebase Auth: email/password registration and login, Google Sign-In as an OAuth provider, secure token storage in flutter_secure_storage, biometric unlock for returning users, and automatic token refresh via Dio interceptor",
+        "setup_requirements": [
+          "Firebase project with Authentication enabled",
+          "Flutter project with firebase_auth, google_sign_in, flutter_secure_storage, local_auth",
+          "Google Cloud Console OAuth credentials configured",
+          "Physical device for biometric testing"
+        ],
+        "review": [
+          {
+            "key": "PKCE Flow for Mobile",
+            "value": "Mobile apps cannot securely store a client secret because the app binary can be decompiled. PKCE (Proof Key for Code Exchange) replaces the client secret with a dynamically generated code verifier and challenge, ensuring the authorization code can only be exchanged by the app that initiated the flow"
+          },
+          {
+            "key": "Token Storage Security Hierarchy",
+            "value": "From least to most secure: SharedPreferences (plaintext, easily extracted), encrypted SharedPreferences (software encryption), flutter_secure_storage (hardware-backed Keychain/Keystore). Always use flutter_secure_storage for auth tokens. Never log tokens or include them in error reports"
+          },
+          {
+            "key": "Biometric Authentication Scope",
+            "value": "Biometric auth verifies the person holding the device is the device owner. It does not authenticate with the server. Use biometrics to unlock locally stored credentials (tokens), which then authenticate with the server. The server never receives biometric data"
+          },
+          {
+            "key": "Certificate Pinning Trade-offs",
+            "value": "Pinning prevents MITM attacks but creates an operational burden: if the server certificate changes and the app has the old pin, all users are locked out until they update. Use backup pins and implement a pin update mechanism through a non-pinned endpoint"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 21,
+      "topic": "Offline-First Design",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Design offline-first architectures that work without network and sync when connected",
+        "Implement conflict resolution strategies for data modified on multiple devices",
+        "Build optimistic UI updates that provide instant feedback while syncing in the background"
+      ],
+      "readings": [
+        "Google Developers: Build Offline-First Mobile Apps",
+        "Martin Kleppmann, Designing Data-Intensive Applications, Ch. 5 (Replication)",
+        "Offline-First Web and Mobile Design Patterns"
+      ],
+      "lecture_notes": {
+        "introduction": "Users expect mobile apps to work regardless of network conditions: on airplanes, in subway tunnels, in areas with spotty cellular coverage, and when their data plan is exhausted. An app that shows a spinner or error message every time the network drops is frustrating and feels unreliable. Offline-first design inverts the traditional architecture: instead of treating the server as the source of truth and the local database as a cache, offline-first treats the local database as the primary data source and the server as a sync target. The app reads from and writes to the local database immediately, providing instant responsiveness, and a background sync engine reconciles local changes with the server when connectivity is available. This session covers the architectural patterns, data synchronization strategies, and conflict resolution mechanisms required to build robust offline-first mobile applications.",
+        "key_concepts": [
+          "Offline-first principle: the app works fully offline; network is an enhancement, not a requirement",
+          "Local-first reads: always read from the local database for instant responsiveness, sync in background",
+          "Write-ahead queue: local writes are persisted immediately and queued for server sync when online",
+          "Sync engine: background process that pushes pending local changes and pulls server updates",
+          "Conflict resolution: last-write-wins, merge strategies, and operational transformation for concurrent edits",
+          "Optimistic UI: immediately reflect user actions in the UI before server confirmation, roll back on failure",
+          "Connectivity awareness: detecting online/offline state and transitions with connectivity_plus",
+          "Delta sync: transferring only changed records since last sync rather than full data sets",
+          "Idempotent operations: ensuring that replaying a queued operation produces the same result, even if the server already processed it",
+          "Sync status indicators: showing users which data is synced, pending, or failed"
+        ],
+        "demonstration": "Build an offline-first task manager: create, edit, and delete tasks locally with immediate UI updates, queue changes for sync, detect connectivity changes to trigger sync, handle a conflict where the same task was edited on two devices, and display sync status badges on each task",
+        "setup_requirements": [
+          "Flutter project with sqflite, connectivity_plus, and workmanager packages",
+          "REST API with versioned records for conflict detection",
+          "Network condition simulator for testing offline scenarios"
+        ],
+        "review": [
+          {
+            "key": "Last-Write-Wins Simplicity",
+            "value": "The simplest conflict resolution: compare timestamps and keep the most recent write. Works when conflicts are rare and data loss from overwriting is acceptable. Fails when two users make meaningful concurrent edits that should be merged rather than one discarded"
+          },
+          {
+            "key": "Idempotency for Reliable Sync",
+            "value": "If a sync request succeeds but the response is lost (network drop), the client retries. Without idempotency, this creates duplicates. Design every sync operation to produce the same result regardless of how many times it executes, typically by using unique client-generated IDs"
+          },
+          {
+            "key": "Optimistic UI with Rollback",
+            "value": "Immediately show the result of a user action (creating a task appears instantly) while sending the request in the background. If the server rejects the change, roll back the UI and show an error. This provides perceived performance without sacrificing data integrity"
+          },
+          {
+            "key": "Background Sync Scheduling",
+            "value": "Use WorkManager (Android) and BGTaskScheduler (iOS) for background sync. The OS decides when to run background tasks based on battery, network, and system load. Do not rely on timers or foreground services for sync; they drain battery and may be killed by the OS"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 23,
+      "topic": "Performance Optimization",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Profile Flutter applications using DevTools to identify rendering and memory bottlenecks",
+        "Optimize widget rebuilds, image loading, and list rendering for smooth 60fps performance",
+        "Reduce app startup time, memory usage, and battery consumption"
+      ],
+      "readings": [
+        "Flutter Documentation: Performance Best Practices",
+        "Flutter DevTools Documentation",
+        "Dart VM Optimization and Compilation Modes"
+      ],
+      "lecture_notes": {
+        "introduction": "Performance is a feature, not an afterthought. Users perceive apps as sluggish when frame rates drop below 60fps, abandon apps that take more than three seconds to start, and uninstall apps that drain their battery. Mobile devices have constrained CPU, GPU, memory, and battery compared to desktops, making performance optimization both more important and more challenging. Flutter provides excellent baseline performance through its compiled Dart runtime and GPU-accelerated rendering, but it is entirely possible to write Flutter code that stutters, leaks memory, and drains battery through common anti-patterns: unnecessary widget rebuilds, large images loaded at full resolution, synchronous computation on the main thread, and memory leaks from undisposed controllers. This session teaches you to measure performance using Flutter DevTools, identify the specific bottleneck causing a performance problem, and apply targeted optimizations that solve the problem without adding unnecessary complexity.",
+        "key_concepts": [
+          "Flutter rendering pipeline: build phase (widget tree), layout phase (constraints), paint phase (GPU commands)",
+          "Widget rebuild optimization: const constructors, keys, RepaintBoundary to isolate expensive subtrees",
+          "Image optimization: ResizeImage for downsampling, CachedNetworkImage for disk caching, precacheImage for pre-loading",
+          "List virtualization: ListView.builder for lazy rendering, maintaining scroll position with keys",
+          "Compute isolation: Isolate.run for CPU-intensive tasks (JSON parsing, image processing) off the main thread",
+          "Memory profiling: identifying leaks from undisposed controllers, streams, and animation ticker providers",
+          "App size optimization: tree shaking, deferred loading, removing unused assets and packages",
+          "Startup time optimization: reducing main() work, deferring initialization, showing splash screens",
+          "Battery optimization: reducing GPS polling frequency, batching network requests, dimming animations",
+          "Profile mode vs release mode: always profile in profile mode, not debug mode which has unrepresentative overhead"
+        ],
+        "demonstration": "Profile a deliberately slow Flutter app using DevTools: identify unnecessary rebuilds in the widget inspector, find a jank-causing computation using the timeline view, locate a memory leak in the memory profiler, fix each issue, and measure the improvement",
+        "setup_requirements": [
+          "Flutter DevTools running",
+          "Sample app with intentional performance problems",
+          "Physical device for accurate profiling (emulators skew results)"
+        ],
+        "review": [
+          {
+            "key": "const Constructor Optimization",
+            "value": "Marking a widget constructor as const tells Flutter the widget is immutable and can be cached. When a parent rebuilds, const children are skipped entirely. This is the single most impactful rebuild optimization and costs nothing to implement"
+          },
+          {
+            "key": "RepaintBoundary Usage",
+            "value": "RepaintBoundary creates a separate compositing layer so that when a widget inside it repaints, surrounding widgets are not affected. Use it around expensive custom painters, animations, and frequently updating widgets like clocks or progress indicators"
+          },
+          {
+            "key": "Isolate.run for Heavy Work",
+            "value": "The main isolate handles the UI. Any synchronous work over 16ms (one frame at 60fps) causes visible jank. Move JSON parsing of large responses, image manipulation, and complex calculations to a background isolate using Isolate.run, which handles data passing automatically"
+          },
+          {
+            "key": "Memory Leak Detection Pattern",
+            "value": "Take a heap snapshot, perform a suspected leaky operation several times, take another snapshot, and diff. Objects that grow with each operation but should be garbage collected indicate a leak. Common causes: undisposed StreamSubscription, AnimationController, or TextEditingController"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 25,
+      "topic": "App Store Deployment",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Prepare Android app bundles and iOS archives for store submission",
+        "Navigate the Apple App Store and Google Play Store review processes",
+        "Configure app signing, versioning, and release management"
+      ],
+      "readings": [
+        "Flutter Documentation: Build and Release for Android",
+        "Flutter Documentation: Build and Release for iOS",
+        "Apple App Store Review Guidelines (summary)",
+        "Google Play Store Policies"
+      ],
+      "lecture_notes": {
+        "introduction": "The final mile of mobile development is getting your app into users' hands through the Apple App Store and Google Play Store. This process is far more than clicking a publish button: it involves configuring build variants for different environments, managing cryptographic signing keys that tie your identity to the app permanently, optimizing the store listing with screenshots, descriptions, and keywords that determine discoverability, navigating review processes where a single policy violation can delay launch by weeks, and planning a phased rollout strategy that catches issues before they affect all users. Developers who treat store deployment as an afterthought inevitably face rejected submissions, lost signing keys, and embarrassing production bugs. This session walks through the complete deployment pipeline from build configuration through store submission to post-launch monitoring, with emphasis on the common pitfalls that delay or derail launches.",
+        "key_concepts": [
+          "Android App Bundle (AAB): optimized delivery format that generates device-specific APKs from a single upload",
+          "iOS Archive (IPA): Xcode archive with embedded signing and provisioning for distribution",
+          "Code signing: Android keystore for signing app bundles, Apple certificates and provisioning profiles for iOS",
+          "Build flavors and schemes: configuring debug, staging, and release variants with different API endpoints and bundle IDs",
+          "Version management: semantic versioning, build numbers, and the relationship between versionName and versionCode",
+          "App Store Connect: configuring metadata, screenshots, privacy labels, and in-app purchase entitlements",
+          "Google Play Console: store listing, content rating questionnaire, target audience declarations",
+          "Review process: Apple human review (1-7 days), Google automated review (hours) with policy enforcement",
+          "Phased rollout: releasing to 1%, 5%, 25%, 100% of users to catch issues before full deployment",
+          "Over-the-air updates: CodePush for React Native, Shorebird for Flutter, vs full store updates"
+        ],
+        "demonstration": "Build a release Android App Bundle and iOS Archive from a Flutter project, configure signing for both platforms, create a store listing with screenshots and metadata in both App Store Connect and Google Play Console, and submit for review",
+        "setup_requirements": [
+          "Apple Developer account ($99/year) or access to team account",
+          "Google Play Developer account ($25 one-time) or access to team account",
+          "Android keystore generated and backed up",
+          "Xcode with distribution certificates and provisioning profiles"
+        ],
+        "review": [
+          {
+            "key": "Signing Key Security",
+            "value": "The Android signing key is permanent: lose it and you cannot update the app, ever. Back up the keystore file and its passwords in a secure location. Google Play App Signing lets Google hold the upload key, reducing the risk, but the app signing key is still irreplaceable"
+          },
+          {
+            "key": "Apple Review Common Rejections",
+            "value": "Top rejection reasons: login required without guest mode or demo account, placeholder content, requesting unnecessary permissions, incomplete metadata, and crashes during review. Provide a demo account in the review notes and test every flow on a clean install before submission"
+          },
+          {
+            "key": "Phased Rollout Strategy",
+            "value": "Release to a small percentage first, monitor crash reports and user feedback, then expand if metrics are healthy. A bug affecting 1% of users is manageable; the same bug affecting 100% on day one requires an emergency hotfix under pressure"
+          },
+          {
+            "key": "Version Code vs Version Name",
+            "value": "Version name (1.2.3) is what users see. Version code (integer, e.g., 10203) is what the store uses to determine upgrade eligibility. The version code must strictly increase with every upload. Use a formula like major*10000 + minor*100 + patch for consistency"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 27,
+      "topic": "Cross-Platform Strategies and Testing",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Write comprehensive widget tests, integration tests, and golden tests for Flutter apps",
+        "Implement platform-adaptive UI that follows iOS conventions on iOS and Android conventions on Android",
+        "Configure CI/CD pipelines for automated mobile app building, testing, and deployment"
+      ],
+      "readings": [
+        "Flutter Documentation: Testing",
+        "Flutter Documentation: Platform-Adaptive Apps",
+        "Codemagic CI/CD Documentation for Flutter"
+      ],
+      "lecture_notes": {
+        "introduction": "Cross-platform development promises one codebase for multiple platforms, but delivering a truly native experience on each requires deliberate platform-adaptive design and rigorous testing across devices. Users on iOS expect navigation patterns, gestures, and visual styling that differ from Android conventions. A cross-platform app that feels like an Android app on iOS or vice versa fails to meet user expectations on either platform. Similarly, the sheer diversity of Android devices (thousands of screen sizes, API levels, and hardware configurations) and the high quality bar of iOS App Store review demand comprehensive automated testing that covers widget behavior, integration flows, visual regression, and platform-specific edge cases. This session covers platform-adaptive design strategies that respect each platform's conventions, Flutter's rich testing framework that enables confidence in code changes, and CI/CD automation that builds, tests, and deploys to both stores from a single pipeline.",
+        "key_concepts": [
+          "Platform-adaptive widgets: using CupertinoNavigationBar on iOS and AppBar on Android from the same codebase",
+          "Platform detection: Theme.of(context).platform for switching UI components based on the running platform",
+          "Widget testing: pumping widgets in isolation, finding by type/key/text, tapping, entering text, verifying output",
+          "Integration testing: driving the full app with integration_test package, testing complete user flows",
+          "Golden tests: comparing widget screenshots pixel-by-pixel against approved reference images for visual regression",
+          "Mock dependencies: using mockito to replace API clients, databases, and platform plugins in tests",
+          "CI/CD pipeline: GitHub Actions or Codemagic for automated build, test, and deploy on every push",
+          "Fastlane integration: automating screenshots, signing, and store submission for both platforms",
+          "Device farm testing: running tests on real devices via Firebase Test Lab or AWS Device Farm",
+          "Code coverage: measuring which code paths are exercised by tests and setting minimum coverage thresholds"
+        ],
+        "demonstration": "Write widget tests for a login form (validation, submission, error display), integration tests for the login-to-home navigation flow, and golden tests for the home screen, then configure a GitHub Actions pipeline that runs all tests and builds release artifacts on every pull request",
+        "setup_requirements": [
+          "Flutter project with flutter_test and integration_test packages",
+          "mockito and build_runner for mock generation",
+          "GitHub repository with Actions enabled",
+          "Fastlane installed for deployment automation"
+        ],
+        "review": [
+          {
+            "key": "Widget Test vs Integration Test",
+            "value": "Widget tests pump a single widget in isolation with mocked dependencies, run in milliseconds, and verify widget behavior. Integration tests drive the full app on a real or emulated device, take minutes, and verify end-to-end flows. Use many widget tests and fewer integration tests for fast feedback"
+          },
+          {
+            "key": "Golden Test Workflow",
+            "value": "Generate reference images with flutter test --update-goldens. On subsequent test runs, the test compares the current rendering against the reference. Any pixel difference fails the test. Update goldens intentionally when the design changes; unexpected failures indicate a regression"
+          },
+          {
+            "key": "Platform-Adaptive Design Principle",
+            "value": "Do not force Material Design on iOS users or Cupertino style on Android users. Abstract the platform decision into an adaptive widget layer that selects the appropriate component automatically. Use platform-specific navigation patterns (back button on Android, swipe-back on iOS)"
+          },
+          {
+            "key": "CI/CD Build Matrix",
+            "value": "Configure CI to build and test on both macOS (required for iOS builds) and Linux (sufficient for Android). Run unit and widget tests on every commit for fast feedback. Run integration tests on pull requests. Deploy to TestFlight and internal test track on merge to main"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 29,
+      "topic": "Final Project Presentations and Course Review",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Present a complete mobile application demonstrating all course concepts",
+        "Critically evaluate peer projects for usability, code quality, and technical implementation",
+        "Synthesize mobile development best practices into a personal development framework"
+      ],
+      "readings": [
+        "Effective Dart: Style and Documentation Guidelines",
+        "Flutter Architecture Blueprints",
+        "Mobile App Development Trends and Future Directions"
+      ],
+      "lecture_notes": {
+        "introduction": "The final week brings together everything you have learned in this course through project presentations and a comprehensive course review. Each student presents their complete mobile application, demonstrating the technical skills covered across all fourteen preceding weeks: cross-platform UI development, state management, API integration, local persistence, push notifications, device API integration, authentication, offline-first design, performance optimization, and store deployment readiness. Presentations are evaluated not only on technical implementation but also on the quality of the user experience, the robustness of error handling, and the clarity of the architectural decisions. After presentations, we review the complete mobile development lifecycle and discuss emerging trends including declarative UI frameworks, Kotlin Multiplatform, AI-powered development tools, and the evolving capabilities of Progressive Web Apps that are reshaping the mobile development landscape.",
+        "key_concepts": [
+          "Project presentation structure: problem statement, architectural overview, live demo, technical deep-dive, lessons learned",
+          "Code review criteria: separation of concerns, testability, error handling completeness, documentation quality",
+          "User experience evaluation: onboarding flow, loading states, error states, accessibility, offline behavior",
+          "Performance metrics: startup time, frame rate during scrolling, memory usage, battery impact measurement",
+          "Architecture patterns summary: clean architecture layers, dependency injection, repository pattern, BLoC pattern",
+          "Emerging trends: Kotlin Multiplatform for shared business logic, Jetpack Compose and SwiftUI convergence",
+          "AI-assisted development: code generation, automated testing, layout suggestions, accessibility checking",
+          "Career paths: mobile developer, cross-platform specialist, mobile architect, mobile DevOps engineer"
+        ],
+        "demonstration": "Live walkthrough of an exemplary final project highlighting best practices in architecture, state management, API integration with offline support, comprehensive error handling, and a polished user experience that would be accepted on both app stores",
+        "setup_requirements": [
+          "Presentation slides or demo environment",
+          "Physical device loaded with final project app",
+          "Peer evaluation rubric forms"
+        ],
+        "review": [
+          {
+            "key": "Mobile Development Lifecycle",
+            "value": "Requirements and design, environment setup, UI implementation, state management, API integration, local storage, device features, authentication, offline support, performance optimization, testing, deployment, monitoring. Each phase builds on the previous; skipping a phase creates technical debt that compounds"
+          },
+          {
+            "key": "Architecture Matters Most at Scale",
+            "value": "A small app can succeed with any architecture. At 50+ screens and multiple developers, proper separation of concerns (UI, business logic, data access) determines whether you can add features in hours or weeks. Invest in architecture early when the cost of change is low"
+          },
+          {
+            "key": "The Mobile Quality Bar",
+            "value": "Users tolerate bugs in web apps but uninstall mobile apps after a single crash. The expected quality bar for mobile is higher: smooth animations, instant feedback, graceful offline behavior, clear error messages, and respect for platform conventions. Test on real devices before every release"
+          },
+          {
+            "key": "Continuous Learning Requirement",
+            "value": "Mobile platforms evolve rapidly: new OS versions annually, framework updates quarterly, new hardware capabilities regularly. Budget ongoing learning into your career. Follow platform release notes, attend conferences, and rebuild sample apps with each major framework update"
           }
         ]
       }
@@ -218,175 +842,578 @@
     "quizzes": [
       {
         "quiz": 1,
-        "week": 2,
-        "topic": "Flutter Widgets and State Management",
-        "duration": "20 minutes",
-        "questions": [
-          {
-            "question": "Explain the difference between StatelessWidget and StatefulWidget. When should you use each?",
-            "type": "short_answer",
-            "points": 10,
-            "answer": "StatelessWidget has no mutable state; its build method always produces the same output for the same configuration (props). Use it for static UI elements like labels, icons, and layout containers. StatefulWidget has a companion State object that holds mutable state; calling setState triggers a rebuild with the new state. Use it when the widget needs to change in response to user interaction or asynchronous events (e.g., a checkbox, a form field, an animation).",
-            "rubric": [
-              {
-                "key": "Correct definitions of both widget types",
-                "value": 4
-              },
-              {
-                "key": "Correct use cases for each",
-                "value": 3
-              },
-              {
-                "key": "Mentions setState triggering rebuild",
-                "value": 3
-              }
-            ]
-          },
-          {
-            "question": "Write a ChangeNotifier class called CounterModel with an increment method and a count getter. Then show how to provide it with ChangeNotifierProvider and consume it with Consumer.",
-            "type": "code",
-            "points": 10,
-            "answer": "class CounterModel extends ChangeNotifier {\n  int _count = 0;\n  int get count => _count;\n  void increment() {\n    _count++;\n    notifyListeners();\n  }\n}\n\n// Providing:\nChangeNotifierProvider(\n  create: (_) => CounterModel(),\n  child: MyApp(),\n)\n\n// Consuming:\nConsumer<CounterModel>(\n  builder: (context, counter, child) => Text('${counter.count}'),\n)",
-            "rubric": [
-              {
-                "key": "Correct ChangeNotifier with notifyListeners",
-                "value": 4
-              },
-              {
-                "key": "Correct ChangeNotifierProvider usage",
-                "value": 3
-              },
-              {
-                "key": "Correct Consumer usage",
-                "value": 3
-              }
-            ]
-          }
-        ],
-        "total_points": 20
-      },
-      {
-        "quiz": 2,
-        "week": 4,
-        "topic": "Navigation, API Integration, and Storage",
+        "week": 3,
+        "topic": "Mobile UI Components and Layout Systems",
         "duration": "25 minutes",
         "questions": [
           {
-            "question": "Explain the repository pattern in the context of a mobile app that fetches data from an API and caches it locally. Why is this pattern valuable?",
+            "question": "Explain Flutter's constraint propagation model. How do constraints flow through the widget tree, and what happens when a child widget requests a size larger than the constraints allow?",
             "type": "short_answer",
             "points": 10,
-            "answer": "The repository pattern creates an abstraction layer between the data sources (remote API, local database) and the rest of the application. The repository interface exposes methods like getArticles() without revealing whether data comes from the network or local cache. The implementation decides: check the cache first, fall back to the API if the cache is stale or empty, and update the cache after a successful API call. This is valuable because: (1) UI code does not need to change when you switch data sources. (2) Testing is easier with mock repositories. (3) Offline support is implemented in one place. (4) Caching strategy can be changed without affecting the rest of the app.",
+            "answer": "Flutter's layout algorithm works in two passes: (1) Constraints flow downward from parent to child. Each parent passes BoxConstraints (minWidth, maxWidth, minHeight, maxHeight) to its children. (2) Sizes flow upward from child to parent. Each child chooses a size within the received constraints and reports it back. If a child requests a size larger than the constraints allow, the child is clipped to the maximum constraint. For example, if a parent passes maxWidth: 200 and the child wants 300px, the child will be rendered at 200px and any content beyond that is clipped. This results in an overflow error in debug mode (yellow and black stripes) to alert the developer. The fix is either to make the child respect constraints (use Flexible or Expanded) or to allow scrolling (wrap in SingleChildScrollView).",
             "rubric": [
               {
-                "key": "Correctly defines the repository abstraction",
+                "key": "Correctly describes the two-pass constraint/size flow",
                 "value": 4
               },
               {
-                "key": "Explains the cache-then-network strategy",
+                "key": "Explains what happens when child exceeds constraints",
                 "value": 3
               },
               {
-                "key": "Lists at least two benefits",
+                "key": "Mentions overflow error and practical fixes",
                 "value": 3
               }
             ]
           },
           {
-            "question": "A Flutter app crashes when the user navigates back from a screen that makes an API call. The error says 'setState called after dispose'. Explain the cause and the fix.",
-            "type": "short_answer",
-            "points": 15,
-            "answer": "The API call is asynchronous. If the user navigates away before the response arrives, the widget is disposed (removed from the tree). When the callback runs and calls setState, the State object is no longer mounted, causing the error. Fix: Check the mounted property before calling setState. Better: cancel the async operation in the dispose method using a CancelToken (for HTTP) or by setting a flag. Best: use a state management solution like Provider where the model outlives the widget and the widget rebuilds reactively without needing setState.",
+            "question": "Write a Flutter widget that displays a list of products as cards in a responsive grid: 2 columns on phones (width < 600) and 3 columns on tablets (width >= 600). Each card should show the product name and price.",
+            "type": "code",
+            "points": 10,
+            "answer": "class ProductGrid extends StatelessWidget {\n  final List<Product> products;\n  const ProductGrid({required this.products});\n\n  @override\n  Widget build(BuildContext context) {\n    return LayoutBuilder(\n      builder: (context, constraints) {\n        final columns = constraints.maxWidth < 600 ? 2 : 3;\n        return GridView.builder(\n          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(\n            crossAxisCount: columns,\n            crossAxisSpacing: 8,\n            mainAxisSpacing: 8,\n          ),\n          itemCount: products.length,\n          itemBuilder: (context, index) {\n            final product = products[index];\n            return Card(\n              child: Padding(\n                padding: EdgeInsets.all(12),\n                child: Column(\n                  mainAxisAlignment: MainAxisAlignment.center,\n                  children: [\n                    Text(product.name, style: Theme.of(context).textTheme.titleMedium),\n                    SizedBox(height: 8),\n                    Text('\\$${product.price.toStringAsFixed(2)}'),\n                  ],\n                ),\n              ),\n            );\n          },\n        );\n      },\n    );\n  }\n}",
             "rubric": [
               {
-                "key": "Correctly identifies async callback after dispose",
-                "value": 5
-              },
-              {
-                "key": "Mentions checking mounted property",
-                "value": 3
-              },
-              {
-                "key": "Mentions canceling the async operation in dispose",
+                "key": "Uses LayoutBuilder for responsive column count",
                 "value": 4
               },
               {
-                "key": "Suggests state management as a structural fix",
+                "key": "Correct GridView.builder implementation",
+                "value": 3
+              },
+              {
+                "key": "Properly displays product name and price in cards",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "What is the difference between Expanded and Flexible widgets in a Row or Column? Provide a specific example where using the wrong one causes a layout problem.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Expanded and Flexible both distribute remaining space in a Row or Column among their children using flex factors. The key difference is the fit parameter: Expanded uses FlexFit.tight (child must fill all allocated space), while Flexible defaults to FlexFit.loose (child can be smaller than allocated space). Example problem: In a Row with a Text widget wrapped in Expanded, the Text is forced to fill all allocated width even if the text is short, which can cause unexpected stretching of the text background. If you instead use Flexible, the Text takes only the width it needs. Conversely, using Flexible instead of Expanded for columns in a data table results in uneven column widths because each column sizes to its content rather than distributing space evenly.",
+            "rubric": [
+              {
+                "key": "Correctly distinguishes tight vs loose fit",
+                "value": 4
+              },
+              {
+                "key": "Provides a concrete example of incorrect usage",
+                "value": 3
+              },
+              {
+                "key": "Explains when to use each widget",
                 "value": 3
               }
             ]
           }
         ],
-        "total_points": 25
+        "total_points": 30
+      },
+      {
+        "quiz": 2,
+        "week": 5,
+        "topic": "Navigation and State Management",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "A Flutter app uses go_router for navigation. Explain how you would implement a route guard that redirects unauthenticated users to a login screen while preserving the originally requested URL so they can be redirected back after login.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "In go_router, use the redirect callback on GoRouter configuration. The callback receives GoRouterState which includes the current location. Check if the user is authenticated (via a ref to an auth provider or a global auth state). If not authenticated and the requested path is not already /login, return '/login?redirect=${state.matchedLocation}' to redirect to login with the original URL as a query parameter. If authenticated, return null to allow normal navigation. On the login screen, after successful authentication, read the redirect query parameter and use context.go(redirectUrl) to navigate to the originally requested page. This pattern centralizes auth checking in one place rather than in every screen.",
+            "rubric": [
+              {
+                "key": "Correctly uses redirect callback with auth check",
+                "value": 4
+              },
+              {
+                "key": "Preserves original URL as query parameter",
+                "value": 3
+              },
+              {
+                "key": "Describes post-login redirect back to original page",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Write a ChangeNotifier-based shopping cart model that supports adding items, removing items, updating quantity, and computing the total price. Show how to provide it to the widget tree and consume it with selective rebuilding.",
+            "type": "code",
+            "points": 15,
+            "answer": "class CartModel extends ChangeNotifier {\n  final Map<String, CartItem> _items = {};\n  Map<String, CartItem> get items => Map.unmodifiable(_items);\n  \n  double get totalPrice => _items.values\n      .fold(0, (sum, item) => sum + item.price * item.quantity);\n  \n  int get itemCount => _items.values\n      .fold(0, (sum, item) => sum + item.quantity);\n  \n  void addItem(String id, String name, double price) {\n    if (_items.containsKey(id)) {\n      _items[id] = _items[id]!.copyWith(quantity: _items[id]!.quantity + 1);\n    } else {\n      _items[id] = CartItem(id: id, name: name, price: price, quantity: 1);\n    }\n    notifyListeners();\n  }\n  \n  void removeItem(String id) {\n    _items.remove(id);\n    notifyListeners();\n  }\n  \n  void updateQuantity(String id, int quantity) {\n    if (quantity <= 0) { removeItem(id); return; }\n    if (_items.containsKey(id)) {\n      _items[id] = _items[id]!.copyWith(quantity: quantity);\n      notifyListeners();\n    }\n  }\n}\n\n// Providing:\nChangeNotifierProvider(create: (_) => CartModel(), child: MyApp())\n\n// Selective consumption (only rebuilds when totalPrice changes):\nSelector<CartModel, double>(\n  selector: (_, cart) => cart.totalPrice,\n  builder: (_, total, __) => Text('Total: \\$${total.toStringAsFixed(2)}'),\n)",
+            "rubric": [
+              {
+                "key": "Complete CartModel with add, remove, updateQuantity, and computed properties",
+                "value": 5
+              },
+              {
+                "key": "Correct notifyListeners calls and immutable public API",
+                "value": 4
+              },
+              {
+                "key": "Correct Provider setup and Selector for selective rebuilding",
+                "value": 4
+              },
+              {
+                "key": "Handles edge cases (duplicate add increments, zero quantity removes)",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between context.read and context.watch in Provider. What happens if you use context.watch inside a button's onPressed callback, and why is it a bug?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "context.watch<T>() returns the current value of a provider and subscribes the calling widget to rebuild whenever the provider's value changes. context.read<T>() returns the current value without subscribing to changes. If you use context.watch inside an onPressed callback, it is a bug because: (1) watch is designed to be called during build, where it registers the widget for rebuilds. Inside a callback, the watch subscription is not properly managed and will not trigger rebuilds as expected. (2) Flutter will throw an assertion error in debug mode: 'Tried to listen to a value exposed with provider, from outside of the widget tree.' The correct pattern is to use context.read inside callbacks (since you only need the current value at the time the button is pressed) and context.watch inside build methods (where you need reactive updates).",
+            "rubric": [
+              {
+                "key": "Correctly defines watch (subscribes) vs read (one-time access)",
+                "value": 4
+              },
+              {
+                "key": "Identifies the bug: watch in callback causes assertion error",
+                "value": 3
+              },
+              {
+                "key": "States the correct pattern: read in callbacks, watch in build",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 35
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "API Integration and Push Notifications",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Describe the token refresh race condition that occurs when multiple API requests simultaneously receive 401 Unauthorized responses. How does a properly implemented Dio interceptor handle this?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "When the access token expires, multiple in-flight requests may receive 401 responses near-simultaneously. Without coordination, each request's error interceptor independently attempts to refresh the token, causing: (1) Multiple refresh requests hit the server, potentially invalidating each other's refresh tokens. (2) Some requests retry with a token that was already replaced by another refresh. A proper implementation uses a mutex/lock pattern: the first 401 acquires a lock and performs the refresh. Subsequent 401s check the lock, see a refresh is in progress, and wait for it to complete. Once the first refresh succeeds, all waiting requests retry with the new token. If the refresh fails, all waiting requests propagate the error. Implementation: store a Completer in the interceptor; the first 401 creates and starts it, subsequent 401s await it.",
+            "rubric": [
+              {
+                "key": "Correctly identifies the race condition with multiple refresh attempts",
+                "value": 4
+              },
+              {
+                "key": "Describes the mutex/lock solution pattern",
+                "value": 3
+              },
+              {
+                "key": "Mentions queuing waiting requests and replaying after refresh",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between FCM notification messages and data messages. When should you use each, and how does the app's state (foreground, background, terminated) affect delivery behavior?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Notification messages have a 'notification' payload with title and body. Data messages have only a 'data' payload with custom key-value pairs. Behavior by app state: Foreground: Both types are delivered to the app's message handler. The app decides how to display them (in-app banner, dialog, etc.). Notification messages are NOT automatically displayed. Background: Notification messages are displayed by the OS in the notification tray automatically; the app receives the message only when the user taps it. Data messages are delivered to the background handler (onBackgroundMessage in Flutter). Terminated: Notification messages appear in the tray; the app receives the payload in getInitialMessage() when launched by tapping. Data messages may be silently dropped on some platforms. Use notification messages for simple alerts where OS handling is sufficient. Use data messages when you need custom handling logic regardless of app state (e.g., updating a badge count, triggering a sync, or constructing a custom notification with actions).",
+            "rubric": [
+              {
+                "key": "Correctly distinguishes notification vs data message payloads",
+                "value": 3
+              },
+              {
+                "key": "Accurately describes behavior in all three app states",
+                "value": 4
+              },
+              {
+                "key": "Provides appropriate use cases for each message type",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Write a Dio interceptor class that adds an Authorization Bearer token from secure storage to every request and automatically refreshes the token on 401 responses.",
+            "type": "code",
+            "points": 15,
+            "answer": "class AuthInterceptor extends Interceptor {\n  final FlutterSecureStorage _storage;\n  final Dio _refreshDio; // separate Dio instance to avoid interceptor loop\n  Completer<String>? _refreshCompleter;\n\n  AuthInterceptor(this._storage, this._refreshDio);\n\n  @override\n  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {\n    final token = await _storage.read(key: 'access_token');\n    if (token != null) {\n      options.headers['Authorization'] = 'Bearer $token';\n    }\n    handler.next(options);\n  }\n\n  @override\n  void onError(DioException err, ErrorInterceptorHandler handler) async {\n    if (err.response?.statusCode != 401) {\n      handler.next(err);\n      return;\n    }\n    try {\n      final newToken = await _refreshToken();\n      err.requestOptions.headers['Authorization'] = 'Bearer $newToken';\n      final response = await _refreshDio.fetch(err.requestOptions);\n      handler.resolve(response);\n    } catch (e) {\n      handler.next(err);\n    }\n  }\n\n  Future<String> _refreshToken() async {\n    if (_refreshCompleter != null) return _refreshCompleter!.future;\n    _refreshCompleter = Completer<String>();\n    try {\n      final refreshToken = await _storage.read(key: 'refresh_token');\n      final response = await _refreshDio.post('/auth/refresh',\n          data: {'refresh_token': refreshToken});\n      final newToken = response.data['access_token'];\n      await _storage.write(key: 'access_token', value: newToken);\n      _refreshCompleter!.complete(newToken);\n      return newToken;\n    } catch (e) {\n      _refreshCompleter!.completeError(e);\n      rethrow;\n    } finally {\n      _refreshCompleter = null;\n    }\n  }\n}",
+            "rubric": [
+              {
+                "key": "Correctly adds Bearer token to requests from secure storage",
+                "value": 4
+              },
+              {
+                "key": "Handles 401 with token refresh and request retry",
+                "value": 4
+              },
+              {
+                "key": "Uses Completer to prevent concurrent refresh race condition",
+                "value": 4
+              },
+              {
+                "key": "Uses separate Dio instance to avoid interceptor loop",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 35
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "Offline-First Design and Authentication",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Design the conflict resolution strategy for an offline-first note-taking app where users can edit the same note on their phone and tablet while offline. Describe how you detect conflicts and what resolution options you would offer.",
+            "type": "short_answer",
+            "points": 12,
+            "answer": "Conflict detection: Each note has a version number (or vector clock) that increments on every edit. When the device syncs, it sends its version number. If the server's version is higher than the client's base version (the version the client started editing from), a conflict exists. Resolution strategy: (1) Automatic merge for non-overlapping changes: if phone edited the title and tablet edited the body, merge both changes automatically. (2) For overlapping changes (both devices edited the body), present a conflict resolution UI showing both versions side by side with diff highlighting, letting the user choose one, merge manually, or keep both as separate notes. (3) Last-write-wins as fallback for unattended sync (when user is not present to resolve), with the overwritten version saved to a conflict archive for later recovery. Implementation: store a base_version and modified_version with each synced change. Server compares base_version against current_version; mismatch means conflict.",
+            "rubric": [
+              {
+                "key": "Describes version-based conflict detection mechanism",
+                "value": 4
+              },
+              {
+                "key": "Proposes automatic merge for non-overlapping changes",
+                "value": 3
+              },
+              {
+                "key": "Provides user-facing resolution UI for overlapping conflicts",
+                "value": 3
+              },
+              {
+                "key": "Includes fallback strategy and conflict archive",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain why mobile apps cannot securely store a client secret for OAuth, and describe how the PKCE (Proof Key for Code Exchange) flow solves this problem.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Mobile apps cannot securely store client secrets because: (1) The app binary is distributed to every user's device and can be decompiled or reverse-engineered to extract any embedded secrets. (2) Unlike a server where the secret stays on a machine you control, a mobile secret is on millions of devices you do not control. PKCE solves this by replacing the static client secret with a dynamic, per-request proof: (1) The app generates a random code_verifier (128 bytes of entropy). (2) It computes a code_challenge = SHA256(code_verifier) and sends it with the authorization request. (3) The auth server stores the challenge. (4) When exchanging the authorization code for tokens, the app sends the original code_verifier. (5) The server hashes it and compares against the stored challenge. This proves the same app that started the flow is completing it, without requiring a stored secret. An attacker who intercepts the authorization code cannot exchange it without the code_verifier.",
+            "rubric": [
+              {
+                "key": "Explains why app binaries cannot protect secrets",
+                "value": 3
+              },
+              {
+                "key": "Correctly describes the PKCE flow with verifier and challenge",
+                "value": 4
+              },
+              {
+                "key": "Explains how PKCE prevents authorization code interception",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "What is an optimistic UI update and what is the rollback strategy when the server rejects the change? Provide a concrete example with a social media 'like' button.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "An optimistic UI update immediately reflects a user action in the interface before receiving server confirmation, providing instant perceived responsiveness. For a like button: (1) User taps like. (2) Immediately update the local state: increment like count, change heart icon to filled/red. (3) Send the like API request in the background. (4) On success: no UI change needed, local state already reflects the correct state. (5) On failure (server error, network timeout): roll back the local state: decrement like count, change heart icon back to outline. Show a brief error message like 'Could not save your like. Try again.' The rollback must restore the exact previous state. Store the pre-update state before applying the optimistic change so you can revert cleanly. For non-idempotent operations (like posting a comment), queue the action and show a 'sending...' indicator rather than a fully optimistic update.",
+            "rubric": [
+              {
+                "key": "Correctly defines optimistic UI with immediate local state update",
+                "value": 3
+              },
+              {
+                "key": "Describes rollback on server failure with like button example",
+                "value": 3
+              },
+              {
+                "key": "Mentions storing pre-update state for clean revert",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "Performance, Deployment, and Testing",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "A Flutter app stutters noticeably when scrolling a list of 1000 items, each containing a network image and text. Using Flutter DevTools, describe step by step how you would diagnose and fix this performance issue.",
+            "type": "short_answer",
+            "points": 12,
+            "answer": "Step 1: Run the app in profile mode (not debug, which has artificially high overhead). Step 2: Open DevTools Timeline view, start recording, scroll through the list, stop recording. Step 3: Look for frames exceeding 16ms (60fps budget) in the frame chart. Identify whether the bottleneck is in the build phase (widget construction) or paint phase (rendering). Common causes and fixes for this scenario: (1) Images loading at full resolution: Use ResizeImage or CachedNetworkImage with memCacheWidth/Height to downscale images to display size. (2) All items building at once: Ensure using ListView.builder (not ListView with children list) for lazy construction. (3) Unnecessary rebuilds: Add const constructors to list item widgets, use keys for stable identity. (4) Heavy build methods: Extract list items into separate StatelessWidget classes so Flutter can skip rebuilding unchanged items. (5) Main thread image decoding: Large images decode on the main thread; use precacheImage or compute the decode in an isolate. Step 4: Apply fixes, re-profile, confirm frames are under 16ms.",
+            "rubric": [
+              {
+                "key": "Uses profile mode and DevTools Timeline correctly",
+                "value": 3
+              },
+              {
+                "key": "Identifies image optimization as a key fix",
+                "value": 3
+              },
+              {
+                "key": "Mentions ListView.builder and const constructors",
+                "value": 3
+              },
+              {
+                "key": "Describes systematic diagnose-fix-verify approach",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between widget tests, integration tests, and golden tests in Flutter. For each, give one specific scenario where that test type is the best choice.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Widget tests: test a single widget in isolation with mocked dependencies. Run in milliseconds without a device. Best for: testing that a login form shows validation errors when the user submits with an empty email field. The test pumps the LoginForm widget, taps submit, and verifies the error message appears. Integration tests: test the full application running on a real or emulated device. Test end-to-end user flows. Best for: testing the complete checkout flow from adding an item to cart through entering payment details to seeing the order confirmation screen. The test drives the actual app through the entire flow. Golden tests: render a widget and compare the resulting image pixel-by-pixel against an approved reference screenshot. Best for: ensuring a custom chart widget renders identically after a refactor. The test detects unintended visual changes that widget tests (which check widget tree structure) would miss, such as incorrect colors, alignment shifts, or font rendering changes.",
+            "rubric": [
+              {
+                "key": "Correctly describes all three test types",
+                "value": 4
+              },
+              {
+                "key": "Provides appropriate specific scenarios for each",
+                "value": 4
+              },
+              {
+                "key": "Distinguishes what each type catches that others miss",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Your app has been rejected by the Apple App Store. The rejection states: 'Guideline 5.1.1 - Data Collection and Storage: Your app requires users to grant access to the camera before they reach a feature that uses it.' What is the issue and how do you fix it?",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "The issue is requesting camera permission prematurely, before the user has reached a context where the camera is needed. Apple requires that permission requests be just-in-time: they must be triggered by a user action that directly relates to the feature requiring the permission. Fix: (1) Remove any camera permission request from app startup, onboarding, or main screen initialization. (2) Move the permission request to the exact moment the user taps a button that needs the camera (e.g., 'Take Photo' or 'Scan Document'). (3) Before triggering the system permission dialog, show a custom pre-permission screen explaining why the camera is needed and what value it provides ('We need camera access to scan your document'). (4) If the user has previously denied permission, show a message with a button that opens Settings where they can re-enable the permission. (5) Resubmit with a note to the reviewer explaining the change.",
+            "rubric": [
+              {
+                "key": "Correctly identifies premature permission request as the issue",
+                "value": 3
+              },
+              {
+                "key": "Describes just-in-time permission request with user action trigger",
+                "value": 3
+              },
+              {
+                "key": "Mentions pre-permission explanation and handling prior denial",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 30
       }
     ],
     "major_assignments": [
       {
         "assignment": 1,
-        "title": "Full-Featured Mobile Application",
+        "title": "Cross-Platform UI and Navigation Prototype",
         "week_assigned": 3,
-        "week_due": 5,
-        "points": 100,
-        "description": "Design and build a complete cross-platform mobile application with Flutter that includes multiple screens, state management, API integration, local storage, and platform feature integration. The app should solve a real user need and be polished enough for store submission.",
+        "week_due": 6,
+        "points": 150,
+        "description": "Design and build a multi-screen Flutter application with a polished UI, responsive layouts that adapt to phone and tablet form factors, and a complete navigation system using go_router with deep linking support. The app must demonstrate mastery of Flutter's widget system, layout constraints, state management with Provider, and declarative navigation including nested routes and route guards.",
         "objectives": [
-          "Build a multi-screen Flutter app with proper navigation and state management",
-          "Integrate with a REST API for data and implement local caching",
-          "Access at least one platform feature (camera, location, or notifications)",
-          "Produce a polished app ready for store submission"
+          "Build a responsive Flutter app with at least 8 screens demonstrating diverse layout patterns",
+          "Implement navigation with go_router including nested routes, deep links, and authentication guards",
+          "Use Provider for state management with proper separation of ephemeral and application state",
+          "Create a consistent design system with theming, custom widgets, and platform-adaptive components"
         ],
         "requirements": {},
         "deliverables": [
-          "Complete Flutter project source code",
-          "Release builds for Android (APK) and iOS (IPA or simulator build)",
-          "App store listing assets: icon, screenshots, description",
-          "Design document (2 pages) explaining architecture and technology choices"
+          "Complete Flutter project source code with organized folder structure",
+          "Design document (3 pages) explaining navigation architecture, state management decisions, and responsive strategy",
+          "Screen recordings demonstrating the app on phone and tablet form factors",
+          "Deep link test plan with URLs that open specific screens with parameters"
         ],
         "grading_rubric": {
-          "functionality": {
-            "points": 35,
+          "technical_implementation": {
+            "points": 50,
             "criteria": [
-              "All specified features work correctly on both platforms",
-              "Navigation handles edge cases (back button, deep links)",
-              "API integration handles loading, error, and empty states",
-              "Local storage provides meaningful offline capability"
+              "Responsive layouts work correctly on phone, tablet, and desktop breakpoints",
+              "go_router configuration handles all routes including deep links and guards",
+              "Provider state management follows best practices with proper separation of concerns",
+              "Widget tree is efficient with const constructors, extracted widgets, and no unnecessary rebuilds"
             ]
           },
-          "code_quality": {
-            "points": 25,
+          "visual_quality": {
+            "points": 40,
             "criteria": [
-              "State management uses Provider with proper separation",
-              "Repository pattern abstracts data sources",
-              "Code is organized by feature with clear module boundaries",
-              "No unnecessary rebuilds or performance issues"
+              "Consistent Material Design 3 theming across all screens",
+              "Smooth transitions and animations between routes",
+              "Proper handling of edge cases: empty states, loading states, overflow on small screens",
+              "Platform-adaptive elements where iOS and Android conventions differ"
             ]
           },
-          "user_experience": {
-            "points": 25,
+          "performance_optimization": {
+            "points": 30,
             "criteria": [
-              "UI follows Material Design guidelines consistently",
-              "App is responsive across phone and tablet sizes",
-              "Loading and error states provide clear feedback",
-              "Animations and transitions feel native and polished"
+              "No jank during navigation transitions or scrolling",
+              "Images are properly sized and cached",
+              "Lists use builder constructors for large datasets",
+              "App startup time is under 2 seconds on a mid-range device"
             ]
           },
           "documentation": {
-            "points": 15,
+            "points": 30,
             "criteria": [
-              "Architecture document explains key decisions",
-              "README includes setup and build instructions",
-              "Code has meaningful comments where needed",
-              "Store listing assets are professional quality"
+              "Design document clearly explains architectural decisions with rationale",
+              "Code is organized by feature with clear module boundaries",
+              "README includes setup, build, and testing instructions",
+              "Deep link test plan covers all routes with expected behavior"
             ]
           }
         },
         "rubric": [
           {
             "attributes": {
-              "points": 100,
+              "points": 150,
               "criteria": [
-                "Complete cross-platform app with robust feature set",
-                "Clean architecture with Provider and repository pattern",
-                "Polished UI with proper error handling and offline support",
-                "Professional documentation and store-ready assets"
+                "Polished multi-screen Flutter app with responsive layout support",
+                "Complete navigation system with deep linking and authentication guards",
+                "Well-structured state management using Provider patterns",
+                "Professional documentation covering architecture and design decisions"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "API-Integrated Mobile Application with Offline Support",
+        "week_assigned": 7,
+        "week_due": 11,
+        "points": 200,
+        "description": "Extend your application with full backend API integration, local data persistence, push notification support, and offline-first capabilities. The app must communicate with a REST API using Dio with proper authentication, cache data locally using SQLite for offline access, handle push notifications in all app states, and provide a seamless user experience regardless of network conditions.",
+        "objectives": [
+          "Build a robust API client with Dio interceptors for auth, logging, and error handling",
+          "Implement local persistence with SQLite and a repository pattern abstracting data sources",
+          "Configure Firebase Cloud Messaging for push notifications with deep linking",
+          "Design an offline-first sync engine that queues changes and resolves conflicts"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Complete Flutter project with API integration, local storage, and offline support",
+          "API documentation showing all endpoints consumed with request/response examples",
+          "Offline test report demonstrating app behavior in no-network, intermittent, and restored conditions",
+          "Architecture diagram showing data flow from API through repository to UI with offline sync paths"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 70,
+            "criteria": [
+              "Dio client with interceptors for auth token injection, refresh, and error handling",
+              "Type-safe JSON serialization with json_serializable for all API models",
+              "SQLite database with proper schema, migrations, and DAO pattern",
+              "Sync engine correctly queues offline changes and pushes when connectivity restores"
+            ]
+          },
+          "visual_quality": {
+            "points": 40,
+            "criteria": [
+              "Clear loading, success, error, and empty states for every data-driven screen",
+              "Sync status indicators showing pending, synced, and failed states",
+              "Push notification handling in foreground, background, and terminated states",
+              "Graceful degradation when offline with clear user communication"
+            ]
+          },
+          "performance_optimization": {
+            "points": 40,
+            "criteria": [
+              "API responses cached appropriately to minimize redundant network requests",
+              "Background sync does not impact UI responsiveness",
+              "Database queries are indexed and efficient for the app's access patterns",
+              "Token refresh handles race conditions without duplicate refresh attempts"
+            ]
+          },
+          "documentation": {
+            "points": 50,
+            "criteria": [
+              "API documentation with endpoint details, auth flow, and error codes",
+              "Offline test report with specific scenarios tested and results",
+              "Architecture diagram accurately reflects data flow and sync patterns",
+              "Code documentation covers sync engine conflict resolution strategy"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 200,
+              "criteria": [
+                "Production-quality API integration with auth and error handling",
+                "Offline-first design with local persistence and sync engine",
+                "Push notification support across all app lifecycle states",
+                "Comprehensive documentation of architecture and offline behavior"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Production-Ready Mobile App with Device Integration",
+        "week_assigned": 10,
+        "week_due": 14,
+        "points": 200,
+        "description": "Complete your mobile application with device hardware integration, authentication, performance optimization, comprehensive testing, and app store deployment preparation. The app must access at least two device APIs (camera, GPS, or sensors), implement secure authentication with biometric support, pass performance profiling benchmarks, include widget and integration tests, and be packaged as store-ready release builds.",
+        "objectives": [
+          "Integrate at least two device APIs with proper permission handling and lifecycle management",
+          "Implement authentication with Firebase Auth including social login and biometric unlock",
+          "Optimize performance to achieve 60fps scrolling and sub-2-second startup on mid-range devices",
+          "Write comprehensive tests and prepare signed release builds for both app stores"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Complete Flutter project with device integration, auth, tests, and release builds",
+          "Performance profiling report showing before/after optimization metrics",
+          "Test coverage report with widget tests, integration tests, and golden tests",
+          "Signed release APK/AAB for Android and archive for iOS with store listing assets"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 70,
+            "criteria": [
+              "Two or more device APIs integrated with proper permission handling and resource cleanup",
+              "Firebase Auth with at least two login methods plus biometric unlock for returning users",
+              "Comprehensive test suite with widget tests for key widgets and integration test for primary flow",
+              "Release builds configured with proper signing, obfuscation, and build flavors"
+            ]
+          },
+          "visual_quality": {
+            "points": 40,
+            "criteria": [
+              "Device features enhance the user experience with clear purpose",
+              "Authentication flow is smooth with proper error handling for every failure mode",
+              "App store listing assets (icon, screenshots, description) are professional quality",
+              "Accessibility: proper semantics, sufficient contrast, and screen reader support for key flows"
+            ]
+          },
+          "performance_optimization": {
+            "points": 50,
+            "criteria": [
+              "60fps scrolling verified in profile mode with DevTools timeline",
+              "App startup under 2 seconds on a mid-range device",
+              "No memory leaks detected in profiling session covering main user flows",
+              "Device API usage is battery-efficient with proper lifecycle management"
+            ]
+          },
+          "documentation": {
+            "points": 40,
+            "criteria": [
+              "Performance report shows specific optimizations with measured impact",
+              "Test coverage report identifies covered and uncovered code paths",
+              "README covers complete setup, build, test, and release instructions",
+              "Store listing description follows platform guidelines and highlights key features"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 200,
+              "criteria": [
+                "Device integration with proper permission and lifecycle management",
+                "Secure authentication with multiple methods and biometric support",
+                "Performance-optimized app meeting 60fps and startup benchmarks",
+                "Store-ready release builds with comprehensive test coverage"
               ]
             }
           }
@@ -396,31 +1423,31 @@
   },
   "grading_breakdown": {
     "weekly_quizzes": {
-      "percentage": 15,
-      "description": "Regular assessment of Flutter and mobile concepts"
+      "percentage": 20,
+      "description": "Five quizzes assessing mobile development concepts, framework knowledge, and practical coding skills"
     },
     "lab_assignments": {
-      "percentage": 25,
-      "description": "Weekly mobile development exercises"
+      "percentage": 15,
+      "description": "Weekly hands-on lab exercises building incremental mobile app features"
     },
     "major_assignments": {
       "percentage": 30,
-      "description": "Full mobile application project"
+      "description": "Three major projects building a complete mobile application from UI prototype through production deployment"
     },
     "midterm_examination": {
-      "percentage": 10,
-      "description": "Written and coding exam on Flutter fundamentals"
+      "percentage": 15,
+      "description": "Written and coding exam covering Flutter fundamentals, state management, navigation, and API integration"
     },
-    "final_examination": {
+    "final_project": {
       "percentage": 20,
-      "description": "Comprehensive exam covering all mobile development topics"
+      "description": "Comprehensive final project demonstrating mastery of the complete mobile development lifecycle"
     }
   },
   "course_policies": {
-    "attendance": "Attendance is expected for all lectures and mandatory for lab sessions.",
-    "late_submissions": "Late assignments lose 10% per day. No submissions accepted more than 5 days late.",
-    "collaboration": "Discussion is encouraged. All code must be written individually unless pair programming is assigned.",
-    "academic_integrity": "All submitted code must be your own work. Using templates or AI-generated code without attribution is plagiarism.",
-    "technology_requirements": "Students need Flutter SDK, Android Studio or VS Code, and either an Android device/emulator or iOS simulator. Lab computers are available."
+    "attendance": "Attendance is expected for all lectures and mandatory for lab sessions. Device testing sessions require physical presence.",
+    "late_submissions": "Late assignments lose 10% per day. No submissions accepted more than 5 days late. App store submission deadlines are firm.",
+    "collaboration": "Discussion of approaches is encouraged. All code must be written individually unless pair programming is specifically assigned.",
+    "academic_integrity": "All submitted code must be your own work. Using templates or AI-generated code without attribution is plagiarism. Open-source packages are allowed with proper pubspec attribution.",
+    "technology_requirements": "Students need Flutter SDK, Android Studio or VS Code, and either an Android device/emulator or iOS simulator. A physical device is required for device API and push notification testing. Lab computers are available with all tools pre-installed."
   }
 }

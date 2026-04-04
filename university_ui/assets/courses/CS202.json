@@ -13,201 +13,839 @@
     {
       "week_number": 1,
       "session_number": 1,
-      "topic": "Introduction to Computer Organization",
-      "duration": "50 minutes",
+      "topic": "Number Systems and Binary Representation",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Understand the von Neumann architecture and its components",
-        "Identify the roles of CPU, memory, and I/O in a computer system",
-        "Convert between binary, decimal, and hexadecimal number systems"
+        "Convert between binary, decimal, hexadecimal, and octal number systems fluently",
+        "Represent signed integers using twos complement notation",
+        "Perform binary arithmetic including addition, subtraction, and overflow detection",
+        "Understand IEEE 754 floating-point representation basics"
       ],
       "readings": [
-        "Patterson & Hennessy, Computer Organization and Design, Ch. 1",
-        "Nisan & Schocken, The Elements of Computing Systems, Ch. 1"
+        "Patterson & Hennessy, Computer Organization and Design (RISC-V Edition), Ch. 1",
+        "Nisan & Schocken, The Elements of Computing Systems, Ch. 1",
+        "Harris & Harris, Digital Design and Computer Architecture, Ch. 1 (sections 1.4-1.6)"
       ],
       "lecture_notes": {
-        "introduction": "This course bridges the gap between software and hardware. Understanding how a computer actually executes your code makes you a better programmer, enabling you to write faster software and debug mysterious performance issues.",
+        "introduction": "Every piece of data a computer processes, from text and images to financial transactions and machine learning weights, is ultimately represented as sequences of binary digits. This foundational session establishes the number systems that underpin all digital computation. Understanding these representations is not merely academic; real-world bugs in banking software, game physics engines, and spacecraft navigation systems have been traced to misunderstandings about integer overflow, sign extension, and floating-point precision. The ability to think fluently in binary and hexadecimal is what separates someone who writes code from someone who truly understands what the machine does with that code. We begin here because every subsequent topic in computer architecture, from logic gates to cache design, depends on this vocabulary.",
         "key_concepts": [
-          "Von Neumann architecture: stored program concept",
-          "CPU components: ALU, control unit, registers",
-          "Memory hierarchy overview: registers, cache, RAM, disk",
-          "Binary and hexadecimal number systems",
-          "Twos complement representation for signed integers"
+          "Positional number systems: each digit's value depends on its position (place value), and the base determines the multiplier between positions",
+          "Binary (base-2): the native language of digital circuits, where each bit is a 0 or 1 representing an off or on transistor state",
+          "Hexadecimal (base-16): compact notation for binary, where each hex digit maps to exactly 4 bits, making memory dumps and addresses human-readable",
+          "Octal (base-8): historically significant in Unix file permissions and PDP-era computing, each digit maps to 3 bits",
+          "Twos complement: the standard representation for signed integers, where the most significant bit has negative weight, enabling the same adder hardware to handle both signed and unsigned arithmetic",
+          "Binary addition and subtraction: carry propagation, borrow chains, and how subtraction is implemented as addition of the twos complement",
+          "Overflow detection: for unsigned arithmetic, carry-out indicates overflow; for signed arithmetic, overflow occurs when two operands of the same sign produce a result of opposite sign",
+          "Sign extension: when widening a twos complement number, replicate the sign bit to preserve the value; truncation requires checking that discarded bits match the new sign bit",
+          "IEEE 754 floating-point: sign, exponent, and mantissa fields; the concept of normalized form and why 0.1 + 0.2 does not equal 0.3 in binary",
+          "Fixed-point as an alternative to floating-point for embedded systems where deterministic precision matters more than dynamic range"
         ],
-        "demonstration": "Use a CPU simulator to trace the fetch-decode-execute cycle for simple instructions, observing register and memory state changes at each step",
+        "demonstration": "Walk through converting the decimal number -42 to 8-bit twos complement step by step: first convert 42 to binary (00101010), then invert all bits (11010101), then add 1 (11010110). Verify by computing the weighted sum: -128 + 64 + 16 + 4 + 2 = -42. Then perform binary addition of -42 + 100 (01100100) showing carry propagation and confirming the 8-bit result is 00111010 = 58. Finally, demonstrate overflow by adding 100 + 100 in 8-bit signed, showing how the result wraps to -56.",
         "setup_requirements": [
-          "CPU simulator software installed (MARS MIPS or similar)",
-          "Binary/hex calculator available"
+          "CPU simulator software installed (MARS MIPS or Ripes RISC-V simulator)",
+          "Binary/hex calculator available (programmer mode of system calculator)",
+          "Printed number conversion reference sheet"
         ],
         "review": [
           {
-            "key": "Von Neumann Bottleneck",
-            "value": "Instructions and data share a single memory bus, meaning the CPU often waits for data; this bottleneck drives the need for caches and out-of-order execution"
+            "key": "Twos Complement",
+            "value": "Negative numbers are represented by flipping all bits and adding 1; this allows the same hardware adder to handle both addition and subtraction without separate subtraction circuits, since A - B = A + (~B + 1)"
           },
           {
-            "key": "Twos Complement",
-            "value": "Negative numbers are represented by flipping all bits and adding 1; this allows the same hardware adder to handle both addition and subtraction"
+            "key": "Hexadecimal Utility",
+            "value": "Hexadecimal is not a different kind of number, just a more compact way to write binary; 0xDEADBEEF is easier to read than its 32-bit binary equivalent, which is why memory addresses, color codes, and debug output use hex"
+          },
+          {
+            "key": "Overflow vs Carry",
+            "value": "Carry-out means the unsigned result does not fit; overflow means the signed result does not fit. These are independent conditions detected by different hardware flags, and confusing them causes real bugs"
+          },
+          {
+            "key": "IEEE 754 Pitfall",
+            "value": "Floating-point numbers are approximations: 0.1 cannot be represented exactly in binary, so repeated additions accumulate error. Financial software uses fixed-point or decimal types to avoid this"
           }
         ]
       }
     },
     {
       "week_number": 2,
-      "session_number": 3,
-      "topic": "Assembly Language and the Instruction Set Architecture",
-      "duration": "50 minutes",
+      "session_number": 2,
+      "topic": "Boolean Algebra and Logic Gates",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Write simple programs in MIPS assembly language",
-        "Understand how high-level constructs map to assembly instructions",
-        "Explain the role of the instruction set architecture as a hardware/software interface"
+        "Apply Boolean algebra laws to simplify logic expressions",
+        "Construct truth tables for arbitrary combinational logic functions",
+        "Map between Boolean expressions, truth tables, and gate-level circuit diagrams",
+        "Use Karnaugh maps for systematic minimization of up to 4 variables"
       ],
       "readings": [
-        "Patterson & Hennessy, Ch. 2 - Instructions: Language of the Computer",
-        "MIPS Assembly Quick Reference Guide"
+        "Harris & Harris, Digital Design and Computer Architecture, Ch. 2 (sections 2.1-2.5)",
+        "Mano & Ciletti, Digital Design, Ch. 2 - Boolean Algebra and Logic Gates",
+        "Patterson & Hennessy, Appendix B (sections B.1-B.3)"
       ],
       "lecture_notes": {
-        "introduction": "Assembly language reveals what the CPU actually does. Every if-statement, loop, and function call in Python or C compiles down to sequences of these simple instructions. Understanding assembly makes you a far better debugger and optimizer.",
+        "introduction": "Boolean algebra is the mathematical foundation of all digital circuits. Every processor, memory chip, and I/O controller is built from billions of logic gates that implement Boolean functions. George Boole formalized this algebra in 1854, never imagining it would become the basis of a trillion-dollar industry. Claude Shannon's 1937 masters thesis showed that Boolean algebra could model switching circuits, bridging abstract mathematics and electrical engineering. In this session, we move from the number representations of week one to the logic operations that manipulate those numbers. You will learn to describe digital behavior with truth tables, express it with Boolean equations, simplify those equations using algebraic laws, and realize them as physical gate circuits. This skill set is essential for understanding how the CPU, ALU, and control unit we study later are actually constructed from primitive logic elements.",
         "key_concepts": [
-          "MIPS instruction format: R-type, I-type, J-type",
-          "Arithmetic instructions: add, sub, mul, div",
-          "Memory instructions: lw (load word), sw (store word)",
-          "Branch and jump instructions for control flow",
-          "Translating C/Python constructs to assembly"
+          "Basic logic gates: AND, OR, NOT, NAND, NOR, XOR, XNOR, with their truth tables and standard symbols",
+          "Boolean algebra axioms: identity (A AND 1 = A), null (A AND 0 = 0), complement (A AND NOT A = 0), idempotent (A AND A = A)",
+          "Boolean algebra theorems: De Morgan's laws (NOT(A AND B) = NOT A OR NOT B), distributive, absorption, and consensus",
+          "Sum-of-products (SOP) and product-of-sums (POS) canonical forms derived from truth tables",
+          "Karnaugh maps: a visual method for finding minimal SOP or POS expressions by grouping adjacent cells that differ in exactly one variable",
+          "Don't-care conditions: inputs that never occur in practice, allowing further simplification by treating them as either 0 or 1",
+          "Gate universality: NAND gates alone (or NOR gates alone) can implement any Boolean function, which simplifies manufacturing",
+          "Propagation delay: each gate introduces a small time delay, and the critical path through a circuit determines maximum operating speed",
+          "Fan-in and fan-out: practical limits on how many inputs a gate can accept and how many gate inputs a single output can drive",
+          "Power consumption: static power from leakage current and dynamic power proportional to switching frequency, both critical constraints in modern chip design"
         ],
-        "demonstration": "Translate a simple C function (iterative factorial) to MIPS assembly step by step, then run it in the MARS simulator",
+        "demonstration": "Start with the truth table for a 2-bit equality comparator (output 1 when A1A0 = B1B0). Derive the sum-of-products expression, which has 4 minterms and 8 literals. Use Boolean algebra to simplify to (A1 XNOR B1) AND (A0 XNOR B0). Draw the gate-level circuit. Then use a Karnaugh map to minimize a 4-variable function, showing how adjacent groupings eliminate variables and produce a simpler circuit than the unsimplified canonical form.",
         "setup_requirements": [
-          "MARS MIPS simulator installed",
-          "Assembly reference card provided"
+          "Logic gate simulator (Logisim Evolution or Digital)",
+          "Karnaugh map blank templates (2, 3, and 4 variable)",
+          "Boolean algebra laws reference sheet"
         ],
         "review": [
           {
-            "key": "ISA as Contract",
-            "value": "The instruction set architecture is the contract between hardware and software: hardware promises to implement these instructions, and compilers promise to generate only these instructions"
+            "key": "De Morgan's Laws",
+            "value": "NOT(A AND B) = NOT A OR NOT B, and NOT(A OR B) = NOT A AND NOT B; these laws are essential for converting between gate types and for pushing inversions through a circuit to use NAND/NOR implementations"
           },
           {
-            "key": "RISC vs CISC",
-            "value": "MIPS is RISC (few simple instructions, fixed length); x86 is CISC (many complex instructions, variable length). Modern CISC CPUs internally decode to RISC-like micro-ops"
+            "key": "NAND Universality",
+            "value": "Any Boolean function can be built using only NAND gates: NOT A = A NAND A, A AND B = (A NAND B) NAND (A NAND B), A OR B = (A NAND A) NAND (B NAND B); this simplifies manufacturing because only one gate type is needed"
+          },
+          {
+            "key": "Karnaugh Map Advantage",
+            "value": "K-maps provide a guaranteed way to find minimal two-level Boolean expressions for up to 4-6 variables, avoiding the trial-and-error nature of algebraic simplification"
+          },
+          {
+            "key": "Critical Path Delay",
+            "value": "The maximum operating frequency of a circuit is limited by the longest path through combinational logic; minimizing gate levels reduces delay but may increase gate count, a fundamental design trade-off"
           }
         ]
       }
     },
     {
       "week_number": 3,
-      "session_number": 5,
-      "topic": "The Processor: Datapath and Control",
-      "duration": "50 minutes",
+      "session_number": 3,
+      "topic": "Combinational Circuit Design",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Trace instruction execution through the CPU datapath",
-        "Understand how control signals direct data through the processor",
-        "Explain the single-cycle processor design and its limitations"
+        "Design and analyze multiplexers, decoders, encoders, and arithmetic circuits",
+        "Construct a ripple-carry adder from full adder components",
+        "Understand the ALU as a collection of combinational circuits controlled by function-select signals",
+        "Analyze propagation delay through multi-level combinational circuits"
       ],
       "readings": [
-        "Patterson & Hennessy, Ch. 4 - The Processor (sections 4.1-4.4)",
-        "Lecture slides on datapath diagrams"
+        "Harris & Harris, Digital Design and Computer Architecture, Ch. 2 (sections 2.6-2.8)",
+        "Patterson & Hennessy, Appendix B (sections B.4-B.6)",
+        "Mano & Ciletti, Digital Design, Ch. 4 - Combinational Logic"
       ],
       "lecture_notes": {
-        "introduction": "The datapath is the highway system inside the CPU: data flows from registers through the ALU and back, directed by control signals. Understanding this reveals why some instructions are faster than others and why pipelining is necessary.",
+        "introduction": "Combinational circuits are the building blocks of every digital system. Unlike sequential circuits, their outputs depend only on current inputs, not on history. The multiplexer selects data, the decoder addresses memory, the encoder compresses priority signals, and the adder performs arithmetic. By combining these blocks, we construct the arithmetic logic unit, the computational heart of every processor. This session bridges the gap between abstract Boolean algebra and functional hardware components. Every ALU operation your programs invoke, from integer addition to bitwise XOR, is realized by the combinational circuits we design today. Understanding their structure and timing constraints explains why certain operations cost more clock cycles than others, and why hardware designers obsess over carry propagation delay in adder circuits. By the end of this session, you will be able to design a functional ALU on paper and trace its operation for any supported instruction.",
         "key_concepts": [
-          "Datapath components: register file, ALU, multiplexers, memory units",
-          "Control signals: determining which operations occur at each stage",
-          "Single-cycle design: every instruction completes in one clock cycle",
-          "Clock period determined by the slowest instruction",
-          "Limitations of single-cycle: wasted time on fast instructions"
+          "Multiplexer (MUX): selects one of 2^n inputs based on n select lines; a 2-to-1 MUX implements any Boolean function of the select and data inputs",
+          "Decoder: converts an n-bit binary code to a one-hot output, activating exactly one of 2^n output lines; used in memory address decoding and instruction decoding",
+          "Encoder and priority encoder: the inverse of a decoder, producing a binary code from a one-hot or priority-ordered input",
+          "Half adder: computes sum and carry for two single-bit inputs using XOR and AND gates",
+          "Full adder: extends the half adder with a carry-in input, producing sum = A XOR B XOR Cin and carry-out = AB + Cin(A XOR B)",
+          "Ripple-carry adder: chains N full adders to add N-bit numbers, with each carry output feeding the next carry input; simple but slow due to O(N) carry propagation delay",
+          "Carry-lookahead adder: computes carry signals in parallel using generate (G = AB) and propagate (P = A XOR B) signals, reducing delay to O(log N)",
+          "ALU design: a multiplexer selects between adder, subtractor, AND, OR, XOR, and shift outputs based on the ALU control signal from the instruction decoder",
+          "Comparator design: subtraction followed by checking the sign bit and zero flag to determine less-than, equal, and greater-than relationships"
         ],
-        "demonstration": "Trace three different instructions (add, lw, beq) through the single-cycle datapath, highlighting which components are active for each",
+        "demonstration": "Build a 4-bit ALU in Logisim Evolution step by step: first wire four full adders as a ripple-carry adder, then add XOR gates on one input for subtraction mode, then add parallel AND and OR circuits, and finally use a 4-to-1 multiplexer controlled by a 2-bit ALU operation code to select the output. Test with concrete values: 0101 + 0011 = 1000, 0101 - 0011 = 0010, 0101 AND 0011 = 0001.",
         "setup_requirements": [
-          "Datapath diagram handout",
-          "Control signal truth table reference"
+          "Logisim Evolution or Digital circuit simulator",
+          "Full adder component library loaded",
+          "Combinational circuit reference handout"
         ],
         "review": [
           {
-            "key": "Critical Path",
-            "value": "The clock period is set by the longest instruction path through the hardware; in a single-cycle design, this is typically the load word instruction which accesses both instruction and data memory"
+            "key": "Carry Propagation Bottleneck",
+            "value": "In a 32-bit ripple-carry adder, the carry must propagate through all 32 full adders sequentially; if each gate has 2ns delay and each full adder has 2 gate levels for carry, the total delay is 64ns, limiting clock speed to about 15 MHz"
           },
           {
-            "key": "Control Signals",
-            "value": "Binary signals that configure multiplexers, enable register writes, and select ALU operations; the control unit generates them by decoding the instruction opcode"
+            "key": "Carry-Lookahead Speedup",
+            "value": "By computing carries in parallel using generate and propagate signals, a carry-lookahead adder reduces 32-bit addition delay from O(32) to O(log 32) = O(5) gate levels, enabling much higher clock frequencies"
+          },
+          {
+            "key": "MUX as Universal Logic",
+            "value": "A 2^n-to-1 multiplexer can implement any n-variable Boolean function by hardwiring the truth table values to the data inputs and using the function variables as select lines"
+          },
+          {
+            "key": "ALU Control Signals",
+            "value": "The ALU does not decide what operation to perform; the control unit decodes the instruction and sends a function-select code to the ALU, which then routes the correct result to its output"
           }
         ]
       }
     },
     {
       "week_number": 4,
-      "session_number": 7,
-      "topic": "Pipelining and Hazards",
-      "duration": "50 minutes",
+      "session_number": 4,
+      "topic": "Sequential Circuits and Flip-Flops",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Explain how pipelining improves processor throughput",
-        "Identify and resolve data, control, and structural hazards",
-        "Understand forwarding, stalling, and branch prediction"
+        "Distinguish between combinational and sequential circuits based on the presence of feedback and memory",
+        "Analyze SR, D, JK, and T flip-flop behavior using characteristic tables and timing diagrams",
+        "Design finite state machines using state diagrams and state transition tables",
+        "Understand clock signals, setup time, hold time, and metastability"
       ],
       "readings": [
-        "Patterson & Hennessy, Ch. 4 - The Processor (sections 4.5-4.8)",
-        "Hennessy & Patterson, Computer Architecture, Appendix C"
+        "Harris & Harris, Digital Design and Computer Architecture, Ch. 3 (sections 3.1-3.4)",
+        "Mano & Ciletti, Digital Design, Ch. 5 - Synchronous Sequential Logic",
+        "Patterson & Hennessy, Appendix B (section B.8 on clocking)"
       ],
       "lecture_notes": {
-        "introduction": "Pipelining is the single most important technique in processor design. Like an assembly line in a factory, it overlaps instruction execution so that while one instruction is being decoded, another is being fetched, and another is being executed.",
+        "introduction": "Sequential circuits introduce memory into digital systems. While combinational circuits respond only to current inputs, sequential circuits remember past inputs and produce outputs that depend on both current input and stored state. This is the fundamental capability that makes computation possible: without memory elements, a circuit cannot count, cannot track state transitions, and cannot execute a sequence of instructions. Every register in a CPU, every bit in a cache, and every cell in SRAM is built from flip-flops or their variants. The clock signal coordinates all these memory elements, ensuring that state changes happen in a controlled, predictable manner. Understanding timing constraints like setup time and hold time is critical because violating them causes metastability, a condition where a flip-flop enters an undefined state that can propagate errors through an entire system. This session covers the fundamental sequential building blocks that enable the register files, program counters, and pipeline registers we will study in coming weeks.",
         "key_concepts": [
-          "Five-stage pipeline: IF, ID, EX, MEM, WB",
-          "Pipeline speedup: ideally N stages gives N times throughput",
-          "Data hazards: RAW dependencies between consecutive instructions",
-          "Forwarding (bypassing): resolving data hazards without stalling",
-          "Control hazards: branches and branch prediction",
-          "Structural hazards: resource conflicts"
+          "Latch vs flip-flop: a latch is level-sensitive (transparent when enable is high), while a flip-flop is edge-triggered (captures input only on the clock edge)",
+          "SR latch: set-reset memory element; the forbidden state (S=R=1) makes it unsuitable for direct use in synchronous designs",
+          "D flip-flop: captures the D input on the rising clock edge and holds it until the next edge; the most common flip-flop in modern digital design",
+          "JK flip-flop: eliminates the SR forbidden state by defining J=K=1 as toggle; historically important but less common in modern ASIC design",
+          "T flip-flop: toggles output on each clock edge when T=1; natural building block for counters",
+          "Clock signal: a periodic square wave that synchronizes all sequential elements; the clock period must exceed the longest combinational path delay plus setup time",
+          "Setup time: the minimum time data must be stable before the clock edge for reliable capture",
+          "Hold time: the minimum time data must remain stable after the clock edge",
+          "Metastability: when setup or hold time is violated, the flip-flop may oscillate or settle to an unpredictable value; synchronizer chains reduce but cannot eliminate this risk at domain crossings",
+          "Finite state machine (FSM): a model of sequential behavior with a finite number of states, transitions triggered by inputs, and outputs determined by current state (Moore) or current state plus inputs (Mealy)"
         ],
-        "demonstration": "Trace a sequence of 6 instructions through the 5-stage pipeline, identifying hazards and showing how forwarding and stalling resolve them",
+        "demonstration": "Design a sequence detector FSM that outputs 1 whenever the input sequence '110' is detected. Draw the state diagram with 4 states (S0, S1, S2, S3), derive the state transition table, assign binary state codes, use D flip-flops for state storage, derive the next-state and output logic using Karnaugh maps, and build the complete circuit in Logisim. Test with the input stream 1101100110 and verify correct detections at positions 3 and 6.",
         "setup_requirements": [
-          "Pipeline diagram worksheets",
-          "Colored pencils for tracking instruction stages"
+          "Logisim Evolution with flip-flop components",
+          "FSM design worksheet with blank state diagram and transition table templates",
+          "Timing diagram graph paper"
         ],
         "review": [
           {
-            "key": "Forwarding",
-            "value": "Instead of waiting for a result to be written to the register file (WB stage), the result is forwarded directly from the EX or MEM stage to the instruction that needs it, eliminating one or two stall cycles"
+            "key": "Edge-Triggered vs Level-Sensitive",
+            "value": "Edge-triggered flip-flops sample input only at the clock edge, making them immune to input glitches during the rest of the clock period; level-sensitive latches are transparent when enabled, which can cause race conditions in careless designs"
           },
           {
-            "key": "Branch Prediction",
-            "value": "Rather than stalling on every branch, the processor predicts whether the branch will be taken and speculatively executes; modern processors achieve 95%+ accuracy using history-based predictors"
+            "key": "Setup and Hold Violations",
+            "value": "If data changes too close to the clock edge, the flip-flop cannot reliably resolve to 0 or 1, potentially entering metastability; this is why timing analysis tools verify setup and hold margins for every flip-flop in a design"
+          },
+          {
+            "key": "Moore vs Mealy FSM",
+            "value": "Moore outputs depend only on the current state (output changes one clock cycle after the input that caused the state transition); Mealy outputs depend on state and input (output changes immediately with input), producing faster response but potentially glitchy outputs"
+          },
+          {
+            "key": "Register as Flip-Flop Array",
+            "value": "A 32-bit register is simply 32 D flip-flops sharing the same clock and enable signal; the register file in a CPU is an array of such registers with address-based selection logic"
           }
         ]
       }
     },
     {
       "week_number": 5,
-      "session_number": 9,
-      "topic": "Memory Hierarchy and Caching",
-      "duration": "50 minutes",
+      "session_number": 5,
+      "topic": "CPU Architecture and Datapath Design",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Understand the memory hierarchy and why caches are necessary",
-        "Calculate cache hit rates for direct-mapped and set-associative caches",
-        "Explain write policies and cache replacement strategies"
+        "Trace instruction execution through the single-cycle CPU datapath",
+        "Identify the role of each datapath component: register file, ALU, instruction memory, data memory, and multiplexers",
+        "Explain how control signals direct data flow for R-type, I-type, load, store, and branch instructions",
+        "Analyze the performance limitations of single-cycle design"
       ],
       "readings": [
-        "Patterson & Hennessy, Ch. 5 - Large and Fast: Exploiting Memory Hierarchy",
-        "Bryant & O'Hallaron, CS:APP, Ch. 6 - Memory Hierarchy"
+        "Patterson & Hennessy, Computer Organization and Design (RISC-V Edition), Ch. 4 (sections 4.1-4.4)",
+        "Harris & Harris, Digital Design and Computer Architecture, Ch. 7 (sections 7.1-7.3)",
+        "Hennessy & Patterson, Computer Architecture: A Quantitative Approach, Ch. 1 (performance metrics)"
       ],
       "lecture_notes": {
-        "introduction": "The speed gap between the CPU and main memory is enormous — about 100x. Caches bridge this gap by keeping recently used data close to the processor. Understanding caches explains why array traversal is fast but linked list traversal is slow.",
+        "introduction": "The CPU datapath is the highway system of the processor. Data flows from the instruction memory through the register file and ALU, potentially through data memory, and back to registers. Control signals generated by the instruction decoder act like traffic signals, directing data through the correct path for each instruction type. The single-cycle design is the simplest processor architecture: every instruction completes in exactly one clock cycle. While elegant in its simplicity, this design has a critical limitation: the clock period must accommodate the slowest instruction, meaning fast instructions like register-to-register addition waste time waiting for the clock to tick. Understanding this limitation motivates pipelining, the topic of our next major unit. This session gives you a complete mental model of how instructions actually execute in hardware, from the moment the program counter presents an address to instruction memory until the result is written back to the register file. Every software optimization you will ever make benefits from this understanding.",
         "key_concepts": [
-          "Temporal locality: recently accessed data is likely to be accessed again",
-          "Spatial locality: data near recently accessed data is likely to be accessed soon",
-          "Direct-mapped, set-associative, and fully-associative caches",
-          "Cache address breakdown: tag, index, offset",
-          "Write-through vs write-back policies",
-          "LRU replacement and cache miss types: compulsory, capacity, conflict"
+          "Von Neumann architecture: instructions and data share a common memory, and the CPU fetches instructions sequentially unless a branch redirects the program counter",
+          "Program counter (PC): a register that holds the address of the current instruction; it is incremented by 4 (for 32-bit instructions) after each fetch or loaded with a branch target",
+          "Instruction memory: addressed by the PC, outputs the current instruction word to the decoder",
+          "Register file: a fast memory array with two read ports and one write port, allowing simultaneous reads of two source operands and writing of one destination in a single cycle",
+          "ALU: performs the arithmetic or logic operation specified by the instruction, producing a result and condition flags (zero, negative, overflow, carry)",
+          "Data memory: used only by load and store instructions; addressed by the ALU result, with data flowing from the register file (store) or to the register file (load)",
+          "Multiplexers in the datapath: select between alternative data sources (e.g., register value vs immediate value for ALU input, ALU result vs memory data for register write-back)",
+          "Control unit: decodes the instruction opcode and function fields to generate control signals for all multiplexers, the ALU operation code, register write enable, and memory read/write signals",
+          "Single-cycle performance: CPI = 1 by definition, but clock period is determined by the critical path (longest instruction), typically the load word path through instruction memory, register file, ALU, data memory, and back to register file"
         ],
-        "demonstration": "Trace a sequence of memory accesses through a 4-line direct-mapped cache, calculating hit/miss at each step and computing the overall hit rate",
+        "demonstration": "Trace three RISC-V instructions through the complete single-cycle datapath: (1) add x5, x6, x7: PC fetches instruction, register file reads x6 and x7, ALU adds, result writes to x5; (2) lw x5, 8(x6): register file reads x6, ALU adds 8, data memory reads at that address, result writes to x5; (3) beq x5, x6, offset: register file reads both, ALU subtracts and checks zero flag, PC is conditionally updated. For each instruction, identify all active control signals and all active datapath components.",
         "setup_requirements": [
-          "Cache simulator or spreadsheet for calculations",
-          "Address breakdown worksheets"
+          "Printed single-cycle datapath diagram with labeled components",
+          "Control signal truth table reference handout",
+          "Ripes RISC-V simulator for visual instruction tracing"
         ],
         "review": [
           {
-            "key": "Cache Hit Rate Impact",
-            "value": "A 95% cache hit rate with 1-cycle cache and 100-cycle memory gives average access time of 0.95*1 + 0.05*100 = 5.95 cycles; a 90% hit rate gives 10.9 cycles — nearly 2x slower for just 5% more misses"
+            "key": "Critical Path Determines Clock",
+            "value": "The clock period is set by the longest instruction path through the hardware; in a single-cycle design, this is typically load word which traverses instruction memory + register file + ALU + data memory + register write-back, perhaps 800ps total"
           },
           {
-            "key": "Set Associativity Trade-off",
-            "value": "Higher associativity reduces conflict misses but increases hit time and hardware complexity; 4-way or 8-way set-associative caches are the typical sweet spot in modern processors"
+            "key": "Control Signal Generation",
+            "value": "The control unit is a combinational circuit that takes the instruction opcode as input and produces all required control signals; it does not store state, making it a pure truth-table lookup"
+          },
+          {
+            "key": "Single-Cycle Inefficiency",
+            "value": "An R-type add takes the same clock period as a load word even though add does not access data memory; this wasted time motivates multi-cycle and pipelined designs that allow different instructions to use different amounts of time"
+          },
+          {
+            "key": "Register File Timing",
+            "value": "The register file must support two reads and one write in the same cycle; reads are combinational (output appears after address propagation delay), while write occurs on the clock edge, enabling read-before-write in the same cycle"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Instruction Sets: MIPS and RISC-V",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Write programs in MIPS and RISC-V assembly implementing loops, conditionals, and function calls",
+        "Explain the ISA as the hardware-software interface contract",
+        "Compare RISC and CISC design philosophies and their trade-offs",
+        "Understand calling conventions, stack frames, and register usage policies"
+      ],
+      "readings": [
+        "Patterson & Hennessy, Computer Organization and Design (RISC-V Edition), Ch. 2",
+        "RISC-V Specification Volume 1: Unprivileged ISA (Chapters 1-2)",
+        "MIPS Assembly Quick Reference Guide"
+      ],
+      "lecture_notes": {
+        "introduction": "The instruction set architecture is the most important interface in computing. It is the contract between hardware and software: hardware designers promise to implement every instruction in the ISA, and compiler writers promise to generate only instructions from the ISA. This clean separation allows processors and compilers to evolve independently, which is why a program compiled for RISC-V runs on any RISC-V processor regardless of its internal microarchitecture. Assembly language is the human-readable form of machine instructions, and every high-level construct you have ever written, from for loops to recursive function calls, compiles down to sequences of these simple operations. In this session, we study both MIPS (the classic teaching ISA) and RISC-V (the open-source ISA rapidly gaining industry adoption). Understanding assembly makes you a far better debugger, profiler, and optimizer, because you can see exactly what the hardware is actually doing with your high-level code.",
+        "key_concepts": [
+          "ISA as abstraction layer: defines the programmer-visible state (registers, memory, PC) and the operations that modify it, hiding implementation details like pipeline depth and cache organization",
+          "RISC-V instruction formats: R-type (register-register), I-type (register-immediate), S-type (store), B-type (branch), U-type (upper immediate), J-type (jump)",
+          "MIPS instruction formats: R-type (opcode, rs, rt, rd, shamt, funct), I-type (opcode, rs, rt, immediate), J-type (opcode, address)",
+          "Arithmetic instructions: add, sub, addi, mul; how immediate values avoid extra load instructions for small constants",
+          "Memory instructions: lw/sw (MIPS) and lw/sw (RISC-V); load-store architecture means only load and store access memory, all computation happens in registers",
+          "Control flow: beq, bne, blt, bge for conditional branches; jal and jalr for function calls and returns",
+          "Calling conventions: caller-saved vs callee-saved registers, stack pointer management, return address in ra register",
+          "Stack frames: allocating space for local variables and saved registers on function entry, deallocating on return",
+          "RISC vs CISC: RISC uses fixed-length instructions, few addressing modes, and load-store architecture; CISC (x86) uses variable-length instructions, many addressing modes, and memory-to-memory operations. Modern CISC processors internally decode to RISC-like micro-ops",
+          "Pseudo-instructions: assembler conveniences like li (load immediate), mv (move), and la (load address) that expand to one or more real instructions"
+        ],
+        "demonstration": "Implement iterative factorial in both MIPS and RISC-V assembly, showing the translation of C code: int fact(int n) { int r=1; for(int i=2; i<=n; i++) r*=i; return r; }. Then implement a recursive version demonstrating stack frame management: prologue (save ra and s registers, allocate frame), recursive call, epilogue (restore registers, deallocate frame, return). Run both versions in MARS (MIPS) and Ripes (RISC-V) simulators, stepping through to observe register and stack changes.",
+        "setup_requirements": [
+          "MARS MIPS simulator installed",
+          "Ripes RISC-V simulator installed",
+          "MIPS and RISC-V register convention reference cards",
+          "Assembly instruction quick reference sheets for both ISAs"
+        ],
+        "review": [
+          {
+            "key": "ISA as Contract",
+            "value": "The ISA is the contract between hardware and software: hardware promises to implement these instructions, and compilers promise to generate only these instructions; this separation enables independent evolution of both sides"
+          },
+          {
+            "key": "RISC vs CISC Trade-off",
+            "value": "RISC instructions are simpler and fixed-length, making decoding fast and pipelining straightforward; CISC instructions are more powerful individually but harder to pipeline, which is why modern x86 CPUs internally translate CISC to RISC micro-ops"
+          },
+          {
+            "key": "Calling Convention Importance",
+            "value": "Without agreed-upon calling conventions, functions compiled by different compilers or written in different languages could not call each other; the convention specifies which registers the caller must save and which the callee must preserve"
+          },
+          {
+            "key": "Load-Store Architecture",
+            "value": "In RISC architectures, only load and store instructions access memory; all arithmetic and logic operate on registers. This simplifies the datapath because the ALU never needs to wait for memory access during computation"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Memory Hierarchy and Locality",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Explain the memory hierarchy and the economic and physical reasons for its existence",
+        "Quantify the performance impact of memory access latency using the memory wall concept",
+        "Identify temporal and spatial locality in code and data access patterns",
+        "Calculate average memory access time given hit rates and miss penalties"
+      ],
+      "readings": [
+        "Patterson & Hennessy, Computer Organization and Design (RISC-V Edition), Ch. 5 (sections 5.1-5.2)",
+        "Bryant & O'Hallaron, Computer Systems: A Programmer's Perspective, Ch. 6 (sections 6.1-6.3)",
+        "Hennessy & Patterson, Computer Architecture: A Quantitative Approach, Ch. 2 (memory hierarchy introduction)"
+      ],
+      "lecture_notes": {
+        "introduction": "The speed gap between the CPU and main memory is the dominant bottleneck in modern computing. A modern processor can execute an instruction every 0.3 nanoseconds, but a main memory access takes 50-100 nanoseconds, a ratio of roughly 200:1. If the CPU had to wait for every memory access, it would be idle more than 99% of the time. The memory hierarchy solves this problem by exploiting a fundamental property of real programs: locality. Programs tend to access the same data repeatedly (temporal locality) and tend to access data near recently accessed data (spatial locality). By keeping recently and nearby data in small, fast memories close to the CPU (caches), we can make the common case fast. This session establishes the principles that underpin cache design, virtual memory, and every performance optimization involving data access patterns. Understanding the memory hierarchy transforms how you write code: it explains why traversing an array by rows is fast but by columns is slow, why linked lists have poor cache performance, and why data structure layout matters as much as algorithmic complexity for real-world performance.",
+        "key_concepts": [
+          "Memory hierarchy levels: registers (sub-nanosecond, bytes), L1 cache (1-2ns, 32-64KB), L2 cache (3-10ns, 256KB-1MB), L3 cache (10-30ns, 4-32MB), main memory (50-100ns, 4-64GB), SSD (10-100 microseconds), HDD (5-10 milliseconds)",
+          "Cost-capacity trade-off: faster memory technologies cost more per bit; SRAM (caches) costs roughly 100x more per bit than DRAM (main memory), which costs roughly 100x more per bit than flash storage",
+          "Temporal locality: if a memory location is accessed, it is likely to be accessed again soon; exploited by keeping recently accessed data in cache",
+          "Spatial locality: if a memory location is accessed, nearby locations are likely to be accessed soon; exploited by fetching entire cache lines (64 bytes typically) on each miss",
+          "Memory wall: the growing gap between CPU speed (improving roughly 50% per year historically) and memory speed (improving roughly 7% per year) means the memory system increasingly limits performance",
+          "Average memory access time (AMAT): AMAT = hit_time + miss_rate * miss_penalty; this formula governs performance analysis of every level of the memory hierarchy",
+          "Amdahl's law applied to memory: even a small miss rate multiplied by a large miss penalty can dominate execution time; reducing miss rate from 5% to 3% with 100-cycle miss penalty saves more time than making the ALU twice as fast",
+          "Locality in code patterns: sequential array traversal has excellent spatial locality; random access patterns and pointer chasing (linked lists, trees) have poor spatial locality",
+          "Data structure impact: array-of-structures vs structure-of-arrays layout affects cache line utilization; padding and alignment influence whether accesses span one or two cache lines"
+        ],
+        "demonstration": "Write two C programs that sum the elements of a 10000x10000 matrix: one traversing row-major order and one traversing column-major order. Measure execution time of both and observe that row-major is 5-10x faster due to spatial locality. Use the perf tool on Linux to show the difference in L1 cache miss rates. Then calculate AMAT for a system with L1 hit time 1ns, L1 miss rate 5%, L2 hit time 5ns, L2 miss rate 20%, and main memory latency 100ns.",
+        "setup_requirements": [
+          "Linux environment with GCC and perf tool",
+          "C programs for matrix traversal benchmarks",
+          "AMAT calculation worksheet"
+        ],
+        "review": [
+          {
+            "key": "AMAT Formula",
+            "value": "Average Memory Access Time = hit_time + miss_rate * miss_penalty; for multi-level caches, each miss penalty is itself an AMAT of the next level, creating a recursive calculation"
+          },
+          {
+            "key": "Memory Wall Problem",
+            "value": "CPU speed has improved much faster than memory speed over decades, creating a growing gap that makes cache design increasingly critical; modern CPUs spend most transistors on cache, not computation logic"
+          },
+          {
+            "key": "Locality and Software Design",
+            "value": "Data structure choice has enormous performance impact: arrays have excellent spatial locality, hash tables have moderate locality, and linked structures (lists, trees) have poor locality because nodes are scattered across memory"
+          },
+          {
+            "key": "Cache Line Granularity",
+            "value": "Caches transfer data in fixed-size blocks called cache lines (typically 64 bytes); accessing a single byte brings the entire 64-byte line into cache, which is wasteful if surrounding bytes are not needed"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Cache Design and Organization",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Design direct-mapped, set-associative, and fully-associative caches given capacity and block size constraints",
+        "Break down memory addresses into tag, index, and offset fields for any cache configuration",
+        "Trace memory access sequences through caches to determine hits and misses",
+        "Compare write-through and write-back policies and their performance and consistency implications"
+      ],
+      "readings": [
+        "Patterson & Hennessy, Computer Organization and Design (RISC-V Edition), Ch. 5 (sections 5.3-5.5)",
+        "Bryant & O'Hallaron, Computer Systems: A Programmer's Perspective, Ch. 6 (sections 6.4-6.6)",
+        "Hennessy & Patterson, Computer Architecture: A Quantitative Approach, Ch. 2 (cache design)"
+      ],
+      "lecture_notes": {
+        "introduction": "Cache design is one of the most consequential decisions in processor architecture. The choice of cache size, associativity, block size, and write policy affects every program that runs on the processor. A well-designed cache makes the common case fast; a poorly designed one creates bottlenecks that no amount of ALU speedup can overcome. In this session, we move from the principles of locality to the concrete hardware structures that exploit it. We examine three cache organizations (direct-mapped, set-associative, and fully-associative), each representing a different point in the trade-off space between hit time, miss rate, and hardware complexity. We also study write policies, which determine when modified data is propagated from cache to main memory. These are not abstract choices: Intel and AMD engineers spend years tuning these parameters, and understanding them helps you predict and optimize the performance of your software. After this session, you will be able to analyze any cache configuration on paper, calculate hit rates for given access patterns, and reason about which configuration best suits a particular workload.",
+        "key_concepts": [
+          "Direct-mapped cache: each memory block maps to exactly one cache line determined by (block address) mod (number of cache lines); simple and fast but vulnerable to conflict misses",
+          "Set-associative cache: each memory block maps to a set of N lines (N-way set-associative); the block can be placed in any line within its set, reducing conflict misses at the cost of comparison hardware",
+          "Fully-associative cache: any block can go in any line; eliminates conflict misses entirely but requires comparing the tag against every line, making it expensive and slow for large caches",
+          "Address decomposition: for a cache with S sets, B bytes per block, and N-way associativity: offset bits = log2(B), index bits = log2(S), tag bits = address bits - offset bits - index bits",
+          "Cache miss types: compulsory (first access to a block, unavoidable), capacity (cache too small to hold all active blocks), conflict (multiple blocks compete for the same set in direct-mapped or set-associative caches)",
+          "Replacement policies: LRU (least recently used) is optimal among practical policies; random replacement is simpler and performs nearly as well for high associativity; FIFO is simple but can exhibit Belady's anomaly",
+          "Write-through: every write updates both cache and main memory; simpler consistency model but generates high memory traffic; typically paired with a write buffer to avoid stalling the CPU",
+          "Write-back: writes update only the cache; dirty blocks are written to memory only on eviction; reduces memory traffic but complicates coherence in multi-core systems",
+          "Write-allocate vs write-no-allocate: on a write miss, write-allocate fetches the block into cache first (good if subsequent writes to the same block are likely); write-no-allocate writes directly to memory"
+        ],
+        "demonstration": "Trace the byte address sequence {0, 4, 8, 12, 16, 32, 0, 4, 32, 16} through three cache configurations: (1) direct-mapped with 4 lines of 4 bytes each, (2) 2-way set-associative with 2 sets of 4 bytes each, (3) fully-associative with 4 lines of 4 bytes each. For each configuration, show the tag/index/offset breakdown, track contents of each line after each access, and compute the final hit rate. Observe how increased associativity reduces conflict misses: direct-mapped gets 2 hits, 2-way gets 3 hits, fully-associative gets 4 hits out of 10 accesses.",
+        "setup_requirements": [
+          "Cache simulation spreadsheet or online cache simulator",
+          "Address breakdown worksheet with blank tag/index/offset tables",
+          "Pre-printed cache state tracking grids for each associativity level"
+        ],
+        "review": [
+          {
+            "key": "Associativity Trade-off",
+            "value": "Higher associativity reduces conflict misses but increases hit time (more tags to compare) and hardware cost; 4-way to 8-way is the sweet spot in most modern L1 caches, balancing miss rate reduction against access latency"
+          },
+          {
+            "key": "Three Cs of Cache Misses",
+            "value": "Compulsory misses (cold start, reduced by prefetching), capacity misses (working set too large, reduced by larger cache), conflict misses (insufficient associativity, reduced by higher associativity or better address mapping)"
+          },
+          {
+            "key": "Write-Back Advantage",
+            "value": "Write-back caches generate much less memory bus traffic because multiple writes to the same line produce only one memory write on eviction; this bandwidth savings is critical in multi-core systems where the memory bus is shared"
+          },
+          {
+            "key": "Cache Size Sweet Spot",
+            "value": "Doubling cache size from 16KB to 32KB might reduce miss rate by 30%, but doubling from 4MB to 8MB might reduce it by only 5%; the diminishing returns explain why L1 caches are small and fast while L3 caches are large and slower"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "Virtual Memory",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Explain how virtual memory provides process isolation, memory protection, and the illusion of large contiguous address spaces",
+        "Trace virtual-to-physical address translation through page tables",
+        "Describe the role of the TLB in accelerating address translation",
+        "Analyze page fault handling and page replacement policies in the context of the OS-hardware interface"
+      ],
+      "readings": [
+        "Patterson & Hennessy, Computer Organization and Design (RISC-V Edition), Ch. 5 (sections 5.7-5.8)",
+        "Bryant & O'Hallaron, Computer Systems: A Programmer's Perspective, Ch. 9",
+        "Arpaci-Dusseau, Operating Systems: Three Easy Pieces, Virtual Memory chapters"
+      ],
+      "lecture_notes": {
+        "introduction": "Virtual memory is the mechanism that gives each running program the illusion of having its own large, private, contiguous memory space, even though physical memory is shared among all programs and is typically much smaller than the total virtual address space. It is one of the most important inventions in computer science, enabling process isolation (one program cannot corrupt another's memory), memory protection (the OS kernel is shielded from user programs), and efficient memory use (only actively used pages consume physical memory). Virtual memory is implemented through a collaboration between the operating system (which manages page tables and handles page faults) and the hardware (which provides the MMU and TLB for fast address translation). Every memory access your program makes goes through this translation machinery, making it one of the most performance-critical subsystems in any computer. Understanding virtual memory explains why your program can allocate more memory than physically exists, why segmentation faults happen, why forking a process is fast (copy-on-write), and why swapping makes a system feel slow.",
+        "key_concepts": [
+          "Virtual address space: each process sees a flat address space (e.g., 0 to 2^48-1 on x86-64) divided into fixed-size pages (typically 4KB)",
+          "Physical address space: the actual DRAM addresses, divided into frames of the same size as pages",
+          "Page table: a per-process data structure mapping virtual page numbers (VPN) to physical frame numbers (PFN), with permission bits (read, write, execute) and a present/valid bit",
+          "Address translation: the virtual address is split into VPN and page offset; the VPN indexes the page table to get the PFN; the PFN is concatenated with the offset to form the physical address",
+          "TLB (Translation Lookaside Buffer): a small, fast, fully-associative cache of recent page table entries; a TLB hit avoids the expensive page table walk, which would otherwise require one or more memory accesses",
+          "Page fault: occurs when the present bit is 0, meaning the page is not in physical memory; the OS handles the fault by loading the page from disk, updating the page table, and restarting the instruction",
+          "Multi-level page tables: hierarchical structures that avoid allocating page table entries for unused regions of the virtual address space; x86-64 uses 4-level page tables",
+          "Copy-on-write: on fork(), parent and child share the same physical pages marked read-only; a page is duplicated only when either process writes to it, making fork() nearly instantaneous",
+          "Demand paging: pages are loaded into memory only when first accessed, not when the program starts; this reduces startup time and memory consumption",
+          "Page replacement: when physical memory is full and a new page must be loaded, the OS selects a victim page using algorithms like LRU, Clock, or the Linux kernel's two-list approximation"
+        ],
+        "demonstration": "Walk through a concrete address translation example: a 32-bit virtual address 0x0040_1A3C with 4KB pages. Split into 20-bit VPN (0x00401) and 12-bit offset (0xA3C). Look up VPN 0x00401 in the page table, find PFN 0x0F3. Form physical address 0x0F3A3C. Then show what happens on a TLB miss: the hardware walks the page table in memory (2 memory accesses for a 2-level table), loads the entry into the TLB, and retries. Then show a page fault: the page table entry has present=0, the CPU traps to the OS, the OS reads the page from disk (millions of cycles), updates the page table and TLB, and restarts the instruction.",
+        "setup_requirements": [
+          "Virtual memory address translation worksheet",
+          "Page table simulation tool or spreadsheet",
+          "Linux /proc/self/maps example output for examining real process memory layout"
+        ],
+        "review": [
+          {
+            "key": "TLB Performance Impact",
+            "value": "Without the TLB, every memory access would require two or more additional memory accesses to walk the page table, making programs 2-5x slower; a TLB hit rate of 99%+ is typical for programs with good locality"
+          },
+          {
+            "key": "Page Fault Cost",
+            "value": "A page fault that requires reading from disk takes roughly 10 milliseconds (mechanical HDD) or 100 microseconds (SSD), compared to 100 nanoseconds for a normal memory access; this 100,000x penalty makes page fault minimization critical"
+          },
+          {
+            "key": "Process Isolation via Virtual Memory",
+            "value": "Each process has its own page table, so process A's virtual address 0x1000 maps to a completely different physical frame than process B's virtual address 0x1000; neither process can even address the other's memory"
+          },
+          {
+            "key": "Multi-Level Page Table Efficiency",
+            "value": "A single-level page table for a 48-bit address space with 4KB pages would require 2^36 entries (512GB); multi-level tables allocate sub-tables only for regions actually in use, reducing typical memory consumption to a few megabytes"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "Input/Output Systems",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Explain how the CPU communicates with I/O devices through memory-mapped I/O and port-mapped I/O",
+        "Compare polling, interrupt-driven, and DMA-based I/O transfer mechanisms",
+        "Analyze the performance trade-offs between different I/O approaches for various workloads",
+        "Understand the role of device drivers and the I/O software stack"
+      ],
+      "readings": [
+        "Patterson & Hennessy, Computer Organization and Design (RISC-V Edition), Ch. 5 (section 5.6)",
+        "Hennessy & Patterson, Computer Architecture: A Quantitative Approach, Ch. 4 (I/O systems)",
+        "Silberschatz, Operating System Concepts, Ch. 13 (I/O systems overview)"
+      ],
+      "lecture_notes": {
+        "introduction": "Every useful computer interacts with the outside world through input/output devices: keyboards, displays, network interfaces, storage drives, sensors, and actuators. The I/O system bridges the enormous speed gap between the fast CPU and slow peripheral devices. A modern SSD can deliver data at 3 GB/s, which sounds fast until you realize the CPU can process data from its L1 cache at 500 GB/s, a 150x mismatch. For mechanical hard drives, the gap is 10,000x or more. The challenge of I/O system design is keeping the CPU productive while waiting for slow devices, and transferring data efficiently without consuming too many CPU cycles. Three main approaches have evolved: polling (CPU repeatedly checks device status), interrupts (device notifies CPU when ready), and DMA (device transfers data directly to memory without CPU involvement). Each is appropriate for different scenarios, and modern systems use all three. Understanding I/O systems explains why disk-intensive programs are slow, why network latency matters more than bandwidth for many applications, and why the OS kernel spends most of its time handling I/O.",
+        "key_concepts": [
+          "Memory-mapped I/O: device registers appear as regular memory addresses; reading from or writing to these addresses communicates with the device; used by most modern architectures including ARM and RISC-V",
+          "Port-mapped I/O: special instructions (IN/OUT on x86) access a separate I/O address space; simpler address decoding but requires privileged instructions",
+          "Polling: the CPU repeatedly reads a device status register in a loop, waiting for the device to be ready; simple but wastes CPU cycles, suitable only for very fast devices or when the CPU has nothing else to do",
+          "Interrupt-driven I/O: the device asserts an interrupt signal when ready, causing the CPU to save its state and execute an interrupt handler; frees the CPU to do other work while waiting, but interrupt handling has overhead",
+          "DMA (Direct Memory Access): a DMA controller transfers data between device and memory without CPU involvement; the CPU sets up the transfer (source, destination, length) and receives an interrupt on completion",
+          "I/O bus hierarchy: PCIe connects high-speed devices (GPUs, NVMe SSDs, network cards) to the CPU; USB, SATA, and other buses connect slower peripherals through bridge chips",
+          "Device drivers: kernel-level software that abstracts hardware-specific register protocols behind a standard interface, allowing the OS to support diverse devices with uniform system calls",
+          "I/O scheduling: the OS reorders and batches I/O requests to minimize seek time on HDDs and maximize throughput on SSDs",
+          "Throughput vs latency: network I/O optimization often focuses on reducing latency (time for a single request), while storage I/O optimization focuses on maximizing throughput (data transferred per second)"
+        ],
+        "demonstration": "Compare three approaches for reading 1MB from a disk. Polling: CPU reads 4 bytes at a time, checking status register each time, requiring 250,000 status checks and consuming 100% CPU. Interrupt-driven: CPU initiates read, handles 250,000 interrupts (one per 4-byte transfer), each interrupt costing 500 cycles of overhead. DMA: CPU issues one DMA command, DMA controller transfers the entire 1MB, CPU receives one interrupt on completion, freeing the CPU for 99.99% of the transfer time. Calculate the CPU utilization percentage for each approach.",
+        "setup_requirements": [
+          "I/O system diagram showing bus hierarchy",
+          "CPU utilization calculation worksheet",
+          "Linux /proc/interrupts example for observing real interrupt counts"
+        ],
+        "review": [
+          {
+            "key": "DMA Advantage",
+            "value": "DMA frees the CPU from byte-by-byte data transfer; for a 1MB transfer at 100 MB/s, the CPU is busy for 10ms with polling but only microseconds with DMA, freeing it for computation during the transfer"
+          },
+          {
+            "key": "Interrupt Overhead",
+            "value": "Each interrupt requires saving registers, jumping to the handler, executing the handler, restoring registers, and returning; this costs hundreds of cycles, making per-byte interrupts impractical for high-speed devices"
+          },
+          {
+            "key": "I/O as Performance Bottleneck",
+            "value": "Most programs spend more time waiting for I/O than computing; optimizing I/O patterns (sequential access, batching, asynchronous operations) often yields more speedup than optimizing computation"
+          },
+          {
+            "key": "Memory-Mapped I/O Caution",
+            "value": "Reads from and writes to device registers may have side effects (e.g., reading a FIFO register consumes the data), so the compiler must not reorder or optimize away I/O accesses; volatile keyword in C prevents this optimization"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "Pipelining",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Explain how pipelining overlaps instruction execution to improve throughput without reducing individual instruction latency",
+        "Draw pipeline diagrams showing instruction flow through the 5 classic stages",
+        "Identify and classify data, control, and structural hazards in instruction sequences",
+        "Apply forwarding and stalling techniques to resolve hazards correctly"
+      ],
+      "readings": [
+        "Patterson & Hennessy, Computer Organization and Design (RISC-V Edition), Ch. 4 (sections 4.5-4.8)",
+        "Hennessy & Patterson, Computer Architecture: A Quantitative Approach, Appendix C",
+        "Harris & Harris, Digital Design and Computer Architecture, Ch. 7 (sections 7.5-7.8)"
+      ],
+      "lecture_notes": {
+        "introduction": "Pipelining is the single most important technique in processor design, responsible for much of the performance improvement in CPUs over the past four decades. The analogy is a factory assembly line: instead of one worker building an entire car from start to finish, five workers each perform one step in parallel on different cars. The time to build one car does not decrease, but the factory output increases to nearly one car per step-time. In a pipelined processor, the five stages are Instruction Fetch (IF), Instruction Decode (ID), Execute (EX), Memory Access (MEM), and Write-Back (WB). Each clock cycle, a new instruction enters the pipeline while previous instructions advance to the next stage. Ideally, this yields a 5x throughput improvement over a single-cycle design. In practice, hazards, situations where the next instruction depends on a previous instruction that has not yet completed, reduce this ideal throughput. Understanding and resolving hazards through forwarding, stalling, and branch prediction is the central challenge of pipelined processor design. This is directly relevant to software performance: the penalty for a branch misprediction or a data dependency stall is measured in wasted cycles that no compiler optimization can recover.",
+        "key_concepts": [
+          "Five-stage pipeline: IF (fetch instruction from memory), ID (decode instruction and read registers), EX (execute ALU operation or compute branch target), MEM (access data memory for loads and stores), WB (write result to register file)",
+          "Pipeline registers: flip-flop banks between stages (IF/ID, ID/EX, EX/MEM, MEM/WB) that hold intermediate results, allowing each stage to operate on a different instruction simultaneously",
+          "Throughput vs latency: pipelining increases throughput (instructions completed per unit time) but does not reduce latency (time for one instruction to complete); a 5-stage pipeline has 5-cycle latency but ideally 1-cycle throughput",
+          "Data hazards (RAW): Read After Write dependency where a later instruction reads a register that an earlier instruction has not yet written back; the most common hazard type",
+          "Forwarding (bypassing): routing the result from the EX/MEM or MEM/WB pipeline register directly to the ALU input of a dependent instruction, avoiding a 1-2 cycle stall",
+          "Load-use hazard: a special data hazard where a load instruction is immediately followed by an instruction that uses the loaded value; forwarding alone cannot resolve this because the value is not available until the end of MEM, requiring one mandatory stall cycle",
+          "Control hazards: branches are resolved in the EX stage but the pipeline has already fetched instructions after the branch; a misprediction requires flushing the pipeline (discarding incorrectly fetched instructions), wasting cycles",
+          "Branch prediction: predicting the branch outcome (taken or not taken) and direction to avoid stalling; static prediction (always predict not taken, or backward branches taken) and dynamic prediction (branch history tables) achieve different accuracy levels",
+          "Structural hazards: two instructions need the same hardware resource in the same cycle (e.g., single memory port for both IF and MEM); resolved by resource duplication (separate instruction and data memories) or stalling",
+          "Pipeline performance: CPI_pipelined = 1 + stall_cycles_per_instruction; the goal of forwarding and prediction is to minimize stall_cycles, approaching the ideal CPI of 1"
+        ],
+        "demonstration": "Trace the following RISC-V instruction sequence through the 5-stage pipeline, drawing a cycle-by-cycle pipeline diagram: add x5, x1, x2 / sub x6, x5, x3 / lw x7, 0(x5) / add x8, x7, x6 / beq x8, x0, target. Identify all hazards: sub-depends-on-add (EX-to-EX forwarding), lw-depends-on-add (EX-to-EX forwarding), add-depends-on-lw (load-use hazard, one stall bubble), beq-depends-on-add (EX-to-EX forwarding). Show how forwarding paths eliminate most stalls, leaving only the load-use stall. Calculate total cycles: 5 + 4 + 1 stall = 10 cycles for 5 instructions, CPI = 2.0 (vs ideal CPI = 1.0).",
+        "setup_requirements": [
+          "Pipeline diagram worksheet with 5-stage grid",
+          "Forwarding path diagram showing EX-to-EX and MEM-to-EX paths",
+          "Colored pencils or highlighters for tracking instruction stages",
+          "Ripes RISC-V simulator with pipeline visualization enabled"
+        ],
+        "review": [
+          {
+            "key": "Forwarding Eliminates Most RAW Stalls",
+            "value": "Without forwarding, every data dependency would require a 2-cycle stall; with forwarding, only load-use hazards (data not available until end of MEM stage) require stalling, reducing typical stall rates from 40% to about 5% of instructions"
+          },
+          {
+            "key": "Branch Prediction Accuracy Matters",
+            "value": "With a 5-stage pipeline, a branch misprediction wastes 2 cycles; with deeper pipelines (15+ stages in modern processors), a misprediction wastes 15+ cycles, making accurate prediction essential. Modern predictors achieve 95-99% accuracy"
+          },
+          {
+            "key": "Pipeline Depth Trade-off",
+            "value": "Deeper pipelines allow higher clock frequencies (each stage does less work), but increase the misprediction and data hazard penalties; this is why Intel's 31-stage Pentium 4 Prescott pipeline was ultimately abandoned in favor of shorter pipelines"
+          },
+          {
+            "key": "Compiler Scheduling",
+            "value": "Compilers reorder independent instructions to fill load-use and branch delay slots, reducing hardware stalls; this software-hardware co-optimization is why compiler quality significantly affects pipelined processor performance"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Parallel Processing and Multicore Architecture",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Distinguish between instruction-level parallelism, data-level parallelism, and thread-level parallelism",
+        "Explain superscalar, VLIW, and out-of-order execution approaches to ILP",
+        "Understand cache coherence protocols for multicore processors",
+        "Apply Amdahl's Law to predict parallel speedup limits"
+      ],
+      "readings": [
+        "Patterson & Hennessy, Computer Organization and Design (RISC-V Edition), Ch. 6",
+        "Hennessy & Patterson, Computer Architecture: A Quantitative Approach, Ch. 3 (sections 3.1-3.4) and Ch. 5",
+        "Culler, Singh & Gupta, Parallel Computer Architecture, Ch. 1 (overview)"
+      ],
+      "lecture_notes": {
+        "introduction": "For decades, processor performance improved primarily by increasing clock frequency and deepening pipelines. Around 2005, this approach hit fundamental physical limits: power consumption scaled as the cube of frequency, and heat dissipation exceeded practical cooling solutions. The industry responded by putting multiple processor cores on a single chip, shifting the burden of performance improvement from hardware designers to software developers. Every modern device, from smartphones to supercomputers, has multiple cores, and exploiting them requires understanding parallelism at multiple levels. Instruction-level parallelism (ILP) extracts parallelism from sequential code automatically using hardware techniques like superscalar execution, out-of-order execution, and speculation. Data-level parallelism (SIMD) applies the same operation to multiple data elements simultaneously, essential for multimedia, scientific computing, and machine learning. Thread-level parallelism (TLP) runs multiple software threads on multiple cores, requiring explicit parallel programming. This session covers all three levels, with emphasis on the multicore architecture that dominates modern computing and the cache coherence problem it creates.",
+        "key_concepts": [
+          "Amdahl's Law: speedup is limited by the sequential fraction of a program; if 10% of execution is inherently sequential, maximum speedup with infinite cores is 10x, making parallelization of the sequential portion the highest priority",
+          "Superscalar execution: fetching, decoding, and executing multiple instructions per cycle; a 4-wide superscalar processor can sustain up to 4 IPC (instructions per clock) if sufficient ILP exists",
+          "Out-of-order execution: hardware dynamically reorders instructions to execute independent instructions while waiting for dependent ones; uses a reorder buffer to maintain correct architectural state",
+          "Branch speculation: executing instructions beyond a predicted branch before knowing if the prediction is correct; correct predictions yield free work, mispredictions require pipeline flush and re-execution",
+          "SIMD (Single Instruction, Multiple Data): one instruction operates on multiple data elements packed in wide registers; x86 SSE/AVX processes 4/8/16 floats per instruction, critical for multimedia and ML workloads",
+          "Multicore architecture: multiple independent CPU cores sharing L3 cache and memory controller on a single die; each core has private L1 and L2 caches",
+          "Cache coherence problem: when multiple cores cache the same memory line and one core modifies it, other cores may hold stale data; the hardware must ensure all cores see a consistent view of memory",
+          "MESI protocol: four states per cache line (Modified, Exclusive, Shared, Invalid) with bus snooping to maintain coherence; a write to a Shared line first invalidates all other copies",
+          "False sharing: when two cores access different variables that happen to reside on the same cache line, they repeatedly invalidate each other's copy, destroying performance even though there is no true data sharing",
+          "Memory consistency models: rules governing the order in which memory operations become visible to other cores; sequential consistency is intuitive but expensive; relaxed models (x86 TSO, ARM weak) allow hardware optimizations but require programmer awareness"
+        ],
+        "demonstration": "Demonstrate Amdahl's Law with a concrete example: a program with 90% parallelizable code running on 1, 2, 4, 8, and 16 cores. Speedups are 1x, 1.82x, 3.08x, 4.71x, 6.40x, showing diminishing returns that asymptotically approach the 10x limit. Then show false sharing in action: two threads incrementing separate counters that share a cache line take 10x longer than when the counters are padded to separate cache lines. Measure with perf to show the coherence traffic.",
+        "setup_requirements": [
+          "Multi-core Linux system for parallel benchmarks",
+          "C/C++ compiler with OpenMP support",
+          "perf tool for cache coherence event monitoring",
+          "Amdahl's Law calculation spreadsheet"
+        ],
+        "review": [
+          {
+            "key": "Amdahl's Law Implication",
+            "value": "Even with unlimited cores, the sequential fraction limits speedup; parallelizing 95% of a program yields at most 20x speedup regardless of core count, making optimization of the sequential 5% the highest-impact work"
+          },
+          {
+            "key": "Cache Coherence Overhead",
+            "value": "The MESI protocol ensures correctness but creates bus traffic for invalidations and data transfers between cores; this coherence traffic can become a bottleneck in workloads with heavy sharing, limiting scalability beyond 8-16 cores"
+          },
+          {
+            "key": "Out-of-Order Execution Complexity",
+            "value": "Modern out-of-order cores (Apple M-series, AMD Zen, Intel Core) can have 200+ instructions in flight simultaneously, with hardware tracking all dependencies; this enormous complexity is hidden from the programmer but consumes most of the chip's transistor budget"
+          },
+          {
+            "key": "SIMD Programming",
+            "value": "SIMD provides 4-16x speedup for data-parallel workloads (image processing, matrix multiplication, neural network inference) but requires data to be aligned and packed in vectors; auto-vectorization by compilers helps but manual intrinsics often achieve higher utilization"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "GPU Architecture and Heterogeneous Computing",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Explain GPU architecture and how it differs from CPU architecture in design goals and execution model",
+        "Understand the SIMT (Single Instruction, Multiple Thread) execution model and warp scheduling",
+        "Identify workloads that benefit from GPU acceleration versus those that do not",
+        "Describe the role of heterogeneous computing in modern systems"
+      ],
+      "readings": [
+        "Patterson & Hennessy, Computer Organization and Design (RISC-V Edition), Ch. 6 (GPU sections)",
+        "Kirk & Hwu, Programming Massively Parallel Processors, Ch. 1-3",
+        "NVIDIA CUDA C Programming Guide, Ch. 1-2"
+      ],
+      "lecture_notes": {
+        "introduction": "GPUs have evolved from specialized graphics rendering hardware into general-purpose parallel processors that dominate machine learning training, scientific simulation, cryptocurrency mining, and high-performance computing. A modern GPU like the NVIDIA H100 has over 16,000 cores, compared to 24-128 cores in high-end CPUs. This massive parallelism comes at a cost: each GPU core is much simpler than a CPU core, lacking sophisticated branch prediction, out-of-order execution, and large caches. GPUs excel at workloads with massive data parallelism, where the same operation is applied to thousands or millions of independent data elements. They struggle with workloads that have complex control flow, irregular memory access patterns, or limited parallelism. Understanding when to use a GPU versus a CPU, and how to structure computation to exploit GPU architecture, is an increasingly important skill as heterogeneous computing (CPU + GPU + specialized accelerators) becomes the norm. Modern data centers, smartphones, and even laptops contain both CPUs and GPUs, and software that exploits both achieves dramatically better performance and energy efficiency than software limited to one or the other.",
+        "key_concepts": [
+          "GPU design philosophy: maximize throughput by using thousands of simple cores, sacrificing single-thread performance; CPUs optimize for latency with few powerful cores, GPUs optimize for throughput with many simple cores",
+          "SIMT execution model: groups of 32 threads (a warp on NVIDIA) execute the same instruction simultaneously; if threads within a warp take different branches (divergence), both paths are executed serially, reducing efficiency",
+          "GPU memory hierarchy: global memory (large, high latency, high bandwidth), shared memory (per-block, low latency, programmable), registers (per-thread, fastest), constant and texture caches (specialized read-only caches)",
+          "Kernel launch model: the host CPU dispatches a kernel (parallel function) to the GPU, specifying a grid of thread blocks; the GPU scheduler assigns blocks to streaming multiprocessors (SMs)",
+          "Memory coalescing: when threads in a warp access consecutive memory addresses, the hardware combines them into a single wide memory transaction; scattered accesses generate multiple transactions, wasting bandwidth",
+          "Occupancy: the ratio of active warps to maximum warps on an SM; higher occupancy hides memory latency by switching to other warps while one waits for data, but excessive register or shared memory usage limits occupancy",
+          "CPU-GPU data transfer overhead: data must be copied from CPU main memory to GPU global memory before computation and copied back afterward; this transfer over PCIe can dominate total time for small workloads",
+          "Heterogeneous computing: using the right processor for each task; CPUs handle sequential control logic and OS services, GPUs handle data-parallel computation, and specialized accelerators (TPUs, NPUs) handle specific workloads like inference",
+          "CUDA and compute shaders: programming models for GPU general-purpose computing; CUDA (NVIDIA-specific) and OpenCL/Vulkan compute (cross-platform) expose the GPU's parallel capabilities to non-graphics workloads"
+        ],
+        "demonstration": "Compare matrix multiplication performance on CPU vs GPU. A naive CPU implementation of 1024x1024 matrix multiply takes about 2 seconds. A CUDA implementation with shared memory tiling completes in 5 milliseconds, a 400x speedup. Show the CUDA kernel code structure: thread indexing, shared memory allocation, synchronization barriers, and coalesced global memory access. Then demonstrate thread divergence by modifying the kernel to include an if-else branch that splits the warp, measuring the performance degradation.",
+        "setup_requirements": [
+          "System with NVIDIA GPU (or cloud GPU instance)",
+          "CUDA toolkit installed",
+          "nvprof or Nsight profiling tools",
+          "Matrix multiplication benchmark code"
+        ],
+        "review": [
+          {
+            "key": "CPU vs GPU Design Trade-off",
+            "value": "CPUs dedicate most transistors to caches and control logic for fast single-thread execution; GPUs dedicate most transistors to ALUs for massive parallel throughput. Neither is universally superior; the best choice depends on the workload's parallelism and control flow complexity"
+          },
+          {
+            "key": "Warp Divergence Penalty",
+            "value": "When threads in a 32-thread warp take different branches, the warp must execute both paths serially, disabling threads not on the active path; in the worst case (16 threads take each path), throughput is halved"
+          },
+          {
+            "key": "Memory Coalescing Importance",
+            "value": "Coalesced access can achieve 80-90% of peak GPU memory bandwidth; uncoalesced access may achieve only 10-20%, making memory access pattern the single most important GPU optimization"
+          },
+          {
+            "key": "Heterogeneous Computing Trend",
+            "value": "Apple's M-series chips integrate CPU, GPU, and Neural Engine on one die with shared memory; this eliminates the PCIe copy overhead and represents the direction of future chip design for all platforms"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "Embedded Systems and System-on-Chip Design",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Identify the unique constraints of embedded systems: power, cost, real-time requirements, and physical size",
+        "Explain the architecture of a System-on-Chip (SoC) integrating CPU, GPU, memory controllers, and peripherals",
+        "Understand real-time scheduling constraints and their architectural implications",
+        "Analyze power management techniques including dynamic voltage-frequency scaling and power gating"
+      ],
+      "readings": [
+        "Patterson & Hennessy, Computer Organization and Design (RISC-V Edition), Ch. 6 (embedded and IoT sections)",
+        "Wolf, Computers as Components: Principles of Embedded Computing System Design, Ch. 1-2",
+        "ARM Cortex-M Architecture Reference Manual (selected sections)"
+      ],
+      "lecture_notes": {
+        "introduction": "Embedded systems are computers hidden inside other devices: your car has over 100 of them, your microwave has one, your thermostat has one, and the average home contains dozens. They vastly outnumber desktop computers and servers, with billions shipped annually. Unlike general-purpose computers that run arbitrary software, embedded systems are designed for specific tasks with strict constraints on power consumption (battery life), cost (pennies per unit in mass production), real-time responsiveness (airbag deployment must happen within milliseconds), and physical size (fitting inside a sensor node or medical implant). These constraints drive architectural decisions very different from desktop processors: simpler pipelines, smaller caches or scratchpads instead of caches, deterministic memory access patterns, and aggressive power management. The System-on-Chip (SoC) model, where CPU cores, GPU, memory controllers, I/O peripherals, and specialized accelerators are integrated on a single die, dominates embedded and mobile computing. Understanding embedded architecture is essential because IoT, automotive, medical devices, and industrial automation are among the fastest-growing areas of computing, and RISC-V is rapidly becoming the dominant ISA for new embedded designs due to its open, modular, and extensible nature.",
+        "key_concepts": [
+          "Embedded system constraints: hard real-time deadlines (missing a deadline is system failure), limited power budget (microwatts for IoT sensors to watts for smartphones), cost sensitivity (cents per unit at scale), and physical size limitations",
+          "System-on-Chip (SoC): integrates CPU cores, GPU, DSP, memory controller, I/O peripherals, and often application-specific accelerators on a single die; examples include Apple M-series, Qualcomm Snapdragon, and ESP32",
+          "Microcontroller vs microprocessor: microcontrollers (ARM Cortex-M, RISC-V) integrate flash, SRAM, and peripherals on-chip for self-contained operation; microprocessors require external memory and I/O chips",
+          "Real-time operating systems (RTOS): guarantee worst-case response times; preemptive priority scheduling ensures the highest-priority task runs within a bounded latency; examples include FreeRTOS, Zephyr, and VxWorks",
+          "Scratchpad memory vs cache: caches provide automatic management but non-deterministic access times (hits vs misses); scratchpads provide software-managed, deterministic access times required by hard real-time systems",
+          "Dynamic Voltage and Frequency Scaling (DVFS): reducing clock frequency and supply voltage during low-activity periods; power scales as CV^2f, so halving voltage and frequency reduces power by 8x",
+          "Power gating: completely shutting off power to unused chip regions to eliminate both dynamic and static (leakage) power; requires careful management of state saving and wake-up latency",
+          "Interrupt latency: the time from interrupt assertion to the start of the handler; embedded systems minimize this with dedicated interrupt controllers, tail chaining (back-to-back interrupt handling), and hardware state saving",
+          "RISC-V in embedded: the open ISA allows custom extensions for specific applications (e.g., bit manipulation for cryptography, vector extensions for DSP); this customizability without licensing fees drives rapid adoption in IoT and embedded markets",
+          "Hardware-software co-design: in embedded systems, the boundary between hardware and software is flexible; critical functions can be implemented as hardware accelerators for power efficiency or as software for flexibility"
+        ],
+        "demonstration": "Walk through the architecture of a real SoC (ESP32-S3): dual-core 240 MHz Xtensa LX7 CPU, 512KB SRAM, 16MB flash, WiFi/Bluetooth radio, multiple I/O peripherals, and an AI accelerator for neural network inference. Show how a FreeRTOS application creates two tasks: a high-priority sensor reading task with a hard 10ms deadline and a low-priority data logging task. Demonstrate DVFS by measuring power consumption at 240 MHz, 160 MHz, and 80 MHz, showing the cubic relationship between voltage-frequency and power. Then show interrupt latency measurement using a GPIO pin toggle and oscilloscope.",
+        "setup_requirements": [
+          "ESP32-S3 development board with USB connection",
+          "PlatformIO or Arduino IDE with ESP32 support",
+          "Logic analyzer or oscilloscope for timing measurements",
+          "FreeRTOS task creation example code"
+        ],
+        "review": [
+          {
+            "key": "Power Equation",
+            "value": "Dynamic power P = CV^2f means reducing voltage is far more effective than reducing frequency alone; halving both voltage and frequency reduces power by 87.5%, which is why DVFS is the primary power management technique"
+          },
+          {
+            "key": "Determinism in Real-Time Systems",
+            "value": "Caches improve average-case performance but worsen worst-case performance due to unpredictable misses; hard real-time systems often use scratchpads or lock critical data into cache to guarantee deterministic timing"
+          },
+          {
+            "key": "SoC Integration Benefits",
+            "value": "Integrating components on one die reduces power (on-chip communication uses 10-100x less energy than off-chip), latency (nanoseconds vs microseconds for off-chip), and cost (one chip vs many); this drives the trend toward larger, more integrated SoCs"
+          },
+          {
+            "key": "RISC-V Embedded Advantage",
+            "value": "RISC-V's modular ISA lets designers include only needed extensions (e.g., integer-only for tiny microcontrollers, add floating-point for signal processing), minimizing die area and power for cost-sensitive embedded applications"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Course Review and Architecture Synthesis",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Synthesize knowledge across all topics from number systems through parallel and embedded architectures",
+        "Trace the execution of a program from high-level code through compilation, instruction fetch, pipeline stages, cache accesses, and virtual memory translation",
+        "Evaluate architectural trade-offs in real processor designs",
+        "Prepare for the final examination by identifying key concepts and common problem types"
+      ],
+      "readings": [
+        "Patterson & Hennessy, Computer Organization and Design (RISC-V Edition), all chapter summaries",
+        "Course lecture notes and assignment solutions",
+        "Review sheet distributed in class"
+      ],
+      "lecture_notes": {
+        "introduction": "This final session synthesizes every topic we have covered into a unified understanding of how computers work from transistors to running programs. We trace the complete journey of a single instruction through the entire system: the compiler translates high-level code to assembly, the assembler produces machine code stored in memory, the virtual memory system translates the program counter's virtual address to a physical address via the TLB and page table, the instruction cache delivers the instruction to the pipeline, the pipeline stages decode, execute, access memory (going through the data cache and potentially the TLB again), and write results back to the register file. Along the way, the memory hierarchy at every level exploits locality to hide latency, the pipeline overlaps execution of multiple instructions for throughput, and in a multicore system, cache coherence protocols ensure consistency across cores. Understanding how all these mechanisms interact is what makes a computer architect, not just knowing each mechanism in isolation. This review prepares you not only for the final exam but for a career of making informed decisions about hardware-software interaction. Whether you become a kernel developer, a performance engineer, a compiler writer, or a chip designer, the mental model you have built in this course will guide your work.",
+        "key_concepts": [
+          "End-to-end instruction execution: compiler to ISA to pipeline to cache to virtual memory to physical memory, every step connected",
+          "Number systems and representation: the foundation everything builds upon, from gate inputs to memory addresses to floating-point arithmetic",
+          "Boolean algebra to circuits: logic gates implement Boolean functions, combinational circuits build ALUs and decoders, sequential circuits build registers and FSMs",
+          "CPU datapath and control: the register file, ALU, memory, and multiplexers connected by control signals derived from instruction decoding",
+          "Pipelining: overlapping instruction execution for throughput, managing hazards through forwarding, stalling, and prediction",
+          "Memory hierarchy: registers, caches (L1/L2/L3), main memory, storage; each level trading capacity for speed, exploiting temporal and spatial locality",
+          "Virtual memory: process isolation, address translation, TLB, page tables, page faults; the OS-hardware partnership",
+          "I/O systems: polling, interrupts, DMA; bridging the speed gap between CPU and peripherals",
+          "Parallelism: ILP (superscalar, out-of-order), DLP (SIMD), TLP (multicore); Amdahl's Law limiting speedup",
+          "GPU and heterogeneous computing: massive throughput for data-parallel workloads; the trend toward specialized accelerators"
+        ],
+        "demonstration": "Full system trace exercise: take a simple C program that searches a sorted array using binary search. Trace: (1) compiler output showing the assembly loop with branch and load instructions, (2) virtual address translation of the first instruction fetch through TLB and page table, (3) instruction cache lookup for the fetch, (4) pipeline execution of the first iteration showing the data-dependent branch, (5) data cache behavior as the search narrows (initially poor locality, improving as the search converges), (6) branch predictor behavior across iterations. Calculate total cycles accounting for TLB misses, cache misses, branch mispredictions, and pipeline stalls.",
+        "setup_requirements": [
+          "Comprehensive review handout covering all topics",
+          "Practice problems with solutions for each topic area",
+          "Full system trace worksheet",
+          "Office hours schedule for pre-exam questions"
+        ],
+        "review": [
+          {
+            "key": "Iron Law of Performance",
+            "value": "Execution time = instruction count * CPI * clock period; architecture choices affect each factor independently: ISA affects instruction count, pipeline design affects CPI, and circuit technology affects clock period"
+          },
+          {
+            "key": "Locality is Fundamental",
+            "value": "Every level of the memory hierarchy, from register allocation to L1 cache to virtual memory page replacement, exploits the same principle: programs access a small working set repeatedly. Designing for locality is the most universally applicable optimization"
+          },
+          {
+            "key": "Abstraction Enables Complexity",
+            "value": "ISA abstracts hardware from software, virtual memory abstracts physical memory from processes, caches abstract slow memory as fast memory; each abstraction hides complexity and enables independent optimization of each layer"
+          },
+          {
+            "key": "Power is the Ultimate Constraint",
+            "value": "Clock frequency scaling ended around 2005 due to power limits; core counts are now limited by power budgets; the future of architecture is energy efficiency, which drives specialization (GPUs, TPUs, NPUs) and heterogeneous design"
           }
         ]
       }
@@ -217,171 +855,571 @@
     "quizzes": [
       {
         "quiz": 1,
-        "week": 2,
-        "topic": "Number Systems and Assembly Language",
-        "duration": "20 minutes",
+        "week": 3,
+        "topic": "Number Systems, Boolean Algebra, and Combinational Circuits",
+        "duration": "25 minutes",
         "questions": [
           {
-            "question": "Convert the decimal number -13 to an 8-bit twos complement binary representation. Show your work.",
+            "question": "Convert the decimal number -53 to a 8-bit twos complement binary representation. Then add it to the decimal number 80 (in 8-bit binary) and determine whether signed overflow occurs. Show all work.",
             "type": "calculation",
             "points": 10,
-            "answer": "Step 1: 13 in binary = 00001101. Step 2: Flip all bits = 11110010. Step 3: Add 1 = 11110011. So -13 in 8-bit twos complement is 11110011.",
+            "answer": "Step 1: 53 in binary = 00110101. Step 2: Invert bits = 11001010. Step 3: Add 1 = 11001011. So -53 in 8-bit twos complement is 11001011.\n\n80 in binary = 01010000.\n\nAddition: 11001011 + 01010000 = 00011011 (carry out of MSB is 1, discarded for 8-bit result).\n\n00011011 = 27 in decimal. Check: -53 + 80 = 27. Correct.\n\nSigned overflow check: the operands have different signs (negative + positive), so signed overflow cannot occur. The carry out does not indicate overflow for signed arithmetic when operand signs differ. No overflow.",
             "rubric": [
               {
-                "key": "Correct positive binary representation",
+                "key": "Correct twos complement conversion of -53",
                 "value": 3
               },
               {
-                "key": "Correct bit inversion",
+                "key": "Correct binary addition with proper carry propagation",
+                "value": 4
+              },
+              {
+                "key": "Correct overflow analysis with reasoning",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Using Boolean algebra, simplify the expression F = A'BC + AB'C + ABC' + ABC to a minimal sum-of-products form. Show each step and name the law applied.",
+            "type": "analysis",
+            "points": 10,
+            "answer": "F = A'BC + AB'C + ABC' + ABC\n\nStep 1: Group last two terms: ABC' + ABC = AB(C' + C) = AB (complement law)\nSo F = A'BC + AB'C + AB\n\nStep 2: Factor: AB absorbs ABC terms. Check: AB + A'BC + AB'C.\nExpand AB: AB = AB(C + C') = ABC + ABC'.\nSo F = ABC + ABC' + A'BC + AB'C.\nGroup: ABC + A'BC = BC(A + A') = BC (complement law).\nGroup: ABC + AB'C = AC(B + B') = AC (complement law).\nSo F = BC + AC + ABC'.\nBC + AC = C(A + B). ABC' is covered: check with AB, ABC' = AB * C'. AB = AC + BC? No.\n\nAlternative clean path:\nF = A'BC + AB'C + ABC' + ABC\n= A'BC + ABC + AB'C + ABC' (reorder)\n= BC(A' + A) + AB'C + ABC' (factor BC)\n= BC + AB'C + ABC' (complement)\n= BC + A(B'C + BC') (factor A)\n= BC + A(B XOR C)\n\nMinimal SOP via K-map: F(A,B,C) minterms are 011, 101, 110, 111 = m3, m5, m6, m7.\nK-map grouping: m3+m7 = BC, m5+m7 = AC, m6+m7 = AB.\nMinimal cover: F = AB + AC + BC (each pair covers m7 plus one other).\n\nVerification: AB + AC + BC covers all four minterms with three 2-variable terms.",
+            "rubric": [
+              {
+                "key": "Correct identification of minterms or correct algebraic grouping",
                 "value": 3
               },
               {
-                "key": "Correct final answer 11110011",
+                "key": "Valid application of Boolean algebra laws at each step",
+                "value": 4
+              },
+              {
+                "key": "Correct minimal SOP result: AB + AC + BC",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Design a 4-to-1 multiplexer using only 2-to-1 multiplexers. Draw the circuit diagram, label all inputs (D0-D3, S0-S1), and trace the signal path when S1S0 = 10 to show that D2 reaches the output.",
+            "type": "analysis",
+            "points": 10,
+            "answer": "Circuit: Use three 2-to-1 MUXes in a tree structure.\n\nLevel 1 (two MUXes):\n- MUX_A: inputs D0 and D1, select = S0. Output = S0 ? D1 : D0.\n- MUX_B: inputs D2 and D3, select = S0. Output = S0 ? D3 : D2.\n\nLevel 2 (one MUX):\n- MUX_C: inputs MUX_A_out and MUX_B_out, select = S1. Output = S1 ? MUX_B_out : MUX_A_out.\n\nTrace for S1S0 = 10 (S1=1, S0=0):\n- MUX_A: S0=0, selects D0 (but this path is not used).\n- MUX_B: S0=0, selects D2.\n- MUX_C: S1=1, selects MUX_B_out = D2.\n- Output = D2. Correct.\n\nThis generalizes: the lower select bits choose within pairs, the upper select bits choose between pairs.",
+            "rubric": [
+              {
+                "key": "Correct tree structure with three 2-to-1 MUXes",
+                "value": 4
+              },
+              {
+                "key": "Correct select signal assignments (S0 to level 1, S1 to level 2)",
+                "value": 3
+              },
+              {
+                "key": "Correct signal trace showing D2 reaches output for S1S0=10",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      },
+      {
+        "quiz": 2,
+        "week": 5,
+        "topic": "Sequential Circuits, CPU Datapath, and Instruction Sets",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Design a 3-bit synchronous up-counter using D flip-flops. Provide the state transition table, derive the next-state equations for each flip-flop using the current state bits Q2Q1Q0, and draw the circuit.",
+            "type": "analysis",
+            "points": 12,
+            "answer": "State transition table (current -> next):\nQ2Q1Q0 -> Q2+Q1+Q0+\n000 -> 001\n001 -> 010\n010 -> 011\n011 -> 100\n100 -> 101\n101 -> 110\n110 -> 111\n111 -> 000\n\nNext-state equations (D input = next state for D flip-flops):\nD0 = Q0' (Q0 toggles every cycle)\nD1 = Q1 XOR Q0 (Q1 toggles when Q0 = 1)\nD2 = Q2 XOR (Q1 AND Q0) (Q2 toggles when Q1Q0 = 11)\n\nCircuit: Three D flip-flops sharing a common clock. D0 input is NOT Q0. D1 input is Q1 XOR Q0. D2 input is Q2 XOR (Q1 AND Q0). An AND gate combines Q1 and Q0, and its output feeds one input of the XOR gate for D2.",
+            "rubric": [
+              {
+                "key": "Complete and correct state transition table for all 8 states",
+                "value": 3
+              },
+              {
+                "key": "Correct next-state equations for D0, D1, and D2",
+                "value": 5
+              },
+              {
+                "key": "Correct circuit diagram with proper flip-flop and gate connections",
                 "value": 4
               }
             ]
           },
           {
-            "question": "Write MIPS assembly code that computes the sum of integers from 1 to N, where N is stored in register $s0. Store the result in $s1.",
-            "type": "code",
-            "points": 10,
-            "answer": "    li   $s1, 0        # sum = 0\n    li   $t0, 1        # i = 1\nloop:\n    bgt  $t0, $s0, done  # if i > N, exit\n    add  $s1, $s1, $t0   # sum += i\n    addi $t0, $t0, 1     # i++\n    j    loop\ndone:",
+            "question": "Trace the execution of the RISC-V instruction lw x5, 12(x10) through the single-cycle datapath. For each of the following components, state whether it is active and what value it processes: (a) instruction memory, (b) register file read, (c) ALU, (d) data memory, (e) register file write. Assume x10 contains 0x10000000.",
+            "type": "analysis",
+            "points": 8,
+            "answer": "(a) Instruction memory: ACTIVE. PC provides the address; instruction memory outputs the 32-bit lw instruction encoding.\n\n(b) Register file read: ACTIVE. The rs1 field (x10) is read, outputting 0x10000000. The rs2 field is read but its value is unused for lw.\n\n(c) ALU: ACTIVE. ALU computes the effective address: x10 + 12 = 0x10000000 + 0x0000000C = 0x1000000C. ALU operation is ADD, selected by control signals.\n\n(d) Data memory: ACTIVE (read). The effective address 0x1000000C is sent to data memory's address input. MemRead control is asserted. Data memory outputs the 32-bit word stored at that address.\n\n(e) Register file write: ACTIVE. The data memory output is routed through the MemToReg multiplexer to the register file's write data input. The rd field (x5) specifies the destination register. RegWrite control is asserted. The loaded value is written to x5 on the clock edge.",
             "rubric": [
               {
-                "key": "Correct initialization of sum and counter",
+                "key": "Correct identification of all active components",
+                "value": 2
+              },
+              {
+                "key": "Correct ALU computation of effective address 0x1000000C",
                 "value": 3
               },
               {
-                "key": "Correct loop condition and branch",
+                "key": "Correct data flow from data memory through MemToReg mux to register file",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Write a RISC-V assembly function sum_array that takes two arguments: a0 = pointer to an integer array, a1 = number of elements. The function returns the sum in a0. Use proper calling convention (save/restore any callee-saved registers you use).",
+            "type": "code",
+            "points": 10,
+            "answer": "sum_array:\n    li   t0, 0          # t0 = sum = 0\n    li   t1, 0          # t1 = index i = 0\nloop:\n    bge  t1, a1, done   # if i >= n, exit loop\n    slli t2, t1, 2      # t2 = i * 4 (byte offset)\n    add  t2, a0, t2     # t2 = &array[i]\n    lw   t3, 0(t2)      # t3 = array[i]\n    add  t0, t0, t3     # sum += array[i]\n    addi t1, t1, 1      # i++\n    j    loop\ndone:\n    mv   a0, t0          # return sum in a0\n    ret                   # jalr x0, ra, 0\n\nNote: No callee-saved registers (s0-s11) are used; only temporaries (t0-t3) which are caller-saved, so no stack frame is needed.",
+            "rubric": [
+              {
+                "key": "Correct loop structure with proper bounds checking",
                 "value": 3
               },
               {
-                "key": "Correct accumulation and increment",
+                "key": "Correct address calculation using shift and add",
+                "value": 3
+              },
+              {
+                "key": "Correct use of calling convention (return value in a0, no callee-saved register clobbering without save/restore)",
                 "value": 4
               }
             ]
           }
         ],
-        "total_points": 20
+        "total_points": 30
       },
       {
-        "quiz": 2,
-        "week": 4,
-        "topic": "Datapath, Pipelining, and Caching",
-        "duration": "25 minutes",
+        "quiz": 3,
+        "week": 8,
+        "topic": "Memory Hierarchy, Cache Design, and Virtual Memory",
+        "duration": "30 minutes",
         "questions": [
           {
-            "question": "Given the following MIPS instruction sequence, identify all data hazards and state whether each can be resolved with forwarding or requires a stall.\n\nadd $s0, $t0, $t1\nsub $s1, $s0, $t2\nlw  $s2, 0($s0)\nadd $s3, $s2, $s1",
-            "type": "analysis",
-            "points": 15,
-            "answer": "Hazard 1: sub reads $s0 written by add — EX-to-EX forwarding resolves this, no stall needed. Hazard 2: lw reads $s0 written by add — EX-to-EX forwarding resolves this, no stall needed. Hazard 3: add reads $s2 written by lw — this is a load-use hazard requiring one stall cycle because the data is not available until the MEM stage. Hazard 4: add reads $s1 written by sub — MEM-to-EX forwarding resolves this, no stall needed.",
+            "question": "A system has a 2-way set-associative cache with 64 sets and 32-byte blocks, using 32-bit byte addresses and LRU replacement. (a) Calculate the total cache size in bytes. (b) Break down the address into tag, index, and offset fields with bit widths. (c) For the byte address sequence {0, 32, 64, 128, 96, 0, 64, 128}, determine the hit/miss for each access.",
+            "type": "calculation",
+            "points": 12,
+            "answer": "(a) Total cache size = sets * ways * block_size = 64 * 2 * 32 = 4096 bytes = 4KB.\n\n(b) Offset bits = log2(32) = 5 bits. Index bits = log2(64) = 6 bits. Tag bits = 32 - 6 - 5 = 21 bits.\nAddress format: [tag: 31-11 | index: 10-5 | offset: 4-0]\n\n(c) Trace (block address = byte_addr / 32, set index = block_addr % 64):\nAddr 0: block 0, set 0. MISS (compulsory). Set 0: [way0: blk0]\nAddr 32: block 1, set 1. MISS (compulsory). Set 1: [way0: blk1]\nAddr 64: block 2, set 2. MISS (compulsory). Set 2: [way0: blk2]\nAddr 128: block 4, set 4. MISS (compulsory). Set 4: [way0: blk4]\nAddr 96: block 3, set 3. MISS (compulsory). Set 3: [way0: blk3]\nAddr 0: block 0, set 0. HIT (blk0 still in way0 of set 0).\nAddr 64: block 2, set 2. HIT (blk2 still in way0 of set 2).\nAddr 128: block 4, set 4. HIT (blk4 still in way0 of set 4).\n\nHit rate: 3 hits / 8 accesses = 37.5%.",
             "rubric": [
               {
-                "key": "Identifies all data hazards correctly",
-                "value": 6
+                "key": "Correct cache size calculation (4KB)",
+                "value": 2
               },
               {
-                "key": "Correctly distinguishes forwarding from stall cases",
-                "value": 5
+                "key": "Correct address field breakdown (5 offset, 6 index, 21 tag)",
+                "value": 4
               },
               {
-                "key": "Identifies the load-use hazard requiring a stall",
+                "key": "Correct hit/miss sequence with proper set indexing and LRU tracking",
+                "value": 4
+              },
+              {
+                "key": "Correct final hit rate (37.5%)",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A system has a TLB with 64 entries and a two-level page table. The virtual address is 32 bits, page size is 4KB, and physical memory is 512MB. (a) How many bits are in the VPN and page offset? (b) How many entries does the first-level page table have if it uses the top 10 bits of the VPN? (c) If the TLB miss rate is 1% and each page table walk costs 2 memory accesses (100ns each), what is the average address translation time assuming a TLB hit takes 1ns?",
+            "type": "calculation",
+            "points": 10,
+            "answer": "(a) Page offset = log2(4KB) = log2(4096) = 12 bits. VPN = 32 - 12 = 20 bits.\n\n(b) Top 10 bits of the VPN index the first-level table: 2^10 = 1024 entries.\n\n(c) TLB hit time = 1ns. TLB miss penalty = 2 * 100ns = 200ns.\nAverage translation time = 0.99 * 1ns + 0.01 * (1ns + 200ns) = 0.99 + 0.01 * 201 = 0.99 + 2.01 = 3.0ns.\n\nNote: Even a 1% TLB miss rate triples the average translation time because the miss penalty (200ns) is 200x the hit time (1ns).",
+            "rubric": [
+              {
+                "key": "Correct VPN (20 bits) and offset (12 bits) calculation",
+                "value": 3
+              },
+              {
+                "key": "Correct first-level page table entry count (1024)",
+                "value": 3
+              },
+              {
+                "key": "Correct AMAT calculation (3.0ns) with proper formula application",
                 "value": 4
               }
             ]
           },
           {
-            "question": "A direct-mapped cache has 8 cache lines, each holding 4 bytes. Given byte addresses 0, 4, 8, 12, 32, 0, 4, 32, determine the hit/miss for each access.",
-            "type": "calculation",
-            "points": 10,
-            "answer": "Block size = 4 bytes, so block number = address / 4. Cache index = block number % 8.\nAddr 0 → block 0 → index 0: MISS (compulsory)\nAddr 4 → block 1 → index 1: MISS (compulsory)\nAddr 8 → block 2 → index 2: MISS (compulsory)\nAddr 12 → block 3 → index 3: MISS (compulsory)\nAddr 32 → block 8 → index 0: MISS (conflict, evicts block 0)\nAddr 0 → block 0 → index 0: MISS (conflict, evicts block 8)\nAddr 4 → block 1 → index 1: HIT\nAddr 32 → block 8 → index 0: MISS (conflict, evicts block 0)\nHit rate: 1/8 = 12.5%",
+            "question": "Explain why a program that traverses a linked list of 1 million nodes performs significantly worse than a program that traverses an array of 1 million integers, even though both access the same number of elements. Reference at least three specific memory hierarchy mechanisms in your answer.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Three memory hierarchy mechanisms explain the difference:\n\n1. Spatial locality and cache lines: Array elements are contiguous in memory, so fetching one cache line (64 bytes = 16 ints) brings in 16 elements at once. Only 1 in 16 accesses is a cache miss. Linked list nodes are allocated at arbitrary heap locations, so each node access likely occupies a different cache line, giving nearly 100% miss rate on the data.\n\n2. Hardware prefetching: Modern CPUs detect sequential access patterns and prefetch the next cache line before it is needed. Array traversal triggers this prefetcher, effectively hiding memory latency. Linked list traversal has unpredictable access patterns (each next pointer can point anywhere), defeating the prefetcher entirely.\n\n3. TLB behavior: Sequential array access hits the same virtual memory page (4KB = 1024 ints) for 1024 consecutive accesses, requiring one TLB entry for 1024 elements. Linked list nodes scattered across memory may each reside on a different page, causing frequent TLB misses and expensive page table walks.\n\nAdditionally, each linked list access depends on the previous one (must dereference the next pointer before knowing where to look), creating a serialized chain of dependent loads that cannot be overlapped by the pipeline.",
             "rubric": [
               {
-                "key": "Correct block number and index calculations",
+                "key": "Explains cache line spatial locality difference (array prefetch vs linked list random access)",
+                "value": 3
+              },
+              {
+                "key": "Explains hardware prefetching effectiveness for arrays but not linked lists",
+                "value": 2
+              },
+              {
+                "key": "Explains TLB miss rate difference or pipeline serialization due to pointer chasing",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "I/O Systems and Pipelining",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "A disk controller transfers data at 100 MB/s. The CPU can execute one polling check in 200 clock cycles at 2 GHz. Each check reads 4 bytes. (a) What percentage of CPU time is consumed by polling to sustain the full 100 MB/s transfer rate? (b) If interrupts cost 500 clock cycles each and each interrupt transfers 4KB, what percentage of CPU time is consumed? (c) If DMA transfers the entire 1MB block with one setup (1000 cycles) and one completion interrupt (500 cycles), what is the CPU utilization?",
+            "type": "calculation",
+            "points": 10,
+            "answer": "(a) Polling: To transfer 100 MB/s reading 4 bytes per poll, need 100,000,000/4 = 25,000,000 polls per second. Each poll costs 200 cycles. Total cycles = 25,000,000 * 200 = 5,000,000,000 cycles/sec. CPU has 2,000,000,000 cycles/sec. CPU utilization = 5,000,000,000 / 2,000,000,000 = 250%. This means polling CANNOT sustain 100 MB/s; the CPU is completely saturated and still cannot keep up.\n\n(b) Interrupts: 100 MB/s with 4KB per interrupt = 100,000,000/4096 = 24,414 interrupts/sec. Each costs 500 cycles. Total = 24,414 * 500 = 12,207,000 cycles/sec. CPU utilization = 12,207,000 / 2,000,000,000 = 0.61%.\n\n(c) DMA: For 1MB transfer at 100 MB/s, transfer time = 10ms. CPU cost = 1000 + 500 = 1500 cycles = 750ns. CPU utilization during transfer = 750ns / 10ms = 0.0075%. The CPU is essentially free during the entire transfer.",
+            "rubric": [
+              {
+                "key": "Correct polling calculation showing CPU saturation at 250%",
                 "value": 4
               },
               {
-                "key": "Correct hit/miss determination for all 8 accesses",
+                "key": "Correct interrupt calculation (approximately 0.61%)",
+                "value": 3
+              },
+              {
+                "key": "Correct DMA calculation showing near-zero CPU utilization",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Given the following RISC-V instruction sequence in a 5-stage pipeline with full forwarding:\n  lw   x5, 0(x10)\n  add  x6, x5, x7\n  sub  x8, x6, x9\n  sw   x8, 4(x10)\n\n(a) Identify all data hazards. (b) For each hazard, state whether it is resolved by forwarding or requires a stall. (c) Draw the pipeline diagram showing all stages, stalls, and forwarding paths. (d) Calculate the total execution cycles.",
+            "type": "analysis",
+            "points": 12,
+            "answer": "(a) Data hazards:\nH1: add reads x5 written by lw (load-use hazard)\nH2: sub reads x6 written by add (RAW)\nH3: sw reads x8 written by sub (RAW)\n\n(b) Resolution:\nH1: Load-use hazard. lw's value is not available until end of MEM stage. add needs it at EX stage. Even with forwarding (MEM-to-EX), add must stall 1 cycle to wait for lw to complete MEM. ONE STALL BUBBLE.\nH2: EX-to-EX forwarding. add's result is available at end of EX, forwarded to sub's EX input. No stall.\nH3: EX-to-EX forwarding. sub's result is available at end of EX, forwarded to sw's EX input (for address calculation, but sw needs x8 as store data). Actually sw needs x8 for the data to store, which is read in ID or forwarded from MEM-to-MEM. MEM-to-MEM forwarding resolves this. No stall.\n\n(c) Pipeline diagram:\nCycle:  1    2    3    4    5    6    7    8    9\nlw:     IF   ID   EX   MEM  WB\nadd:         IF   ID   stl  EX   MEM  WB\nsub:              IF   stl  ID   EX   MEM  WB\nsw:                    IF   ID   EX   MEM  WB\n\nWait, let me redo properly:\nCycle:  1    2    3    4    5    6    7    8    9\nlw:     IF   ID   EX   MEM  WB\nadd:         IF   ID   **   EX   MEM  WB\nsub:              IF   **   ID   EX   MEM  WB\nsw:                         IF   ID   EX   MEM  WB\n\n** = stall bubble due to load-use hazard on lw->add\n\n(d) Total cycles: 4 instructions take 5 + 3 + 1 stall = 9 cycles. Without stall it would be 5 + 3 = 8 cycles. The one load-use stall adds 1 cycle.",
+            "rubric": [
+              {
+                "key": "Correct identification of all three data hazards with dependency types",
+                "value": 3
+              },
+              {
+                "key": "Correctly identifies load-use hazard requiring one stall, others resolved by forwarding",
                 "value": 4
               },
               {
-                "key": "Correct final hit rate",
+                "key": "Correct pipeline diagram showing stall bubble and forwarding paths",
+                "value": 3
+              },
+              {
+                "key": "Correct total cycle count (9 cycles for 4 instructions)",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A 5-stage pipelined processor executes a program with 20% branch instructions. Branch outcomes are resolved at the end of the EX stage (cycle 3). With static 'always predict not-taken' prediction, 60% of branches are actually taken. Calculate the CPI and compare it to the ideal CPI of 1.0.",
+            "type": "calculation",
+            "points": 8,
+            "answer": "Branch misprediction penalty: Branch is resolved at end of EX stage (stage 3). If mispredicted, instructions fetched in stages IF and ID (2 stages) must be flushed. Penalty = 2 cycles per misprediction.\n\nWith 'predict not-taken': mispredictions occur when branch IS taken = 60% of branches.\n\nMisprediction rate = 0.60 of branches.\nBranch frequency = 20% of instructions.\n\nStall cycles per instruction from branches = branch_frequency * misprediction_rate * penalty = 0.20 * 0.60 * 2 = 0.24.\n\nCPI = 1 + 0.24 = 1.24 (assuming no other hazards).\n\nCompared to ideal CPI of 1.0, this is a 24% performance degradation due to branch mispredictions. The processor completes the program in 1.24x the time of an ideal pipeline.",
+            "rubric": [
+              {
+                "key": "Correct misprediction penalty calculation (2 cycles)",
+                "value": 3
+              },
+              {
+                "key": "Correct stall cycles per instruction (0.24)",
+                "value": 3
+              },
+              {
+                "key": "Correct final CPI (1.24) with comparison to ideal",
                 "value": 2
               }
             ]
           }
         ],
-        "total_points": 25
+        "total_points": 30
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "Parallel Processing, GPU Architecture, and Embedded Systems",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "A program takes 100 seconds on a single core. Profiling shows 80% is parallelizable and 20% is inherently sequential. (a) Using Amdahl's Law, calculate the maximum speedup with 4, 16, and infinite cores. (b) If you could reduce the sequential portion to 10% through algorithmic improvements, how does this change the infinite-core speedup? (c) Which optimization (more cores or reducing sequential fraction) has more impact?",
+            "type": "calculation",
+            "points": 10,
+            "answer": "(a) Amdahl's Law: Speedup = 1 / (s + p/N) where s = sequential fraction, p = parallel fraction, N = cores.\n\ns = 0.20, p = 0.80.\n4 cores: Speedup = 1 / (0.20 + 0.80/4) = 1 / (0.20 + 0.20) = 1 / 0.40 = 2.50x\n16 cores: Speedup = 1 / (0.20 + 0.80/16) = 1 / (0.20 + 0.05) = 1 / 0.25 = 4.00x\nInfinite cores: Speedup = 1 / (0.20 + 0) = 1 / 0.20 = 5.00x\n\n(b) With s = 0.10, p = 0.90:\nInfinite cores: Speedup = 1 / 0.10 = 10.00x\n\n(c) Reducing the sequential fraction from 20% to 10% doubles the infinite-core speedup from 5x to 10x. Adding more cores beyond 16 with the original 20% sequential fraction only improves from 4x to 5x. Reducing the sequential fraction has dramatically more impact, confirming Amdahl's Law's key insight: the sequential bottleneck dominates scaling.",
+            "rubric": [
+              {
+                "key": "Correct Amdahl's Law speedup for 4, 16, and infinite cores (2.5x, 4.0x, 5.0x)",
+                "value": 4
+              },
+              {
+                "key": "Correct recalculation with 10% sequential (10.0x at infinite cores)",
+                "value": 3
+              },
+              {
+                "key": "Correct analysis that reducing sequential fraction has more impact than adding cores",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "A GPU kernel processes a 1024x1024 matrix. Each thread processes one element. Warps contain 32 threads. The kernel has an if-else branch where threads processing elements with row index < 512 take the if-path (20 instructions) and others take the else-path (15 instructions). (a) Do warps executing rows 0-31 experience divergence? (b) Do warps executing rows 511-512 experience divergence? (c) How many instructions does a divergent warp execute?",
+            "type": "analysis",
+            "points": 10,
+            "answer": "(a) Warps executing rows 0-31: All 32 threads in these warps process elements with row < 512, so all take the if-path. NO divergence. They execute 20 instructions.\n\n(b) Warps executing rows 511-512: This depends on thread-to-row mapping. If threads are assigned row-major and a warp spans 32 consecutive elements in a row, then a warp entirely in row 511 (all if-path) or entirely in row 512 (all else-path) has no divergence. However, if the warp contains threads from BOTH rows (e.g., last threads of row 511 and first threads of row 512), those threads diverge: some take if-path (row 511 < 512) and some take else-path (row 512 >= 512). YES, divergence occurs in warps that straddle the row 511-512 boundary.\n\n(c) A divergent warp must execute BOTH paths serially: first the if-path (20 instructions) with else-threads masked off, then the else-path (15 instructions) with if-threads masked off. Total = 20 + 15 = 35 instructions, compared to 20 or 15 for a non-divergent warp. This is a 75-133% penalty.",
+            "rubric": [
+              {
+                "key": "Correct: no divergence for rows entirely within one branch path",
+                "value": 3
+              },
+              {
+                "key": "Correct: divergence at the 511-512 boundary depending on thread assignment",
+                "value": 4
+              },
+              {
+                "key": "Correct: divergent warp executes both paths (35 instructions total)",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "An embedded system running FreeRTOS has three tasks: Task A (period 10ms, execution 2ms), Task B (period 25ms, execution 5ms), and Task C (period 50ms, execution 10ms). (a) Calculate the CPU utilization. (b) Is the task set schedulable under Rate Monotonic Scheduling? (c) If the processor supports DVFS and the current frequency is 100 MHz, what is the minimum frequency that can meet all deadlines?",
+            "type": "calculation",
+            "points": 10,
+            "answer": "(a) CPU utilization = sum of (execution/period) for each task:\nU = 2/10 + 5/25 + 10/50 = 0.20 + 0.20 + 0.20 = 0.60 = 60%.\n\n(b) Rate Monotonic Scheduling schedulability bound for n=3 tasks: n(2^(1/n) - 1) = 3(2^(1/3) - 1) = 3(1.2599 - 1) = 3(0.2599) = 0.7798.\nSince U = 0.60 < 0.7798, the task set IS guaranteed schedulable under RMS. (Note: this is a sufficient condition; some task sets with higher utilization are also schedulable but require more detailed analysis.)\n\n(c) If we scale frequency by factor f (where f <= 1), execution times scale by 1/f (they take longer). The utilization becomes U/f. We need U/f <= RMS bound: 0.60/f <= 0.7798, so f >= 0.60/0.7798 = 0.7694.\nMinimum frequency = 0.7694 * 100 MHz = 76.94 MHz, approximately 77 MHz.\n\nAt 77 MHz, power savings: P_new/P_old = (77/100)^3 = 0.457, a 54% power reduction.",
+            "rubric": [
+              {
+                "key": "Correct CPU utilization calculation (60%)",
+                "value": 3
+              },
+              {
+                "key": "Correct RMS schedulability test with proper bound formula",
+                "value": 4
+              },
+              {
+                "key": "Correct minimum frequency calculation (approximately 77 MHz) with DVFS reasoning",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 30
       }
     ],
     "major_assignments": [
       {
         "assignment": 1,
-        "title": "MIPS Assembly Programming and Processor Simulation",
-        "week_assigned": 2,
-        "week_due": 5,
-        "points": 100,
-        "description": "Write a set of MIPS assembly programs implementing fundamental algorithms, then simulate their execution through a pipelined processor to analyze hazards and performance. Includes a cache performance analysis component.",
+        "title": "MIPS/RISC-V Assembly Programming and Processor Simulation",
+        "week_assigned": 3,
+        "week_due": 6,
+        "points": 150,
+        "description": "Write a suite of assembly language programs implementing fundamental algorithms, then trace their execution through the pipelined processor to analyze hazards and performance. This assignment bridges software and hardware understanding by requiring you to think about how your code interacts with the pipeline, forwarding paths, and branch prediction.",
         "objectives": [
-          "Write correct MIPS assembly for sorting, searching, and string manipulation",
-          "Trace instruction execution through a 5-stage pipeline identifying hazards",
-          "Analyze cache performance for different access patterns",
-          "Connect assembly-level understanding to high-level performance implications"
+          "Write correct RISC-V assembly for sorting (insertion sort), searching (binary search), and string processing (palindrome check)",
+          "Implement a recursive function with proper stack frame management following calling conventions",
+          "Trace each program's hot loop through the 5-stage pipeline, identifying all data and control hazards",
+          "Quantify the performance impact of hazards by calculating actual CPI versus ideal CPI",
+          "Propose code reordering optimizations that reduce stall cycles without changing program behavior"
         ],
         "requirements": {},
         "deliverables": [
-          "MIPS assembly source files for all assigned programs",
-          "Pipeline diagrams showing hazard detection and resolution",
-          "Cache simulation results and analysis report (2-3 pages)",
-          "Reflection document connecting low-level insights to software optimization"
+          "RISC-V assembly source files for all four programs (insertion sort, binary search, palindrome check, recursive Fibonacci)",
+          "Pipeline analysis report: diagram the inner loop of each program through the 5-stage pipeline, showing all hazards, forwarding paths, and stall bubbles",
+          "Performance comparison: calculated CPI for each program with and without forwarding, and with proposed instruction reorderings",
+          "Optimization report (2-3 pages): describe each code reordering applied, justify why it is correct (preserves dependencies), and quantify the stall reduction"
         ],
         "grading_rubric": {
-          "assembly_programs": {
+          "technical_implementation": {
+            "points": 50,
+            "criteria": [
+              "All programs assemble and run correctly in Ripes or MARS",
+              "Programs handle edge cases: empty arrays, single elements, zero-length strings",
+              "Register usage follows RISC-V calling conventions consistently",
+              "Recursive Fibonacci correctly manages stack frames with save/restore of callee-saved registers"
+            ]
+          },
+          "visual_quality": {
+            "points": 40,
+            "criteria": [
+              "Pipeline diagrams are complete, accurate, and clearly labeled",
+              "All data hazards are correctly identified and classified (RAW, load-use)",
+              "Forwarding paths are correctly drawn and stall bubbles placed appropriately",
+              "CPI calculations are shown step-by-step with correct arithmetic"
+            ]
+          },
+          "performance_optimization": {
             "points": 35,
             "criteria": [
-              "All programs assemble and run correctly in MARS",
-              "Programs handle edge cases (empty arrays, single elements)",
-              "Register usage follows MIPS calling conventions",
-              "Code is commented explaining the purpose of each section"
-            ]
-          },
-          "pipeline_analysis": {
-            "points": 30,
-            "criteria": [
-              "All hazards are correctly identified and classified",
-              "Forwarding vs stalling decisions are correct",
-              "Pipeline diagrams are complete and accurate",
-              "Cycle count analysis is correct"
-            ]
-          },
-          "cache_analysis": {
-            "points": 20,
-            "criteria": [
-              "Hit rates calculated correctly for given access patterns",
-              "Different cache configurations compared meaningfully",
-              "Performance impact quantified with miss penalty calculations",
-              "Recommendations for software optimization based on cache behavior"
+              "Code reorderings are correct (do not violate data dependencies)",
+              "Reorderings measurably reduce stall cycles",
+              "Before/after CPI comparison is provided for each optimization",
+              "Explanations demonstrate understanding of why the reordering helps"
             ]
           },
           "documentation": {
-            "points": 15,
+            "points": 25,
             "criteria": [
-              "Analysis report is clear and well-organized",
-              "Reflection connects low-level concepts to practical software decisions",
-              "All diagrams are legible and correctly labeled",
-              "Professional writing quality"
+              "Assembly code is thoroughly commented explaining each section",
+              "Optimization report is clear, well-organized, and technically accurate",
+              "All diagrams are legible with consistent notation",
+              "Professional writing quality throughout"
             ]
           }
         },
         "rubric": [
           {
             "attributes": {
-              "points": 100,
+              "points": 150,
               "criteria": [
-                "Correct MIPS assembly programs following calling conventions",
-                "Thorough pipeline analysis with accurate hazard resolution",
-                "Insightful cache performance analysis with optimization recommendations",
-                "Clear documentation connecting low-level understanding to software engineering"
+                "Correct, well-structured RISC-V assembly programs following calling conventions",
+                "Thorough pipeline analysis with accurate hazard identification and resolution",
+                "Effective code optimizations with measurable stall reduction",
+                "Clear documentation connecting assembly-level understanding to performance engineering"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Cache Simulator and Memory Hierarchy Performance Analysis",
+        "week_assigned": 7,
+        "week_due": 10,
+        "points": 150,
+        "description": "Design and implement a cache simulator in C or Python that models direct-mapped, set-associative, and fully-associative caches with configurable parameters. Use the simulator to analyze the cache behavior of real memory access traces and draw conclusions about optimal cache configurations for different workloads.",
+        "objectives": [
+          "Implement a configurable cache simulator supporting direct-mapped, N-way set-associative, and fully-associative organizations",
+          "Support LRU and FIFO replacement policies and both write-through and write-back write policies",
+          "Analyze cache performance on provided memory traces from matrix multiplication, binary search, and linked list traversal workloads",
+          "Determine optimal cache configurations for each workload and justify with data"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Cache simulator source code with clear modular design",
+          "Automated test suite verifying simulator correctness against hand-calculated traces",
+          "Performance analysis report (4-5 pages) with hit rate graphs, miss rate breakdowns (compulsory/capacity/conflict), and AMAT calculations for each workload and configuration",
+          "Recommendation section: for each workload, recommend the best cache configuration and justify with cost-performance analysis"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 50,
+            "criteria": [
+              "Simulator correctly handles direct-mapped, 2-way, 4-way, 8-way, and fully-associative configurations",
+              "LRU and FIFO replacement produce correct eviction decisions verified by test cases",
+              "Write-through and write-back policies correctly track dirty bits and write-backs",
+              "Simulator handles configurable cache size (1KB to 64KB), block size (16 to 128 bytes), and address width"
+            ]
+          },
+          "visual_quality": {
+            "points": 30,
+            "criteria": [
+              "Hit rate graphs are clear, properly labeled, and show trends across configurations",
+              "Miss rate breakdown (3 Cs) is presented for each workload",
+              "AMAT calculations are shown with realistic timing parameters",
+              "Tables and figures are publication quality"
+            ]
+          },
+          "performance_optimization": {
+            "points": 40,
+            "criteria": [
+              "Analysis covers a comprehensive range of configurations (varying size, associativity, block size)",
+              "Performance differences between workloads are explained in terms of locality characteristics",
+              "Cost-performance trade-offs are quantified (e.g., doubling cache size for X% miss rate reduction)",
+              "Recommendations are specific, data-driven, and practically justified"
+            ]
+          },
+          "documentation": {
+            "points": 30,
+            "criteria": [
+              "Code is well-documented with clear module boundaries and interface documentation",
+              "Test suite is comprehensive with both unit tests and integration tests against known traces",
+              "Report is well-organized with introduction, methodology, results, and conclusions",
+              "Professional writing quality with proper technical terminology"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Correct, configurable cache simulator with comprehensive parameter support",
+                "Verified correctness through hand-calculated test cases",
+                "Insightful performance analysis connecting workload characteristics to cache behavior",
+                "Data-driven configuration recommendations with cost-performance justification"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Multicore Performance Analysis and Parallel Optimization",
+        "week_assigned": 11,
+        "week_due": 14,
+        "points": 150,
+        "description": "Analyze and optimize a set of parallel programs running on a multicore system. Measure performance scaling, identify bottlenecks including false sharing and synchronization overhead, apply architectural-aware optimizations, and produce a comprehensive performance report demonstrating understanding of parallel architecture concepts.",
+        "objectives": [
+          "Measure parallel speedup and efficiency for provided benchmark programs on 1, 2, 4, and 8 cores",
+          "Use hardware performance counters (perf, Intel VTune, or similar) to identify cache coherence traffic and false sharing",
+          "Apply optimizations including cache line padding, data partitioning, and lock-free algorithms",
+          "Compare measured results against Amdahl's Law predictions and explain discrepancies"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Optimized source code for all three benchmark programs (parallel matrix multiply, shared counter, producer-consumer queue)",
+          "Performance measurement scripts and raw data files",
+          "Analysis report (4-5 pages) with speedup curves, hardware counter data, and optimization rationale",
+          "Presentation slides (10 slides) summarizing findings suitable for a technical audience"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 50,
+            "criteria": [
+              "All programs compile and run correctly on 1-8 cores without race conditions",
+              "Thread sanitizer (-fsanitize=thread) reports no data races",
+              "Optimizations are correct and demonstrably improve performance",
+              "Lock-free or reduced-lock alternatives are correctly implemented where applicable"
+            ]
+          },
+          "visual_quality": {
+            "points": 30,
+            "criteria": [
+              "Speedup curves are clearly plotted with proper axes, labels, and legends",
+              "Before/after performance comparisons are presented visually",
+              "Hardware counter data is presented in meaningful tables and charts",
+              "Presentation slides are professional and technically clear"
+            ]
+          },
+          "performance_optimization": {
+            "points": 45,
+            "criteria": [
+              "False sharing is identified and eliminated with measured improvement",
+              "Data partitioning strategy minimizes inter-core communication",
+              "Performance scaling is compared against Amdahl's Law predictions with discrepancies explained",
+              "Optimizations demonstrate understanding of cache coherence, memory consistency, and synchronization overhead"
+            ]
+          },
+          "documentation": {
+            "points": 25,
+            "criteria": [
+              "Analysis report clearly explains methodology, results, and conclusions",
+              "Each optimization is justified with architectural reasoning, not just empirical results",
+              "Measurement methodology is reproducible (scripts, environment documented)",
+              "Professional writing and presentation quality"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Race-free parallel programs with verified correctness",
+                "Effective optimizations demonstrating architectural understanding",
+                "Thorough performance analysis with hardware counter evidence",
+                "Clear communication of findings in both written and presentation format"
               ]
             }
           }
@@ -391,24 +1429,24 @@
   },
   "grading_breakdown": {
     "weekly_quizzes": {
-      "percentage": 15,
-      "description": "Regular assessment of architecture concepts and calculations"
+      "percentage": 20,
+      "description": "Five quizzes covering architecture concepts, calculations, and design problems"
     },
     "lab_assignments": {
-      "percentage": 25,
-      "description": "Assembly programming labs and hardware simulation exercises"
+      "percentage": 15,
+      "description": "Weekly lab exercises on assembly programming, circuit simulation, and performance measurement"
     },
     "major_assignments": {
-      "percentage": 20,
-      "description": "Comprehensive projects integrating multiple architecture topics"
+      "percentage": 30,
+      "description": "Three comprehensive projects integrating multiple architecture topics with analysis and optimization"
     },
     "midterm_examination": {
-      "percentage": 20,
-      "description": "Written exam covering ISA, datapath, and pipelining"
+      "percentage": 15,
+      "description": "Written exam covering number systems, Boolean algebra, combinational and sequential circuits, CPU datapath, and ISA"
     },
-    "final_examination": {
+    "final_project": {
       "percentage": 20,
-      "description": "Comprehensive exam covering all topics including memory hierarchy"
+      "description": "Comprehensive final project integrating memory hierarchy analysis, parallel performance measurement, and architectural design recommendations"
     }
   },
   "course_policies": {

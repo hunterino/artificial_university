@@ -14,239 +14,838 @@
       "week_number": 1,
       "session_number": 1,
       "topic": "Algorithm Analysis and Asymptotic Notation",
-      "duration": "50 minutes",
+      "duration": "3 hours",
       "learning_objectives": [
-        "Formally analyze algorithm time and space complexity",
-        "Apply Big-O, Big-Omega, and Big-Theta notation correctly",
-        "Analyze loops, nested loops, and recursive algorithms"
+        "Formally analyze algorithm time and space complexity using asymptotic notation",
+        "Apply Big-O, Big-Omega, and Big-Theta notation correctly and distinguish between them",
+        "Analyze iterative algorithms by counting operations in loops and nested loops",
+        "Establish the mathematical foundation for rigorous algorithm comparison"
       ],
       "readings": [
-        "CLRS, Ch. 2-3 - Getting Started and Growth of Functions",
+        "CLRS, Ch. 2 - Getting Started (Sections 2.1-2.2)",
+        "CLRS, Ch. 3 - Growth of Functions",
         "Sedgewick, Algorithms, Ch. 1.4 - Analysis of Algorithms"
       ],
       "lecture_notes": {
-        "introduction": "Data Structures and Algorithms is the most important course in the CS curriculum. Every technical interview, every system design decision, and every performance optimization depends on the concepts you learn here.",
+        "introduction": "Data Structures and Algorithms is the most important course in the computer science curriculum. Every technical interview, every system design decision, and every performance optimization you encounter in your career depends on the concepts you learn here. This is where you move from writing code that works to writing code that scales.\n\nIn CS101 and CS102, you informally discussed Big-O notation. Now we formalize it mathematically. Big-O gives an upper bound on growth: f(n) is O(g(n)) if there exist constants c and n0 such that f(n) <= c * g(n) for all n >= n0. Big-Omega gives a lower bound, and Big-Theta gives a tight bound (both upper and lower). These definitions are precise, and you must be able to apply them rigorously.\n\nThe ability to analyze algorithms separates engineers who guess at performance from those who predict it. When someone proposes a solution in a design meeting, you should be able to immediately estimate its time and space requirements. Is a nested loop acceptable for 1000 elements? Yes. For 10 million? Probably not — that is O(n^2) = 100 trillion operations.\n\nThis week establishes the analytical framework we will use throughout the course. Every data structure and algorithm we study will be characterized by its complexity, and you will be expected to derive that complexity from first principles, not memorize it from a table.",
         "key_concepts": [
-          "Worst-case, average-case, and best-case analysis",
-          "Big-O (upper bound), Big-Omega (lower bound), Big-Theta (tight bound)",
-          "Analyzing iterative algorithms: counting operations in loops",
-          "Analyzing recursive algorithms: recurrence relations",
-          "Amortized analysis: average cost over a sequence of operations"
+          "Big-O definition: f(n) = O(g(n)) if there exist constants c > 0 and n0 such that f(n) <= c*g(n) for all n >= n0",
+          "Big-Omega definition: f(n) = Omega(g(n)) if there exist constants c > 0 and n0 such that f(n) >= c*g(n) for all n >= n0",
+          "Big-Theta definition: f(n) = Theta(g(n)) if f(n) = O(g(n)) and f(n) = Omega(g(n)) — a tight bound",
+          "Common growth rates ordered: O(1) < O(log n) < O(n) < O(n log n) < O(n^2) < O(n^3) < O(2^n) < O(n!)",
+          "Analyzing loops: a single loop from 1 to n is O(n); nested loops multiply — two nested loops over n are O(n^2)",
+          "Analyzing recursive algorithms: set up a recurrence relation T(n) and solve it",
+          "The Master Theorem: T(n) = aT(n/b) + O(n^d) has solutions based on comparing log_b(a) to d",
+          "Amortized analysis: average cost per operation over a sequence, even when individual operations vary",
+          "Worst-case vs average-case vs best-case: we usually analyze worst-case unless stated otherwise",
+          "Space complexity: how much extra memory beyond the input does the algorithm use"
         ],
-        "demonstration": "Analyze the time complexity of five code snippets ranging from O(1) to O(n^3), showing how to count operations systematically",
+        "demonstration": "Analyze the time complexity of five progressively complex code snippets: constant-time array access, a single loop with arithmetic, nested loops with dependent bounds, a binary search variant, and a divide-and-conquer function. For each, formally prove the Big-O bound by identifying the dominant term.",
         "setup_requirements": [
           "Python 3.12+ or Java 17+ installed",
-          "IDE configured for the chosen language",
-          "CLRS textbook or equivalent reference"
+          "IDE configured for the chosen implementation language",
+          "CLRS textbook or equivalent reference available"
         ],
         "review": [
           {
-            "key": "Big-O vs Big-Theta",
-            "value": "Big-O is an upper bound (at most this fast); Big-Theta is a tight bound (exactly this fast asymptotically). Saying binary search is O(n) is technically true but imprecise; O(log n) and Theta(log n) are the correct characterizations"
+            "key": "What is the difference between Big-O and Big-Theta?",
+            "value": "Big-O is an upper bound (at most this fast). Big-Theta is a tight bound (exactly this fast asymptotically). Saying binary search is O(n) is technically true but imprecise; Theta(log n) is the precise characterization."
           },
           {
-            "key": "Amortized Analysis",
-            "value": "Some operations are expensive rarely but cheap usually; amortized analysis averages cost over a sequence. ArrayList append is O(1) amortized even though individual resizes are O(n)"
-          }
-        ]
-      }
-    },
-    {
-      "week_number": 1,
-      "session_number": 2,
-      "topic": "Stacks, Queues, and Linked Lists",
-      "duration": "50 minutes",
-      "learning_objectives": [
-        "Implement stack and queue ADTs using arrays and linked lists",
-        "Understand trade-offs between array-based and pointer-based implementations",
-        "Apply stacks and queues to solve practical problems"
-      ],
-      "readings": [
-        "CLRS, Ch. 10 - Elementary Data Structures",
-        "Sedgewick, Algorithms, Ch. 1.3 - Bags, Queues, and Stacks"
-      ],
-      "lecture_notes": {
-        "introduction": "Stacks and queues are the simplest abstract data types that restrict how elements are added and removed. Despite their simplicity, they are fundamental building blocks: function calls use a stack, BFS uses a queue, and undo systems use a stack.",
-        "key_concepts": [
-          "Stack ADT: push, pop, peek — LIFO ordering",
-          "Queue ADT: enqueue, dequeue, front — FIFO ordering",
-          "Singly and doubly linked list implementation",
-          "Array-based vs linked implementation trade-offs",
-          "Applications: expression evaluation, BFS, undo systems"
-        ],
-        "demonstration": "Implement a balanced parentheses checker using a stack and a print job scheduler using a queue",
-        "setup_requirements": [
-          "Programming environment configured",
-          "Understanding of Big-O from previous session"
-        ],
-        "review": [
-          {
-            "key": "Array vs Linked List Trade-off",
-            "value": "Arrays give O(1) random access but O(n) insertion/deletion in the middle; linked lists give O(1) insertion/deletion at known positions but O(n) access by index"
+            "key": "What is amortized analysis?",
+            "value": "Some operations are expensive rarely but cheap usually. Amortized analysis averages cost over a sequence. Dynamic array append is O(1) amortized even though individual resizes are O(n), because resizes happen exponentially less frequently."
           },
           {
-            "key": "Stack Applications",
-            "value": "Function call stack, expression parsing, undo/redo, DFS traversal, backtracking algorithms — all use LIFO ordering"
+            "key": "How do you analyze nested loops?",
+            "value": "Multiply the iterations of each loop. A loop from 1 to n containing a loop from 1 to n gives n*n = O(n^2). If the inner loop depends on the outer (1 to i), sum the series: 1+2+...+n = n(n+1)/2 = O(n^2)."
+          },
+          {
+            "key": "What does the Master Theorem give you?",
+            "value": "For recurrences T(n) = aT(n/b) + O(n^d), it provides the solution directly: if log_b(a) < d, T(n) = O(n^d); if equal, O(n^d log n); if greater, O(n^(log_b a)). This handles most divide-and-conquer algorithms."
           }
         ]
       }
     },
     {
       "week_number": 2,
-      "session_number": 4,
-      "topic": "Trees and Binary Search Trees",
-      "duration": "50 minutes",
+      "session_number": 2,
+      "topic": "Arrays, Dynamic Arrays, and Amortized Analysis",
+      "duration": "3 hours",
       "learning_objectives": [
-        "Understand tree terminology and properties",
-        "Implement a binary search tree with insert, search, and delete",
-        "Perform in-order, pre-order, and post-order traversals"
+        "Understand the memory layout and performance characteristics of arrays",
+        "Implement a dynamic array with amortized O(1) append",
+        "Prove the amortized O(1) bound using the aggregate and accounting methods",
+        "Compare array-based implementations with linked alternatives"
       ],
       "readings": [
-        "CLRS, Ch. 12 - Binary Search Trees",
-        "Sedgewick, Algorithms, Ch. 3.2 - Binary Search Trees"
+        "CLRS, Ch. 17 - Amortized Analysis (Sections 17.1-17.2)",
+        "Sedgewick, Algorithms, Ch. 1.3 - Resizing Arrays",
+        "Python Documentation: How Python lists are implemented internally"
       ],
       "lecture_notes": {
-        "introduction": "Trees are hierarchical data structures that appear everywhere: file systems, HTML DOM, database indexes, decision trees, and compiler parse trees. Binary search trees combine the flexibility of linked lists with the fast lookup of binary search.",
+        "introduction": "Arrays are the most fundamental data structure in computer science. They provide O(1) random access by index because elements are stored contiguously in memory — the address of element i is simply base_address + i * element_size. This property makes arrays the backbone of nearly every other data structure.\n\nStatic arrays have a fixed size determined at creation. Dynamic arrays (Python's list, Java's ArrayList, C++'s vector) overcome this limitation by automatically resizing when full. The resizing strategy is crucial: doubling the capacity when full ensures that append operations are O(1) amortized, even though individual resizes are O(n).\n\nAmortized analysis formalizes this argument. The aggregate method sums the total cost of n operations and divides by n. The accounting method assigns each cheap operation an extra 'credit' that pays for future expensive operations. Both prove that the average cost per append is O(1), which is what matters for the overall running time of a program that does n appends.\n\nUnderstanding arrays deeply — their memory layout, cache behavior, resizing cost, and comparison with linked structures — is essential because arrays underlie so many other data structures: hash tables use arrays of buckets, heaps use arrays for implicit trees, and even graphs are often stored as arrays of adjacency lists.",
         "key_concepts": [
-          "Tree terminology: root, parent, child, leaf, height, depth",
-          "Binary tree properties and the BST invariant",
-          "BST operations: insert, search, find min/max — all O(h)",
-          "BST delete: three cases (leaf, one child, two children)",
-          "Tree traversals: in-order (sorted), pre-order, post-order, level-order"
+          "Static arrays: contiguous memory, O(1) access by index, fixed size at creation",
+          "Dynamic arrays: resize when full, typically doubling capacity to maintain O(1) amortized append",
+          "Amortized analysis (aggregate method): total cost of n appends is O(n), so average cost is O(1)",
+          "Amortized analysis (accounting method): charge each append $3 — $1 for the insert, $2 saved for future resize",
+          "Array operations: access O(1), append O(1) amortized, insert at index O(n), delete at index O(n), search O(n)",
+          "Cache locality: arrays are cache-friendly because elements are contiguous; linked lists are not",
+          "Python list internals: over-allocates by ~12.5% to reduce resize frequency",
+          "Java ArrayList vs LinkedList: ArrayList for random access, LinkedList for frequent insertion/deletion at known positions",
+          "Multi-dimensional arrays: row-major vs column-major storage affects loop performance",
+          "Tradeoffs: arrays sacrifice flexible insertion for fast access; linked lists do the opposite"
         ],
-        "demonstration": "Build a BST from a sequence of insertions, perform all traversal types, and walk through the three delete cases visually",
+        "demonstration": "Implement a DynamicArray class from scratch with append, get, set, insert, and delete methods. Track the number of element copies during resizes. Run 10000 appends and graph the cumulative copy count to visually demonstrate the amortized O(1) behavior. Compare timing with Python's built-in list.",
         "setup_requirements": [
           "Programming environment configured",
-          "Tree visualization tool recommended"
+          "Understanding of Big-O from previous session",
+          "Matplotlib or terminal plotting for visualization (optional)"
         ],
         "review": [
           {
-            "key": "BST Invariant",
-            "value": "For every node, all keys in the left subtree are less than the node's key, and all keys in the right subtree are greater; this invariant enables O(h) search"
+            "key": "Why does doubling give O(1) amortized append?",
+            "value": "After n appends, the total copy work from all resizes is 1 + 2 + 4 + ... + n = 2n - 1. Dividing total work (n appends + 2n copies) by n gives O(1) per operation."
           },
           {
-            "key": "Degenerate BST",
-            "value": "If elements are inserted in sorted order, the BST degenerates to a linked list with O(n) operations; balanced trees (AVL, Red-Black) prevent this"
+            "key": "Why not increase by a constant amount instead of doubling?",
+            "value": "Adding a constant k means resizing every k appends, each costing O(current size). Total copies become O(n^2/k) = O(n^2), making amortized append O(n). Doubling is essential for the O(1) amortized bound."
+          },
+          {
+            "key": "What is cache locality?",
+            "value": "When the CPU accesses memory, it loads a block (cache line) containing nearby addresses. Arrays benefit because sequential elements are nearby. Linked list nodes are scattered, causing cache misses on nearly every access."
+          },
+          {
+            "key": "When would you choose a linked list over an array?",
+            "value": "When you need frequent O(1) insertions/deletions at known positions and rarely access by index. Examples: implementing a queue (deque), LRU cache eviction, and maintaining sorted sequences with frequent updates."
           }
         ]
       }
     },
     {
       "week_number": 3,
-      "session_number": 6,
-      "topic": "Hash Tables and Hash Functions",
-      "duration": "50 minutes",
+      "session_number": 3,
+      "topic": "Linked Lists: Singly, Doubly, and Circular",
+      "duration": "3 hours",
       "learning_objectives": [
-        "Understand hash function design and properties",
-        "Implement a hash table with chaining and open addressing",
-        "Analyze average and worst-case performance of hash tables"
+        "Implement singly, doubly, and circular linked lists with full operations",
+        "Solve classic linked list problems: reversal, cycle detection, merge sorted lists",
+        "Analyze the time and space complexity of all linked list operations",
+        "Use sentinel nodes and dummy heads to simplify edge case handling"
       ],
       "readings": [
-        "CLRS, Ch. 11 - Hash Tables",
-        "Sedgewick, Algorithms, Ch. 3.4 - Hash Tables"
+        "CLRS, Ch. 10 - Elementary Data Structures (Sections 10.1-10.2)",
+        "Sedgewick, Algorithms, Ch. 1.3 - Linked Lists",
+        "Cracking the Coding Interview, Ch. 2 - Linked Lists"
       ],
       "lecture_notes": {
-        "introduction": "Hash tables provide O(1) average-case lookup, insertion, and deletion — the fastest possible for key-value storage. Understanding how they work under the hood explains why Python dictionaries and Java HashMaps are so fast.",
+        "introduction": "Linked lists are the foundation of pointer-based data structures. While you implemented basic linked lists in CS102, this session pushes deeper: circular variants, sentinel nodes, and the classic algorithmic problems that interviewers love and real systems require.\n\nA circular linked list connects the last node back to the first, eliminating the concept of 'end.' This is useful for round-robin scheduling, circular buffers, and any situation where you cycle through elements repeatedly. The implementation requires careful handling to avoid infinite loops during traversal.\n\nSentinel nodes (dummy head/tail nodes that contain no data) eliminate special cases in insertion and deletion. Without a sentinel, inserting at the head requires updating the head pointer separately from inserting elsewhere. With a sentinel, every insertion — including at the head — follows the same 'insert after a node' logic. This simplification reduces bugs and makes code easier to reason about.\n\nWe also study classic linked list algorithms that appear in technical interviews and real codebases: reversing a list in place (the three-pointer technique), detecting cycles (Floyd's tortoise and hare algorithm), finding the middle element in one pass, and merging two sorted lists. These problems train the pointer manipulation skills needed for trees and graphs.",
         "key_concepts": [
-          "Hash function requirements: deterministic, uniform distribution, fast computation",
-          "Collision resolution: separate chaining with linked lists",
-          "Collision resolution: open addressing (linear probing, quadratic probing, double hashing)",
-          "Load factor and dynamic resizing",
-          "Worst-case O(n) when all keys collide"
+          "Singly linked list: each node has data and next; head pointer; O(1) prepend, O(n) append without tail pointer",
+          "Doubly linked list: each node has data, next, and prev; O(1) insertion/deletion at known positions",
+          "Circular linked list: last node points back to first; no None terminator; requires careful traversal logic",
+          "Sentinel (dummy) nodes: simplify edge cases by ensuring head.next and tail.prev always exist",
+          "In-place reversal: three-pointer technique (prev, current, next_temp) — O(n) time, O(1) space",
+          "Cycle detection: Floyd's algorithm uses slow (1 step) and fast (2 steps) pointers — O(n) time, O(1) space",
+          "Finding the middle: slow and fast pointer — when fast reaches the end, slow is at the middle",
+          "Merging two sorted lists: compare heads, advance the smaller — O(n+m) time, O(1) space",
+          "The runner technique: two pointers moving at different speeds to find positions without counting",
+          "Memory allocation: each node is a separate heap allocation, contributing to memory fragmentation"
         ],
-        "demonstration": "Implement a hash table from scratch with chaining, insert 1000 random keys, and visualize the distribution of chain lengths to observe uniform hashing",
+        "demonstration": "Implement a doubly linked list with sentinel nodes. Then solve three problems: (1) reverse a singly linked list in place, (2) detect a cycle and find its start using Floyd's algorithm, and (3) merge two sorted linked lists into one. Draw pointer diagrams for each step of the reversal.",
         "setup_requirements": [
           "Programming environment configured",
-          "Understanding of linked lists"
+          "Understanding of basic linked lists from CS102",
+          "Whiteboard or diagram tool for pointer visualization"
         ],
         "review": [
           {
-            "key": "Load Factor",
-            "value": "The ratio of elements to buckets (n/m); when it exceeds a threshold (typically 0.75), the table is resized and all elements are rehashed, keeping average chain length constant"
+            "key": "How does Floyd's cycle detection work?",
+            "value": "Two pointers start at the head: slow moves 1 step, fast moves 2 steps. If there is a cycle, fast eventually catches slow inside the cycle. If fast reaches None, there is no cycle. To find the cycle start, reset one pointer to head and advance both one step at a time — they meet at the cycle entry."
           },
           {
-            "key": "Open Addressing vs Chaining",
-            "value": "Chaining handles collisions with linked lists (simpler, no clustering); open addressing probes alternative slots (better cache performance, but degrades badly at high load factors)"
+            "key": "Why use sentinel nodes?",
+            "value": "Sentinel nodes eliminate special cases for empty lists and head/tail operations. Every insertion and deletion follows the same logic because there is always a valid previous and next node. This reduces bugs in code that handles edge cases."
+          },
+          {
+            "key": "What is the three-pointer reversal technique?",
+            "value": "Maintain prev, current, and next_temp. In each iteration: save current.next in next_temp, point current.next to prev, advance prev to current, advance current to next_temp. When current is None, prev is the new head."
+          },
+          {
+            "key": "When is a circular linked list useful?",
+            "value": "Round-robin scheduling (each process gets a turn, then wraps to the first), multiplayer game turns, circular buffers, and the Josephus problem. The key property is that traversal naturally wraps without special end-of-list logic."
           }
         ]
       }
     },
     {
       "week_number": 4,
-      "session_number": 8,
-      "topic": "Sorting Algorithms: Merge Sort and Quicksort",
-      "duration": "50 minutes",
+      "session_number": 4,
+      "topic": "Stacks and Queues: Advanced Applications",
+      "duration": "3 hours",
       "learning_objectives": [
-        "Implement merge sort and quicksort from scratch",
-        "Analyze their time complexity using recurrence relations",
-        "Understand when to use each algorithm and their stability properties"
+        "Implement stacks and queues using both arrays and linked lists",
+        "Solve advanced problems: expression evaluation, min-stack, queue from stacks",
+        "Understand the deque (double-ended queue) and its applications",
+        "Analyze the time complexity of all stack and queue operations"
       ],
       "readings": [
-        "CLRS, Ch. 7 - Quicksort and Ch. 2.3 - Merge Sort",
-        "Sedgewick, Algorithms, Ch. 2.2-2.3 - Mergesort and Quicksort"
+        "CLRS, Ch. 10 - Elementary Data Structures (Sections 10.1, 10.4)",
+        "Sedgewick, Algorithms, Ch. 1.3 - Bags, Queues, and Stacks",
+        "Cracking the Coding Interview, Ch. 3 - Stacks and Queues"
       ],
       "lecture_notes": {
-        "introduction": "Merge sort and quicksort are the two most important comparison-based sorting algorithms. Merge sort guarantees O(n log n) worst-case; quicksort achieves O(n log n) average-case with better constants and is the basis for most standard library sort implementations.",
+        "introduction": "You implemented basic stacks and queues in CS102. Now we study them as abstract data types with multiple implementation strategies and explore their advanced applications. The choice between array-based and linked implementations involves trade-offs in memory usage, cache performance, and worst-case guarantees.\n\nAn array-based stack is simple: push increments a top pointer and stores the element; pop decrements and returns. The capacity is fixed unless you use a dynamic array. A linked-list stack pushes and pops at the head, giving O(1) operations without capacity limits but with higher memory overhead per element.\n\nAdvanced stack applications include expression evaluation (converting infix to postfix and evaluating postfix), the min-stack problem (maintaining O(1) minimum alongside O(1) push/pop), and using two stacks to simulate a queue. These problems appear frequently in interviews and demonstrate how simple data structures compose into powerful solutions.\n\nThe deque (double-ended queue) supports O(1) insertion and deletion at both ends. It generalizes both stacks and queues: a deque used at one end is a stack; used at opposite ends it is a queue. Python's collections.deque and Java's ArrayDeque are the standard implementations, built on circular arrays.",
         "key_concepts": [
-          "Merge sort: divide, recursively sort, merge — O(n log n) worst-case, O(n) extra space",
-          "Quicksort: partition around pivot, recursively sort — O(n log n) average, O(n^2) worst-case",
-          "Pivot selection strategies: first, random, median-of-three",
-          "Stability: merge sort is stable, quicksort is not",
-          "Lower bound: comparison-based sorting cannot be faster than O(n log n)"
+          "Array-based stack: push/pop at one end of an array — O(1), capacity limited (or use dynamic array for amortized O(1))",
+          "Linked-list stack: push/pop at head — O(1) always, no capacity limit, higher memory per element",
+          "Array-based queue (circular): enqueue at tail, dequeue at head, wrap around — O(1), fixed capacity",
+          "Linked-list queue: enqueue at tail, dequeue at head — O(1) with tail pointer, no capacity limit",
+          "Infix to postfix conversion: use a stack to hold operators, output operands immediately, respect precedence",
+          "Postfix evaluation: push operands, pop two and apply when an operator is encountered",
+          "Min-stack: maintain a parallel stack tracking the current minimum — O(1) getMin, O(1) push/pop",
+          "Queue from two stacks: push to inStack, pop from outStack (lazy transfer) — O(1) amortized dequeue",
+          "Deque (double-ended queue): O(1) insert/remove at both ends, generalizes stack and queue",
+          "Circular array implementation: use modular arithmetic (index % capacity) to wrap around"
         ],
-        "demonstration": "Implement both algorithms, then benchmark them on random, sorted, and reverse-sorted arrays of varying sizes to observe their behavior empirically",
+        "demonstration": "Implement a postfix expression evaluator using a stack. Then implement a MinStack that supports push, pop, and getMin all in O(1). Finally, implement a queue using two stacks and prove the amortized O(1) dequeue bound using the accounting method.",
         "setup_requirements": [
           "Programming environment configured",
-          "Benchmarking utilities set up"
+          "Understanding of stacks and queues from CS102",
+          "Familiarity with amortized analysis from Week 2"
         ],
         "review": [
           {
-            "key": "Merge Sort Recurrence",
-            "value": "T(n) = 2T(n/2) + O(n); by the Master Theorem, this solves to T(n) = O(n log n). The O(n) term is the merge step"
+            "key": "How does a circular array queue work?",
+            "value": "Maintain head and tail indices that wrap around using modulo: enqueue at tail % capacity, dequeue at head % capacity. The queue is full when (tail + 1) % capacity == head. This avoids shifting elements on dequeue."
           },
           {
-            "key": "Quicksort Worst Case",
-            "value": "Occurs when the pivot is always the smallest or largest element (sorted input with first-element pivot), causing T(n) = T(n-1) + O(n) = O(n^2); randomized pivot selection makes this astronomically unlikely"
+            "key": "How does the MinStack maintain O(1) getMin?",
+            "value": "Maintain a second stack that records the minimum at each level. On push, push min(value, current_min) onto the min stack. On pop, pop from both stacks. getMin returns the top of the min stack."
+          },
+          {
+            "key": "How does a queue from two stacks achieve amortized O(1)?",
+            "value": "Push to inStack. When outStack is empty and dequeue is called, transfer all elements from inStack to outStack (reversing order). Each element is moved at most twice (once to inStack, once to outStack), so n operations cost O(n) total."
+          },
+          {
+            "key": "When would you use a deque?",
+            "value": "When you need efficient insertion and removal at both ends: sliding window problems, BFS with priority modifications, palindrome checking, and implementing both stack and queue with a single data structure."
           }
         ]
       }
     },
     {
       "week_number": 5,
-      "session_number": 10,
-      "topic": "Graphs: Representation and Traversal",
-      "duration": "50 minutes",
+      "session_number": 5,
+      "topic": "Trees and Binary Search Trees",
+      "duration": "3 hours",
       "learning_objectives": [
-        "Represent graphs using adjacency lists and adjacency matrices",
-        "Implement breadth-first search and depth-first search",
-        "Apply graph traversal to solve reachability and shortest path problems"
+        "Understand tree terminology, properties, and traversal methods",
+        "Implement a binary search tree with insert, search, delete, and traversal operations",
+        "Analyze BST operations in terms of tree height",
+        "Perform in-order, pre-order, post-order, and level-order traversals"
       ],
       "readings": [
-        "CLRS, Ch. 22 - Elementary Graph Algorithms",
-        "Sedgewick, Algorithms, Ch. 4.1-4.2 - Graphs"
+        "CLRS, Ch. 12 - Binary Search Trees",
+        "Sedgewick, Algorithms, Ch. 3.2 - Binary Search Trees",
+        "Cracking the Coding Interview, Ch. 4 - Trees and Graphs"
       ],
       "lecture_notes": {
-        "introduction": "Graphs model relationships: social networks, road maps, dependency chains, web links, circuit boards. BFS and DFS are the foundation of nearly every graph algorithm, from shortest paths to cycle detection to topological sorting.",
+        "introduction": "Trees are hierarchical data structures that appear everywhere in computing: file systems, HTML DOM, database indexes, compiler parse trees, decision trees in machine learning, and organizational charts. Understanding trees is non-negotiable for any software engineer.\n\nA binary search tree (BST) maintains the invariant that for every node, all keys in the left subtree are smaller and all keys in the right subtree are larger. This invariant enables O(h) search, insert, and delete, where h is the height of the tree. For a balanced tree, h = O(log n), giving the same performance as binary search on a sorted array but with O(log n) insertion and deletion — a major improvement over the O(n) cost of inserting into a sorted array.\n\nThe catch is that BSTs can become unbalanced. If elements are inserted in sorted order, the tree degenerates into a linked list with h = n, making all operations O(n). This motivates balanced BSTs (AVL trees, red-black trees) that maintain O(log n) height through rotations, which we study next week.\n\nTree traversals are fundamental operations. In-order traversal visits nodes in sorted order and is the basis for range queries. Pre-order traversal visits the root first and is used for serialization. Post-order visits children before the root and is used for expression evaluation and memory deallocation. Level-order (BFS) visits by depth and is used for finding shortest paths in unweighted trees.",
         "key_concepts": [
-          "Graph terminology: vertex, edge, directed vs undirected, weighted vs unweighted",
-          "Adjacency list vs adjacency matrix: space and time trade-offs",
-          "BFS: level-order exploration using a queue — O(V + E)",
-          "DFS: depth-first exploration using recursion/stack — O(V + E)",
-          "Applications: shortest path (unweighted), cycle detection, connected components, topological sort"
+          "Tree terminology: root, parent, child, leaf, internal node, height, depth, level, subtree",
+          "Binary tree: each node has at most two children (left and right)",
+          "BST invariant: for every node n, all keys in left subtree < n.key < all keys in right subtree",
+          "BST search: compare key with current node, go left if smaller, right if larger — O(h)",
+          "BST insert: search for the key's position, create a new leaf node there — O(h)",
+          "BST delete (three cases): leaf (remove), one child (replace with child), two children (replace with in-order successor)",
+          "In-order traversal (left, root, right): visits BST nodes in sorted order — O(n)",
+          "Pre-order traversal (root, left, right): useful for copying/serializing the tree — O(n)",
+          "Post-order traversal (left, right, root): useful for deleting the tree or evaluating expressions — O(n)",
+          "Level-order traversal (BFS with queue): visits nodes by depth level — O(n)"
         ],
-        "demonstration": "Model a campus map as a graph, implement BFS to find the shortest path between buildings, and DFS to detect if all buildings are reachable from the main entrance",
+        "demonstration": "Build a BST by inserting the sequence [15, 10, 20, 5, 12, 25, 14]. Perform all four traversal types and verify in-order produces sorted output. Walk through all three delete cases: delete 25 (leaf), delete 20 (one child), delete 10 (two children, replaced by in-order successor 12). Draw the tree at each step.",
         "setup_requirements": [
           "Programming environment configured",
-          "Graph visualization tool recommended"
+          "Tree visualization tool or whiteboard",
+          "Understanding of recursion and classes"
         ],
         "review": [
           {
-            "key": "Adjacency List vs Matrix",
-            "value": "Adjacency list uses O(V + E) space and is efficient for sparse graphs; adjacency matrix uses O(V^2) space but allows O(1) edge lookup. Most real-world graphs are sparse"
+            "key": "What is the BST invariant?",
+            "value": "For every node, all keys in the left subtree are less than the node's key, and all keys in the right subtree are greater. This invariant enables O(h) search by eliminating half the remaining tree at each comparison."
           },
           {
-            "key": "BFS vs DFS",
-            "value": "BFS finds shortest paths in unweighted graphs and explores level by level; DFS explores as deep as possible first and is the basis for topological sort, cycle detection, and strongly connected components"
+            "key": "Why do BST operations depend on height, not size?",
+            "value": "Each operation follows a single root-to-leaf path, visiting one node per level. The number of levels is the height h. For a balanced tree h = O(log n); for a degenerate tree h = O(n)."
+          },
+          {
+            "key": "How does BST deletion handle two children?",
+            "value": "Replace the deleted node with its in-order successor (smallest node in the right subtree) or in-order predecessor (largest in left subtree). Copy the successor's key, then recursively delete the successor (which has at most one child)."
+          },
+          {
+            "key": "What causes a BST to degenerate?",
+            "value": "Inserting elements in sorted (or reverse-sorted) order creates a tree where every node has only one child, forming a linked list. The height becomes n instead of log n, and all operations become O(n)."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Balanced Trees: AVL Trees and Red-Black Trees",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Understand why balancing is necessary and what balance guarantees O(log n) height",
+        "Implement AVL tree rotations: single and double rotations",
+        "Understand the red-black tree invariants and how they maintain balance",
+        "Compare AVL and red-black trees in terms of balance strictness and rotation frequency"
+      ],
+      "readings": [
+        "CLRS, Ch. 13 - Red-Black Trees",
+        "Sedgewick, Algorithms, Ch. 3.3 - Balanced Search Trees",
+        "AVL Trees visualization at visualgo.net"
+      ],
+      "lecture_notes": {
+        "introduction": "Unbalanced BSTs degenerate to O(n) operations when elements arrive in sorted order. Balanced BSTs solve this by maintaining invariants that guarantee O(log n) height through structural adjustments called rotations. AVL trees and red-black trees are the two most important balanced BST variants.\n\nAn AVL tree maintains the invariant that for every node, the heights of its left and right subtrees differ by at most 1. When an insertion or deletion violates this invariant, the tree performs one or two rotations to restore balance. The four rotation cases (left-left, right-right, left-right, right-left) handle all imbalance scenarios.\n\nA rotation restructures a subtree by changing which node is the root while preserving the BST invariant. A single rotation handles the case where the imbalance and the inserted node are on the same side (left-left or right-right). A double rotation (rotate the child, then rotate the node) handles the case where they are on opposite sides (left-right or right-left).\n\nRed-black trees use a different strategy: each node is colored red or black, and five invariants (root is black, leaves (NIL) are black, red nodes have black children, every path has the same black count, etc.) guarantee that the longest path is at most twice the shortest. This weaker balance guarantee means fewer rotations per operation than AVL trees, making red-black trees preferred for high-throughput applications. Java's TreeMap and Linux's process scheduler use red-black trees.",
+        "key_concepts": [
+          "AVL invariant: for every node, |height(left) - height(right)| <= 1",
+          "Balance factor: height(left) - height(right); values outside [-1, 1] trigger rebalancing",
+          "Single rotation (left or right): fixes same-side imbalance (LL or RR case) — O(1)",
+          "Double rotation (left-right or right-left): fixes opposite-side imbalance — two single rotations — O(1)",
+          "AVL insertion: insert as in BST, then walk up updating heights and rotating as needed — O(log n)",
+          "Red-black tree invariants: root is black, NIL leaves are black, red has black children, equal black height on all paths",
+          "Red-black trees guarantee height <= 2 * log2(n+1), which is O(log n)",
+          "Red-black insertion: insert red node, then fix violations with recoloring and at most 2 rotations",
+          "AVL vs red-black: AVL is more strictly balanced (faster lookups) but requires more rotations (slower inserts/deletes)",
+          "Self-balancing trees guarantee O(log n) for insert, delete, and search in all cases"
+        ],
+        "demonstration": "Implement AVL tree insertion with all four rotation cases. Insert elements in sorted order [1, 2, 3, 4, 5, 6, 7] and show how rotations maintain balance at each step, producing a tree of height 2 instead of a degenerate chain of height 6. Visualize the tree structure before and after each rotation.",
+        "setup_requirements": [
+          "Programming environment configured",
+          "BST implementation from previous week as a starting point",
+          "Tree visualization tool (visualgo.net or similar)"
+        ],
+        "review": [
+          {
+            "key": "Why is AVL balancing necessary?",
+            "value": "Without balancing, sorted insertions create a linked-list tree with O(n) operations. AVL maintains |left_height - right_height| <= 1, guaranteeing height O(log n) and therefore O(log n) operations."
+          },
+          {
+            "key": "When do you use a single vs double rotation?",
+            "value": "Single rotation (LL or RR): the imbalance and the causing node are on the same side. Double rotation (LR or RL): they are on opposite sides. The double rotation first rotates the child to create a same-side case, then rotates the node."
+          },
+          {
+            "key": "Why are red-black trees used more than AVL in practice?",
+            "value": "Red-black trees require at most 2 rotations per insertion (vs up to O(log n) for AVL). Their weaker balance means slightly deeper trees but significantly fewer restructuring operations, making them faster for insert-heavy workloads."
+          },
+          {
+            "key": "What does the red-black black-height invariant guarantee?",
+            "value": "Every root-to-leaf path has the same number of black nodes. Combined with 'no two consecutive reds', this ensures the longest path is at most twice the shortest, guaranteeing O(log n) height."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Heaps and Priority Queues",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Understand the heap property and the binary heap data structure",
+        "Implement insert and extract-min/max operations with heapify",
+        "Use a heap to implement a priority queue ADT",
+        "Implement heapsort and analyze its O(n log n) complexity"
+      ],
+      "readings": [
+        "CLRS, Ch. 6 - Heapsort",
+        "Sedgewick, Algorithms, Ch. 2.4 - Priority Queues",
+        "Python Documentation: heapq module"
+      ],
+      "lecture_notes": {
+        "introduction": "A priority queue is an abstract data type where each element has a priority, and elements are removed in priority order rather than insertion order. Priority queues are essential for scheduling (processes, network packets, hospital patients), graph algorithms (Dijkstra's shortest path, Prim's minimum spanning tree), and event-driven simulations.\n\nThe binary heap is the standard implementation of a priority queue. It is a complete binary tree (all levels full except possibly the last, which is filled left to right) satisfying the heap property: every node's priority is higher than (or equal to) its children's. A min-heap has the smallest element at the root; a max-heap has the largest.\n\nThe elegant insight of binary heaps is that a complete binary tree can be stored in an array without pointers. The root is at index 0, and for a node at index i, its left child is at 2i+1, its right child at 2i+2, and its parent at (i-1)/2. This array representation is more cache-friendly and memory-efficient than a pointer-based tree.\n\nInsertion adds the element at the end and 'sifts up' (swaps with parent while the heap property is violated). Extraction removes the root, replaces it with the last element, and 'sifts down' (swaps with the smaller child while violated). Both operations are O(log n) because the tree height is exactly floor(log2 n). Building a heap from n elements takes O(n) using the bottom-up heapify algorithm, not O(n log n) — a surprising result we will prove.",
+        "key_concepts": [
+          "Heap property (min-heap): every node's key is <= its children's keys; root holds the minimum",
+          "Complete binary tree: all levels full except the last, which is filled left to right",
+          "Array representation: root at 0, left child at 2i+1, right child at 2i+2, parent at (i-1)//2",
+          "Insert (sift up): add at end, swap with parent while parent is larger — O(log n)",
+          "Extract-min (sift down): replace root with last element, swap with smaller child while violated — O(log n)",
+          "Build-heap (bottom-up): heapify each node from the bottom — O(n) total, not O(n log n)",
+          "Priority queue ADT: insert(key, priority), extract_min() or extract_max(), peek()",
+          "Heapsort: build a max-heap, repeatedly extract max to the end — O(n log n), in-place",
+          "Python's heapq module: heappush, heappop, heapify — min-heap only, negate for max-heap",
+          "Decrease-key operation: needed for Dijkstra's algorithm — O(log n) with index tracking"
+        ],
+        "demonstration": "Implement a MinHeap class with insert, extract_min, and build_heap methods. Demonstrate the build process visually on the array [9, 5, 6, 2, 3, 1, 8, 7, 4], showing how bottom-up heapify transforms it into a valid min-heap. Then implement heapsort and compare its performance with merge sort on large random arrays.",
+        "setup_requirements": [
+          "Programming environment configured",
+          "Understanding of complete binary trees and array indexing",
+          "heapq module for comparison benchmarking"
+        ],
+        "review": [
+          {
+            "key": "Why is building a heap O(n) and not O(n log n)?",
+            "value": "Most nodes are near the bottom and need little sifting. Half the nodes are leaves (0 swaps), a quarter need 1 swap, an eighth need 2, etc. The total is n * sum(i/2^i) for i=0 to log n, which converges to O(n)."
+          },
+          {
+            "key": "Why store a heap in an array instead of a tree with pointers?",
+            "value": "Array storage is more memory-efficient (no pointer overhead), more cache-friendly (contiguous memory), and the parent/child relationships are computed with simple arithmetic instead of pointer dereferences."
+          },
+          {
+            "key": "What is the difference between a heap and a BST?",
+            "value": "A BST orders elements left-to-right (left < root < right). A heap orders top-to-bottom (parent < children in min-heap). BST supports O(log n) search; heap does not support efficient search but provides O(1) peek at the min/max."
+          },
+          {
+            "key": "Is heapsort better than merge sort?",
+            "value": "Heapsort is in-place (O(1) extra space vs O(n) for merge sort) but has worse cache performance and is not stable. In practice, merge sort and Timsort are faster due to cache locality and adaptive behavior on partially sorted data."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Hash Tables and Hash Functions",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Design hash functions with good distribution properties",
+        "Implement hash tables with separate chaining and open addressing",
+        "Analyze average and worst-case performance under different load factors",
+        "Understand the relationship between hash tables and Python dicts / Java HashMaps"
+      ],
+      "readings": [
+        "CLRS, Ch. 11 - Hash Tables",
+        "Sedgewick, Algorithms, Ch. 3.4 - Hash Tables",
+        "Python Documentation: dict implementation notes"
+      ],
+      "lecture_notes": {
+        "introduction": "Hash tables provide the fastest practical data structure for key-value lookup: O(1) average case for insert, delete, and search. They power Python dictionaries, Java HashMaps, database indexes, caches, symbol tables in compilers, and routing tables in network switches. Understanding hash tables deeply is essential for systems design.\n\nA hash function maps keys to integer indices in an array of 'buckets.' The ideal hash function distributes keys uniformly across buckets so that collisions (two keys mapping to the same bucket) are rare. In practice, collisions are inevitable — the pigeonhole principle guarantees collisions when the key space exceeds the number of buckets.\n\nTwo collision resolution strategies dominate. Separate chaining stores colliding elements in a linked list at each bucket. Open addressing probes alternative buckets within the array itself. Chaining is simpler and degrades gracefully; open addressing has better cache performance but suffers from clustering at high load factors.\n\nThe load factor (n/m, elements divided by buckets) determines average chain length in chaining and collision probability in open addressing. When the load factor exceeds a threshold (typically 0.75), the table doubles its bucket count and rehashes all elements. This resize is O(n) but happens so rarely that the amortized cost of insert remains O(1).",
+        "key_concepts": [
+          "Hash function requirements: deterministic, uniform distribution, fast computation",
+          "Division method: h(k) = k mod m; choose m as a prime not close to a power of 2",
+          "Multiplication method: h(k) = floor(m * (k * A mod 1)) where A is an irrational constant (often golden ratio)",
+          "Separate chaining: each bucket holds a linked list of colliding elements",
+          "Open addressing — linear probing: h(k, i) = (h(k) + i) mod m; causes primary clustering",
+          "Open addressing — quadratic probing: h(k, i) = (h(k) + c1*i + c2*i^2) mod m; reduces clustering",
+          "Open addressing — double hashing: h(k, i) = (h1(k) + i*h2(k)) mod m; eliminates clustering",
+          "Load factor alpha = n/m; average chain length in chaining is alpha; O(1 + alpha) expected lookup",
+          "Dynamic resizing: double the table and rehash all elements when alpha exceeds threshold",
+          "Universal hashing: choose hash function randomly from a family to guarantee O(1) expected time against any input"
+        ],
+        "demonstration": "Implement a hash table from scratch with separate chaining. Insert 10,000 random keys and visualize the distribution of chain lengths to demonstrate uniform hashing. Then implement open addressing with linear probing and show how primary clustering develops as the load factor approaches 1.0.",
+        "setup_requirements": [
+          "Programming environment configured",
+          "Understanding of linked lists and arrays",
+          "Random number generator for key distribution testing"
+        ],
+        "review": [
+          {
+            "key": "What is the load factor and why does it matter?",
+            "value": "Load factor alpha = n/m (elements / buckets). In chaining, the average chain length is alpha, so lookup is O(1 + alpha). When alpha exceeds ~0.75, resize and rehash to keep chains short."
+          },
+          {
+            "key": "What is primary clustering in linear probing?",
+            "value": "Occupied slots form contiguous runs. A collision near a cluster forces probing through the entire cluster, making the cluster longer and future collisions more likely. This positive feedback loop degrades performance as load factor increases."
+          },
+          {
+            "key": "Why must hash table keys be immutable?",
+            "value": "The hash value determines the bucket. If a key mutates after insertion, its hash changes, but it remains in the original bucket. Looking it up with the new hash searches the wrong bucket, making the element unfindable."
+          },
+          {
+            "key": "What is the worst case for a hash table?",
+            "value": "O(n) when all keys hash to the same bucket, creating a single chain of length n. Universal hashing prevents adversarial inputs from causing this, and good hash functions make it astronomically unlikely for random inputs."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "Graphs: Representation and Properties",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Represent graphs using adjacency lists, adjacency matrices, and edge lists",
+        "Classify graphs: directed vs undirected, weighted vs unweighted, cyclic vs acyclic",
+        "Analyze the space complexity of different graph representations",
+        "Model real-world problems as graph problems"
+      ],
+      "readings": [
+        "CLRS, Ch. 22 - Elementary Graph Algorithms (Section 22.1)",
+        "Sedgewick, Algorithms, Ch. 4.1 - Undirected Graphs",
+        "Sedgewick, Algorithms, Ch. 4.2 - Directed Graphs"
+      ],
+      "lecture_notes": {
+        "introduction": "Graphs are the most versatile data structure in computer science. They model relationships between entities: social networks (people connected by friendships), road maps (intersections connected by roads), dependency chains (tasks connected by prerequisites), web pages (pages connected by links), and molecular structures (atoms connected by bonds).\n\nA graph G = (V, E) consists of vertices (nodes) V and edges (connections) E. The fundamental design decision is how to represent the edges. An adjacency list stores, for each vertex, a list of its neighbors. An adjacency matrix stores a |V| x |V| grid where entry (i, j) is 1 (or the edge weight) if there is an edge from i to j. An edge list simply stores all edges as (u, v) pairs.\n\nThe choice of representation affects space usage and operation speed. Adjacency lists use O(V + E) space and are efficient for sparse graphs (few edges relative to vertices). Adjacency matrices use O(V^2) space but allow O(1) edge existence queries. Most real-world graphs (social networks, road maps, web graphs) are sparse, making adjacency lists the standard choice.\n\nGraph theory provides a precise vocabulary for reasoning about structure: paths, cycles, connectivity, bipartiteness, planarity, and more. This session establishes the terminology and representation choices that underlie all graph algorithms.",
+        "key_concepts": [
+          "Graph G = (V, E): V is the set of vertices, E is the set of edges connecting them",
+          "Directed graph (digraph): edges have direction (u -> v); undirected: edges are bidirectional",
+          "Weighted graph: each edge has a numeric weight (distance, cost, capacity)",
+          "Adjacency list: array of lists — vertex i stores a list of its neighbors — O(V + E) space",
+          "Adjacency matrix: 2D array — matrix[i][j] = 1 if edge (i,j) exists — O(V^2) space, O(1) edge query",
+          "Sparse graph: E << V^2 (most real graphs); dense graph: E close to V^2",
+          "Degree of a vertex: number of edges incident to it; in-degree and out-degree for directed graphs",
+          "Path: sequence of vertices connected by edges; cycle: path that starts and ends at the same vertex",
+          "Connected graph: there is a path between every pair of vertices (undirected); strongly connected (directed)",
+          "DAG (Directed Acyclic Graph): a directed graph with no cycles — models dependency ordering"
+        ],
+        "demonstration": "Model a campus map as a graph with buildings as vertices and walkways as weighted edges. Implement the graph using both adjacency list (dictionary of lists) and adjacency matrix (2D array). Compare the space usage and operation times. Then model a course prerequisite system as a DAG and visualize the dependency structure.",
+        "setup_requirements": [
+          "Programming environment configured",
+          "Graph visualization tool (networkx + matplotlib, or online tool)",
+          "Understanding of dictionaries and arrays"
+        ],
+        "review": [
+          {
+            "key": "When do you use adjacency lists vs adjacency matrices?",
+            "value": "Adjacency lists for sparse graphs (E << V^2): uses O(V+E) space, efficient iteration over neighbors. Adjacency matrices for dense graphs or when O(1) edge queries are needed: uses O(V^2) space."
+          },
+          {
+            "key": "What is the difference between a directed and undirected graph?",
+            "value": "In a directed graph, edge (u,v) goes from u to v but not necessarily v to u. In an undirected graph, every edge connects both directions. An undirected edge {u,v} is stored as both (u,v) and (v,u) in an adjacency list."
+          },
+          {
+            "key": "What is a DAG and why is it important?",
+            "value": "A Directed Acyclic Graph has directed edges and no cycles. DAGs model dependencies (course prerequisites, build systems, task scheduling). Topological sort orders vertices so all edges go from earlier to later."
+          },
+          {
+            "key": "How do you represent a weighted graph?",
+            "value": "In an adjacency list, store (neighbor, weight) pairs instead of just neighbors. In an adjacency matrix, store the weight instead of 1 (use infinity for non-edges). In an edge list, store (u, v, weight) triples."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "Graph Traversals: BFS and DFS",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Implement breadth-first search and depth-first search on graphs",
+        "Apply BFS to find shortest paths in unweighted graphs",
+        "Apply DFS to detect cycles, perform topological sorting, and find connected components",
+        "Analyze the time and space complexity of graph traversals"
+      ],
+      "readings": [
+        "CLRS, Ch. 22 - Elementary Graph Algorithms (Sections 22.2-22.4)",
+        "Sedgewick, Algorithms, Ch. 4.1-4.2 - Graph traversal sections",
+        "Grokking Algorithms, Ch. 6 - Breadth-First Search"
+      ],
+      "lecture_notes": {
+        "introduction": "BFS and DFS are the two fundamental graph traversal algorithms. Every graph algorithm you will ever encounter either is or builds upon one of these traversals. BFS explores level by level (all neighbors before going deeper), while DFS explores as deep as possible before backtracking. Their different exploration patterns make them suited to different problems.\n\nBFS uses a queue and visits vertices in order of their distance from the source. This makes BFS the correct algorithm for finding shortest paths in unweighted graphs: the first time BFS reaches a vertex, it has found the shortest path. BFS also detects whether a graph is bipartite (two-colorable) by checking if adjacent vertices can always receive different colors.\n\nDFS uses a stack (or recursion) and explores as deep as possible along each branch. DFS classifies edges into tree edges, back edges, forward edges, and cross edges. Back edges indicate cycles. The absence of back edges means the graph is acyclic. DFS on a DAG produces a topological ordering when vertices are output in reverse finish order.\n\nBoth traversals run in O(V + E) time because they visit every vertex and examine every edge exactly once (twice for undirected graphs). This linear-time guarantee makes them practical for graphs with millions of vertices and edges.",
+        "key_concepts": [
+          "BFS: explore all vertices at distance d before distance d+1 — use a queue — O(V + E)",
+          "BFS shortest path: the first time BFS visits a vertex, it has found the shortest path (in unweighted graphs)",
+          "BFS tracks distance and parent pointers to reconstruct shortest paths",
+          "DFS: explore as deep as possible, then backtrack — use recursion or explicit stack — O(V + E)",
+          "DFS discovery and finish times: used for edge classification and topological sort",
+          "Edge classification: tree edge (part of DFS tree), back edge (ancestor, indicates cycle), forward edge, cross edge",
+          "Cycle detection: a directed graph has a cycle if and only if DFS finds a back edge",
+          "Topological sort: order vertices of a DAG so all edges go from earlier to later — reverse DFS finish order",
+          "Connected components (undirected): run DFS/BFS from each unvisited vertex — each run finds one component",
+          "Strongly connected components (directed): Kosaraju's or Tarjan's algorithm using two DFS passes"
+        ],
+        "demonstration": "Implement BFS on a social network graph to find the shortest connection path between two people. Implement DFS on a course prerequisite graph to produce a topological ordering (a valid course sequence). Show cycle detection by adding a circular dependency and demonstrating the back edge detection.",
+        "setup_requirements": [
+          "Programming environment configured",
+          "Graph implementation from previous week",
+          "Sample graphs for social network and course prerequisites"
+        ],
+        "review": [
+          {
+            "key": "Why does BFS find shortest paths?",
+            "value": "BFS explores vertices in order of increasing distance from the source. The first time it reaches vertex v, it has traversed the minimum number of edges. This fails for weighted graphs where edge weights vary."
+          },
+          {
+            "key": "How does DFS detect cycles?",
+            "value": "In a directed graph, DFS finds a cycle if and only if it discovers a back edge — an edge from a vertex to one of its ancestors in the DFS tree. The ancestor is currently being processed (on the recursion stack)."
+          },
+          {
+            "key": "What is topological sort and when is it used?",
+            "value": "A linear ordering of DAG vertices such that for every edge (u,v), u appears before v. Used for: build order, course scheduling, task dependency resolution. Computed by DFS in reverse finish order."
+          },
+          {
+            "key": "What is the time complexity of BFS and DFS?",
+            "value": "Both are O(V + E): they visit every vertex once (O(V)) and examine every edge once (O(E)). This is optimal since you cannot know the graph structure without examining all vertices and edges."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "Shortest Path Algorithms",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Implement Dijkstra's algorithm for single-source shortest paths with non-negative weights",
+        "Understand the Bellman-Ford algorithm for graphs with negative weights",
+        "Use priority queues to achieve optimal Dijkstra performance",
+        "Apply shortest path algorithms to real-world routing problems"
+      ],
+      "readings": [
+        "CLRS, Ch. 24 - Single-Source Shortest Paths",
+        "Sedgewick, Algorithms, Ch. 4.4 - Shortest Paths",
+        "Grokking Algorithms, Ch. 7 - Dijkstra's Algorithm"
+      ],
+      "lecture_notes": {
+        "introduction": "Finding shortest paths in weighted graphs is one of the most practically important problems in computer science. GPS navigation finds the shortest route between locations. Network routing finds the fastest path for data packets. Social network analysis finds the closest connection between people. Logistics systems find the cheapest shipping routes.\n\nDijkstra's algorithm solves the single-source shortest path problem for graphs with non-negative edge weights. Starting from a source vertex, it greedily extends the shortest known path to the nearest unvisited vertex. The key insight is that once a vertex is 'settled' (its shortest distance is confirmed), it never needs to be reconsidered. This greedy property only holds when edge weights are non-negative.\n\nThe algorithm's efficiency depends on how the 'nearest unvisited vertex' is found. A naive scan takes O(V) per step, giving O(V^2) total. Using a binary heap (priority queue) reduces this to O((V + E) log V). For dense graphs V^2 ~ E, the naive scan is actually faster; for sparse graphs, the heap version is better.\n\nBellman-Ford handles graphs with negative edge weights (but no negative cycles). It relaxes all edges V-1 times, guaranteeing shortest paths because the longest possible shortest path has V-1 edges. It is slower than Dijkstra (O(VE) vs O((V+E) log V)) but more general.",
+        "key_concepts": [
+          "Shortest path problem: find the minimum-weight path from source s to all other vertices",
+          "Relaxation: if dist[u] + weight(u,v) < dist[v], update dist[v] — the core operation of all shortest path algorithms",
+          "Dijkstra's algorithm: greedily settle the nearest vertex, relax its neighbors — O((V+E) log V) with a binary heap",
+          "Dijkstra requires non-negative edge weights; negative weights break the greedy property",
+          "Priority queue in Dijkstra: extract-min gives the next vertex to settle; decrease-key updates distances",
+          "Bellman-Ford: relax all edges V-1 times — handles negative weights — O(VE)",
+          "Negative cycle detection: if any edge can still be relaxed after V-1 iterations, a negative cycle exists",
+          "Shortest path tree: the parent pointers form a tree rooted at the source, encoding all shortest paths",
+          "Dijkstra on a grid: models pathfinding in games and robotics (4-connected or 8-connected)",
+          "A* search: Dijkstra with a heuristic that estimates remaining distance — faster in practice for point-to-point"
+        ],
+        "demonstration": "Implement Dijkstra's algorithm with a priority queue on a road network graph (cities as vertices, roads as weighted edges). Find the shortest path from a source city to all others, outputting the path and distance. Then demonstrate that Dijkstra fails on a graph with a negative edge and show Bellman-Ford producing the correct result.",
+        "setup_requirements": [
+          "Programming environment configured",
+          "Heap/priority queue implementation from Week 7",
+          "Graph implementation with weighted edges"
+        ],
+        "review": [
+          {
+            "key": "Why does Dijkstra fail with negative edge weights?",
+            "value": "Dijkstra's greedy property assumes that once a vertex is settled, no shorter path exists. A negative edge from an unsettled vertex could provide a shorter path to an already-settled vertex, violating this assumption."
+          },
+          {
+            "key": "What is relaxation?",
+            "value": "Relaxation checks if a path through vertex u provides a shorter route to v: if dist[u] + w(u,v) < dist[v], update dist[v] and set parent[v] = u. Every shortest path algorithm is built on relaxation."
+          },
+          {
+            "key": "Why does Bellman-Ford run V-1 iterations?",
+            "value": "The longest shortest path in a graph with V vertices has at most V-1 edges. Each iteration finds shortest paths using one more edge. After V-1 iterations, all shortest paths (of any length) have been found."
+          },
+          {
+            "key": "When would you use Bellman-Ford over Dijkstra?",
+            "value": "When the graph has negative edge weights (e.g., financial arbitrage, network cost optimization) or when you need to detect negative cycles. For non-negative weights, Dijkstra is always faster."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Sorting Algorithms: Comprehensive Analysis",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Implement and analyze quicksort with various pivot strategies",
+        "Prove the O(n log n) lower bound for comparison-based sorting",
+        "Understand non-comparison sorts: counting sort, radix sort, bucket sort",
+        "Choose the optimal sorting algorithm based on data characteristics"
+      ],
+      "readings": [
+        "CLRS, Ch. 7 - Quicksort",
+        "CLRS, Ch. 8 - Sorting in Linear Time",
+        "Sedgewick, Algorithms, Ch. 2.3 - Quicksort"
+      ],
+      "lecture_notes": {
+        "introduction": "Sorting is the most well-studied problem in computer science. This session provides a comprehensive analysis of sorting algorithms, from the practical quicksort to the theoretical lower bound proving that O(n log n) is optimal for comparison sorts, to the linear-time sorts that beat this bound by using element structure.\n\nQuicksort is the most widely used sorting algorithm in practice. It partitions the array around a pivot element: elements less than the pivot go left, greater go right. Then it recursively sorts each partition. With a good pivot (near the median), each partition halves the array, giving O(n log n) performance. With a bad pivot (smallest or largest element), one partition has n-1 elements, giving O(n^2). Randomized pivot selection makes the worst case astronomically unlikely.\n\nThe lower bound proof uses a decision tree model: any comparison sort corresponds to a binary tree where each leaf is a permutation of the input. With n! possible permutations, the tree needs at least n! leaves, requiring height at least log2(n!) = Omega(n log n). No comparison sort can beat this.\n\nNon-comparison sorts sidestep this bound by using the structure of keys. Counting sort distributes elements into buckets indexed by key value — O(n + k) where k is the key range. Radix sort applies counting sort digit by digit — O(d(n + b)) for d digits in base b. These achieve linear time for keys with bounded range, but they do not work for arbitrary comparison-based ordering.",
+        "key_concepts": [
+          "Quicksort: partition around pivot, recursively sort partitions — O(n log n) average, O(n^2) worst case",
+          "Partition: rearrange array so elements < pivot are left, elements > pivot are right — O(n)",
+          "Pivot strategies: first element (bad for sorted input), random (good in practice), median-of-three (best practical)",
+          "Quicksort is in-place (O(log n) stack space) and has small constant factors, making it fast in practice",
+          "Lower bound: any comparison sort requires Omega(n log n) comparisons in the worst case",
+          "Decision tree model: n! leaves (permutations), binary tree height >= log2(n!) = Omega(n log n)",
+          "Counting sort: count occurrences, compute positions, place elements — O(n + k), stable, not in-place",
+          "Radix sort: sort by each digit using a stable sort (counting sort) — O(d(n + b)), works for fixed-width keys",
+          "Bucket sort: distribute elements into buckets, sort each bucket — O(n) expected for uniformly distributed input",
+          "Stability: merge sort and counting sort are stable; quicksort and heapsort are not"
+        ],
+        "demonstration": "Implement quicksort with three pivot strategies (first, random, median-of-three) and benchmark on random, sorted, and reverse-sorted arrays. Demonstrate the O(n^2) worst case with first-element pivot on sorted input. Then implement counting sort and show it sorting 1 million integers in the range [0, 1000] faster than quicksort.",
+        "setup_requirements": [
+          "Programming environment configured",
+          "Benchmarking setup from previous weeks",
+          "Understanding of recursion and partition logic"
+        ],
+        "review": [
+          {
+            "key": "Why is quicksort fast in practice despite O(n^2) worst case?",
+            "value": "Randomized pivot selection makes worst case astronomically unlikely. Quicksort's inner loop is simple (just a comparison and swap), its cache performance is excellent (in-place, sequential access), and its constant factor is smaller than merge sort's."
+          },
+          {
+            "key": "What does the O(n log n) lower bound prove?",
+            "value": "No comparison-based sorting algorithm can guarantee fewer than Omega(n log n) comparisons in the worst case. This means merge sort and heapsort are asymptotically optimal among comparison sorts."
+          },
+          {
+            "key": "When is counting sort better than quicksort?",
+            "value": "When the key range k is O(n) or smaller. Counting sort takes O(n + k) time, which is O(n) when k = O(n). For large key ranges (k >> n), the extra memory and initialization make counting sort impractical."
+          },
+          {
+            "key": "What is a stable sort and when does it matter?",
+            "value": "A stable sort preserves the relative order of equal elements. It matters when sorting by multiple keys: sort by secondary key first (stable), then by primary key (stable). If the primary sort is unstable, it can scramble the secondary ordering."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "Dynamic Programming",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Identify problems with optimal substructure and overlapping subproblems",
+        "Solve problems using both top-down (memoized) and bottom-up (tabulated) approaches",
+        "Implement classic DP problems: Fibonacci, coin change, longest common subsequence, knapsack",
+        "Analyze the time and space complexity of dynamic programming solutions"
+      ],
+      "readings": [
+        "CLRS, Ch. 15 - Dynamic Programming (Sections 15.1-15.4)",
+        "Grokking Algorithms, Ch. 9 - Dynamic Programming",
+        "Sedgewick, Algorithms, Ch. 6.6 - Dynamic Programming (if available)"
+      ],
+      "lecture_notes": {
+        "introduction": "Dynamic programming (DP) is an algorithm design technique for optimization problems where the solution can be constructed from solutions to overlapping subproblems. It is one of the most powerful and widely tested topics in algorithm design, appearing in technical interviews, competitive programming, and real-world optimization.\n\nThe key insight is that some problems have optimal substructure: the optimal solution contains optimal solutions to subproblems. The Fibonacci sequence has this property: fib(n) = fib(n-1) + fib(n-2). But naive recursion recomputes the same subproblems exponentially many times. DP eliminates this redundancy by storing results in a table.\n\nTwo approaches exist. Top-down (memoization) writes the recursive solution and adds a cache — the structure of the recursion drives the computation. Bottom-up (tabulation) fills a table iteratively from the smallest subproblems upward — the loop structure drives the computation. Both produce the same result; the choice is a matter of style and sometimes performance.\n\nThe hardest part of DP is formulating the recurrence: defining what a subproblem is, what the recursive relationship is, and what the base cases are. Once you have the recurrence, the coding is mechanical. This session studies the technique through four classic problems: Fibonacci (warmup), coin change (counting and optimization variants), longest common subsequence (string comparison), and 0/1 knapsack (resource allocation).",
+        "key_concepts": [
+          "Optimal substructure: the optimal solution to a problem contains optimal solutions to its subproblems",
+          "Overlapping subproblems: the same subproblems are solved multiple times in a naive recursive approach",
+          "Top-down (memoization): recursive solution with a cache storing previously computed results",
+          "Bottom-up (tabulation): iterative solution filling a table from base cases upward",
+          "Coin change: minimum coins to make amount n — recurrence: dp[n] = 1 + min(dp[n-c] for c in coins)",
+          "Longest Common Subsequence (LCS): dp[i][j] = dp[i-1][j-1]+1 if match, else max(dp[i-1][j], dp[i][j-1])",
+          "0/1 Knapsack: dp[i][w] = max(dp[i-1][w], dp[i-1][w-wi] + vi) — include or exclude item i",
+          "State definition: the subproblem parameters define the table dimensions (1D, 2D, etc.)",
+          "Space optimization: many 2D DP problems only need the previous row, reducing O(nm) space to O(m)",
+          "Reconstructing the solution: trace back through the table to find which choices led to the optimal value"
+        ],
+        "demonstration": "Solve four problems step by step: (1) Fibonacci with memoization and tabulation, (2) coin change minimum coins using bottom-up DP, (3) LCS of two strings with a 2D table and backtracking to reconstruct the subsequence, (4) 0/1 knapsack with item selection reconstruction. For each, draw the DP table and show the recurrence filling it.",
+        "setup_requirements": [
+          "Programming environment configured",
+          "Understanding of recursion and memoization from CS102",
+          "Whiteboard or table for DP visualization"
+        ],
+        "review": [
+          {
+            "key": "How do you identify a DP problem?",
+            "value": "Look for two properties: (1) optimal substructure — can you build the solution from smaller solutions? (2) overlapping subproblems — does a naive recursive solution recompute the same subproblems? If both hold, DP applies."
+          },
+          {
+            "key": "What is the difference between memoization and tabulation?",
+            "value": "Memoization is top-down: start with the original problem, recurse, and cache results. Tabulation is bottom-up: start with the smallest subproblems and iteratively build up. Tabulation avoids recursion overhead; memoization only computes needed subproblems."
+          },
+          {
+            "key": "How do you define the state for a DP problem?",
+            "value": "The state is the minimum set of parameters that uniquely identifies a subproblem. For coin change, it is the remaining amount. For LCS, it is the two string positions (i, j). For knapsack, it is the item index and remaining capacity (i, w)."
+          },
+          {
+            "key": "How do you optimize DP space complexity?",
+            "value": "If the recurrence only depends on the previous row (or previous few entries), you can use a rolling array instead of the full table. The 2D knapsack O(nW) table reduces to O(W) by keeping only two rows."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "Greedy Algorithms",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Understand the greedy strategy and when it produces optimal solutions",
+        "Prove greedy correctness using exchange arguments and greedy-stays-ahead arguments",
+        "Implement classic greedy algorithms: activity selection, Huffman coding, Kruskal's MST",
+        "Distinguish problems where greedy works from those requiring DP"
+      ],
+      "readings": [
+        "CLRS, Ch. 16 - Greedy Algorithms",
+        "CLRS, Ch. 23 - Minimum Spanning Trees",
+        "Sedgewick, Algorithms, Ch. 4.3 - Minimum Spanning Trees"
+      ],
+      "lecture_notes": {
+        "introduction": "Greedy algorithms make the locally optimal choice at each step, hoping to find a globally optimal solution. Unlike dynamic programming, which considers all possibilities, a greedy algorithm commits to the best immediate choice without reconsidering. This makes greedy algorithms simpler and faster, but they only work when the problem has the greedy choice property.\n\nThe greedy choice property means that making the locally optimal choice does not prevent finding the globally optimal solution. For the activity selection problem (schedule the maximum number of non-overlapping activities), the greedy choice is to always select the activity that finishes earliest. This leaves maximum room for future activities.\n\nProving greedy correctness requires showing that the greedy choice is always part of some optimal solution. The exchange argument shows that any optimal solution can be transformed to include the greedy choice without worsening it. The greedy-stays-ahead argument shows that the greedy solution is at least as good as any other solution at every step.\n\nNot all optimization problems yield to greedy strategies. The 0/1 knapsack problem does not: taking the item with the best value-to-weight ratio can leave no room for a combination that would have been better. Distinguishing greedy-solvable problems from those requiring DP is a critical skill.",
+        "key_concepts": [
+          "Greedy strategy: at each step, make the choice that looks best right now without reconsidering",
+          "Greedy choice property: a locally optimal choice is consistent with a globally optimal solution",
+          "Optimal substructure: after the greedy choice, the remaining problem is a smaller instance of the same problem",
+          "Activity selection: sort by finish time, greedily select earliest-finishing non-overlapping activity — O(n log n)",
+          "Huffman coding: build an optimal prefix-free code by repeatedly merging the two lowest-frequency symbols — O(n log n)",
+          "Minimum Spanning Tree: connect all vertices with minimum total edge weight",
+          "Kruskal's algorithm: sort edges by weight, add cheapest edge that does not create a cycle — O(E log E) with Union-Find",
+          "Prim's algorithm: grow the MST from a starting vertex, always adding the cheapest edge to a new vertex — O((V+E) log V)",
+          "Exchange argument: prove that swapping a non-greedy choice for the greedy choice does not worsen the solution",
+          "Greedy vs DP: fractional knapsack is greedy (take fractions); 0/1 knapsack requires DP (all-or-nothing)"
+        ],
+        "demonstration": "Solve the activity selection problem step by step: sort by finish time, greedily select compatible activities. Then implement Kruskal's MST algorithm on a weighted graph using Union-Find for cycle detection. Show the exchange argument proof for activity selection on a concrete example where swapping one activity for the earliest-finishing one does not reduce the count.",
+        "setup_requirements": [
+          "Programming environment configured",
+          "Union-Find implementation (or implement during class)",
+          "Weighted graph implementation from previous weeks"
+        ],
+        "review": [
+          {
+            "key": "How do you prove a greedy algorithm is correct?",
+            "value": "Exchange argument: show that any optimal solution can be modified to include the greedy choice without getting worse. This proves the greedy choice is safe. Combined with optimal substructure, it proves the greedy algorithm finds an optimal solution."
+          },
+          {
+            "key": "Why does greedy fail for 0/1 knapsack?",
+            "value": "Taking the item with the best value/weight ratio might consume capacity that would have been better used by a different combination. Greedy cannot undo choices, so it misses the optimal combination. DP considers all combinations."
+          },
+          {
+            "key": "What is Huffman coding used for?",
+            "value": "Data compression. Frequent characters get short codes; rare characters get long codes. The greedy algorithm builds the optimal code by merging the two least-frequent symbols at each step, creating a binary tree where code length = depth."
+          },
+          {
+            "key": "What is the difference between Kruskal's and Prim's MST algorithms?",
+            "value": "Kruskal's processes edges globally (sort all edges, add cheapest non-cycle-forming edge). Prim's grows locally (from a vertex, always extend to nearest neighbor). Both produce the same MST. Kruskal's is better for sparse graphs; Prim's for dense."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Course Review and Final Preparation",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Synthesize all course topics into a unified understanding of data structures and algorithms",
+        "Compare data structures by their operation complexities and appropriate use cases",
+        "Review algorithm design paradigms: divide and conquer, dynamic programming, greedy",
+        "Prepare for the final examination with comprehensive problem solving"
+      ],
+      "readings": [
+        "Review all previous readings, focusing on complexity tables and algorithm summaries",
+        "CLRS, Appendix A - Summations (for series analysis review)",
+        "Course notes and lecture materials from all sessions"
+      ],
+      "lecture_notes": {
+        "introduction": "This final session synthesizes the entire course into a coherent framework for choosing data structures and designing algorithms. The goal is not to memorize facts but to develop the judgment to make informed decisions: given a problem, which data structure supports the needed operations efficiently? Given an optimization problem, which design paradigm applies?\n\nData structures form a spectrum of trade-offs. Arrays excel at random access but struggle with insertion. Linked lists excel at insertion but lack random access. Hash tables provide O(1) average lookup but have no ordering. BSTs provide O(log n) ordered operations. Heaps provide O(1) access to the minimum but nothing else efficiently. Graphs model arbitrary relationships. Each structure is optimal for specific access patterns.\n\nAlgorithm design paradigms provide frameworks for attacking new problems. Divide and conquer splits the problem, solves parts recursively, and combines. Dynamic programming builds optimal solutions from overlapping subproblems. Greedy algorithms make locally optimal choices. Recognizing which paradigm applies to a new problem is the most valuable skill you take from this course.\n\nLooking ahead, this course's concepts appear in every area of computer science: databases use B-trees and hash indexes, operating systems use priority queues for scheduling, networks use shortest-path algorithms for routing, machine learning uses graph algorithms for clustering, and compilers use stacks and trees for parsing. You now have the vocabulary and analytical tools to engage with all of these systems.",
+        "key_concepts": [
+          "Data structure comparison table: array, linked list, hash table, BST, heap, graph — operations and complexities",
+          "Choosing data structures: what operations do you need? What is the expected data size? Are ordering guarantees needed?",
+          "Algorithm paradigms: brute force, divide and conquer, dynamic programming, greedy — recognizing which applies",
+          "Divide and conquer: split into independent subproblems of the same type (merge sort, quicksort, binary search)",
+          "Dynamic programming: overlapping subproblems + optimal substructure (knapsack, LCS, shortest paths)",
+          "Greedy: locally optimal choices lead to globally optimal solution (activity selection, Huffman, MST)",
+          "Complexity hierarchy: O(1) < O(log n) < O(n) < O(n log n) < O(n^2) < O(2^n) < O(n!)",
+          "NP-completeness preview: some problems (TSP, graph coloring, SAT) have no known polynomial algorithm",
+          "Practical performance: constant factors, cache behavior, and memory allocation often matter more than asymptotic complexity for small inputs",
+          "Lifelong learning: the problems change, but the analytical framework and data structure toolkit you have built remain"
+        ],
+        "demonstration": "Comprehensive problem-solving session: (1) Given a problem statement, choose the appropriate data structure and justify the choice. (2) Given a recursive solution, determine whether it has overlapping subproblems (use DP) or independent subproblems (divide and conquer). (3) Given an optimization problem, determine whether the greedy approach works or DP is needed. Work through 6-8 practice problems covering all course topics.",
+        "setup_requirements": [
+          "All course materials available for reference",
+          "Complexity cheat sheet prepared",
+          "Practice problems from CLRS and interview prep resources"
+        ],
+        "review": [
+          {
+            "key": "How do you choose a data structure for a new problem?",
+            "value": "Identify the operations you need (insert, delete, search, min, ordered iteration) and their frequency. Match to the structure with the best complexity for those operations. Consider space constraints and whether ordering is needed."
+          },
+          {
+            "key": "How do you distinguish DP from greedy?",
+            "value": "If the problem has overlapping subproblems and optimal substructure, try DP. If the greedy choice never needs to be reconsidered (proved by exchange argument), greedy is simpler and faster. When in doubt, DP is safer."
+          },
+          {
+            "key": "What is the most important skill from this course?",
+            "value": "The ability to analyze a problem, choose appropriate data structures, design an efficient algorithm, and prove its correctness and complexity. This framework applies to every technical problem you will encounter."
+          },
+          {
+            "key": "Where do these concepts appear in practice?",
+            "value": "Databases (B-trees, hash indexes), networks (shortest paths, spanning trees), operating systems (heaps for scheduling, queues for I/O), web search (graphs, hash tables), machine learning (trees, dynamic programming), and every technical interview."
           }
         ]
       }
@@ -256,97 +855,344 @@
     "quizzes": [
       {
         "quiz": 1,
-        "week": 2,
-        "topic": "Complexity Analysis and Linear Data Structures",
-        "duration": "20 minutes",
-        "questions": [
-          {
-            "question": "What is the time complexity of the following code?\n\ndef mystery(n):\n    count = 0\n    i = 1\n    while i < n:\n        for j in range(n):\n            count += 1\n        i *= 2\n    return count",
-            "type": "analysis",
-            "points": 10,
-            "answer": "O(n log n). The outer while loop runs log(n) times because i doubles each iteration. The inner for loop runs n times for each outer iteration. Total: n * log(n).",
-            "rubric": [
-              {
-                "key": "Correctly identifies outer loop as O(log n)",
-                "value": 4
-              },
-              {
-                "key": "Correctly identifies inner loop as O(n)",
-                "value": 3
-              },
-              {
-                "key": "Correctly multiplies to O(n log n)",
-                "value": 3
-              }
-            ]
-          },
-          {
-            "question": "Describe one advantage and one disadvantage of using a linked list instead of a dynamic array for implementing a stack.",
-            "type": "short_answer",
-            "points": 10,
-            "answer": "Advantage: Linked list push/pop is always O(1) with no amortized cost, since there is no resizing. Disadvantage: Each element requires extra memory for the pointer/reference to the next node, and linked list nodes are scattered in memory, leading to poor cache performance.",
-            "rubric": [
-              {
-                "key": "Valid advantage with correct reasoning",
-                "value": 5
-              },
-              {
-                "key": "Valid disadvantage with correct reasoning",
-                "value": 5
-              }
-            ]
-          }
-        ],
-        "total_points": 20
-      },
-      {
-        "quiz": 2,
-        "week": 4,
-        "topic": "Trees, Hash Tables, and Sorting",
+        "week": 3,
+        "topic": "Algorithm Analysis, Arrays, and Linked Lists",
         "duration": "25 minutes",
         "questions": [
           {
-            "question": "Given the following BST, what is the in-order traversal output?\n\n        15\n       /  \\\n      10   20\n     / \\     \\\n    5   12   25\n         \\\n         14",
-            "type": "short_answer",
-            "points": 10,
-            "answer": "5, 10, 12, 14, 15, 20, 25. In-order traversal visits left subtree, then root, then right subtree, producing elements in sorted order for a BST.",
+            "question": "What is the time complexity of the following code?\n\ndef mystery(n):\n    count = 0\n    i = 1\n    while i < n:\n        for j in range(n):\n            count += 1\n        i *= 2\n    return count",
+            "type": "calculation",
+            "points": 8,
+            "answer": "O(n log n). The outer while loop runs log2(n) times because i doubles each iteration (1, 2, 4, 8, ..., n). The inner for loop runs n times for each outer iteration. Total operations: n * log2(n) = O(n log n).",
             "rubric": [
               {
-                "key": "Correct sequence of all 7 values",
-                "value": 7
+                "key": "Correctly identifies outer loop as O(log n) due to doubling",
+                "value": 3
               },
               {
-                "key": "Explains in-order produces sorted output for BST",
+                "key": "Correctly identifies inner loop as O(n)",
+                "value": 2
+              },
+              {
+                "key": "Correctly multiplies to O(n log n) with clear reasoning",
                 "value": 3
               }
             ]
           },
           {
-            "question": "Explain why quicksort is generally faster than merge sort in practice despite having a worse worst-case complexity.",
+            "question": "Explain the amortized O(1) bound for dynamic array append. Why does doubling the capacity (rather than adding a constant) give this result?",
             "type": "short_answer",
-            "points": 15,
-            "answer": "Quicksort has better cache locality because it sorts in-place (elements are close in memory), while merge sort requires O(n) auxiliary space for merging. Quicksort's inner loop does fewer comparisons per element (smaller constant factor). The O(n^2) worst case is avoided in practice with randomized pivot selection. Additionally, quicksort's in-place nature means less memory allocation overhead.",
+            "points": 8,
+            "answer": "With doubling, after n appends the total resize work is 1 + 2 + 4 + ... + n = 2n - 1 (geometric series). Adding n regular appends gives total work 3n - 1, so amortized cost per append is O(1). With constant increment k, resizing happens every k appends at cost O(current_size). Total resize work over n appends is O(n^2/k) = O(n^2), making amortized append O(n).",
             "rubric": [
               {
-                "key": "Mentions cache locality / in-place advantage",
-                "value": 5
-              },
-              {
-                "key": "Mentions smaller constant factor or fewer operations per element",
-                "value": 4
-              },
-              {
-                "key": "Notes that worst case is avoidable with randomized pivot",
+                "key": "Correctly explains the geometric series sum for doubling",
                 "value": 3
               },
               {
-                "key": "Mentions memory allocation overhead of merge sort",
+                "key": "Derives the O(1) amortized bound",
+                "value": 2
+              },
+              {
+                "key": "Explains why constant increment gives O(n) amortized",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Write a function that detects whether a singly linked list has a cycle, using O(1) extra space. Explain why your algorithm is correct.",
+            "type": "code",
+            "points": 10,
+            "answer": "def has_cycle(head):\n    slow = head\n    fast = head\n    while fast is not None and fast.next is not None:\n        slow = slow.next\n        fast = fast.next.next\n        if slow == fast:\n            return True\n    return False\n\nCorrectness: If there is no cycle, fast reaches None and we return False. If there is a cycle, fast enters the cycle first and slow follows. Since fast moves 2 steps and slow 1, the gap decreases by 1 each step. They must meet within the cycle after at most O(n) steps.",
+            "rubric": [
+              {
+                "key": "Correct Floyd's algorithm with slow/fast pointers",
+                "value": 4
+              },
+              {
+                "key": "Correct termination conditions (fast and fast.next not None)",
+                "value": 3
+              },
+              {
+                "key": "Explains correctness: why the pointers must meet if a cycle exists",
                 "value": 3
               }
             ]
           }
         ],
-        "total_points": 25
+        "total_points": 26
+      },
+      {
+        "quiz": 2,
+        "week": 5,
+        "topic": "Stacks, Queues, and Binary Search Trees",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Implement a queue using two stacks. Describe the amortized time complexity of enqueue and dequeue operations.",
+            "type": "code",
+            "points": 10,
+            "answer": "class QueueFromStacks:\n    def __init__(self):\n        self.in_stack = []\n        self.out_stack = []\n\n    def enqueue(self, item):\n        self.in_stack.append(item)\n\n    def dequeue(self):\n        if not self.out_stack:\n            while self.in_stack:\n                self.out_stack.append(self.in_stack.pop())\n        if not self.out_stack:\n            raise IndexError('dequeue from empty queue')\n        return self.out_stack.pop()\n\nEnqueue is O(1). Dequeue is O(1) amortized: each element is moved from in_stack to out_stack exactly once, so n operations cost O(n) total.",
+            "rubric": [
+              {
+                "key": "Correct implementation with two stacks",
+                "value": 3
+              },
+              {
+                "key": "Lazy transfer: only move when out_stack is empty",
+                "value": 3
+              },
+              {
+                "key": "Correct amortized analysis (O(1) per operation)",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "Given the following BST, show the result of deleting node 15:\n\n        15\n       /  \\\n      10   20\n     / \\     \\\n    5   12   25\n         \\\n         14\n\nExplain which deletion case applies and why.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Node 15 has two children, so we use the two-children case: replace 15 with its in-order successor. The in-order successor is the smallest node in the right subtree, which is 20. Copy 20's value to the root, then delete the original node 20 (which has one child, 25). Result:\n\n        20\n       /  \\\n      10   25\n     / \\\n    5   12\n         \\\n         14",
+            "rubric": [
+              {
+                "key": "Correctly identifies two-children deletion case",
+                "value": 2
+              },
+              {
+                "key": "Correctly identifies in-order successor as 20",
+                "value": 3
+              },
+              {
+                "key": "Correct final tree structure",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "What is the worst-case time complexity of searching for a value in an unbalanced BST vs a balanced BST? Give an example of an insertion sequence that produces the worst case.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Unbalanced BST: O(n) worst case. Inserting elements in sorted order (1, 2, 3, 4, 5) creates a right-skewed chain where every node has only a right child. The height equals n, so search follows n nodes.\n\nBalanced BST (AVL or Red-Black): O(log n) in all cases, because rotations maintain height at most O(log n) regardless of insertion order.",
+            "rubric": [
+              {
+                "key": "Correct O(n) for unbalanced with explanation",
+                "value": 3
+              },
+              {
+                "key": "Provides concrete worst-case insertion sequence",
+                "value": 2
+              },
+              {
+                "key": "Correct O(log n) for balanced with explanation",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 26
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "Heaps, Hash Tables, and Balanced Trees",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Given the array [9, 5, 6, 2, 3, 1, 8, 7, 4], build a min-heap using bottom-up heapify. Show the array after each sift-down operation.",
+            "type": "code",
+            "points": 10,
+            "answer": "Start from the last non-leaf node (index 3, value 2) and sift down each node:\n\nInitial: [9, 5, 6, 2, 3, 1, 8, 7, 4]\nSift index 3 (2): children are 7 and 4. 2 < both, no change.\nSift index 2 (6): children are 1 and 8. Swap with 1: [9, 5, 1, 2, 3, 6, 8, 7, 4]\nSift index 1 (5): children are 2 and 3. Swap with 2: [9, 2, 1, 5, 3, 6, 8, 7, 4]. Then 5's children are 7 and 4. Swap with 4: [9, 2, 1, 4, 3, 6, 8, 7, 5]\nSift index 0 (9): children are 2 and 1. Swap with 1: [1, 2, 9, 4, 3, 6, 8, 7, 5]. Then 9's children are 6 and 8. Swap with 6: [1, 2, 6, 4, 3, 9, 8, 7, 5]\n\nFinal min-heap: [1, 2, 6, 4, 3, 9, 8, 7, 5]",
+            "rubric": [
+              {
+                "key": "Correct starting point (last non-leaf node)",
+                "value": 2
+              },
+              {
+                "key": "Correct sift-down operations with swap decisions",
+                "value": 5
+              },
+              {
+                "key": "Valid final min-heap (every parent <= children)",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between separate chaining and open addressing for collision resolution in hash tables. When would you prefer each?",
+            "type": "essay",
+            "points": 8,
+            "answer": "Separate chaining: each bucket holds a linked list of colliding elements. Advantages: simple implementation, graceful degradation at high load factors, easy deletion. Disadvantages: pointer overhead, poor cache locality, extra memory allocation.\n\nOpen addressing: collisions are resolved by probing alternative slots within the array. Advantages: better cache locality (all data in one array), no pointer overhead, less memory allocation. Disadvantages: clustering degrades performance at high load factors, deletion requires lazy deletion markers, load factor must stay below ~0.7.\n\nPrefer chaining when: load factor may fluctuate, deletions are frequent, or simplicity matters. Prefer open addressing when: memory is tight, cache performance matters, or the load factor is well-controlled.",
+            "rubric": [
+              {
+                "key": "Accurately describes both strategies with pros/cons",
+                "value": 4
+              },
+              {
+                "key": "Explains when each is preferred with reasoning",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "What are the four rotation cases in an AVL tree? For each, describe the imbalance pattern and the rotation(s) needed to fix it.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "1. Left-Left (LL): Node's left child is left-heavy. Fix: single right rotation at the node.\n2. Right-Right (RR): Node's right child is right-heavy. Fix: single left rotation at the node.\n3. Left-Right (LR): Node's left child is right-heavy. Fix: left rotation at the child, then right rotation at the node.\n4. Right-Left (RL): Node's right child is left-heavy. Fix: right rotation at the child, then left rotation at the node.\n\nSingle rotations fix same-side imbalances; double rotations fix opposite-side imbalances by first converting to a same-side case.",
+            "rubric": [
+              {
+                "key": "Correctly names all four cases with imbalance patterns",
+                "value": 4
+              },
+              {
+                "key": "Correct rotation(s) for each case",
+                "value": 4
+              }
+            ]
+          }
+        ],
+        "total_points": 26
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "Graphs, Traversals, and Shortest Paths",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Given this directed graph:\nA -> B (weight 4), A -> C (weight 2), B -> D (weight 3), C -> B (weight 1), C -> D (weight 7), D -> E (weight 1), B -> E (weight 5)\n\nApply Dijkstra's algorithm from source A. Show the order in which vertices are settled and their final shortest distances.",
+            "type": "calculation",
+            "points": 12,
+            "answer": "Initialize: dist = {A:0, B:inf, C:inf, D:inf, E:inf}\n\n1. Settle A (dist 0). Relax A->B: dist[B]=4. Relax A->C: dist[C]=2.\n2. Settle C (dist 2). Relax C->B: 2+1=3 < 4, dist[B]=3. Relax C->D: 2+7=9, dist[D]=9.\n3. Settle B (dist 3). Relax B->D: 3+3=6 < 9, dist[D]=6. Relax B->E: 3+5=8, dist[E]=8.\n4. Settle D (dist 6). Relax D->E: 6+1=7 < 8, dist[E]=7.\n5. Settle E (dist 7).\n\nOrder: A(0), C(2), B(3), D(6), E(7).",
+            "rubric": [
+              {
+                "key": "Correct settlement order",
+                "value": 4
+              },
+              {
+                "key": "Correct final distances for all vertices",
+                "value": 4
+              },
+              {
+                "key": "Shows relaxation steps with comparisons",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "Explain why BFS finds shortest paths in unweighted graphs but not in weighted graphs. What algorithm should you use for weighted graphs?",
+            "type": "short_answer",
+            "points": 6,
+            "answer": "BFS explores vertices in order of edge count (hops) from the source. In unweighted graphs, every edge has the same cost, so fewer hops always means shorter distance. In weighted graphs, a path with more hops can have lower total weight than a path with fewer hops (e.g., two edges of weight 1 beat one edge of weight 10). BFS would settle the single-hop path first, missing the cheaper two-hop path. Use Dijkstra's algorithm for weighted graphs with non-negative weights, or Bellman-Ford for graphs with negative weights.",
+            "rubric": [
+              {
+                "key": "Correctly explains why BFS works for unweighted graphs",
+                "value": 2
+              },
+              {
+                "key": "Correctly explains the failure case for weighted graphs with a concrete example",
+                "value": 2
+              },
+              {
+                "key": "Recommends appropriate algorithms for weighted graphs",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "What is the time complexity of DFS and BFS on a graph with V vertices and E edges? Why is it O(V + E) and not O(V * E)?",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Both are O(V + E). Each vertex is visited exactly once: O(V) total for vertex processing. Each edge is examined exactly once (in directed graphs) or twice (in undirected): O(E) total for edge examination. The work is additive, not multiplicative, because examining a vertex's edges is proportional to its degree (number of neighbors), and the sum of all degrees is 2E (undirected) or E (directed). O(V * E) would mean examining all E edges for each of V vertices, which does not happen — each vertex only examines its own adjacency list.",
+            "rubric": [
+              {
+                "key": "Correctly states O(V + E)",
+                "value": 2
+              },
+              {
+                "key": "Explains V component (each vertex visited once)",
+                "value": 2
+              },
+              {
+                "key": "Explains E component (each edge examined once) with degree sum argument",
+                "value": 2
+              },
+              {
+                "key": "Explains why it is not O(V * E)",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 26
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "Sorting Analysis, Dynamic Programming, and Greedy Algorithms",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Explain why quicksort is generally faster than merge sort in practice despite having a worse worst-case complexity. Under what circumstances would you choose merge sort over quicksort?",
+            "type": "essay",
+            "points": 8,
+            "answer": "Quicksort is faster in practice because: (1) It sorts in-place with O(log n) stack space, while merge sort needs O(n) auxiliary space for merging. (2) Quicksort has better cache locality — it operates on contiguous memory without copying to a separate buffer. (3) Its inner loop is simple (one comparison, one swap), with smaller constant factors. (4) Randomized pivot selection makes the O(n^2) worst case astronomically unlikely.\n\nChoose merge sort when: (1) Worst-case O(n log n) guarantee is required (safety-critical systems). (2) Stability is needed (preserving order of equal elements). (3) Sorting linked lists (no random access needed, and merge is naturally O(1) space for lists). (4) External sorting (data on disk doesn't fit in memory).",
+            "rubric": [
+              {
+                "key": "Explains cache locality and in-place advantages",
+                "value": 3
+              },
+              {
+                "key": "Explains constant factor and inner loop simplicity",
+                "value": 2
+              },
+              {
+                "key": "Gives valid scenarios where merge sort is preferred",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Solve the coin change problem: given coins [1, 5, 10, 25] and amount 36, find the minimum number of coins needed. Show the DP table for amounts 0 through 36.",
+            "type": "calculation",
+            "points": 10,
+            "answer": "dp[0] = 0. For each amount a from 1 to 36: dp[a] = 1 + min(dp[a-c] for each coin c <= a).\n\nKey values: dp[0]=0, dp[1]=1, dp[5]=1, dp[6]=2, dp[10]=1, dp[11]=2, dp[15]=2, dp[20]=2, dp[25]=1, dp[26]=2, dp[30]=2, dp[35]=2, dp[36]=3.\n\nMinimum coins for 36: dp[36] = 3 (using 25 + 10 + 1).\n\nRecurrence: dp[36] = 1 + min(dp[35], dp[31], dp[26], dp[11]) = 1 + min(2, 4, 2, 2) = 3.",
+            "rubric": [
+              {
+                "key": "Correct recurrence relation",
+                "value": 3
+              },
+              {
+                "key": "Correct final answer (3 coins)",
+                "value": 3
+              },
+              {
+                "key": "Shows key DP table values with reasoning",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "The activity selection problem asks: given n activities with start and finish times, select the maximum number of non-overlapping activities. Explain the greedy strategy, prove it is optimal using an exchange argument, and state the time complexity.",
+            "type": "essay",
+            "points": 8,
+            "answer": "Greedy strategy: Sort activities by finish time. Select the first activity. For each subsequent activity, select it if its start time >= the finish time of the last selected activity.\n\nExchange argument proof: Suppose the greedy selects activity G first (earliest finish). Any optimal solution O selects some activity A first. Since G finishes no later than A (G has the earliest finish time), replacing A with G in O leaves all subsequent selections valid (they start after G's finish >= A's finish). The modified solution has the same count, so including G is safe. By induction, the greedy solution is optimal.\n\nTime complexity: O(n log n) for sorting + O(n) for the greedy scan = O(n log n).",
+            "rubric": [
+              {
+                "key": "Correct greedy strategy (sort by finish time)",
+                "value": 2
+              },
+              {
+                "key": "Clear exchange argument showing greedy choice is safe",
+                "value": 4
+              },
+              {
+                "key": "Correct time complexity with justification",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 26
       }
     ],
     "major_assignments": [
@@ -354,69 +1200,219 @@
         "assignment": 1,
         "title": "Autocomplete Engine",
         "week_assigned": 3,
-        "week_due": 5,
-        "points": 100,
-        "description": "Build an autocomplete engine that efficiently suggests completions as a user types. Implement and compare a trie-based solution against a sorted-array binary search solution, benchmarking both with a dictionary of 100,000+ words.",
+        "week_due": 6,
+        "points": 150,
+        "description": "Build an autocomplete engine that efficiently suggests word completions as a user types. Implement and compare three approaches: a trie-based solution (optimal for prefix matching), a sorted-array binary search solution (space-efficient), and a hash-table solution with prefix indexing. Benchmark all three with a dictionary of 100,000+ words loaded from a file, measuring insertion time, query time for varying prefix lengths, and memory usage. Write a detailed analysis report comparing theoretical and empirical performance, explaining which approach is best for different use cases.",
         "objectives": [
-          "Implement a trie data structure with insert, search, and prefix-match operations",
-          "Implement a binary search approach for prefix matching on sorted arrays",
-          "Benchmark and compare both approaches with empirical timing data",
-          "Analyze the time and space complexity of each approach"
+          "Implement a trie data structure with insert, search, and prefix-match operations from scratch",
+          "Implement sorted-array binary search approach for prefix matching",
+          "Implement hash-table prefix indexing as a third comparison point",
+          "Benchmark all approaches with empirical timing data on a real dictionary",
+          "Analyze time and space complexity theoretically and compare with measurements"
         ],
         "requirements": {},
         "deliverables": [
-          "Source code for trie and binary search implementations",
-          "Benchmark results comparing both approaches on varying input sizes",
-          "Analysis report (2-3 pages) with complexity analysis and empirical results",
-          "pytest test suite covering correctness and edge cases"
+          "Source code for all three implementations with clean class interfaces",
+          "Benchmark script that measures insert time, query time (for prefixes of length 1-8), and memory usage",
+          "Test suite with at least 25 test cases covering correctness, edge cases, and performance",
+          "Analysis report (3-4 pages) with complexity analysis, benchmark results, and recommendation",
+          "Interactive demo script that loads the dictionary and accepts prefix queries from the user"
         ],
         "grading_rubric": {
-          "implementation": {
-            "points": 40,
+          "technical_implementation": {
+            "points": 60,
             "criteria": [
-              "Trie insert, search, and prefix-match are correct",
-              "Binary search prefix-match is correct",
-              "Both handle edge cases (empty input, no matches, single character)",
-              "Code is clean and well-organized"
+              "Trie insert, search, and prefix-match are correct and handle all edge cases",
+              "Binary search prefix-match is correct on sorted data",
+              "Hash-table approach correctly indexes all prefixes",
+              "All three handle edge cases: empty prefix, no matches, single character, full word"
             ]
           },
-          "analysis": {
+          "visual_quality": {
             "points": 30,
             "criteria": [
-              "Correct Big-O analysis for both approaches",
-              "Space complexity comparison is accurate",
-              "Empirical benchmarks support the theoretical analysis",
-              "Trade-offs are clearly articulated"
+              "Each implementation is a clean class with consistent interface (insert, search, autocomplete)",
+              "Code is well-organized with common benchmark code factored out",
+              "Docstrings and type hints on all public methods",
+              "No code duplication between implementations"
             ]
           },
-          "testing": {
-            "points": 15,
+          "performance_optimization": {
+            "points": 35,
             "criteria": [
-              "Comprehensive test suite covering normal and edge cases",
-              "Tests verify correctness of both implementations",
-              "Benchmark methodology is sound and reproducible",
-              "All tests pass"
+              "Correct Big-O and space analysis for all three approaches",
+              "Benchmarks use appropriate methodology (averaged over multiple runs, varying prefix lengths)",
+              "Empirical results support theoretical predictions with explanations for discrepancies",
+              "Memory measurement is reasonable (object counting or sys.getsizeof)"
             ]
           },
           "documentation": {
-            "points": 15,
+            "points": 25,
             "criteria": [
-              "Analysis report is clear and well-structured",
-              "Benchmark methodology is explained",
-              "Code has appropriate comments and docstrings",
-              "README explains how to run benchmarks"
+              "Analysis report clearly presents complexity comparisons in a table",
+              "Benchmark methodology is explained and reproducible",
+              "Recommendation section explains which approach suits which scenario",
+              "README explains how to run demos, tests, and benchmarks"
             ]
           }
         },
         "rubric": [
           {
             "attributes": {
-              "points": 100,
+              "points": 150,
               "criteria": [
-                "Correct trie and binary search implementations with prefix matching",
-                "Rigorous complexity analysis supported by empirical benchmarks",
-                "Comprehensive test suite and clean code organization",
-                "Clear analysis report comparing approaches"
+                "Correct implementations of all three approaches with comprehensive edge case handling",
+                "Rigorous complexity analysis supported by empirical benchmark data",
+                "Clean code organization with consistent interfaces and thorough test suite",
+                "Clear analysis report with actionable recommendations"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Graph Algorithms Toolkit",
+        "week_assigned": 9,
+        "week_due": 12,
+        "points": 175,
+        "description": "Build a comprehensive graph algorithms library that supports multiple graph representations (adjacency list and adjacency matrix), implements fundamental algorithms (BFS, DFS, topological sort, cycle detection, shortest paths, minimum spanning tree), and includes a visualization component that displays algorithm execution step by step. Apply the library to solve a real-world problem: modeling a transportation network with cities as vertices and routes as weighted edges. The library should be general-purpose and well-tested, suitable for use in other programs.",
+        "objectives": [
+          "Implement a Graph class supporting both adjacency list and adjacency matrix representations",
+          "Implement BFS, DFS, topological sort, Dijkstra's algorithm, and Kruskal's MST algorithm",
+          "Apply graph algorithms to a real transportation network dataset",
+          "Write comprehensive tests covering correctness on known graphs with verified solutions",
+          "Produce step-by-step output showing algorithm execution for educational visualization"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Python graph library package: graph.py (representation), algorithms.py (BFS, DFS, Dijkstra, Kruskal), utils.py (helpers)",
+          "Transportation network application demonstrating all algorithms on a real city/route dataset",
+          "Test suite with at least 35 test cases across all algorithms, verified against hand-computed solutions",
+          "Algorithm visualization output showing step-by-step execution (text or simple graphical)",
+          "Analysis document (3 pages) explaining algorithm choices, complexity analysis, and results on the transportation network"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 70,
+            "criteria": [
+              "Graph class supports directed/undirected, weighted/unweighted, and both representation types",
+              "BFS and DFS correctly compute paths, components, and cycle detection",
+              "Dijkstra produces correct shortest paths verified against hand-computed solutions",
+              "Kruskal produces correct MST with Union-Find for efficient cycle detection"
+            ]
+          },
+          "visual_quality": {
+            "points": 40,
+            "criteria": [
+              "Library has a clean, general-purpose API (not tied to the specific application)",
+              "Each algorithm is a separate, well-documented function with clear input/output contract",
+              "Code follows consistent style with type hints and docstrings throughout",
+              "Topological sort correctly handles DAGs and reports cycles in non-DAG graphs"
+            ]
+          },
+          "performance_optimization": {
+            "points": 35,
+            "criteria": [
+              "At least 35 test cases covering all algorithms on small hand-verified graphs",
+              "Tests cover edge cases: disconnected graphs, single vertex, self-loops, negative weights (for Dijkstra failure)",
+              "Transportation network application produces meaningful results (shortest routes, MST cost)",
+              "Algorithm visualization clearly shows the exploration order and key decisions"
+            ]
+          },
+          "documentation": {
+            "points": 30,
+            "criteria": [
+              "Analysis document explains algorithmic choices with complexity justification",
+              "Transportation network results are presented clearly with route distances",
+              "Library API documentation enables another developer to use it without reading source code",
+              "README explains setup, running tests, and running the transportation network demo"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 175,
+              "criteria": [
+                "Complete graph library with correct implementations of all major algorithms",
+                "Comprehensive test suite verified against hand-computed solutions",
+                "Real-world transportation network application demonstrating practical utility",
+                "Clean, general-purpose API with thorough documentation"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Dynamic Programming and Optimization Challenge",
+        "week_assigned": 12,
+        "week_due": 14,
+        "points": 150,
+        "description": "Solve four dynamic programming problems of increasing difficulty, implementing both top-down (memoized) and bottom-up (tabulated) solutions for each. The problems are: (1) Longest Common Subsequence with backtracking to reconstruct the subsequence, (2) 0/1 Knapsack with item selection reconstruction, (3) Edit Distance (Levenshtein distance) between two strings, and (4) a scheduling problem — Weighted Job Scheduling where jobs have start times, end times, and profits. For each problem, analyze time and space complexity, implement space-optimized versions where possible, and benchmark both approaches.",
+        "objectives": [
+          "Solve four DP problems using both memoization and tabulation approaches",
+          "Reconstruct optimal solutions by backtracking through the DP table",
+          "Optimize space complexity using rolling arrays where applicable",
+          "Analyze and compare the performance of top-down vs bottom-up approaches",
+          "Demonstrate mastery of the DP problem-solving framework: state, recurrence, base case, reconstruction"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Four Python modules, one per problem, each containing memoized, tabulated, and space-optimized implementations",
+          "Test suite with at least 30 test cases (verified against known solutions from textbooks or online judges)",
+          "Benchmark comparing memoized vs tabulated performance on varying input sizes",
+          "Solution writeup (3-4 pages) for each problem: state definition, recurrence derivation, complexity analysis, and reconstruction explanation",
+          "README explaining how to run all solutions, tests, and benchmarks"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 60,
+            "criteria": [
+              "All four problems solved correctly with both memoization and tabulation",
+              "LCS and knapsack correctly reconstruct the optimal solution (subsequence and item set)",
+              "Edit distance correctly handles insertions, deletions, and substitutions",
+              "Weighted job scheduling correctly handles overlapping jobs with binary search for compatibility"
+            ]
+          },
+          "visual_quality": {
+            "points": 35,
+            "criteria": [
+              "Each problem has clear state definition and recurrence documented in comments or docstrings",
+              "Space-optimized versions are implemented where applicable (LCS, knapsack, edit distance)",
+              "Code is clean with consistent naming and organization across all four problems",
+              "Memoization uses functools.lru_cache or manual dictionary caching consistently"
+            ]
+          },
+          "performance_optimization": {
+            "points": 30,
+            "criteria": [
+              "Complexity analysis is correct for all implementations (time and space)",
+              "Benchmarks compare memoized vs tabulated on multiple input sizes",
+              "Space optimization correctly reduces from O(nm) to O(m) where applicable",
+              "Results show the practical impact of space optimization on large inputs"
+            ]
+          },
+          "documentation": {
+            "points": 25,
+            "criteria": [
+              "Writeup clearly explains the DP formulation process for each problem",
+              "Recurrence derivations show the reasoning, not just the formula",
+              "Reconstruction algorithm is explained with a concrete example",
+              "Test cases include textbook examples with known solutions for verification"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Correct solutions to all four DP problems with both approaches",
+                "Working solution reconstruction for LCS and knapsack",
+                "Space-optimized implementations where applicable",
+                "Clear writeup explaining the DP formulation process for each problem"
               ]
             }
           }
@@ -426,24 +1422,24 @@
   },
   "grading_breakdown": {
     "weekly_quizzes": {
-      "percentage": 15,
-      "description": "Regular assessment of data structure and algorithm concepts"
+      "percentage": 20,
+      "description": "Five quizzes testing data structure operations, algorithm analysis, complexity proofs, and problem-solving techniques"
     },
     "lab_assignments": {
-      "percentage": 20,
-      "description": "Weekly implementation exercises for each data structure and algorithm"
+      "percentage": 15,
+      "description": "Weekly implementation exercises for each data structure and algorithm, with correctness and complexity verification"
     },
     "major_assignments": {
-      "percentage": 25,
-      "description": "Larger projects requiring design, implementation, and analysis"
+      "percentage": 30,
+      "description": "Three major projects spanning data structure implementation, graph algorithms, and dynamic programming"
     },
     "midterm_examination": {
-      "percentage": 20,
-      "description": "Written exam covering data structures and sorting algorithms"
+      "percentage": 15,
+      "description": "Written exam in Week 8 covering algorithm analysis, linear data structures, trees, heaps, and hash tables"
     },
-    "final_examination": {
+    "final_project": {
       "percentage": 20,
-      "description": "Comprehensive exam covering all course material including graphs"
+      "description": "Comprehensive final examination covering all course material including graphs, shortest paths, DP, and greedy algorithms"
     }
   },
   "course_policies": {

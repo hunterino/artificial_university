@@ -12,239 +12,843 @@
       "week_number": 1,
       "session_number": 1,
       "topic": "Introduction to Computer Science and Python",
-      "duration": "50 minutes",
+      "duration": "3 hours",
       "learning_objectives": [
         "Understand what computer science is and its core subfields",
         "Install and configure a Python development environment",
-        "Write and execute a first Python program"
+        "Write and execute a first Python program",
+        "Navigate the Python interactive interpreter and understand the edit-run-debug cycle"
       ],
       "readings": [
         "Think Python, Ch. 1 - The Way of the Program",
-        "Python.org Getting Started Guide"
+        "Python.org Getting Started Guide",
+        "Automate the Boring Stuff, Ch. 0 - Introduction"
       ],
       "lecture_notes": {
-        "introduction": "Welcome to Programming Fundamentals I. This course introduces you to computational thinking and programming using Python. By the end, you will be able to decompose problems, design algorithms, and implement solutions in code.",
+        "introduction": "Welcome to Programming Fundamentals I. This course introduces you to computational thinking and programming using Python, one of the most widely used languages in industry and academia. Computer science is fundamentally about problem solving: given a problem, how do you express a solution precisely enough that a machine can execute it? That precision is what distinguishes programming from everyday reasoning.\n\nOver the next fifteen weeks, you will learn to decompose complex problems into manageable pieces, design step-by-step algorithms to solve them, and translate those algorithms into working Python code. We begin not with syntax drills, but with the question of what a program actually is: a sequence of instructions that transforms input into output, with the programmer as the architect of that transformation.\n\nPython is an excellent first language because its syntax reads almost like English, it provides immediate feedback through the interactive interpreter, and it is used professionally in web development, data science, artificial intelligence, and automation. The skills you build here transfer to every other language you will encounter in your career.\n\nToday we will set up your development environment, write your first program, and explore the interactive interpreter. By the end of this session you will have a working Python installation, an editor configured for Python development, and the confidence to experiment with code on your own.",
         "key_concepts": [
-          "What is computer science: algorithms, abstraction, and automation",
-          "Compiled vs interpreted languages",
-          "The Python interpreter and REPL",
-          "Variables, assignment, and basic data types (int, float, str, bool)",
-          "The print() function and string formatting"
+          "Computer science is the study of algorithms, abstraction, and automation — not just programming",
+          "A program is a precise sequence of instructions that a computer executes to transform input into output",
+          "Compiled languages (C, Java) translate source code to machine code before execution; interpreted languages (Python) execute line by line",
+          "The Python interpreter reads, evaluates, and prints results in a Read-Eval-Print Loop (REPL)",
+          "Variables are names bound to values in memory using the = operator; Python uses dynamic typing so types are inferred at runtime",
+          "Python's four fundamental data types for beginners: int (whole numbers), float (decimals), str (text), bool (True/False)",
+          "The print() function outputs text to the console and is the primary debugging tool for beginners",
+          "String formatting with f-strings allows embedding variable values directly in output text",
+          "Comments begin with # and explain the why of code, not the what",
+          "The input() function reads text from the user, always returning a string that may need type conversion"
         ],
-        "demonstration": "Live walkthrough of installing Python 3.12 and VS Code, writing a Hello World program, and exploring the interactive interpreter",
+        "demonstration": "Live walkthrough of installing Python 3.12 and VS Code, writing a Hello World program, and exploring the interactive interpreter. Students will type along as we create a program that asks for the user's name and age, then computes the year they were born using arithmetic operators.",
         "setup_requirements": [
-          "Python 3.12+ installed",
-          "VS Code with Python extension configured",
-          "Terminal/command line access"
+          "Python 3.12+ installed from python.org",
+          "VS Code with the Python extension installed and configured",
+          "Terminal/command line access verified",
+          "Course LMS account created and accessible"
         ],
         "review": [
           {
-            "key": "Interpreted Language",
-            "value": "Python executes code line by line through an interpreter rather than compiling to machine code first, enabling rapid prototyping and interactive exploration"
+            "key": "What is an interpreted language?",
+            "value": "Python executes code line by line through an interpreter rather than compiling to machine code first, enabling rapid prototyping and interactive exploration through the REPL."
           },
           {
-            "key": "Variable Assignment",
-            "value": "A variable is a name bound to a value in memory using the = operator; Python uses dynamic typing so the type is inferred at runtime"
-          }
-        ]
-      }
-    },
-    {
-      "week_number": 1,
-      "session_number": 2,
-      "topic": "Control Flow: Conditionals and Boolean Logic",
-      "duration": "50 minutes",
-      "learning_objectives": [
-        "Write if, elif, and else statements to control program flow",
-        "Combine boolean expressions using and, or, and not",
-        "Trace program execution through branching paths"
-      ],
-      "readings": [
-        "Think Python, Ch. 5 - Conditionals and Recursion",
-        "Python Documentation: Control Flow Tools"
-      ],
-      "lecture_notes": {
-        "introduction": "Programs must make decisions. Conditional statements let your code choose different paths based on data, enabling programs that respond to varying inputs rather than always doing the same thing.",
-        "key_concepts": [
-          "Boolean values: True and False",
-          "Comparison operators: ==, !=, <, >, <=, >=",
-          "Logical operators: and, or, not",
-          "if / elif / else chaining",
-          "Nested conditionals and short-circuit evaluation"
-        ],
-        "demonstration": "Build a simple grade calculator that takes a numeric score and outputs a letter grade using chained conditionals",
-        "setup_requirements": [
-          "Python environment from previous session",
-          "Text editor or IDE ready"
-        ],
-        "review": [
-          {
-            "key": "Short-Circuit Evaluation",
-            "value": "Python stops evaluating a boolean expression as soon as the result is determined: 'False and X' never evaluates X, 'True or X' never evaluates X"
+            "key": "How does variable assignment work in Python?",
+            "value": "A variable is a name bound to a value in memory using the = operator. Python uses dynamic typing, so the type is inferred at runtime based on the assigned value."
           },
           {
-            "key": "Truthy and Falsy",
-            "value": "In Python, 0, empty string, empty list, and None evaluate as False in boolean context; everything else evaluates as True"
+            "key": "What are the four basic data types?",
+            "value": "int for whole numbers, float for decimal numbers, str for text enclosed in quotes, and bool for True/False logical values."
+          },
+          {
+            "key": "What is the difference between print() and return?",
+            "value": "print() displays text on the screen for the user to see. We will learn about return when we cover functions, but for now, print() is our primary way to see program output."
+          },
+          {
+            "key": "Why use comments in code?",
+            "value": "Comments explain the reasoning behind code decisions. They are ignored by the interpreter but invaluable for anyone reading the code later, including your future self."
           }
         ]
       }
     },
     {
       "week_number": 2,
-      "session_number": 3,
-      "topic": "Iteration: Loops and Repetition",
-      "duration": "50 minutes",
+      "session_number": 2,
+      "topic": "Variables, Data Types, and Operators",
+      "duration": "3 hours",
       "learning_objectives": [
-        "Use for loops to iterate over sequences and ranges",
-        "Use while loops for condition-based repetition",
-        "Avoid infinite loops and apply break/continue correctly"
+        "Declare and use variables with appropriate naming conventions",
+        "Perform arithmetic, string, and type conversion operations",
+        "Understand operator precedence and associativity",
+        "Distinguish between integer division, float division, and modulo operations"
       ],
       "readings": [
-        "Think Python, Ch. 7 - Iteration",
-        "Python Documentation: for Statements"
+        "Think Python, Ch. 2 - Variables, Expressions, and Statements",
+        "Python Documentation: Built-in Types",
+        "Automate the Boring Stuff, Ch. 1 - Python Basics"
       ],
       "lecture_notes": {
-        "introduction": "Loops are fundamental to programming because they let a few lines of code process thousands of data items. Mastering iteration is the single most important skill in this course.",
+        "introduction": "Every program manipulates data, and understanding how Python represents and operates on data is the foundation of everything that follows. This week we dive deep into variables, data types, and the operators that transform them. While last week we introduced these concepts briefly, today we formalize the rules.\n\nVariables in Python are not boxes that hold values — they are labels attached to objects in memory. This distinction matters because it explains behaviors like aliasing and mutability that will become critical when we reach lists and dictionaries. For now, think of assignment as sticking a name tag on a value.\n\nPython provides a rich set of operators for arithmetic, comparison, and text manipulation. Understanding operator precedence — the order in which Python evaluates expressions — prevents subtle bugs. The expression 2 + 3 * 4 yields 14, not 20, because multiplication binds tighter than addition, just as in mathematics.\n\nWe will also explore type conversion, which bridges between data types. When the user types '42' at a prompt, Python sees a string, not a number. Converting between types is a constant task in real programs, and doing it safely requires understanding what can and cannot be converted.",
         "key_concepts": [
-          "The for loop and range() function",
-          "Iterating over strings and lists",
-          "The while loop and loop conditions",
-          "Loop control: break, continue, and else clauses",
-          "Accumulator pattern: building results incrementally"
+          "Variable naming rules: must start with a letter or underscore, case-sensitive, cannot be a reserved keyword",
+          "Python naming convention: snake_case for variables and functions, PascalCase for classes",
+          "Arithmetic operators: + - * / // % ** with standard mathematical precedence",
+          "Integer division (//) truncates toward negative infinity; regular division (/) always returns a float",
+          "The modulo operator (%) returns the remainder and is essential for divisibility checks and cyclic patterns",
+          "String concatenation (+) and repetition (*) operators work on strings but not between mixed types",
+          "Type conversion functions: int(), float(), str(), bool() explicitly convert between types",
+          "Augmented assignment operators: += -= *= /= combine operation and assignment in one step",
+          "The type() function reveals the data type of any value or variable",
+          "Python integers have arbitrary precision — there is no overflow limit"
         ],
-        "demonstration": "Write a program that computes the sum and average of a list of numbers entered by the user, using a while loop for input and a for loop for computation",
+        "demonstration": "Build a tip calculator that takes a meal total and tip percentage, computes the tip amount, total with tip, and per-person split. This exercises arithmetic operators, type conversion from input(), string formatting, and rounding with the round() function.",
         "setup_requirements": [
-          "Python environment configured",
-          "Understanding of conditionals from previous session"
+          "Python environment from Week 1",
+          "VS Code with Python extension configured",
+          "Familiarity with print() and input() from previous session"
         ],
         "review": [
           {
-            "key": "Accumulator Pattern",
-            "value": "Initialize a variable before the loop, update it inside the loop on each iteration, and use it after the loop; this pattern underlies counting, summing, finding max/min, and string building"
+            "key": "What is the difference between / and // in Python?",
+            "value": "The / operator performs true division and always returns a float (10 / 3 = 3.333...). The // operator performs floor division and truncates toward negative infinity (10 // 3 = 3, -10 // 3 = -4)."
           },
           {
-            "key": "Off-by-One Errors",
-            "value": "range(n) produces values 0 through n-1; range(1, n+1) produces 1 through n. Choosing the wrong bounds is the most common loop bug"
+            "key": "Why does input() always return a string?",
+            "value": "Python cannot know whether the user intends to type a number or text, so input() treats everything as a string. The programmer must explicitly convert with int() or float() when numeric input is expected."
+          },
+          {
+            "key": "What is operator precedence?",
+            "value": "The rules determining which operators are evaluated first in a complex expression. Python follows mathematical convention: ** first, then * / // %, then + -, with parentheses overriding all."
+          },
+          {
+            "key": "What happens when you concatenate a string and an integer?",
+            "value": "Python raises a TypeError. You must explicitly convert the integer to a string with str() or use an f-string, which handles conversion automatically."
           }
         ]
       }
     },
     {
       "week_number": 3,
-      "session_number": 5,
-      "topic": "Functions and Modular Design",
-      "duration": "50 minutes",
+      "session_number": 3,
+      "topic": "Expressions and Conditional Statements",
+      "duration": "3 hours",
       "learning_objectives": [
-        "Define and call functions with parameters and return values",
-        "Understand scope and the difference between local and global variables",
-        "Decompose problems into reusable functions"
+        "Write if, elif, and else statements to control program flow",
+        "Combine boolean expressions using and, or, and not operators",
+        "Trace program execution through branching paths",
+        "Apply conditional logic to solve real-world decision problems"
       ],
       "readings": [
-        "Think Python, Ch. 3 - Functions",
-        "Think Python, Ch. 6 - Fruitful Functions"
+        "Think Python, Ch. 5 - Conditionals and Recursion",
+        "Python Documentation: Control Flow Tools",
+        "Automate the Boring Stuff, Ch. 2 - Flow Control"
       ],
       "lecture_notes": {
-        "introduction": "Functions are the primary tool for organizing code. A well-designed function does one thing, has a clear name, and can be tested independently. This session covers how to define, call, and compose functions.",
+        "introduction": "Programs must make decisions. Without conditional statements, a program would execute the same instructions every time regardless of its input — a calculator that always adds, a thermostat that always heats. Conditional statements let your code choose different paths based on data, enabling programs that respond intelligently to varying situations.\n\nThe fundamental construct is the if statement, which executes a block of code only when a condition is true. Combined with elif (else if) and else, you can create arbitrarily complex decision trees. The key insight is that every conditional reduces to evaluating a boolean expression — an expression that is either True or False.\n\nBoolean logic, named after mathematician George Boole, gives us operators to combine conditions: and requires both conditions to be true, or requires at least one, and not inverts a condition. These operators, combined with comparison operators like ==, !=, <, and >, let you express any decision rule.\n\nToday we will also cover Python's concept of truthiness: values that are treated as True or False in boolean context even though they are not boolean values. Understanding that 0, empty strings, empty lists, and None are all 'falsy' while everything else is 'truthy' is essential for writing idiomatic Python.",
         "key_concepts": [
-          "def keyword, parameters, arguments, and return values",
-          "Positional vs keyword arguments, default parameter values",
-          "Local scope vs global scope",
-          "Docstrings and function documentation",
-          "Function composition: calling functions from other functions"
+          "Boolean values True and False are the only members of the bool type",
+          "Comparison operators: == (equal), != (not equal), < > <= >= produce boolean results",
+          "Logical operators: and (both true), or (at least one true), not (invert) combine boolean expressions",
+          "if / elif / else chaining allows multi-way branching with mutually exclusive conditions",
+          "Indentation defines code blocks in Python — consistent use of 4 spaces is required",
+          "Nested conditionals place one if inside another for multi-level decisions, but should be avoided when elif suffices",
+          "Short-circuit evaluation: Python stops evaluating and/or as soon as the result is determined",
+          "Truthiness: 0, 0.0, '', [], {}, None are falsy; all other values are truthy",
+          "The ternary operator: value_if_true if condition else value_if_false for inline conditionals",
+          "Chained comparisons: 1 < x < 10 is valid Python and equivalent to 1 < x and x < 10"
         ],
-        "demonstration": "Refactor a monolithic script into well-named functions: a temperature converter that supports Celsius, Fahrenheit, and Kelvin conversions",
+        "demonstration": "Build a simple grade calculator that takes a numeric score (0-100) and outputs a letter grade using chained conditionals. Then extend it to handle invalid input (negative numbers, scores above 100, non-numeric input) with nested conditionals and input validation.",
         "setup_requirements": [
           "Python environment configured",
-          "Familiarity with loops and conditionals"
+          "Understanding of variables and data types from previous session",
+          "VS Code debugger introduction (stepping through code)"
         ],
         "review": [
           {
-            "key": "Scope",
-            "value": "Variables defined inside a function are local to that function and cannot be accessed outside; this prevents accidental interference between different parts of a program"
+            "key": "What is short-circuit evaluation?",
+            "value": "Python stops evaluating a boolean expression as soon as the result is determined: 'False and X' never evaluates X because the result is already False; 'True or X' never evaluates X because the result is already True."
           },
           {
-            "key": "Return vs Print",
-            "value": "return sends a value back to the caller for further computation; print() displays text on screen. Functions that return values are composable; functions that only print are not"
+            "key": "What are truthy and falsy values?",
+            "value": "In boolean context, 0, 0.0, empty string '', empty list [], empty dict {}, and None evaluate as False. Everything else — non-zero numbers, non-empty strings, non-empty collections — evaluates as True."
+          },
+          {
+            "key": "When should you use elif vs nested if?",
+            "value": "Use elif when conditions are mutually exclusive (only one can be true). Use nested if when a second decision depends on the first. elif produces flatter, more readable code."
+          },
+          {
+            "key": "What does the ternary operator do?",
+            "value": "The expression 'x if condition else y' returns x when the condition is True and y when it is False. It is a compact way to choose between two values without a full if/else block."
           }
         ]
       }
     },
     {
       "week_number": 4,
-      "session_number": 7,
-      "topic": "Lists, Tuples, and Introduction to Data Structures",
-      "duration": "50 minutes",
+      "session_number": 4,
+      "topic": "Loops and Iteration",
+      "duration": "3 hours",
       "learning_objectives": [
-        "Create, index, slice, and modify lists",
-        "Understand the difference between mutable and immutable sequences",
-        "Use list methods and list comprehensions effectively"
+        "Use for loops to iterate over sequences and ranges",
+        "Use while loops for condition-based repetition",
+        "Apply the accumulator pattern to build results incrementally",
+        "Avoid infinite loops and use break/continue correctly"
       ],
       "readings": [
-        "Think Python, Ch. 10 - Lists",
-        "Think Python, Ch. 12 - Tuples"
+        "Think Python, Ch. 7 - Iteration",
+        "Python Documentation: for Statements",
+        "Automate the Boring Stuff, Ch. 2 - Flow Control (Loops section)"
       ],
       "lecture_notes": {
-        "introduction": "Real programs work with collections of data, not just single values. Lists are Python's workhorse data structure, and understanding how they work is essential for everything that follows.",
+        "introduction": "Loops are the construct that makes programming powerful. Without loops, you would need to write a separate line of code for every piece of data you want to process. With loops, a three-line program can process three million records. Mastering iteration is arguably the single most important skill you will develop in this course.\n\nPython provides two loop constructs: for and while. The for loop iterates over a sequence of values — a range of numbers, a string of characters, a list of items. The while loop repeats as long as a condition remains true. Choosing between them is straightforward: use for when you know what you are iterating over, use while when you are waiting for a condition to change.\n\nThe accumulator pattern is the most important loop pattern you will learn. It follows a simple template: initialize a variable before the loop, update it inside the loop on each iteration, and use it after the loop ends. This pattern underlies counting, summing, finding maxima and minima, building strings, and filtering collections. Once you recognize this pattern, you will see it everywhere.\n\nCommon pitfalls include off-by-one errors (processing one too many or one too few items), infinite loops (the condition never becomes false), and modifying a sequence while iterating over it. We will study each of these traps and how to avoid them.",
         "key_concepts": [
-          "List creation, indexing, and slicing",
-          "List methods: append, extend, insert, remove, sort, reverse",
-          "Tuples as immutable sequences",
-          "List comprehensions for concise transformations",
-          "Aliasing vs copying: when two names point to the same list"
+          "The for loop iterates over any iterable: range(), strings, lists, tuples, dictionaries",
+          "range(stop), range(start, stop), and range(start, stop, step) generate sequences of integers",
+          "The while loop repeats a block as long as its condition evaluates to True",
+          "The accumulator pattern: initialize before, update inside, use after the loop",
+          "break exits the loop immediately; continue skips to the next iteration",
+          "The else clause on loops executes when the loop completes without a break",
+          "Nested loops: an inner loop runs completely for each iteration of the outer loop",
+          "Off-by-one errors: range(n) produces 0 to n-1; range(1, n+1) produces 1 to n",
+          "Infinite loop detection: ensure the while condition will eventually become False",
+          "Loop variable scope: in Python, the loop variable persists after the loop ends"
         ],
-        "demonstration": "Build a student grade tracker that stores grades in a list, computes statistics, and filters using list comprehensions",
+        "demonstration": "Write a program that computes the sum and average of a list of numbers entered by the user using a while loop for input collection (with a sentinel value to stop) and a for loop for computation. Then extend it to find the minimum and maximum values using the accumulator pattern.",
         "setup_requirements": [
           "Python environment configured",
-          "Familiarity with functions and loops"
+          "Understanding of conditionals from previous session",
+          "VS Code debugger configured for stepping through loops"
         ],
         "review": [
           {
-            "key": "Mutability",
-            "value": "Lists are mutable (elements can be changed in place); tuples are immutable (once created, elements cannot be changed). Mutability affects aliasing behavior and function side effects"
+            "key": "What is the accumulator pattern?",
+            "value": "Initialize a variable before the loop, update it inside the loop on each iteration, and use it after the loop. This pattern underlies counting, summing, finding max/min, and string building."
           },
           {
-            "key": "List Comprehension",
-            "value": "[expression for item in iterable if condition] creates a new list by transforming and filtering elements in a single readable line"
+            "key": "What are off-by-one errors?",
+            "value": "range(n) produces values 0 through n-1; range(1, n+1) produces 1 through n. Choosing the wrong bounds is the most common loop bug, especially when converting from mathematical notation."
+          },
+          {
+            "key": "When do you use for vs while?",
+            "value": "Use for when iterating over a known sequence or a definite number of times. Use while when repeating until a condition changes and you do not know in advance how many iterations are needed."
+          },
+          {
+            "key": "What does break do inside a loop?",
+            "value": "break immediately exits the innermost enclosing loop, skipping any remaining iterations. It is commonly used to exit a while True loop when a specific condition is met."
           }
         ]
       }
     },
     {
       "week_number": 5,
-      "session_number": 9,
-      "topic": "Dictionaries, Sets, and File I/O",
-      "duration": "50 minutes",
+      "session_number": 5,
+      "topic": "Functions and Modular Design",
+      "duration": "3 hours",
       "learning_objectives": [
-        "Use dictionaries for key-value data storage and lookup",
-        "Understand sets for unique collections and membership testing",
-        "Read from and write to text files using Python"
+        "Define and call functions with parameters and return values",
+        "Understand scope and the difference between local and global variables",
+        "Decompose problems into reusable functions",
+        "Write functions with default parameters and keyword arguments"
       ],
       "readings": [
-        "Think Python, Ch. 11 - Dictionaries",
-        "Think Python, Ch. 14 - Files"
+        "Think Python, Ch. 3 - Functions",
+        "Think Python, Ch. 6 - Fruitful Functions",
+        "Python Documentation: Defining Functions"
       ],
       "lecture_notes": {
-        "introduction": "Dictionaries and sets complete your toolkit for organizing data in memory. File I/O lets your programs persist data and process external datasets. Together, these enable programs that work with real-world data.",
+        "introduction": "Functions are the primary tool for organizing code. A well-designed function does one thing, has a clear name, accepts inputs through parameters, and returns a result. Functions transform programming from writing one long script into composing small, tested, reusable pieces.\n\nThe concept of abstraction is central here. When you call len() on a list, you do not need to know how Python counts the elements internally. The function name tells you what it does; the implementation details are hidden. When you write your own functions, you create the same kind of abstraction for other programmers — and for your future self.\n\nScope is the set of rules determining which variables are visible where. Variables defined inside a function are local — they exist only during that function call and cannot be seen from outside. This isolation is a feature, not a limitation: it means functions cannot accidentally interfere with each other, making programs easier to reason about and debug.\n\nToday we cover the mechanics of defining functions, passing arguments, returning values, and managing scope. We will also introduce docstrings — documentation strings that describe what a function does — and the concept of function composition, where one function calls another to build complex behavior from simple parts.",
         "key_concepts": [
-          "Dictionary creation, access, and iteration",
-          "Dictionary methods: get, keys, values, items, update",
-          "Sets: creation, membership testing, set operations (union, intersection, difference)",
-          "Opening files: open(), read(), write(), and the with statement",
-          "CSV processing basics"
+          "The def keyword defines a function; parameters are listed in parentheses; the body is indented",
+          "return sends a value back to the caller; a function without return implicitly returns None",
+          "Positional arguments are matched by position; keyword arguments are matched by name",
+          "Default parameter values make arguments optional: def greet(name, greeting='Hello')",
+          "Local scope: variables defined inside a function are not accessible outside it",
+          "Global scope: variables defined at the module level are readable but not writable inside functions without the global keyword",
+          "Docstrings (triple-quoted strings after def) document function purpose, parameters, and return values",
+          "Function composition: calling functions from within other functions to build complex behavior",
+          "The DRY principle (Don't Repeat Yourself): if code appears more than twice, extract it into a function",
+          "Functions are first-class objects in Python: they can be assigned to variables and passed as arguments"
         ],
-        "demonstration": "Build a word frequency counter that reads a text file, counts word occurrences using a dictionary, and writes the results to a new file",
+        "demonstration": "Refactor a monolithic temperature converter script into well-named functions: celsius_to_fahrenheit(), fahrenheit_to_celsius(), and a main menu function that lets the user choose conversions. Demonstrate how the refactored version is easier to test and extend with Kelvin support.",
         "setup_requirements": [
           "Python environment configured",
-          "Sample text file provided on LMS"
+          "Familiarity with loops and conditionals",
+          "Understanding of print() vs return distinction"
         ],
         "review": [
           {
-            "key": "Hash Table",
-            "value": "Dictionaries use hash tables internally, giving O(1) average-case lookup time; keys must be immutable (strings, numbers, tuples) so their hash values remain stable"
+            "key": "What is the difference between a parameter and an argument?",
+            "value": "A parameter is the variable name in the function definition. An argument is the actual value passed when calling the function. In def add(a, b), a and b are parameters; in add(3, 5), 3 and 5 are arguments."
           },
           {
-            "key": "Context Manager",
-            "value": "The 'with open(filename) as f:' pattern guarantees the file is closed when the block exits, even if an exception occurs, preventing resource leaks"
+            "key": "What is scope?",
+            "value": "Variables defined inside a function are local to that function and cannot be accessed outside. This prevents accidental interference between different parts of a program."
+          },
+          {
+            "key": "What is the difference between return and print?",
+            "value": "return sends a value back to the caller for further computation; print() displays text on screen. Functions that return values are composable; functions that only print are not."
+          },
+          {
+            "key": "Why write docstrings?",
+            "value": "Docstrings document what a function does, what parameters it expects, and what it returns. They are accessible via help() and are the standard way to document Python code."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Strings and Text Processing",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Use string methods for searching, splitting, joining, and transforming text",
+        "Apply string slicing and indexing to extract substrings",
+        "Format output using f-strings and format specifications",
+        "Process text data using loops and string operations together"
+      ],
+      "readings": [
+        "Think Python, Ch. 8 - Strings",
+        "Python Documentation: String Methods",
+        "Automate the Boring Stuff, Ch. 6 - Manipulating Strings"
+      ],
+      "lecture_notes": {
+        "introduction": "Strings are everywhere in programming. User input, file contents, web pages, database records, log files — nearly all data begins as text. Python provides an exceptionally rich set of string operations, making it one of the best languages for text processing tasks.\n\nStrings in Python are immutable sequences of characters. Immutable means that once a string is created, its contents cannot be changed — operations like upper() and replace() return new strings rather than modifying the original. This immutability has important implications for performance and program correctness that we will explore.\n\nSlicing is a powerful syntax for extracting portions of a string. The expression s[start:stop:step] creates a new string from the characters at positions start through stop-1, advancing by step. Mastering slicing is essential because the same syntax works for lists, tuples, and other sequences.\n\nWe will also study string methods — built-in functions that every string object provides. Methods like split(), join(), strip(), find(), replace(), upper(), and lower() cover the vast majority of text processing needs. Combined with loops, these methods let you parse, clean, transform, and generate text data efficiently.",
+        "key_concepts": [
+          "Strings are immutable sequences: individual characters cannot be changed after creation",
+          "Indexing with s[i] accesses individual characters; negative indices count from the end",
+          "Slicing with s[start:stop:step] extracts substrings; s[::-1] reverses a string",
+          "Essential string methods: split(), join(), strip(), find(), replace(), upper(), lower(), startswith(), endswith()",
+          "f-strings embed expressions in strings: f'Hello, {name}! You are {age} years old.'",
+          "Format specifications control width, alignment, and decimal places: f'{price:.2f}'",
+          "String comparison uses lexicographic (dictionary) ordering based on Unicode values",
+          "The in operator tests for substring membership: 'cat' in 'concatenate' is True",
+          "Escape sequences: \\n (newline), \\t (tab), \\\\ (backslash), \\' and \\\" (quotes)",
+          "Multi-line strings use triple quotes and preserve line breaks and indentation"
+        ],
+        "demonstration": "Build a text analysis tool that reads a paragraph of text and reports: word count, sentence count, average word length, most frequent word, and a formatted summary table. Uses split(), loops, dictionaries for counting, and f-string formatting.",
+        "setup_requirements": [
+          "Python environment configured",
+          "Sample text files available on LMS",
+          "Familiarity with functions and loops"
+        ],
+        "review": [
+          {
+            "key": "Why are strings immutable?",
+            "value": "Immutability means string operations return new strings rather than modifying the original. This makes strings safe to share between variables and functions, and allows Python to optimize memory usage through string interning."
+          },
+          {
+            "key": "How does split() work?",
+            "value": "split() divides a string into a list of substrings at each occurrence of a delimiter. Without arguments, it splits on whitespace. 'hello world'.split() returns ['hello', 'world']."
+          },
+          {
+            "key": "What is the difference between find() and index()?",
+            "value": "Both search for a substring, but find() returns -1 if not found while index() raises a ValueError. Use find() when the substring might not exist; use index() when absence is an error."
+          },
+          {
+            "key": "How do format specifications work?",
+            "value": "Inside an f-string, a colon after the expression introduces format specs: f'{x:.2f}' formats to 2 decimal places, f'{name:>20}' right-aligns in a 20-character field."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Lists and List Operations",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Create, index, slice, and modify lists",
+        "Use list methods for adding, removing, sorting, and searching elements",
+        "Write list comprehensions for concise data transformations",
+        "Understand aliasing, shallow copies, and their implications"
+      ],
+      "readings": [
+        "Think Python, Ch. 10 - Lists",
+        "Python Documentation: More on Lists",
+        "Automate the Boring Stuff, Ch. 4 - Lists"
+      ],
+      "lecture_notes": {
+        "introduction": "Real programs work with collections of data, not just single values. A grade book stores dozens of scores, a playlist contains hundreds of songs, a dataset holds millions of records. Lists are Python's primary mutable sequence type and the workhorse data structure for organizing ordered collections.\n\nUnlike strings, lists are mutable: you can add, remove, and change elements after creation. This mutability makes lists flexible but introduces a subtlety called aliasing. When two variables refer to the same list, changes through one variable are visible through the other. Understanding aliasing prevents a class of bugs that confuses even experienced programmers.\n\nList comprehensions are one of Python's most elegant features. The expression [f(x) for x in items if condition(x)] creates a new list by transforming and filtering elements in a single readable line. Comprehensions replace multi-line loop-and-append patterns with concise, declarative expressions that are easier to read and often faster to execute.\n\nThis week we also cover common list algorithms: searching for elements, finding minimum and maximum values, computing averages, removing duplicates, and sorting. These operations form the building blocks of virtually every data processing program.",
+        "key_concepts": [
+          "List creation with literals [], the list() constructor, and list multiplication [0] * n",
+          "Indexing with lst[i] and slicing with lst[start:stop:step] work exactly like strings",
+          "List methods: append(), extend(), insert(), remove(), pop(), sort(), reverse(), index(), count()",
+          "List comprehensions: [expression for item in iterable if condition] for concise transformations",
+          "Aliasing: two variables pointing to the same list object share all modifications",
+          "Shallow copy with lst.copy() or lst[:] creates a new list with references to the same elements",
+          "Nested lists represent matrices and tables: grid[row][col] accesses elements",
+          "The del statement removes elements by index; remove() removes by value",
+          "sorted() returns a new sorted list; lst.sort() sorts in place and returns None",
+          "Lists can contain mixed types, but in practice you should keep elements uniform"
+        ],
+        "demonstration": "Build a student grade tracker that stores student names and their grades in parallel lists, computes statistics (mean, median, min, max), filters honor roll students using list comprehensions, and sorts by grade. Demonstrate aliasing bugs and how to avoid them.",
+        "setup_requirements": [
+          "Python environment configured",
+          "Familiarity with functions, loops, and strings",
+          "Sample grade data file available on LMS"
+        ],
+        "review": [
+          {
+            "key": "What is aliasing and why does it matter?",
+            "value": "When two variables reference the same list object, changes through one are visible through the other. This causes bugs when you think you have an independent copy but actually share the same data."
+          },
+          {
+            "key": "How do list comprehensions work?",
+            "value": "[expression for item in iterable if condition] creates a new list by evaluating expression for each item that satisfies condition. It replaces the loop-append pattern with a single readable line."
+          },
+          {
+            "key": "What is the difference between append() and extend()?",
+            "value": "append(x) adds x as a single element (even if x is a list). extend(iterable) adds each element of the iterable individually. [1,2].append([3,4]) gives [1,2,[3,4]]; [1,2].extend([3,4]) gives [1,2,3,4]."
+          },
+          {
+            "key": "What is the difference between sort() and sorted()?",
+            "value": "lst.sort() sorts the list in place and returns None. sorted(lst) returns a new sorted list, leaving the original unchanged. Use sorted() when you need both the original and sorted versions."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Tuples and Dictionaries",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Use tuples for immutable sequences and multiple return values",
+        "Create and manipulate dictionaries for key-value data storage",
+        "Iterate over dictionaries using keys(), values(), and items()",
+        "Choose the right data structure for a given problem"
+      ],
+      "readings": [
+        "Think Python, Ch. 11 - Dictionaries",
+        "Think Python, Ch. 12 - Tuples",
+        "Automate the Boring Stuff, Ch. 5 - Dictionaries and Structuring Data"
+      ],
+      "lecture_notes": {
+        "introduction": "Tuples and dictionaries round out Python's core collection types. Tuples are immutable sequences — like lists that cannot be changed after creation. Their immutability makes them useful for data that should not be modified, like coordinates, database records, and function return values.\n\nDictionaries are Python's implementation of the associative array, mapping keys to values. Where lists use integer indices to access elements, dictionaries use arbitrary keys — strings, numbers, or tuples. This makes them ideal for representing structured data: a student record with name, ID, and GPA; a configuration file with settings and values; a word frequency counter.\n\nDictionaries are built on hash tables, giving them O(1) average-case lookup time. This means finding a value by its key is nearly instantaneous regardless of dictionary size — looking up one word in a million-word dictionary takes the same time as looking up one word in a ten-word dictionary.\n\nChoosing the right data structure is one of the most important programming skills. Lists are for ordered collections accessed by position. Dictionaries are for labeled data accessed by key. Tuples are for small fixed-size groupings. Sets (which we introduce next week) are for unique collections where membership testing is the primary operation. This week's exercises will practice making that choice.",
+        "key_concepts": [
+          "Tuples are immutable sequences created with parentheses or just commas: point = (3, 4) or point = 3, 4",
+          "Tuple unpacking assigns multiple variables at once: x, y = point",
+          "Functions can return multiple values using tuples: return min_val, max_val, avg",
+          "Dictionaries map keys to values: student = {'name': 'Alice', 'gpa': 3.8}",
+          "Dictionary access: d[key] raises KeyError if missing; d.get(key, default) returns default instead",
+          "Dictionary methods: keys(), values(), items(), get(), update(), pop(), setdefault()",
+          "Dictionary iteration: for key, value in d.items() is the standard pattern",
+          "Dictionary comprehensions: {k: v for k, v in iterable if condition}",
+          "Keys must be immutable (strings, numbers, tuples); values can be anything",
+          "Nested dictionaries represent complex structured data like JSON"
+        ],
+        "demonstration": "Build a contact book application that stores contacts as dictionaries with name, phone, email, and category fields. Implement add, search, update, delete, and list-by-category operations. Demonstrate the difference between d[key] and d.get(key) for missing keys.",
+        "setup_requirements": [
+          "Python environment configured",
+          "Familiarity with lists and functions",
+          "Understanding of mutability from lists lecture"
+        ],
+        "review": [
+          {
+            "key": "Why are dictionary lookups O(1)?",
+            "value": "Dictionaries use hash tables internally. The key is hashed to compute a bucket index, giving direct access to the value without searching through all entries."
+          },
+          {
+            "key": "When should you use a tuple instead of a list?",
+            "value": "Use tuples for fixed-size groupings that should not change (coordinates, database rows, function return values). Use lists for variable-length collections that grow, shrink, or are reordered."
+          },
+          {
+            "key": "What is the difference between d[key] and d.get(key)?",
+            "value": "d[key] raises KeyError if the key does not exist. d.get(key, default) returns the default value (None if not specified) instead. Use get() when the key might be missing."
+          },
+          {
+            "key": "What is tuple unpacking?",
+            "value": "Assigning a tuple to multiple variables in one statement: x, y, z = (1, 2, 3). This is commonly used with functions that return multiple values and when iterating with items()."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "Sets and File I/O",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Use sets for unique collections and fast membership testing",
+        "Perform set operations: union, intersection, difference, symmetric difference",
+        "Read from and write to text files using the with statement",
+        "Process CSV data and structured text files"
+      ],
+      "readings": [
+        "Think Python, Ch. 14 - Files",
+        "Python Documentation: Set Types",
+        "Automate the Boring Stuff, Ch. 9 - Reading and Writing Files"
+      ],
+      "lecture_notes": {
+        "introduction": "Sets and file I/O complete your core Python toolkit. Sets are unordered collections of unique elements optimized for membership testing and mathematical set operations. File I/O lets your programs persist data beyond a single execution and process external datasets.\n\nA set in Python works like a mathematical set: each element appears at most once, and the order of elements is not preserved. Sets use the same hash table technology as dictionaries, giving O(1) average-case membership testing. Checking whether an element is in a set of a million items is just as fast as checking a set of ten items. This makes sets the right choice whenever you need to track unique items or test membership frequently.\n\nFile I/O bridges the gap between your program and the outside world. Programs that only work with data typed at the keyboard are toys; real programs read configuration files, process data files, write logs, and generate reports. Python's file handling is straightforward: open a file, read or write data, and close it. The with statement automates the closing step, preventing resource leaks.\n\nWe will focus on text files this week, covering line-by-line reading, writing formatted output, and processing CSV (comma-separated values) files — the most common format for tabular data exchange.",
+        "key_concepts": [
+          "Sets are unordered collections of unique elements: s = {1, 2, 3} or s = set(iterable)",
+          "Set membership testing with in is O(1) average case, much faster than list membership O(n)",
+          "Set operations: union (|), intersection (&), difference (-), symmetric difference (^)",
+          "Set methods: add(), remove(), discard(), pop(), clear(), issubset(), issuperset()",
+          "Opening files with open(filename, mode): 'r' for read, 'w' for write, 'a' for append",
+          "The with statement ensures files are properly closed even if exceptions occur",
+          "Reading methods: read() for entire file, readline() for one line, readlines() for list of lines",
+          "Iterating over a file object reads one line at a time, memory-efficient for large files",
+          "Writing with write() and writelines(); print() can also write to files with file= parameter",
+          "CSV processing with split(',') for simple cases or the csv module for robust handling"
+        ],
+        "demonstration": "Build a word frequency counter that reads a text file, uses a set to track unique words, counts occurrences with a dictionary, and writes a formatted report to a new file. Compare performance of membership testing with sets vs lists on large text files.",
+        "setup_requirements": [
+          "Python environment configured",
+          "Sample text and CSV files provided on LMS",
+          "Familiarity with dictionaries and loops"
+        ],
+        "review": [
+          {
+            "key": "Why use a set instead of a list for unique items?",
+            "value": "Sets automatically enforce uniqueness (adding a duplicate has no effect) and provide O(1) membership testing compared to O(n) for lists. For large collections, this performance difference is dramatic."
+          },
+          {
+            "key": "What is a context manager?",
+            "value": "The 'with open(filename) as f:' pattern guarantees the file is closed when the block exits, even if an exception occurs, preventing resource leaks and data corruption."
+          },
+          {
+            "key": "What is the difference between read() and readlines()?",
+            "value": "read() returns the entire file contents as a single string. readlines() returns a list of strings, one per line. For large files, iterate over the file object directly to process one line at a time."
+          },
+          {
+            "key": "What are set operations useful for?",
+            "value": "Intersection finds common elements between two groups. Difference finds elements in one group but not another. Union combines groups. These map directly to real tasks like finding shared friends, missing items, or combined inventories."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "Error Handling and Exceptions",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Use try/except blocks to handle runtime errors gracefully",
+        "Distinguish between different exception types and handle each appropriately",
+        "Raise exceptions for invalid inputs and error conditions",
+        "Design programs that fail informatively rather than silently or cryptically"
+      ],
+      "readings": [
+        "Think Python, Ch. 14 - Files (exception handling section)",
+        "Python Documentation: Errors and Exceptions",
+        "Automate the Boring Stuff, Ch. 11 - Debugging"
+      ],
+      "lecture_notes": {
+        "introduction": "Robust programs anticipate failure. Users enter unexpected input, files go missing, network connections drop, and division by zero lurks in edge cases. Exception handling lets you separate normal logic from error-handling logic, producing programs that recover gracefully or fail with clear diagnostics instead of crashing with cryptic tracebacks.\n\nPython uses exceptions — objects that represent error conditions — to signal when something goes wrong. The try/except construct catches exceptions and executes recovery code. The else clause runs only when no exception occurred, and the finally clause runs regardless, making it perfect for cleanup operations like closing files.\n\nNot all exceptions should be caught. A MemoryError or KeyboardInterrupt should usually propagate up to the caller. The art of exception handling is catching specific exceptions you know how to handle and letting everything else propagate. The worst practice is a bare except: clause that silently swallows all errors, hiding bugs that would otherwise be obvious.\n\nWe will also cover raising your own exceptions with the raise statement. When your function receives invalid input, raising a ValueError with a clear message is better than returning a magic value like -1 or None, because the caller is forced to handle the error explicitly rather than accidentally using the sentinel value as real data.",
+        "key_concepts": [
+          "try/except catches exceptions and executes recovery code instead of crashing",
+          "Specific exception types: ValueError, TypeError, KeyError, IndexError, FileNotFoundError, ZeroDivisionError",
+          "Multiple except clauses handle different exceptions differently",
+          "The else clause runs only if no exception occurred in the try block",
+          "The finally clause runs regardless of whether an exception occurred, for cleanup code",
+          "raise ValueError('message') signals an error condition to the caller",
+          "Never use bare except: — always specify the exception type you expect",
+          "EAFP (Easier to Ask Forgiveness than Permission): try the operation and handle failure, rather than checking conditions first",
+          "Exception chaining with 'raise NewError() from original_error' preserves the error trail",
+          "Custom exception classes inherit from Exception and can carry domain-specific error information"
+        ],
+        "demonstration": "Refactor a file-processing script to handle FileNotFoundError, ValueError on parsing numeric data, PermissionError, and ZeroDivisionError with informative messages for each. Demonstrate the difference between EAFP and LBYL approaches to input validation.",
+        "setup_requirements": [
+          "Python environment configured",
+          "Sample data files with intentional errors provided on LMS",
+          "Familiarity with file I/O from previous session"
+        ],
+        "review": [
+          {
+            "key": "What is the EAFP principle?",
+            "value": "Easier to Ask Forgiveness than Permission: try the operation and handle the exception (try/except) rather than checking conditions beforehand (if/else). This is often more readable and faster in Python."
+          },
+          {
+            "key": "Why should you never use bare except?",
+            "value": "except: with no exception type catches everything including SystemExit and KeyboardInterrupt, hiding bugs and preventing users from stopping the program. Always specify the exception types you expect."
+          },
+          {
+            "key": "When should you raise an exception vs return an error value?",
+            "value": "Raise an exception when the function cannot fulfill its contract. Returning a special value like -1 or None can be silently ignored by the caller, leading to cascading errors that are hard to debug."
+          },
+          {
+            "key": "What is the finally clause for?",
+            "value": "finally runs whether or not an exception occurred, making it the right place for cleanup code like closing files, releasing locks, or resetting state. It runs even if an exception is re-raised."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "Modules, Packages, and the Standard Library",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Organize code into modules and import them in other programs",
+        "Understand the Python module search path and package structure",
+        "Use key standard library modules: os, sys, math, random, datetime, json",
+        "Install and use third-party packages with pip"
+      ],
+      "readings": [
+        "Think Python, Ch. 14 - Files (modules section)",
+        "Python Documentation: Modules",
+        "Python Documentation: The Python Standard Library (overview)"
+      ],
+      "lecture_notes": {
+        "introduction": "Professional software is never a single file. As programs grow, they must be organized into modules — separate files that each handle a specific responsibility. Modules enable code reuse across projects, logical organization of functionality, and collaboration between developers who can work on different modules independently.\n\nPython's import system lets you use code from other modules with a single statement. The standard library — hundreds of modules bundled with Python — provides tools for file manipulation, mathematics, random number generation, date handling, JSON parsing, web requests, and much more. Learning to leverage the standard library is what separates beginners from intermediate programmers.\n\nBeyond the standard library, Python's ecosystem includes over 400,000 third-party packages on the Python Package Index (PyPI). The pip tool installs these packages with a single command. This wealth of reusable code means you almost never need to build something from scratch — there is usually a well-tested package that handles your specific need.\n\nThis week we cover how to structure your own code as modules, how Python finds and loads modules, and a tour of the standard library modules you will use most frequently. We will also practice installing and using third-party packages with pip.",
+        "key_concepts": [
+          "A module is a .py file; a package is a directory containing modules and an __init__.py file",
+          "import module, from module import name, and from module import * (avoid the last one)",
+          "Python searches for modules in: current directory, PYTHONPATH, standard library, site-packages",
+          "The if __name__ == '__main__': guard prevents code from running when imported",
+          "os module: file/directory manipulation, path operations, environment variables",
+          "math module: sqrt, ceil, floor, pi, e, trigonometric functions",
+          "random module: randint, choice, shuffle, sample for random number generation",
+          "datetime module: date, time, datetime, timedelta for date/time arithmetic",
+          "json module: loads/dumps for parsing and generating JSON data",
+          "pip install package_name installs third-party packages from PyPI"
+        ],
+        "demonstration": "Build a personal expense tracker that uses the datetime module for date handling, json for saving/loading data to a file, random for generating sample data, and os for file path management. Structure the code as a package with separate modules for data storage, analysis, and user interface.",
+        "setup_requirements": [
+          "Python environment configured",
+          "pip functional and tested",
+          "Understanding of functions and file I/O"
+        ],
+        "review": [
+          {
+            "key": "What is the __name__ == '__main__' guard for?",
+            "value": "Code inside this block runs only when the file is executed directly, not when imported as a module. This lets a file work both as a standalone script and as an importable module."
+          },
+          {
+            "key": "What is the module search path?",
+            "value": "When you import a module, Python searches: the current directory, PYTHONPATH entries, the standard library, and site-packages (where pip installs packages), in that order."
+          },
+          {
+            "key": "Why avoid 'from module import *'?",
+            "value": "It dumps all names from the module into your namespace, potentially overwriting your own variables. It also makes it impossible to tell where a name came from when reading the code."
+          },
+          {
+            "key": "What is the difference between a module and a package?",
+            "value": "A module is a single .py file. A package is a directory containing an __init__.py file and one or more module files. Packages let you organize related modules hierarchically."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Introduction to Object-Oriented Programming",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Define classes with attributes and methods",
+        "Create and use object instances with proper initialization",
+        "Understand encapsulation and why it matters for program organization",
+        "Implement __str__ and __repr__ for readable object representation"
+      ],
+      "readings": [
+        "Think Python, Ch. 15 - Classes and Objects",
+        "Think Python, Ch. 16 - Classes and Functions",
+        "Python Documentation: Classes Tutorial"
+      ],
+      "lecture_notes": {
+        "introduction": "Object-oriented programming (OOP) is a paradigm that organizes code around objects — entities that bundle data (attributes) and behavior (methods) into a single unit. While procedural programming with functions is powerful, OOP provides an additional layer of organization that becomes essential as programs grow beyond a few hundred lines.\n\nThe fundamental idea is simple: model your program's entities as objects. A student has a name, ID, and GPA (data) and can enroll in courses, calculate their GPA, and generate a transcript (behavior). A bank account has a balance and transaction history (data) and can deposit, withdraw, and transfer funds (behavior). By bundling data with the operations that modify it, you create self-contained units that are easier to understand, test, and reuse.\n\nEncapsulation — hiding internal details behind a public interface — is the first principle of OOP. Users of your class only need to know what methods are available and what they do, not how they work internally. This separation of interface from implementation lets you change the internals without breaking code that uses the class.\n\nThis week introduces the mechanics of classes in Python: defining classes with the class keyword, initializing objects with __init__, creating instance methods that operate on self, and implementing special methods like __str__ for readable output. CS102 will continue with inheritance, polymorphism, and advanced OOP patterns.",
+        "key_concepts": [
+          "A class is a blueprint defining attributes (data) and methods (behavior) for a type of object",
+          "The __init__ method initializes a new instance; self refers to the instance being created",
+          "Instance attributes are unique to each object: self.name, self.balance",
+          "Methods are functions defined inside a class that operate on instance data via self",
+          "Encapsulation bundles data with the methods that operate on it, hiding internal details",
+          "The __str__ method defines how an object appears when printed or converted to a string",
+          "The __repr__ method defines how an object appears in the interpreter (for debugging)",
+          "Naming convention: _private_attr suggests internal use; there is no true privacy in Python",
+          "Objects can contain other objects: a Classroom has a list of Student objects (composition)",
+          "Classes vs dictionaries: use a class when the data has behavior; use a dict for simple key-value lookup"
+        ],
+        "demonstration": "Build a BankAccount class with deposit(), withdraw(), get_balance(), and transaction_history() methods. Demonstrate encapsulation by preventing direct balance modification, requiring all changes to go through methods that validate amounts and log transactions.",
+        "setup_requirements": [
+          "Python environment configured",
+          "Familiarity with functions, dictionaries, and lists",
+          "Understanding of scope from functions lecture"
+        ],
+        "review": [
+          {
+            "key": "What is the difference between a class and an instance?",
+            "value": "A class is a template defining the structure and behavior of objects. An instance is a specific object created from that template. Each instance has its own attribute values but shares method definitions."
+          },
+          {
+            "key": "What does self refer to?",
+            "value": "self is the first parameter of every instance method and refers to the specific object the method was called on. It allows the method to access and modify that object's attributes."
+          },
+          {
+            "key": "Why use a class instead of a dictionary?",
+            "value": "Classes enforce structure (required attributes, typed methods), provide encapsulation (controlled access to data), and bundle behavior with data. Dictionaries are better for simple, flexible key-value storage."
+          },
+          {
+            "key": "What is the difference between __str__ and __repr__?",
+            "value": "__str__ produces a human-readable string for end users (used by print()). __repr__ produces an unambiguous string for developers (used in the interpreter). If only one is defined, define __repr__."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "Recursion",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Understand recursive function design with base and recursive cases",
+        "Trace recursive execution using the call stack model",
+        "Convert between iterative and recursive solutions",
+        "Apply recursion to string and list processing problems"
+      ],
+      "readings": [
+        "Think Python, Ch. 5 - Conditionals and Recursion (recursion section)",
+        "Think Python, Ch. 6 - Fruitful Functions (recursive examples)",
+        "Grokking Algorithms, Ch. 3 - Recursion"
+      ],
+      "lecture_notes": {
+        "introduction": "Recursion is a function calling itself with a smaller version of the same problem until reaching a trivially solvable base case. While every recursive solution can be rewritten as an iterative one, some problems — particularly those involving hierarchical or nested structures — are dramatically cleaner and more intuitive when solved recursively.\n\nThe key to understanding recursion is the call stack. Every time a function calls itself, a new frame is pushed onto the stack with its own local variables. When the base case is reached, the function returns, its frame is popped, and execution continues in the previous frame. Visualizing this stack of frames is essential for tracing recursive execution and debugging.\n\nRecursion requires two components: a base case that returns a result without further recursion, and a recursive case that breaks the problem into a smaller subproblem and calls itself. Forgetting the base case causes infinite recursion and a stack overflow error. Making the recursive case not actually smaller also causes infinite recursion. Both are common beginner mistakes.\n\nThis week we study classic recursive problems: factorial, Fibonacci numbers, power computation, string reversal, and palindrome detection. These simple examples build the mental model you will need for the recursive data structures (trees, graphs) and algorithms (merge sort, quicksort) covered in CS201.",
+        "key_concepts": [
+          "A recursive function calls itself with a smaller input until reaching a base case",
+          "Base case: the condition under which the function returns without making a recursive call",
+          "Recursive case: the function calls itself with a reduced problem and combines the result",
+          "The call stack tracks active function calls; each recursive call adds a frame with its own local variables",
+          "Stack overflow occurs when recursion is too deep (Python default limit is 1000 frames)",
+          "Every recursive solution has an iterative equivalent, but some problems are far cleaner with recursion",
+          "Recursive string processing: reverse a string, check palindrome, count occurrences",
+          "Recursive list processing: sum elements, flatten nested lists, binary search",
+          "Multiple recursive calls per invocation (like Fibonacci) can cause exponential time complexity",
+          "Recursion vs iteration trade-offs: clarity vs performance, stack space vs heap space"
+        ],
+        "demonstration": "Implement factorial, string reversal, and a recursive directory listing function. Use Python Tutor to visualize the call stack at each step. Compare the recursive and iterative versions of Fibonacci to demonstrate the exponential blowup of naive recursion.",
+        "setup_requirements": [
+          "Python environment configured",
+          "Python Tutor (pythontutor.com) bookmarked for visualization",
+          "Familiarity with functions and the call stack concept"
+        ],
+        "review": [
+          {
+            "key": "What is a base case and why is it essential?",
+            "value": "A base case is the condition under which a recursive function returns a result without calling itself. Without it, the function recurses infinitely and crashes with a RecursionError (stack overflow)."
+          },
+          {
+            "key": "What is the call stack?",
+            "value": "The call stack is a data structure that tracks active function calls. Each call pushes a frame with its local variables. When a function returns, its frame is popped and execution resumes in the caller."
+          },
+          {
+            "key": "Why is naive recursive Fibonacci so slow?",
+            "value": "Each call branches into two more calls, creating an exponential number of redundant computations. fib(5) computes fib(3) twice and fib(2) three times. Memoization or iteration eliminates this redundancy."
+          },
+          {
+            "key": "When should you use recursion over iteration?",
+            "value": "Use recursion when the problem has a naturally recursive structure (trees, nested data, divide-and-conquer). Use iteration for simple counting and accumulation. When in doubt, prefer the version that is clearest to read."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "Introduction to Algorithms and Searching/Sorting",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Understand what makes one algorithm better than another",
+        "Implement and compare linear search and binary search",
+        "Implement selection sort and understand its time complexity",
+        "Introduce Big-O notation as a way to describe algorithm efficiency"
+      ],
+      "readings": [
+        "Grokking Algorithms, Ch. 1 - Binary Search and Big O",
+        "Grokking Algorithms, Ch. 2 - Selection Sort",
+        "Think Python, Ch. 21 - Analysis of Algorithms"
+      ],
+      "lecture_notes": {
+        "introduction": "Not all solutions are equal. Two programs can produce the same correct output but differ by orders of magnitude in speed. A linear search through a million-element list examines up to a million items; a binary search examines at most twenty. Understanding algorithm efficiency is what separates programmers who write toy scripts from those who build systems that scale.\n\nBig-O notation provides a language to describe how an algorithm's running time grows as the input size grows. O(n) means doubling the input roughly doubles the time. O(n^2) means doubling the input quadruples the time. O(log n) means doubling the input adds only one extra step. These characterizations are approximations that ignore constant factors, but they capture the essential scaling behavior.\n\nThis week we study searching and sorting as our entry point to algorithm analysis. Linear search is the simplest approach: check every element until you find the target or run out. Binary search is dramatically faster on sorted data: eliminate half the remaining candidates on each step. Selection sort repeatedly finds the minimum element and moves it to the front.\n\nThese are not the fastest algorithms in any category, but they are the most instructive. Understanding why selection sort is O(n^2) prepares you for understanding why merge sort achieves O(n log n) in CS102. The goal is not memorization but understanding the analytical framework.",
+        "key_concepts": [
+          "Big-O notation describes how running time grows with input size, ignoring constant factors",
+          "Common complexities: O(1) constant, O(log n) logarithmic, O(n) linear, O(n log n) linearithmic, O(n^2) quadratic",
+          "Linear search: check each element sequentially — O(n) time, works on any list",
+          "Binary search: eliminate half the candidates each step — O(log n) time, requires sorted input",
+          "Selection sort: find the minimum and swap it to the front, repeat — O(n^2) time",
+          "Comparing algorithms empirically: timing with the time module on varying input sizes",
+          "Best case, worst case, and average case analysis describe different input scenarios",
+          "Space complexity measures how much extra memory an algorithm uses beyond its input",
+          "The sorted() built-in uses Timsort, an O(n log n) hybrid algorithm optimized for real-world data",
+          "Algorithm efficiency matters most when data is large; for small inputs, simplicity often wins"
+        ],
+        "demonstration": "Implement linear search and binary search side by side, then time them on lists of 100, 10,000, and 1,000,000 elements. Plot the results to visualize the difference between O(n) and O(log n). Implement selection sort and count the comparisons to verify the n*(n-1)/2 pattern.",
+        "setup_requirements": [
+          "Python environment configured",
+          "time module for benchmarking",
+          "matplotlib or terminal-based plotting for visualization (optional)"
+        ],
+        "review": [
+          {
+            "key": "What does Big-O notation describe?",
+            "value": "Big-O describes how an algorithm's running time grows as the input size grows. O(n) means doubling the input roughly doubles the time; O(n^2) means doubling the input quadruples the time."
+          },
+          {
+            "key": "Why does binary search require sorted input?",
+            "value": "Binary search eliminates half the candidates by comparing the target to the middle element. This only works if smaller elements are on the left and larger on the right, which requires sorted order."
+          },
+          {
+            "key": "Why is selection sort O(n^2)?",
+            "value": "To find the minimum of n elements takes n comparisons. Then n-1, then n-2, etc. The total is n + (n-1) + ... + 1 = n(n+1)/2, which is O(n^2)."
+          },
+          {
+            "key": "When does algorithm efficiency matter?",
+            "value": "For small inputs (under ~1000 elements), any reasonable algorithm is fast enough. For large inputs, the difference between O(n) and O(n^2) can be seconds vs hours. Always consider the expected data size."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Course Review and Final Project Presentations",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Synthesize all course concepts into a cohesive understanding of programming",
+        "Present and demonstrate a complete programming project",
+        "Evaluate peer projects and provide constructive feedback",
+        "Identify areas for continued study in CS102 and beyond"
+      ],
+      "readings": [
+        "Review all previous readings as needed for final project",
+        "Think Python, Appendix A - Debugging Tips",
+        "Course notes and lecture slides from all sessions"
+      ],
+      "lecture_notes": {
+        "introduction": "This final week brings together everything you have learned: variables, control flow, functions, data structures, file I/O, error handling, modules, OOP basics, recursion, and algorithm fundamentals. The goal is not to re-teach these topics but to show how they connect and reinforce each other in complete programs.\n\nProgramming is not a collection of isolated skills — it is the ability to combine those skills to solve problems. The variables and operators from Week 2 feed into the conditionals of Week 3, which combine with loops from Week 4 to process data stored in the structures from Weeks 7-9, organized into functions and modules from Weeks 5 and 11, handling errors from Week 10, and analyzed for efficiency using Week 14's framework.\n\nToday's session is dedicated to final project presentations. Each student will demonstrate their project, explain their design decisions, and answer questions from the class and instructor. The ability to explain your code to others is as important as writing it. Technical communication — clear explanations, well-organized presentations, honest discussion of limitations — is a skill you will use throughout your career.\n\nLooking ahead, CS102 will deepen your understanding of OOP with inheritance and polymorphism, introduce more complex data structures, and prepare you for the algorithm-intensive work of CS201. The foundation you have built this semester makes all of that possible.",
+        "key_concepts": [
+          "Programming fundamentals form a connected whole: each concept builds on and reinforces previous ones",
+          "Problem decomposition: break large problems into small functions that each do one thing well",
+          "Data structure choice: lists for ordered sequences, dicts for key-value lookups, sets for uniqueness, tuples for fixed groupings",
+          "The read-process-write pattern: read data from a source, transform it with your logic, output the results",
+          "Defensive programming: validate inputs, handle errors, fail informatively",
+          "Code organization: modules for separation of concerns, functions for reuse, classes for bundling data with behavior",
+          "Testing and debugging: test each function independently, use print/debugger to trace logic, read error messages carefully",
+          "Version progression: CS101 foundations → CS102 advanced OOP and data structures → CS201 algorithms",
+          "Self-teaching skills: reading documentation, searching for solutions, experimenting in the REPL",
+          "Technical communication: explaining code decisions, documenting design, presenting work to peers"
+        ],
+        "demonstration": "Student project presentations and demonstrations. The instructor presents a capstone example integrating all course concepts: a complete command-line application that reads data from files, processes it using functions and classes, handles errors gracefully, and produces formatted output.",
+        "setup_requirements": [
+          "Final project completed and ready for demonstration",
+          "Presentation materials prepared (slides optional, live demo required)",
+          "Peer evaluation forms distributed"
+        ],
+        "review": [
+          {
+            "key": "What is the most important skill from this course?",
+            "value": "Problem decomposition — the ability to break a complex problem into small, manageable pieces that can each be solved with a function or method. This skill transfers to every programming language and every domain."
+          },
+          {
+            "key": "What should you study to prepare for CS102?",
+            "value": "Review OOP concepts (classes, __init__, methods, encapsulation) and recursion. CS102 begins with inheritance and polymorphism, which build directly on the OOP fundamentals from Week 12."
+          },
+          {
+            "key": "How do you continue improving after this course?",
+            "value": "Write code daily. Build projects that interest you. Read other people's code on GitHub. Practice on coding challenge sites. The gap between knowing syntax and being a fluent programmer is closed only by practice."
+          },
+          {
+            "key": "What are the hallmarks of production-quality code?",
+            "value": "Clear naming, consistent style, error handling for all failure modes, functions that do one thing, documentation of non-obvious decisions, and no hardcoded magic values. Code is read far more often than it is written."
           }
         ]
       }
@@ -254,105 +858,452 @@
     "quizzes": [
       {
         "quiz": 1,
-        "week": 2,
-        "topic": "Variables, Conditionals, and Loops",
-        "duration": "20 minutes",
+        "week": 3,
+        "topic": "Variables, Operators, and Conditionals",
+        "duration": "25 minutes",
         "questions": [
           {
             "question": "What is the output of the following code?\n\nx = 10\ny = 3\nprint(x // y, x % y)",
-            "type": "code_trace",
-            "points": 10,
-            "answer": "3 1\n\nx // y is integer division (10 // 3 = 3), and x % y is the modulo/remainder (10 % 3 = 1).",
+            "type": "code",
+            "points": 6,
+            "answer": "3 1\n\nx // y is integer division (10 // 3 = 3, truncated toward negative infinity). x % y is the modulo/remainder (10 % 3 = 1, since 10 = 3 * 3 + 1).",
             "rubric": [
               {
-                "key": "Correct output for integer division",
-                "value": 5
+                "key": "Correct output for integer division (3)",
+                "value": 2
               },
               {
-                "key": "Correct output for modulo operator",
-                "value": 3
+                "key": "Correct output for modulo operator (1)",
+                "value": 2
               },
               {
-                "key": "Understanding that // truncates toward negative infinity",
+                "key": "Explanation of // truncation behavior",
                 "value": 2
               }
             ]
           },
           {
-            "question": "Write a for loop that prints all even numbers from 2 to 20 inclusive.",
+            "question": "Write a program that asks the user for a temperature in Fahrenheit and prints whether water would be frozen (at or below 32), boiling (at or above 212), or liquid at that temperature. Handle the case where the user enters a non-numeric value by printing an error message.",
             "type": "code",
             "points": 10,
+            "answer": "try:\n    temp = float(input('Enter temperature in Fahrenheit: '))\n    if temp <= 32:\n        print('Water is frozen at this temperature.')\n    elif temp >= 212:\n        print('Water is boiling at this temperature.')\n    else:\n        print('Water is liquid at this temperature.')\nexcept ValueError:\n    print('Error: Please enter a valid number.')",
+            "rubric": [
+              {
+                "key": "Correct conditional logic with proper boundary values (32 and 212)",
+                "value": 4
+              },
+              {
+                "key": "Proper use of elif for mutually exclusive conditions",
+                "value": 2
+              },
+              {
+                "key": "Input validation handling non-numeric input",
+                "value": 2
+              },
+              {
+                "key": "Correct Python syntax and indentation",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between = and == in Python. Give an example where confusing the two would cause a bug.",
+            "type": "short_answer",
+            "points": 6,
+            "answer": "= is the assignment operator; it binds a name to a value (x = 5 stores 5 in x). == is the equality comparison operator; it returns True or False (x == 5 checks if x equals 5). Confusing them in a conditional — writing 'if x = 5:' instead of 'if x == 5:' — is a syntax error in Python. In languages like C where assignment in conditionals is allowed, this bug silently assigns instead of comparing.",
+            "rubric": [
+              {
+                "key": "Correctly identifies = as assignment",
+                "value": 2
+              },
+              {
+                "key": "Correctly identifies == as comparison",
+                "value": 2
+              },
+              {
+                "key": "Provides a concrete example of the confusion causing a bug",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "What does the following expression evaluate to and why?\n\nnot (True and False) or (False or True)",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "True.\n\nStep-by-step: (True and False) evaluates to False. not False evaluates to True. (False or True) evaluates to True. True or True evaluates to True. The final result is True.\n\nPrecedence order: not binds tightest, then and, then or.",
+            "rubric": [
+              {
+                "key": "Correct final answer (True)",
+                "value": 2
+              },
+              {
+                "key": "Correct evaluation of (True and False) = False",
+                "value": 2
+              },
+              {
+                "key": "Correct evaluation of not False = True",
+                "value": 2
+              },
+              {
+                "key": "Mentions operator precedence (not > and > or)",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      },
+      {
+        "quiz": 2,
+        "week": 5,
+        "topic": "Loops and Functions",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Write a for loop that prints all even numbers from 2 to 20 inclusive.",
+            "type": "code",
+            "points": 6,
             "answer": "for i in range(2, 21, 2):\n    print(i)\n\nAlternatively:\nfor i in range(2, 21):\n    if i % 2 == 0:\n        print(i)",
             "rubric": [
               {
                 "key": "Correct range bounds including 20",
-                "value": 4
+                "value": 2
               },
               {
                 "key": "Correct even number logic (step=2 or modulo check)",
-                "value": 4
+                "value": 2
               },
               {
                 "key": "Proper Python syntax and indentation",
                 "value": 2
               }
             ]
-          }
-        ],
-        "total_points": 20
-      },
-      {
-        "quiz": 2,
-        "week": 4,
-        "topic": "Functions and Data Structures",
-        "duration": "25 minutes",
-        "questions": [
+          },
           {
             "question": "Write a function called count_vowels that takes a string parameter and returns the number of vowels (a, e, i, o, u) in the string. It should be case-insensitive.",
             "type": "code",
-            "points": 15,
+            "points": 10,
             "answer": "def count_vowels(s):\n    count = 0\n    for char in s.lower():\n        if char in 'aeiou':\n            count += 1\n    return count",
             "rubric": [
               {
                 "key": "Correct function definition with parameter",
+                "value": 2
+              },
+              {
+                "key": "Case-insensitive handling (lower() or checking both cases)",
                 "value": 3
               },
               {
-                "key": "Case-insensitive handling",
+                "key": "Correct vowel checking logic using the accumulator pattern",
                 "value": 3
               },
               {
-                "key": "Correct vowel checking logic",
-                "value": 5
-              },
-              {
-                "key": "Returns count rather than printing",
-                "value": 4
+                "key": "Returns count rather than printing it",
+                "value": 2
               }
             ]
           },
           {
+            "question": "What is the output of the following code? Trace through each iteration.\n\ndef mystery(n):\n    result = 1\n    for i in range(1, n + 1):\n        result *= i\n    return result\n\nprint(mystery(5))",
+            "type": "code",
+            "points": 8,
+            "answer": "120\n\nThis function computes the factorial of n. Trace:\ni=1: result = 1 * 1 = 1\ni=2: result = 1 * 2 = 2\ni=3: result = 2 * 3 = 6\ni=4: result = 6 * 4 = 24\ni=5: result = 24 * 5 = 120\nReturn 120.",
+            "rubric": [
+              {
+                "key": "Correct output (120)",
+                "value": 3
+              },
+              {
+                "key": "Correct trace through at least 3 iterations",
+                "value": 3
+              },
+              {
+                "key": "Identifies the function as computing factorial",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between a parameter with a default value and a required parameter. Why should default parameters always come after required parameters in a function definition?",
+            "type": "short_answer",
+            "points": 6,
+            "answer": "A required parameter must be provided by the caller; omitting it causes a TypeError. A default parameter has a fallback value and can be omitted. Default parameters must come after required ones because Python matches arguments by position — if a default parameter came first, there would be no way to skip it and provide the required one without using keyword syntax, which would be confusing and error-prone.",
+            "rubric": [
+              {
+                "key": "Correctly distinguishes required from default parameters",
+                "value": 2
+              },
+              {
+                "key": "Explains why order matters (positional matching)",
+                "value": 2
+              },
+              {
+                "key": "Notes that omitting a required parameter causes an error",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "Lists, Tuples, and Dictionaries",
+        "duration": "25 minutes",
+        "questions": [
+          {
             "question": "Given the list nums = [3, 1, 4, 1, 5, 9, 2, 6], write a list comprehension that produces a new list containing only the elements greater than 3, each multiplied by 2.",
             "type": "code",
-            "points": 10,
+            "points": 8,
             "answer": "[x * 2 for x in nums if x > 3]\n# Result: [8, 10, 18, 12]",
             "rubric": [
               {
                 "key": "Correct list comprehension syntax",
-                "value": 4
+                "value": 3
               },
               {
                 "key": "Correct filter condition (x > 3)",
-                "value": 3
+                "value": 2
               },
               {
                 "key": "Correct transformation (x * 2)",
                 "value": 3
               }
             ]
+          },
+          {
+            "question": "Write a function called word_count that takes a string of text and returns a dictionary mapping each unique word (lowercased) to the number of times it appears.",
+            "type": "code",
+            "points": 10,
+            "answer": "def word_count(text):\n    counts = {}\n    for word in text.lower().split():\n        counts[word] = counts.get(word, 0) + 1\n    return counts",
+            "rubric": [
+              {
+                "key": "Correctly splits text into words and lowercases",
+                "value": 3
+              },
+              {
+                "key": "Uses dictionary to accumulate counts",
+                "value": 3
+              },
+              {
+                "key": "Handles missing keys safely (get() or setdefault() or if/else)",
+                "value": 2
+              },
+              {
+                "key": "Returns the dictionary",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "What is the difference between a list and a tuple? Give two situations where a tuple is more appropriate than a list.",
+            "type": "short_answer",
+            "points": 6,
+            "answer": "Lists are mutable (elements can be added, removed, or changed); tuples are immutable (fixed after creation). Tuples are more appropriate for: (1) Returning multiple values from a function, where the structure is fixed (e.g., return min_val, max_val). (2) Using as dictionary keys, since keys must be immutable and lists cannot be used as keys.",
+            "rubric": [
+              {
+                "key": "Correctly identifies mutability difference",
+                "value": 2
+              },
+              {
+                "key": "First appropriate tuple use case",
+                "value": 2
+              },
+              {
+                "key": "Second appropriate tuple use case",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "What happens when you execute the following code? Explain the output.\n\na = [1, 2, 3]\nb = a\nb.append(4)\nprint(a)\nprint(b)",
+            "type": "short_answer",
+            "points": 6,
+            "answer": "Both print [1, 2, 3, 4].\n\nb = a does not create a copy; it creates an alias. Both a and b reference the same list object in memory. Appending to b modifies the shared object, so the change is visible through a as well. To create an independent copy, use b = a.copy() or b = a[:].",
+            "rubric": [
+              {
+                "key": "Correct output for both print statements",
+                "value": 2
+              },
+              {
+                "key": "Explains aliasing — both variables reference the same object",
+                "value": 2
+              },
+              {
+                "key": "Mentions how to create an independent copy",
+                "value": 2
+              }
+            ]
           }
         ],
-        "total_points": 25
+        "total_points": 30
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "File I/O, Exceptions, and Modules",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Write a function called safe_read_numbers that takes a filename, reads one number per line, and returns a list of floats. Lines that cannot be converted to a float should be skipped with a warning printed to the console. Use proper file handling.",
+            "type": "code",
+            "points": 12,
+            "answer": "def safe_read_numbers(filename):\n    numbers = []\n    try:\n        with open(filename, 'r') as f:\n            for line_num, line in enumerate(f, 1):\n                try:\n                    numbers.append(float(line.strip()))\n                except ValueError:\n                    print(f'Warning: Line {line_num} is not a valid number: {line.strip()!r}')\n    except FileNotFoundError:\n        print(f'Error: File {filename!r} not found.')\n    return numbers",
+            "rubric": [
+              {
+                "key": "Uses with statement for proper file handling",
+                "value": 3
+              },
+              {
+                "key": "Handles FileNotFoundError",
+                "value": 3
+              },
+              {
+                "key": "Handles ValueError for individual lines without stopping",
+                "value": 3
+              },
+              {
+                "key": "Returns the list of valid numbers",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "What is the difference between 'import math' and 'from math import sqrt, pi'? When would you prefer each approach?",
+            "type": "short_answer",
+            "points": 6,
+            "answer": "'import math' imports the module and requires prefixed access (math.sqrt, math.pi). 'from math import sqrt, pi' imports specific names directly into the current namespace. Use 'import math' when you use many functions from the module (the prefix makes it clear where each function comes from) or when names might conflict. Use 'from math import sqrt' when you only need one or two specific names and the prefix would be tedious.",
+            "rubric": [
+              {
+                "key": "Correctly explains prefixed vs direct access",
+                "value": 2
+              },
+              {
+                "key": "Appropriate use case for import module",
+                "value": 2
+              },
+              {
+                "key": "Appropriate use case for from module import name",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the purpose of the try/except/else/finally construct. What code goes in each block?",
+            "type": "short_answer",
+            "points": 6,
+            "answer": "try: contains code that might raise an exception. except: handles specific exceptions with recovery logic. else: runs only if no exception occurred in try — put code here that should only run on success and should not be protected by except. finally: runs regardless of whether an exception occurred — put cleanup code here (closing files, releasing resources). The else block prevents accidentally catching exceptions raised by success-path code.",
+            "rubric": [
+              {
+                "key": "Correctly explains try and except blocks",
+                "value": 2
+              },
+              {
+                "key": "Correctly explains else runs only on success",
+                "value": 2
+              },
+              {
+                "key": "Correctly explains finally always runs for cleanup",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 24
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "OOP, Recursion, and Algorithm Basics",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Define a class called Student with attributes name (string) and grades (list of floats). Include methods: add_grade(grade) that appends a grade to the list, gpa() that returns the average of all grades, and __str__() that returns 'Student(name, GPA: X.XX)'.",
+            "type": "code",
+            "points": 10,
+            "answer": "class Student:\n    def __init__(self, name):\n        self.name = name\n        self.grades = []\n\n    def add_grade(self, grade):\n        self.grades.append(grade)\n\n    def gpa(self):\n        if not self.grades:\n            return 0.0\n        return sum(self.grades) / len(self.grades)\n\n    def __str__(self):\n        return f'Student({self.name}, GPA: {self.gpa():.2f})'",
+            "rubric": [
+              {
+                "key": "Correct __init__ with name and empty grades list",
+                "value": 3
+              },
+              {
+                "key": "add_grade appends to the list",
+                "value": 2
+              },
+              {
+                "key": "gpa computes average with empty-list guard",
+                "value": 3
+              },
+              {
+                "key": "Correct __str__ with formatted GPA",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Write a recursive function called power(base, exp) that computes base raised to the exp power without using the ** operator. Assume exp is a non-negative integer.",
+            "type": "code",
+            "points": 8,
+            "answer": "def power(base, exp):\n    if exp == 0:\n        return 1\n    return base * power(base, exp - 1)",
+            "rubric": [
+              {
+                "key": "Correct base case (exp == 0 returns 1)",
+                "value": 3
+              },
+              {
+                "key": "Correct recursive case reducing exp by 1",
+                "value": 3
+              },
+              {
+                "key": "Proper function structure and return value",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A linear search through a sorted list of 1,000,000 elements takes approximately 500,000 comparisons on average. How many comparisons does a binary search need in the worst case on the same list? Show your reasoning.",
+            "type": "calculation",
+            "points": 6,
+            "answer": "Binary search needs at most ceil(log2(1,000,000)) = 20 comparisons.\n\nReasoning: Binary search halves the search space on each comparison. Starting with 1,000,000 elements:\n1,000,000 → 500,000 → 250,000 → 125,000 → 62,500 → 31,250 → 15,625 → ~7,812 → ~3,906 → ~1,953 → ~976 → ~488 → ~244 → ~122 → ~61 → ~30 → ~15 → ~7 → ~3 → ~1\n\nThat is 20 halvings. Since 2^20 = 1,048,576 > 1,000,000, 20 comparisons suffice.",
+            "rubric": [
+              {
+                "key": "Correct answer (20 comparisons)",
+                "value": 2
+              },
+              {
+                "key": "Uses logarithm or halving reasoning",
+                "value": 2
+              },
+              {
+                "key": "Compares meaningfully with linear search performance",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain encapsulation in object-oriented programming. Why is it beneficial to restrict direct access to an object's internal data?",
+            "type": "essay",
+            "points": 6,
+            "answer": "Encapsulation is the principle of bundling data and the methods that operate on that data into a single unit (a class), while restricting direct access to internal state. Instead of modifying an object's attributes directly, external code uses methods that validate and control changes.\n\nBenefits: (1) Data integrity — methods can enforce constraints (e.g., a withdraw method can check for sufficient balance before modifying it). (2) Flexibility — internal representation can change without affecting code that uses the class. (3) Debugging — all modifications go through known entry points, making bugs easier to trace. (4) Documentation — the public interface (methods) documents how to interact with the object.",
+            "rubric": [
+              {
+                "key": "Correctly defines encapsulation",
+                "value": 2
+              },
+              {
+                "key": "Explains data integrity benefit",
+                "value": 2
+              },
+              {
+                "key": "Mentions at least one additional benefit with reasoning",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 30
       }
     ],
     "major_assignments": [
@@ -361,68 +1312,292 @@
         "title": "Text Adventure Game",
         "week_assigned": 3,
         "week_due": 5,
-        "points": 100,
-        "description": "Build an interactive text-based adventure game in Python that uses conditionals, loops, functions, and data structures. The game should have at least 5 rooms, an inventory system, and a win condition.",
+        "points": 150,
+        "description": "Build an interactive text-based adventure game in Python that demonstrates mastery of control flow, loops, functions, and basic data structures. The game should present the player with a series of interconnected rooms in a fictional setting (dungeon, spaceship, haunted house, etc.), each with descriptive text, items to collect, and choices that affect the outcome. The player navigates by typing commands, manages an inventory of collected items, and works toward a win condition that requires using items in the right locations. The game must handle unexpected input gracefully, provide helpful error messages, and maintain a consistent game state throughout play.",
         "objectives": [
-          "Apply control flow, functions, and data structures in an integrated project",
-          "Practice decomposing a complex problem into manageable functions",
-          "Implement user input handling with validation",
-          "Create an engaging interactive experience through code"
+          "Apply conditionals, loops, and functions in an integrated, non-trivial project",
+          "Practice problem decomposition by organizing game logic into well-named functions",
+          "Implement user input handling with robust validation and helpful error messages",
+          "Design a game state model using dictionaries and lists",
+          "Create an engaging interactive experience demonstrating creative application of programming concepts"
         ],
         "requirements": {},
         "deliverables": [
-          "Python source file(s) with complete game implementation",
-          "README.txt with game description and instructions",
-          "Design document (1-2 pages) explaining room layout and game logic",
-          "Screenshot or transcript of a complete playthrough"
+          "Python source file(s) with complete game implementation (at least 5 interconnected rooms)",
+          "README.txt with game description, story premise, and complete play instructions",
+          "Design document (1-2 pages) explaining room layout, item placement, and game logic flow",
+          "Screenshot or transcript of a complete playthrough demonstrating the win condition",
+          "At least one additional feature beyond basic navigation and inventory (e.g., combat, puzzles, NPC dialogue)"
         ],
         "grading_rubric": {
-          "functionality": {
-            "points": 40,
+          "technical_implementation": {
+            "points": 60,
             "criteria": [
-              "Game has at least 5 interconnected rooms with descriptions",
-              "Inventory system allows picking up and using items",
-              "Win condition is achievable and clearly communicated",
-              "Input validation prevents crashes on unexpected input"
+              "Game has at least 5 interconnected rooms with unique descriptions and connections",
+              "Inventory system allows picking up, dropping, and using items in context-appropriate ways",
+              "Win condition is achievable and clearly communicated to the player",
+              "Input validation prevents crashes on any input including empty strings and special characters"
             ]
           },
-          "code_quality": {
-            "points": 30,
+          "visual_quality": {
+            "points": 35,
             "criteria": [
-              "Code is organized into well-named functions",
-              "Functions have docstrings explaining their purpose",
-              "Variable names are descriptive and consistent",
-              "No duplicated code; common patterns are factored into functions"
+              "Code is organized into well-named functions with clear single responsibilities",
+              "Functions have docstrings explaining purpose, parameters, and return values",
+              "Variable names are descriptive and follow snake_case convention consistently",
+              "No duplicated code — common patterns are factored into reusable functions"
             ]
           },
-          "data_structures": {
-            "points": 15,
+          "performance_optimization": {
+            "points": 25,
             "criteria": [
-              "Rooms are stored in a dictionary with connections",
-              "Inventory uses a list or set appropriately",
-              "Game state is managed through clear data structures",
-              "Appropriate choice of data structure for each use case"
+              "Rooms are stored in a dictionary data structure with connections between them",
+              "Inventory uses a list or set appropriately for the operations performed",
+              "Game state is managed through clear data structures rather than scattered global variables",
+              "Data structure choices are appropriate for each use case (lookup vs ordered collection)"
             ]
           },
           "documentation": {
-            "points": 15,
+            "points": 30,
             "criteria": [
-              "README clearly explains how to run and play the game",
-              "Design document shows room layout and logic",
-              "Code comments explain non-obvious decisions",
-              "Playthrough demonstrates all major features"
+              "README clearly explains how to run the game and lists available commands",
+              "Design document includes a visual room layout and explains item/puzzle logic",
+              "Code comments explain non-obvious design decisions and algorithms",
+              "Playthrough transcript demonstrates all major features including edge cases"
             ]
           }
         },
         "rubric": [
           {
             "attributes": {
-              "points": 100,
+              "points": 150,
               "criteria": [
-                "Fully functional text adventure with rooms, inventory, and win condition",
+                "Fully functional text adventure with rooms, inventory, and achievable win condition",
                 "Clean, well-organized code demonstrating mastery of functions and data structures",
-                "Robust input handling that never crashes on unexpected input",
-                "Complete documentation including design document and playthrough"
+                "Robust input handling that gracefully handles any user input without crashing",
+                "Complete documentation including design document and playthrough transcript"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Data Analysis Tool",
+        "week_assigned": 7,
+        "week_due": 10,
+        "points": 175,
+        "description": "Build a command-line data analysis tool that reads a CSV dataset, performs statistical analysis, filters and sorts data, and generates a formatted report. The tool must handle real-world data challenges including missing values, inconsistent formatting, and invalid entries. Students choose a dataset from a provided list (weather data, student records, movie ratings, or sports statistics) or propose their own with instructor approval. The program should be organized into separate modules for data loading, analysis, and reporting, demonstrating modular design principles.",
+        "objectives": [
+          "Process real-world data from CSV files with robust error handling for messy data",
+          "Compute statistical measures (mean, median, mode, standard deviation, min, max) from scratch without external libraries",
+          "Implement filtering, sorting, and grouping operations on structured data",
+          "Organize code into multiple modules with clear separation of concerns",
+          "Generate formatted output including summary tables and comparison reports"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Python package with separate modules for loading (data_loader.py), analysis (analyzer.py), and reporting (reporter.py)",
+          "Main program (main.py) that ties the modules together with a command-line menu interface",
+          "At least 3 different analysis operations (e.g., summary statistics, correlation, trend analysis, group comparison)",
+          "Formatted report output demonstrating all analysis features on the chosen dataset",
+          "Error log file documenting all data quality issues encountered during processing"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 70,
+            "criteria": [
+              "CSV parsing handles commas in quoted fields, missing values, and extra whitespace",
+              "Statistical computations (mean, median, mode, std dev) produce correct results verified against known values",
+              "Filtering supports multiple criteria with AND/OR logic",
+              "Sorting works on any column in ascending or descending order"
+            ]
+          },
+          "visual_quality": {
+            "points": 40,
+            "criteria": [
+              "Code is organized into modules with clear interfaces between them",
+              "Each module can be tested independently",
+              "Functions are well-named with docstrings and appropriate parameter types",
+              "No code duplication — shared utilities are factored into a common module"
+            ]
+          },
+          "performance_optimization": {
+            "points": 30,
+            "criteria": [
+              "Malformed rows are logged and skipped without stopping the entire analysis",
+              "Type conversion errors produce clear diagnostics identifying the problem row and column",
+              "Missing values are handled consistently (excluded from statistics, noted in reports)",
+              "The program never crashes on any input file, no matter how malformed"
+            ]
+          },
+          "documentation": {
+            "points": 35,
+            "criteria": [
+              "README explains how to run the tool, available analysis options, and expected data format",
+              "Code comments explain non-obvious algorithms, especially statistical formulas",
+              "Sample output demonstrates all analysis features with real data",
+              "Error log shows the tool handling real data quality issues"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 175,
+              "criteria": [
+                "Complete data analysis pipeline from CSV input to formatted report output",
+                "Correct statistical computations verified against known values",
+                "Robust error handling that processes messy real-world data without crashing",
+                "Modular code organization with clear separation of loading, analysis, and reporting"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Object-Oriented Simulation",
+        "week_assigned": 11,
+        "week_due": 13,
+        "points": 150,
+        "description": "Design and implement a simulation of a real-world system using object-oriented programming. Choose from: an ecosystem simulation (predators, prey, and plants on a grid), a traffic intersection simulation (cars, traffic lights, pedestrians), or a bank simulation (customers, tellers, queues). The simulation should model entities as classes, run for a configurable number of time steps, and produce statistics about system behavior over time. This project bridges CS101 OOP fundamentals with the deeper OOP patterns you will study in CS102.",
+        "objectives": [
+          "Design a class hierarchy that accurately models a real-world system with multiple interacting entities",
+          "Apply encapsulation to protect entity state and enforce valid transitions",
+          "Use composition to build complex objects from simpler ones",
+          "Implement a simulation loop that advances time and updates all entities",
+          "Collect and report statistics about system behavior over time"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Python source files organized by class (one file per major class or logical group)",
+          "Main simulation runner with configurable parameters (time steps, entity counts, initial conditions)",
+          "Output showing simulation progress and final statistics (population over time, throughput, wait times, etc.)",
+          "Class diagram (hand-drawn or digital) showing all classes and their relationships",
+          "Design document (1-2 pages) explaining modeling decisions and simplifications"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 60,
+            "criteria": [
+              "At least 3 distinct classes with meaningful attributes and methods",
+              "Classes use encapsulation — state changes go through methods, not direct attribute modification",
+              "Composition is used where appropriate (e.g., an Ecosystem contains a list of Animal objects)",
+              "Simulation runs correctly for configurable time steps and produces consistent results"
+            ]
+          },
+          "visual_quality": {
+            "points": 40,
+            "criteria": [
+              "Classes have clear responsibilities and do not mix concerns",
+              "__init__, __str__, and other special methods are implemented where appropriate",
+              "Methods are well-named and have docstrings",
+              "Code follows consistent style and naming conventions throughout"
+            ]
+          },
+          "performance_optimization": {
+            "points": 25,
+            "criteria": [
+              "Simulation parameters are configurable without code changes",
+              "Statistics are collected efficiently during the simulation, not computed after the fact",
+              "Output is formatted clearly with aligned columns and appropriate precision",
+              "The simulation handles edge cases (all entities die, queue empties, etc.) gracefully"
+            ]
+          },
+          "documentation": {
+            "points": 25,
+            "criteria": [
+              "Class diagram accurately reflects the implementation",
+              "Design document explains what real-world aspects are modeled and what is simplified",
+              "README explains how to run the simulation and what the output means",
+              "Code comments explain non-obvious design decisions"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Well-designed class hierarchy demonstrating OOP fundamentals",
+                "Working simulation that models entity interactions over time",
+                "Clear statistics output showing system behavior trends",
+                "Complete documentation including class diagram and design rationale"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 4,
+        "title": "Final Portfolio Project",
+        "week_assigned": 13,
+        "week_due": 15,
+        "points": 200,
+        "description": "Design and implement a complete Python application of your choosing that integrates concepts from the entire course. The project must demonstrate proficiency in variables and data types, control flow, functions, data structures (lists, dicts, sets), file I/O, error handling, modules, OOP, and at least basic algorithmic thinking. Students propose their project idea in Week 13 for instructor approval. The final deliverable is a polished, documented application with a presentation component. Example projects: a personal finance tracker, a quiz/flashcard application, a recipe manager, a contact book with search, or a simple game with persistent high scores.",
+        "objectives": [
+          "Synthesize all course concepts into a cohesive, functional application",
+          "Demonstrate independent design and implementation skills on a self-directed project",
+          "Produce code of professional quality with proper organization, documentation, and error handling",
+          "Present and explain technical decisions to an audience of peers and instructor",
+          "Practice the complete software development lifecycle: design, implement, test, document, present"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Complete Python application source code organized into modules/packages",
+          "Project proposal (1 page) submitted Week 13 for approval",
+          "User guide explaining how to install dependencies, run the application, and use all features",
+          "Technical document (2-3 pages) explaining architecture, design decisions, and lessons learned",
+          "5-minute presentation with live demonstration to the class in Week 15"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 80,
+            "criteria": [
+              "Application uses at least 3 data structures (lists, dicts, sets, or custom classes) appropriately",
+              "File I/O is used for data persistence — application state survives between runs",
+              "Error handling covers all user-facing operations with informative messages",
+              "OOP is used meaningfully — at least 2 classes with attributes, methods, and encapsulation"
+            ]
+          },
+          "visual_quality": {
+            "points": 50,
+            "criteria": [
+              "Code is organized into multiple modules with clear responsibilities",
+              "Functions and methods are small, well-named, and documented with docstrings",
+              "Consistent coding style throughout the entire project",
+              "No dead code, no commented-out code, no leftover debug prints"
+            ]
+          },
+          "performance_optimization": {
+            "points": 30,
+            "criteria": [
+              "Application handles edge cases and unexpected input without crashing",
+              "Algorithms are appropriate for the data sizes involved",
+              "The application is responsive — no unnecessary delays or inefficient operations",
+              "Resource management (files, connections) uses context managers properly"
+            ]
+          },
+          "documentation": {
+            "points": 40,
+            "criteria": [
+              "User guide enables a peer to install and use the application without additional help",
+              "Technical document demonstrates understanding of design trade-offs and decisions",
+              "Presentation clearly communicates the project's purpose, design, and demonstration",
+              "Code documentation (docstrings, comments) is comprehensive and accurate"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 200,
+              "criteria": [
+                "Complete, polished application integrating all major course concepts",
+                "Professional code quality with modular organization and comprehensive documentation",
+                "Robust error handling and graceful edge case management throughout",
+                "Clear, confident presentation with live demonstration of all major features"
               ]
             }
           }
@@ -432,24 +1607,24 @@
   },
   "grading_breakdown": {
     "weekly_quizzes": {
-      "percentage": 15,
-      "description": "Regular assessment of programming concepts and syntax"
+      "percentage": 20,
+      "description": "Five quizzes throughout the semester testing understanding of programming concepts, syntax, and problem-solving ability"
     },
     "lab_assignments": {
-      "percentage": 25,
-      "description": "Weekly hands-on programming exercises building core skills"
+      "percentage": 15,
+      "description": "Weekly hands-on programming exercises reinforcing each week's lecture topics with practical coding tasks"
     },
     "major_assignments": {
-      "percentage": 25,
-      "description": "Larger projects integrating multiple concepts"
+      "percentage": 30,
+      "description": "Four major projects of increasing complexity integrating multiple programming concepts"
     },
     "midterm_examination": {
       "percentage": 15,
-      "description": "Written and coding exam covering first half of course material"
+      "description": "Written and coding exam in Week 8 covering variables, control flow, functions, strings, and lists"
     },
-    "final_examination": {
+    "final_project": {
       "percentage": 20,
-      "description": "Comprehensive exam covering all course material"
+      "description": "Comprehensive final portfolio project demonstrating mastery of all course concepts with presentation"
     }
   },
   "course_policies": {

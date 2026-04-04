@@ -14,245 +14,858 @@
     {
       "week_number": 1,
       "session_number": 1,
-      "topic": "Operating System Security Architecture",
-      "duration": "50 minutes",
+      "topic": "OS Architecture and Kernel Security",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Describe the security architecture of modern operating systems",
-        "Understand kernel vs user space separation and its security implications",
-        "Identify OS-level security mechanisms"
+        "Describe the security architecture of modern operating systems including kernel and user space separation",
+        "Explain hardware security features that support OS security including NX bit, ASLR, and SMEP",
+        "Identify the Trusted Computing Base and its role in system security",
+        "Compare monolithic, microkernel, and hybrid kernel architectures from a security perspective"
       ],
       "readings": [
-        "Operating System Concepts Ch. 1-2",
-        "NIST SP 800-123 Guide to General Server Security"
+        "Operating System Concepts (Silberschatz) Ch. 1-2",
+        "NIST SP 800-123: Guide to General Server Security",
+        "Windows Internals Part 1 (Russinovich) Ch. 1"
       ],
       "lecture_notes": {
-        "introduction": "Operating systems are the foundation upon which all software runs. Their security mechanisms form the first line of defense against local and remote attacks.",
+        "introduction": "Operating systems are the foundation upon which all software runs, and their security mechanisms form the first and most critical line of defense against both local and remote attacks. The operating system mediates every interaction between software and hardware: it controls which processes can access which memory regions, which users can read which files, which network connections are permitted, and which system resources are available to each application. A compromise of the operating system grants the attacker the highest level of control over the system and everything running on it. In this opening session we examine OS architecture from a security perspective, starting with the fundamental separation between kernel mode and user mode. The kernel operates with unrestricted hardware access and is responsible for enforcing all security policies. User mode processes operate in a restricted environment where the CPU itself prevents direct hardware access, forcing all system interactions through controlled system call interfaces. We examine the hardware features that make this separation possible and the security mechanisms built on top of it, including Address Space Layout Randomization, Data Execution Prevention, and Supervisor Mode Execution Prevention. Understanding these architectural foundations is essential before we can discuss the specific security features of Windows and Linux in subsequent sessions.",
         "key_concepts": [
-          "Kernel mode vs user mode privilege separation",
-          "Process isolation and memory protection",
-          "Security reference monitor concept",
-          "Hardware security features: NX bit, ASLR, SMEP",
-          "Trusted Computing Base (TCB)"
+          "Kernel mode vs user mode: CPU privilege rings, Ring 0 (kernel) has unrestricted access, Ring 3 (user) is restricted by hardware",
+          "System calls: the controlled interface between user mode and kernel mode, validated by the kernel before execution",
+          "Process isolation: each process has its own virtual address space, preventing one process from accessing another's memory",
+          "Memory protection: page tables with permission bits (read, write, execute) enforced by the MMU hardware",
+          "Address Space Layout Randomization (ASLR): randomizes memory addresses of stack, heap, and libraries to prevent exploitation",
+          "Data Execution Prevention (DEP/NX bit): marks data pages as non-executable, preventing code execution from buffer overflow payloads",
+          "Supervisor Mode Execution Prevention (SMEP): prevents kernel from executing user-mode code, blocking common privilege escalation techniques",
+          "Trusted Computing Base (TCB): the minimal set of hardware, firmware, and software components critical to security enforcement",
+          "Monolithic vs microkernel security: monolithic kernels have larger attack surface but better performance; microkernels minimize TCB but have IPC overhead",
+          "Secure boot: verifying the integrity of boot components from firmware through bootloader to kernel using cryptographic signatures"
         ],
-        "demonstration": "Demonstrating process isolation by attempting cross-process memory access on Linux and observing kernel enforcement",
+        "demonstration": "Demonstrating process isolation on Linux by attempting cross-process memory access and observing kernel enforcement, then using GDB to examine the memory layout of a process showing ASLR randomization across multiple executions, and verifying DEP by attempting to execute code from the stack",
         "setup_requirements": [
-          "Ubuntu Server 22.04 LTS VM",
-          "Windows Server 2022 VM",
-          "GDB debugger installed"
+          "Ubuntu Server 22.04 LTS VM with development tools",
+          "Windows Server 2022 VM with debugging tools",
+          "GDB debugger with pwndbg extension installed",
+          "Sample C programs for memory layout demonstration"
         ],
         "review": [
           {
             "key": "Privilege Separation",
-            "value": "Kernel mode has unrestricted hardware access; user mode is restricted. System calls are the controlled interface between them."
+            "value": "Kernel mode (Ring 0) has unrestricted hardware access. User mode (Ring 3) cannot directly access hardware, I/O ports, or other processes' memory. System calls are the controlled gateway: the kernel validates each request before executing it."
           },
           {
             "key": "ASLR",
-            "value": "Address Space Layout Randomization randomizes memory addresses of key data areas, making exploitation of memory corruption vulnerabilities significantly harder"
-          }
-        ]
-      }
-    },
-    {
-      "week_number": 1,
-      "session_number": 2,
-      "topic": "Linux Security Fundamentals",
-      "duration": "50 minutes",
-      "learning_objectives": [
-        "Configure Linux file permissions and ownership",
-        "Implement SELinux and AppArmor mandatory access controls",
-        "Harden a Linux system using CIS benchmarks"
-      ],
-      "readings": [
-        "The Linux Command Line Ch. 9-10",
-        "CIS Benchmark for Ubuntu Linux"
-      ],
-      "lecture_notes": {
-        "introduction": "Linux powers the majority of servers on the internet. Mastering its security features is essential for any cybersecurity professional.",
-        "key_concepts": [
-          "File permissions: rwx, SUID, SGID, sticky bit",
-          "User and group management for access control",
-          "SELinux: contexts, policies, and enforcement modes",
-          "AppArmor: profiles and learning mode",
-          "Systemd service hardening directives"
-        ],
-        "demonstration": "Configuring SELinux in enforcing mode, creating custom policies, and observing how they prevent unauthorized access",
-        "setup_requirements": [
-          "CentOS/RHEL VM with SELinux enabled",
-          "Ubuntu VM with AppArmor enabled",
-          "audit2allow and semanage tools"
-        ],
-        "review": [
-          {
-            "key": "SELinux",
-            "value": "Mandatory Access Control implementation that assigns security contexts to all processes and files, enforcing policy even against root"
+            "value": "Address Space Layout Randomization randomizes the base addresses of the stack, heap, shared libraries, and executable. Without ASLR, an attacker can predict where code and data reside and craft reliable exploits. With ASLR, the attacker must first leak an address to calculate offsets."
           },
           {
-            "key": "SUID Bit",
-            "value": "When set on an executable, it runs with the file owner's privileges. Common attack vector if misconfigured on sensitive binaries."
+            "key": "DEP/NX",
+            "value": "Data Execution Prevention marks data memory pages as non-executable. Even if an attacker injects shellcode into a buffer, the CPU refuses to execute it because the page has the NX (No eXecute) bit set. Attackers bypass DEP using Return-Oriented Programming."
+          },
+          {
+            "key": "Secure Boot",
+            "value": "UEFI Secure Boot verifies each component in the boot chain using cryptographic signatures. The firmware verifies the bootloader, the bootloader verifies the kernel, and the kernel verifies drivers. A rootkit that modifies any boot component will fail signature verification."
+          },
+          {
+            "key": "TCB Minimization",
+            "value": "The Trusted Computing Base should be as small as possible because any bug in the TCB is a security vulnerability. Microkernel architectures minimize TCB by running drivers and services in user mode. Monolithic kernels like Linux include drivers in kernel mode, expanding the TCB."
           }
         ]
       }
     },
     {
       "week_number": 2,
-      "session_number": 3,
-      "topic": "Windows Security Architecture",
-      "duration": "50 minutes",
+      "session_number": 2,
+      "topic": "Windows Security Features",
+      "duration": "75 minutes",
       "learning_objectives": [
         "Understand Windows security architecture including SAM, LSA, and LSASS",
-        "Configure Windows Group Policy for security hardening",
-        "Implement Windows Defender and AppLocker controls"
+        "Configure Group Policy Objects for enterprise security hardening",
+        "Implement Windows Defender Application Control and AppLocker",
+        "Describe Active Directory security fundamentals and common attack vectors"
       ],
       "readings": [
-        "Windows Internals Part 1 Ch. 7",
-        "CIS Benchmark for Windows Server"
+        "Windows Internals Part 1 Ch. 7: Security",
+        "CIS Benchmark for Windows Server 2022",
+        "Microsoft Security Baselines Documentation"
       ],
       "lecture_notes": {
-        "introduction": "Windows dominates enterprise environments. Understanding its security architecture is critical for defending corporate networks.",
+        "introduction": "Windows dominates enterprise computing environments, running on the vast majority of corporate workstations and a significant percentage of servers. Understanding Windows security architecture is therefore essential for any cybersecurity professional working in enterprise environments. The Windows security model centers on the Security Reference Monitor in the kernel, the Local Security Authority Subsystem Service that handles authentication and stores credentials, the Security Account Manager database that stores local account credentials, and Active Directory that provides centralized identity and access management for domain-joined systems. In this session we examine each component in depth, understanding both its intended function and its security weaknesses. LSASS is a prime target for credential dumping tools like Mimikatz because it holds authentication credentials in memory. The SAM database stores password hashes that can be extracted by tools with administrative access. Active Directory, while providing powerful centralized management, creates a high-value target where compromise of a domain controller grants the attacker control over every system in the domain. We examine the defensive tools Windows provides: Group Policy for enforcing security configurations across thousands of machines, AppLocker and Windows Defender Application Control for application whitelisting, Credential Guard for protecting LSASS from credential dumping, and Windows Defender for endpoint protection.",
         "key_concepts": [
-          "Security Account Manager (SAM) and NTLM hashes",
-          "Local Security Authority Subsystem (LSASS)",
-          "Active Directory security fundamentals",
-          "Group Policy Objects (GPOs) for security",
-          "Windows Defender Application Control and AppLocker"
+          "Security Account Manager (SAM): stores local user account credentials as NTLM hashes, accessible via SYSTEM privilege",
+          "Local Security Authority Subsystem (LSASS): handles authentication, stores credentials in memory, and enforces security policies",
+          "Active Directory security: domain controllers, Kerberos authentication, Group Policy distribution, and trust relationships",
+          "Group Policy Objects (GPOs): centralized configuration management for password policies, audit settings, software restrictions, and security settings",
+          "AppLocker: application whitelisting based on publisher, path, or file hash to prevent execution of unauthorized software",
+          "Windows Defender Application Control (WDAC): kernel-enforced application control using Code Integrity policies",
+          "Credential Guard: uses virtualization-based security to isolate LSASS in a secure container inaccessible to admin-level malware",
+          "Windows Event Log: Security, System, and Application channels for audit logging with configurable advanced audit policies",
+          "BitLocker: full disk encryption using TPM for protecting data at rest, with network unlock and recovery key management",
+          "Windows Firewall with Advanced Security: host-based firewall with inbound, outbound, and connection security rules"
         ],
-        "demonstration": "Configuring AppLocker policies to whitelist approved applications and demonstrating how GPOs enforce password policies",
+        "demonstration": "Configuring AppLocker policies to whitelist only signed Microsoft applications and blocking execution of unsigned binaries, then demonstrating Credential Guard by showing that Mimikatz cannot extract credentials from the protected LSASS process, comparing with an unprotected system where extraction succeeds",
         "setup_requirements": [
-          "Windows Server 2022 with Active Directory",
-          "Windows 10/11 client VM joined to domain",
-          "Group Policy Management Console"
+          "Windows Server 2022 with Active Directory configured",
+          "Windows 10/11 client VM joined to the domain",
+          "Group Policy Management Console installed",
+          "Mimikatz binary for credential extraction demonstration"
         ],
         "review": [
           {
-            "key": "LSASS",
-            "value": "Handles authentication and stores credentials in memory. Primary target for credential dumping tools like Mimikatz."
+            "key": "LSASS and Mimikatz",
+            "value": "LSASS stores authentication credentials in memory: NTLM hashes, Kerberos tickets, and potentially plaintext passwords (if WDigest is enabled). Mimikatz reads LSASS memory to extract these credentials. Defense: Credential Guard isolates LSASS using virtualization-based security."
           },
           {
-            "key": "AppLocker",
-            "value": "Application whitelisting technology that controls which executables, scripts, and DLLs are allowed to run based on path, hash, or publisher"
+            "key": "AppLocker vs WDAC",
+            "value": "AppLocker runs in user mode and can be bypassed by certain techniques. WDAC runs in kernel mode using Code Integrity, making it much harder to bypass. WDAC is recommended for high-security environments; AppLocker is suitable for general application management."
+          },
+          {
+            "key": "GPO Security",
+            "value": "GPOs can enforce: password policy (minimum length, complexity, history), account lockout policy, audit policy (log logons, privilege use, object access), software restriction, and firewall rules. Applied to OUs and inherited unless blocked. Essential for consistent security across the enterprise."
+          },
+          {
+            "key": "Active Directory Attacks",
+            "value": "Kerberoasting: requesting service tickets for service accounts and cracking them offline. Pass-the-Hash: using stolen NTLM hashes to authenticate without knowing the password. Golden Ticket: forging Kerberos TGTs with a compromised KRBTGT hash for persistent domain access."
           }
         ]
       }
     },
     {
       "week_number": 3,
-      "session_number": 5,
-      "topic": "Patch Management and Vulnerability Hardening",
-      "duration": "50 minutes",
+      "session_number": 3,
+      "topic": "Linux Security Fundamentals",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Design an enterprise patch management strategy",
-        "Use vulnerability scanners to identify missing patches",
-        "Apply OS hardening checklists systematically"
+        "Configure Linux file permissions, ownership, and special permission bits",
+        "Implement SELinux mandatory access controls and create custom policies",
+        "Harden a Linux system using CIS benchmark guidelines",
+        "Manage user accounts, groups, and privilege escalation securely"
       ],
       "readings": [
-        "NIST SP 800-40 Patch Management Guide",
-        "DISA STIG for Ubuntu and Windows"
+        "The Linux Command Line (Shotts) Ch. 9-10: Permissions",
+        "CIS Benchmark for Ubuntu Linux 22.04",
+        "Red Hat SELinux User Guide"
       ],
       "lecture_notes": {
-        "introduction": "Unpatched systems are the easiest targets. A disciplined patch management process is one of the most effective security controls.",
+        "introduction": "Linux powers the majority of servers on the internet, runs virtually every cloud platform, and underpins most security tools and appliances. Mastering Linux security is therefore essential for any cybersecurity professional. The Linux security model builds on decades of Unix tradition, implementing discretionary access controls through file permissions and ownership, mandatory access controls through frameworks like SELinux and AppArmor, and a sophisticated system of capabilities that allow fine-grained privilege assignment without resorting to full root access. In this session we examine the Linux permission model in depth, starting with the standard read-write-execute permissions for owner, group, and others, and then covering the special permission bits SUID, SGID, and the sticky bit that create both powerful functionality and dangerous security risks. SUID binaries are a perennial source of privilege escalation vulnerabilities: a misconfigured SUID binary owned by root gives any user who can execute it the ability to run code with root privileges. We then examine mandatory access controls with SELinux, which assigns security contexts to every process and file, enforcing policy even against processes running as root. SELinux represents a fundamental shift from the traditional Unix model where root has unrestricted access: under SELinux, even root is constrained by policy. We cover the practical skills of managing SELinux modes, troubleshooting policy denials, and creating custom policy modules for applications.",
         "key_concepts": [
-          "Patch management lifecycle: identify, test, deploy, verify",
-          "WSUS, SCCM, and Ansible for automated patching",
-          "Vulnerability scanning with Nessus and OpenVAS",
-          "CVSS scoring and patch prioritization",
-          "CIS Benchmarks and DISA STIGs for hardening"
+          "Linux permission model: read (4), write (2), execute (1) for owner, group, others; octal and symbolic notation",
+          "Special permissions: SUID (execute as file owner), SGID (execute as file group), sticky bit (restrict deletion in shared directories)",
+          "SUID security risk: SUID root binaries allow privilege escalation if they can be exploited; audit all SUID binaries regularly",
+          "User and group management: useradd, usermod, groupadd, /etc/passwd, /etc/shadow, /etc/group, and PAM configuration",
+          "sudo configuration: /etc/sudoers with least-privilege rules, NOPASSWD risks, and sudoers.d directory for modular configuration",
+          "SELinux: Mandatory Access Control using security contexts (user:role:type:level), enforcing policy independent of DAC permissions",
+          "SELinux modes: Enforcing (policy enforced), Permissive (policy violations logged but not enforced), Disabled (no SELinux)",
+          "SELinux troubleshooting: ausearch for denial messages, audit2why for human-readable explanations, audit2allow for policy generation",
+          "AppArmor: profile-based MAC using pathname-based access control, simpler than SELinux but less granular",
+          "Linux capabilities: fine-grained privileges (CAP_NET_BIND_SERVICE, CAP_SYS_ADMIN) replacing the all-or-nothing root model"
         ],
-        "demonstration": "Running an OpenVAS scan against an unpatched VM, analyzing results, applying patches, and rescanning to verify remediation",
+        "demonstration": "Configuring SELinux in enforcing mode on CentOS, demonstrating how a web server process is confined to its designated file paths, creating a custom SELinux policy module for a new application using audit2allow, and showing how SELinux prevents a simulated privilege escalation even when the attacker gains root shell access",
         "setup_requirements": [
-          "OpenVAS/GVM installed",
-          "Intentionally unpatched Windows and Linux VMs",
-          "Patch repository access"
+          "CentOS/RHEL VM with SELinux in enforcing mode",
+          "Ubuntu VM with AppArmor enabled",
+          "audit2allow, semanage, and restorecon tools",
+          "SUID binary examples for privilege escalation demonstration"
         ],
         "review": [
           {
-            "key": "CVSS Scoring",
-            "value": "Common Vulnerability Scoring System rates vulnerabilities 0-10 based on exploitability, impact, and environmental factors to prioritize patching"
+            "key": "SUID Risk",
+            "value": "When the SUID bit is set on an executable owned by root, any user executing it runs the program as root. If the program has a vulnerability (buffer overflow, command injection), the attacker gains root access. Always audit: find / -perm -4000 -type f and remove SUID from unnecessary binaries."
           },
           {
-            "key": "STIG",
-            "value": "Security Technical Implementation Guide provides detailed hardening configurations developed by DISA for U.S. Department of Defense systems"
+            "key": "SELinux Enforcement",
+            "value": "Even if an attacker gains root access through an exploit, SELinux confines the compromised process to its security context. A web server running as httpd_t can only access files labeled httpd_sys_content_t, even if the process UID is root. This is the power of mandatory access control."
+          },
+          {
+            "key": "sudo Best Practices",
+            "value": "Never use ALL=(ALL) NOPASSWD:ALL. Instead, grant specific commands: michael ALL=(root) /usr/bin/systemctl restart httpd. Use /etc/sudoers.d/ for modular configuration. Always use visudo to edit. Log all sudo usage for audit trails."
+          },
+          {
+            "key": "Linux Capabilities",
+            "value": "Instead of making a binary SUID root, assign only the needed capability. Example: setcap cap_net_bind_service+ep /usr/bin/myapp allows the app to bind to port 80 without running as root. This follows least privilege by granting only the specific power needed."
           }
         ]
       }
     },
     {
       "week_number": 4,
-      "session_number": 7,
-      "topic": "Logging, Auditing, and Monitoring",
-      "duration": "50 minutes",
+      "session_number": 4,
+      "topic": "User and Group Management",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Configure comprehensive logging on Linux and Windows",
-        "Analyze audit logs to detect security events",
-        "Implement centralized log management"
+        "Implement secure user lifecycle management on Windows and Linux",
+        "Configure password policies and account lockout settings",
+        "Design role-based access schemes using groups and organizational units",
+        "Automate user provisioning and deprovisioning processes"
       ],
       "readings": [
-        "NIST SP 800-92 Log Management Guide",
-        "Linux auditd documentation"
+        "Operating System Concepts Ch. 14: Protection and Security",
+        "NIST SP 800-63B: Digital Identity Guidelines",
+        "Active Directory Administration Guide: User and Group Management"
       ],
       "lecture_notes": {
-        "introduction": "Logs are the evidence trail of system activity. Without proper logging and monitoring, breaches go undetected for months.",
+        "introduction": "User account management is where security policy meets daily operations. Every security framework begins with identity: knowing who is accessing the system, what they are authorized to do, and tracking what they actually do. Poor user management practices create some of the most common and most exploitable security weaknesses in organizations. Orphaned accounts from departed employees provide unauthorized access paths. Shared accounts eliminate accountability and complicate forensics. Excessive permissions violate least privilege and expand the blast radius of compromised credentials. Default accounts with known passwords provide easy initial access for attackers. In this session we examine the complete user lifecycle from creation through access assignment to deprovisioning, on both Windows and Linux systems. We discuss password policy configuration, examining how NIST SP 800-63B has revolutionized password guidance by recommending length over complexity, eliminating mandatory rotation, and emphasizing breached password screening. We implement group-based access control that maps organizational roles to permissions, making access management scalable and auditable. We explore the automation of user provisioning and deprovisioning through scripts and identity management tools, because manual processes inevitably leave orphaned accounts and inconsistent permissions.",
         "key_concepts": [
-          "Linux auditd: rules, log analysis, and aureport",
-          "Windows Event Log: Security, System, Application channels",
-          "Syslog and rsyslog for centralized logging",
-          "Log integrity protection with append-only and remote storage",
-          "Key events to monitor: logins, privilege escalation, file access"
+          "User lifecycle: creation, access provisioning, periodic review, modification, and deprovisioning upon role change or departure",
+          "Windows user management: Active Directory Users and Computers, organizational units, user templates, and automated provisioning",
+          "Linux user management: useradd, usermod, userdel, /etc/passwd structure, /etc/shadow hash storage, and /etc/login.defs defaults",
+          "Password policy implementation: minimum length, complexity requirements, history, lockout thresholds, and NIST-recommended approaches",
+          "Account lockout: configuring lockout thresholds, duration, and observation windows to balance security with usability",
+          "Group-based access control: security groups map to roles, users assigned to groups, permissions assigned to groups not individual users",
+          "Organizational Units in Active Directory: hierarchical containers for applying Group Policy and delegating administration",
+          "Service accounts: dedicated accounts for application services with managed passwords, restricted logon rights, and minimal permissions",
+          "Privileged access management: time-limited, just-in-time elevated access with full session recording and approval workflows",
+          "Account auditing: regular access reviews, detection of dormant accounts, and automated deprovisioning triggers from HR systems"
         ],
-        "demonstration": "Configuring auditd rules to detect unauthorized file access, forwarding logs to a central syslog server, and correlating events",
+        "demonstration": "Creating a group-based access control structure in Active Directory with organizational units for departments, security groups for roles, and GPOs for policy enforcement, then scripting automated user provisioning in PowerShell that creates the user, assigns groups, sets initial password, and enables MFA",
         "setup_requirements": [
-          "Linux VM with auditd configured",
-          "Windows VM with advanced audit policies",
-          "Central syslog server (rsyslog)"
+          "Windows Server 2022 Active Directory environment",
+          "Linux VMs with local user management",
+          "PowerShell scripting environment",
+          "User provisioning checklist and templates"
         ],
         "review": [
           {
-            "key": "auditd",
-            "value": "Linux kernel audit framework that monitors system calls. Rules define which events to log, enabling detection of policy violations and intrusions."
+            "key": "Orphaned Account Risk",
+            "value": "Accounts of former employees that remain active are a top attack vector. The 2021 SolarWinds attack used a dormant service account. Mitigation: automate deprovisioning triggered by HR termination events, conduct quarterly access reviews, and disable accounts that have not logged in for 90 days."
           },
           {
-            "key": "Log Integrity",
-            "value": "Attackers often tamper with logs to cover tracks. Remote logging and append-only file attributes protect log integrity."
+            "key": "NIST Password Guidance",
+            "value": "NIST SP 800-63B recommends: minimum 8 characters (longer is better), no complexity composition rules, no mandatory rotation, check against breached password databases, support up to 64 characters, and allow paste into password fields. This is a dramatic departure from traditional policy."
+          },
+          {
+            "key": "Service Account Security",
+            "value": "Service accounts should: use Managed Service Accounts (gMSA) for automatic password rotation, be denied interactive logon, have the minimum permissions required, be monitored for unusual activity, and never be shared between services."
+          },
+          {
+            "key": "Group-Based Access",
+            "value": "Instead of assigning permissions to User A and User B individually, create a Finance-Analysts group with required permissions, add both users to the group. When User A leaves, remove from group. When new analyst starts, add to group. Scalable, auditable, consistent."
           }
         ]
       }
     },
     {
       "week_number": 5,
-      "session_number": 9,
-      "topic": "Containerization and Virtualization Security",
-      "duration": "50 minutes",
+      "session_number": 5,
+      "topic": "File System Permissions and Security",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Identify security concerns specific to containers and VMs",
-        "Harden Docker containers using security best practices",
-        "Understand hypervisor security and VM escape attacks"
+        "Configure NTFS permissions and inheritance on Windows systems",
+        "Implement ext4 permissions, ACLs, and file attributes on Linux",
+        "Design file system security for shared resources in enterprise environments",
+        "Detect and respond to unauthorized file access and modifications"
       ],
       "readings": [
-        "NIST SP 800-190 Application Container Security",
-        "Docker security best practices documentation"
+        "Windows Server Administration: NTFS Permissions Guide",
+        "Linux System Administration: File System Security",
+        "CIS Controls: Data Protection"
       ],
       "lecture_notes": {
-        "introduction": "Containers and virtual machines are the building blocks of modern infrastructure. Their security requires understanding isolation boundaries and escape vectors.",
+        "introduction": "File systems are where data lives, and file system permissions are the mechanism that determines who can read, modify, or execute that data. On both Windows and Linux, the file system permission model is rich and complex, supporting granular access control that, when properly configured, enforces the principle of least privilege at the data level. However, this complexity also means that misconfigurations are common and can create significant security vulnerabilities. In this session we examine file system security on both major platforms. On Windows, NTFS provides a sophisticated permission model with thirteen granular permissions that can be combined into standard permission sets, with inheritance flowing from parent folders to child objects. Understanding NTFS inheritance, explicit versus inherited permissions, and the interaction between share permissions and NTFS permissions is essential for securing Windows file servers. On Linux, the traditional owner/group/other permission model is extended by POSIX Access Control Lists that allow fine-grained per-user and per-group permissions beyond the basic three-entity model. Linux also provides file attributes like immutable (i) and append-only (a) that add additional protection layers. We examine encryption at the file system level with Windows EFS and Linux eCryptfs/fscrypt, and discuss file integrity monitoring tools that detect unauthorized modifications.",
         "key_concepts": [
-          "Hypervisor types and VM isolation guarantees",
-          "VM escape attacks and hypervisor vulnerabilities",
-          "Docker security: namespaces, cgroups, capabilities",
-          "Container image scanning and supply chain security",
-          "Rootless containers and seccomp profiles"
+          "NTFS permissions: Full Control, Modify, Read and Execute, Read, Write, and 13 granular special permissions",
+          "NTFS inheritance: permissions flow from parent folders to child objects, can be blocked or explicitly overridden",
+          "Share permissions vs NTFS permissions: the most restrictive of the two applies when accessing files over the network",
+          "Linux standard permissions: rwx for owner, group, others; umask for default permission settings on new files",
+          "POSIX ACLs on Linux: getfacl and setfacl for per-user and per-group permissions beyond the basic owner/group/other model",
+          "Linux file attributes: chattr +i for immutable (cannot be modified even by root), chattr +a for append-only (for log files)",
+          "File system encryption: BitLocker (volume-level), EFS (file-level) on Windows; LUKS (volume-level), fscrypt (directory-level) on Linux",
+          "File integrity monitoring: AIDE and Tripwire on Linux, comparing current file hashes against a known-good baseline database",
+          "Data classification enforcement: mapping data classification levels to file system permissions and encryption requirements",
+          "Auditing file access: Windows SACL (System Access Control List) and Linux auditd rules for tracking file read, write, and delete operations"
         ],
-        "demonstration": "Building a hardened Docker container with a minimal base image, dropping capabilities, and applying a seccomp profile",
+        "demonstration": "Configuring a shared file server on Windows with department folders using NTFS permissions and inheritance, then setting up AIDE on Linux to create a baseline database and detect unauthorized modifications to system configuration files, demonstrating alert generation when a critical file is modified",
         "setup_requirements": [
-          "Docker Engine installed",
-          "Trivy or Grype for image scanning",
-          "Sample vulnerable container images"
+          "Windows Server with file sharing configured",
+          "Linux VM with AIDE or Tripwire installed",
+          "Multiple user accounts with different group memberships",
+          "File integrity monitoring baseline database"
         ],
         "review": [
           {
-            "key": "Container Isolation",
-            "value": "Containers share the host kernel, relying on namespaces and cgroups for isolation. This is weaker than VM isolation where each guest has its own kernel."
+            "key": "NTFS Inheritance",
+            "value": "By default, permissions on a parent folder propagate to all child folders and files. Explicit permissions override inherited ones. Breaking inheritance at a subfolder creates an independent ACL. Best practice: set permissions at the top level and let inheritance propagate."
           },
           {
-            "key": "Image Security",
-            "value": "Container images may contain vulnerabilities in base OS packages or application dependencies. Scanning with tools like Trivy is essential before deployment."
+            "key": "Linux Immutable Attribute",
+            "value": "chattr +i /etc/resolv.conf makes the file immutable: it cannot be modified, deleted, renamed, or linked even by root. Only root can remove the attribute with chattr -i. Useful for protecting critical configuration files from accidental or malicious modification."
+          },
+          {
+            "key": "File Integrity Monitoring",
+            "value": "AIDE creates a database of file hashes, permissions, and attributes for monitored directories. Running aide --check compares current state against the baseline. Any modification to a monitored file generates an alert. Essential for detecting rootkits and unauthorized configuration changes."
+          },
+          {
+            "key": "Share vs NTFS",
+            "value": "Share permissions apply only to network access. NTFS permissions apply to both local and network access. The effective permission is the most restrictive combination. Best practice: set share permissions to Full Control for Authenticated Users, then use NTFS permissions for granular access control."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Process Management and Monitoring",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Monitor running processes on Windows and Linux for security threats",
+        "Identify malicious processes through behavioral analysis and system call monitoring",
+        "Configure process-level security controls and sandboxing",
+        "Investigate suspicious process activity using forensic tools"
+      ],
+      "readings": [
+        "Operating System Concepts Ch. 3-4: Processes and Threads",
+        "Windows Sysinternals Administrator's Reference: Process Explorer and Process Monitor",
+        "Linux Process Monitoring and Security"
+      ],
+      "lecture_notes": {
+        "introduction": "Processes are the fundamental unit of execution on any operating system, and monitoring process activity is one of the most powerful techniques for detecting malicious behavior. Every action an attacker takes on a compromised system manifests as process activity: malware execution creates new processes, privilege escalation modifies process tokens, persistence mechanisms create scheduled tasks or services, and data exfiltration generates network connections from processes. Understanding how to monitor, analyze, and control process behavior is essential for both real-time threat detection and forensic investigation. In this session we examine process management and security on both Windows and Linux. On Windows, we use the Sysinternals tools Process Explorer and Process Monitor to observe process creation, parent-child relationships, loaded DLLs, network connections, and registry access. On Linux, we use ps, top, htop, lsof, and strace to examine running processes, their resource usage, open files, and system call activity. We learn to identify suspicious indicators: processes running from unusual locations, processes with unexpected parent processes, processes making network connections to external IP addresses, and processes accessing sensitive files they should not touch. We also examine process-level security controls including Windows Job Objects, Linux cgroups and namespaces, and application sandboxing techniques.",
+        "key_concepts": [
+          "Process attributes: PID, PPID, user context, priority, memory usage, CPU usage, open files, and network connections",
+          "Process tree analysis: examining parent-child relationships to detect anomalies like cmd.exe spawned by Microsoft Word",
+          "Windows Process Explorer: real-time process monitoring with DLL inspection, handle listing, and VirusTotal integration",
+          "Windows Process Monitor: system call tracing for file, registry, and network operations with filtering for targeted analysis",
+          "Linux process monitoring: ps aux, top, htop for process listing; lsof for open files; strace for system call tracing",
+          "Suspicious process indicators: running from temp directories, unusual parent processes, hidden processes, and unexpected network activity",
+          "Process injection techniques: DLL injection, process hollowing, and thread hijacking used by malware to hide in legitimate processes",
+          "Windows Job Objects and Linux cgroups: resource limits and isolation for controlling process resource consumption",
+          "Linux namespaces: process, network, mount, and user namespaces for process isolation, the foundation of container technology",
+          "Application sandboxing: restricting process capabilities to minimize the impact of exploitation using AppArmor profiles or seccomp filters"
+        ],
+        "demonstration": "Using Process Explorer on Windows to identify a suspicious process spawned by a macro-enabled document, tracing its parent-child chain, examining its DLLs and network connections, then using strace on Linux to monitor system calls of a suspicious process and identify malicious file access and network communication",
+        "setup_requirements": [
+          "Windows VM with Sysinternals Suite installed",
+          "Linux VM with strace, ltrace, and lsof available",
+          "Simulated malicious processes for analysis exercises",
+          "Process monitoring baseline documentation"
+        ],
+        "review": [
+          {
+            "key": "Parent-Child Anomaly",
+            "value": "Normal: explorer.exe spawns chrome.exe. Suspicious: winword.exe spawns cmd.exe spawns powershell.exe. This chain indicates a macro executing system commands, a classic indicator of malicious document exploitation."
+          },
+          {
+            "key": "strace Usage",
+            "value": "strace -p PID traces system calls of a running process. strace -e network shows only network-related calls. strace -e open shows file access. Essential for understanding what a suspicious process is doing without disassembling the binary."
+          },
+          {
+            "key": "Process Injection",
+            "value": "Malware injects code into legitimate processes (explorer.exe, svchost.exe) to hide its activity. Detection: look for processes with unexpected DLLs loaded, unexpected memory regions marked as executable, or network connections from processes that normally do not communicate externally."
+          },
+          {
+            "key": "cgroups and Namespaces",
+            "value": "cgroups limit resource usage (CPU, memory, I/O) for a process group. Namespaces isolate what a process can see (PID namespace: only its own processes; network namespace: its own network stack). Together they form the foundation of container isolation."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Service Hardening",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Identify unnecessary services and disable them on Windows and Linux",
+        "Harden critical network services including SSH, web servers, and database servers",
+        "Configure service accounts with minimum required privileges",
+        "Implement service isolation using systemd security directives"
+      ],
+      "readings": [
+        "NIST SP 800-123: Guide to General Server Security",
+        "CIS Benchmark Sections on Service Configuration",
+        "systemd.exec Security Directives Documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Every running service is a potential attack surface. A service listening on a network port accepts incoming connections from anyone who can reach it, and any vulnerability in that service can be exploited remotely. Even services that only listen locally expand the local attack surface, potentially enabling privilege escalation from a low-privileged compromise. The principle of minimal services states that a system should run only the services required for its designated function, and those services should be configured with the minimum privileges necessary. In this session we examine service hardening from both a Windows and Linux perspective. We begin by auditing running services to identify unnecessary ones, then systematically harden the services that must remain. For SSH, we configure key-based authentication, disable root login, restrict allowed users, and enable fail2ban for brute force protection. For web servers, we configure TLS properly, remove default content, set restrictive permissions, and enable security headers. For all services, we apply the principle of least privilege through service account configuration and systemd security directives that provide sandboxing capabilities including read-only file systems, restricted network access, private /tmp directories, and capability dropping. These directives represent one of the most powerful and underutilized security features in modern Linux.",
+        "key_concepts": [
+          "Attack surface reduction: disabling unnecessary services, closing unnecessary ports, removing unnecessary software",
+          "Windows service hardening: service account configuration, service permissions, Windows Firewall rules per service",
+          "Linux service management: systemctl for service lifecycle, systemd unit files for configuration and security",
+          "SSH hardening: key-based authentication, PasswordAuthentication no, PermitRootLogin no, AllowUsers directive, Port change",
+          "fail2ban: monitors log files for repeated authentication failures and temporarily blocks offending IP addresses",
+          "Web server hardening: TLS 1.3 configuration, HSTS header, server version hiding, directory listing disabled, security headers",
+          "Database hardening: bind to localhost only, strong authentication, encrypted connections, least-privilege database users",
+          "systemd security directives: ProtectSystem=strict, PrivateTmp=yes, NoNewPrivileges=yes, CapabilityBoundingSet=",
+          "Service account isolation: dedicated user per service, no login shell, restricted home directory, minimal group membership",
+          "Service monitoring: tracking service restarts, unexpected service additions, and unauthorized service modifications"
+        ],
+        "demonstration": "Hardening an SSH server by implementing key-based authentication, disabling password login, restricting to specific users, configuring fail2ban, then applying systemd security directives to an Apache web server to create a read-only filesystem sandbox, private /tmp, and dropped capabilities, verifying with systemd-analyze security",
+        "setup_requirements": [
+          "Linux VM with multiple services running",
+          "SSH key pair generation tools",
+          "fail2ban installed and configured",
+          "systemd-analyze security for service security scoring"
+        ],
+        "review": [
+          {
+            "key": "SSH Hardening Checklist",
+            "value": "Key-based auth only (PasswordAuthentication no), no root login (PermitRootLogin no), restrict users (AllowUsers), use protocol 2 only, set MaxAuthTries 3, enable logging, consider non-standard port, implement fail2ban, use strong key types (Ed25519)."
+          },
+          {
+            "key": "systemd Security Scoring",
+            "value": "Run systemd-analyze security servicename to get a security exposure score from 0.0 (fully locked down) to 10.0 (no security). Each unset security directive contributes to the score. Target score below 5.0 for production services."
+          },
+          {
+            "key": "NoNewPrivileges",
+            "value": "When NoNewPrivileges=yes is set in a systemd unit, the service process and all its children cannot gain new privileges through SUID binaries, capabilities, or any other mechanism. This is a critical defense against privilege escalation from a compromised service."
+          },
+          {
+            "key": "Service Audit",
+            "value": "Regularly audit running services: systemctl list-units --type=service --state=running on Linux, Get-Service | Where-Object Status -eq Running on Windows. Compare against an approved service list. Any unauthorized service warrants investigation."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Registry and Configuration Security",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Navigate and secure the Windows Registry for security hardening",
+        "Identify registry-based persistence mechanisms used by malware",
+        "Secure Linux configuration files and detect unauthorized modifications",
+        "Implement configuration management for consistent security baselines"
+      ],
+      "readings": [
+        "Windows Registry Forensics (Carvey) Ch. 1-4",
+        "CIS Benchmark: Registry Security Settings",
+        "Linux System Configuration Security Guide"
+      ],
+      "lecture_notes": {
+        "introduction": "The Windows Registry is a hierarchical database that stores configuration settings for the operating system, applications, and user preferences. From a security perspective, the Registry is critically important for two reasons: it contains security-relevant settings that control system behavior, and it is one of the primary persistence mechanisms used by malware. Understanding the Registry's structure, the security-critical keys, and the common persistence techniques attackers use is essential for both hardening and incident response. On the Linux side, configuration is distributed across text files primarily in /etc, providing a different but equally important set of hardening targets. In this session we explore both platforms' configuration systems from a security perspective. On Windows, we navigate the five root keys (HKLM, HKCU, HKCR, HKU, HKCC), examine security-critical settings in the Security and SAM hives, and learn to identify the Run/RunOnce keys, Winlogon, and service entries where malware commonly establishes persistence. We configure registry permissions to prevent unauthorized modification and implement registry auditing to detect changes. On Linux, we secure critical configuration files in /etc, implement file integrity monitoring for configuration directories, and use configuration management tools to enforce consistent baselines across multiple systems.",
+        "key_concepts": [
+          "Windows Registry structure: five root keys, hives (SAM, SECURITY, SOFTWARE, SYSTEM), and values (REG_SZ, REG_DWORD, REG_BINARY)",
+          "Registry persistence locations: Run, RunOnce, Winlogon Shell/Userinit, Services, Scheduled Tasks, Browser Helper Objects",
+          "Registry security hardening: restricting permissions on security-critical keys, enabling registry auditing via SACL",
+          "Security Policy registry settings: LanManager authentication level, SMB signing, UAC configuration, and credential caching",
+          "Linux configuration files: /etc/passwd, /etc/shadow, /etc/sudoers, /etc/ssh/sshd_config, /etc/fstab security options",
+          "Linux persistence mechanisms: cron jobs, systemd services, .bashrc/.profile modifications, authorized_keys additions",
+          "Configuration management: Ansible, Puppet, or Chef for enforcing consistent security configurations across systems",
+          "Configuration drift detection: comparing current configuration against approved baseline and alerting on deviations",
+          "Security-relevant sysctl settings: network stack hardening, ICMP redirect disabling, source routing prevention",
+          "fstab security options: noexec (no execution), nosuid (ignore SUID bits), nodev (no device files) for mounted file systems"
+        ],
+        "demonstration": "Examining the Windows Registry for common malware persistence locations using Autoruns from Sysinternals, then demonstrating how malware adds a Run key entry for persistence and how to detect it, followed by using Ansible to enforce sysctl hardening settings across multiple Linux VMs and verifying compliance",
+        "setup_requirements": [
+          "Windows VM with Sysinternals Autoruns installed",
+          "Registry editor and PowerShell for registry manipulation",
+          "Linux VMs with Ansible configured for configuration management",
+          "Baseline configuration files for comparison"
+        ],
+        "review": [
+          {
+            "key": "Run Key Persistence",
+            "value": "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run: entries here execute automatically when the user logs in. Malware commonly adds entries pointing to dropped payloads. Autoruns from Sysinternals shows all autostart locations including Run keys with VirusTotal integration."
+          },
+          {
+            "key": "sysctl Hardening",
+            "value": "net.ipv4.ip_forward=0 (disable routing), net.ipv4.conf.all.accept_redirects=0 (ignore ICMP redirects), net.ipv4.tcp_syncookies=1 (SYN flood protection), kernel.randomize_va_space=2 (full ASLR). Apply via /etc/sysctl.conf and verify with sysctl -a."
+          },
+          {
+            "key": "Configuration Management",
+            "value": "Ansible playbooks define the desired state (packages installed, services running, files present with correct permissions). Running the playbook enforces that state. Any configuration drift is automatically corrected. This ensures all systems maintain the security baseline."
+          },
+          {
+            "key": "fstab Security",
+            "value": "Mount /tmp with noexec,nosuid,nodev to prevent execution of binaries, SUID exploitation, and device file creation in the temp directory. Mount /var/log with append-only to protect log integrity. These mount options are defense-in-depth measures against common attack techniques."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "Logging and Auditing",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Configure comprehensive audit logging on Windows and Linux systems",
+        "Analyze system logs to identify security events and indicators of compromise",
+        "Implement centralized log management with integrity protection",
+        "Design an audit policy that balances security visibility with storage and performance"
+      ],
+      "readings": [
+        "NIST SP 800-92: Guide to Computer Security Log Management",
+        "Linux auditd Documentation and Rules Reference",
+        "Windows Advanced Audit Policy Configuration Guide"
+      ],
+      "lecture_notes": {
+        "introduction": "Logs are the evidence trail of system activity, and without proper logging and monitoring, breaches go undetected for an average of 277 days according to the IBM Cost of a Data Breach Report. Logging is not merely a compliance checkbox; it is the foundation of security monitoring, incident detection, forensic investigation, and accountability. Every security-relevant action on a system should be logged: user logins, privilege escalation, file access, process creation, network connections, policy changes, and system modifications. In this session we configure comprehensive audit logging on both Windows and Linux, understanding what events to capture, how to configure the logging subsystems, and how to analyze the resulting logs. On Windows, we configure Advanced Audit Policies through Group Policy, enabling detailed logging of logon events, privilege use, object access, and policy changes. On Linux, we configure the auditd framework with custom rules that monitor file access to sensitive files, track process execution, and detect privilege escalation. We discuss centralized log management using syslog, examining how to forward logs to a central server for aggregation, correlation, and protection from tampering. We address log integrity: if an attacker can modify or delete logs, the entire audit trail is compromised. Protections include remote logging, append-only storage, log signing, and WORM (Write Once Read Many) storage.",
+        "key_concepts": [
+          "Windows Advanced Audit Policy: nine categories including Account Logon, Logon/Logoff, Object Access, Privilege Use, and Policy Change",
+          "Critical Windows Event IDs: 4624 (logon), 4625 (failed logon), 4672 (admin logon), 4720 (user created), 4732 (user added to group)",
+          "Linux auditd: kernel-level audit framework with rules for monitoring system calls, file access, and user commands",
+          "auditd rule syntax: -w /etc/shadow -p wa -k shadow_access watches the shadow file for write and attribute changes",
+          "aureport and ausearch: tools for querying and reporting on audit logs by event type, user, time, and key",
+          "Syslog and rsyslog: centralized log forwarding protocol, facility and severity levels, and remote logging configuration",
+          "Log integrity protection: remote logging (attacker cannot delete remote copies), append-only storage, log signing with hash chains",
+          "Security-relevant events to monitor: authentication events, privilege changes, file access to sensitive data, process creation, and network connections",
+          "Log retention policies: regulatory requirements (HIPAA 6 years, PCI-DSS 1 year), storage planning, and archival strategies",
+          "Log analysis techniques: pattern matching, baseline comparison, anomaly detection, and correlation across multiple log sources"
+        ],
+        "demonstration": "Configuring auditd rules to detect unauthorized access to /etc/shadow, forwarding audit logs to a central rsyslog server, then performing a simulated attack and using aureport and ausearch to trace the complete attack chain from initial access through privilege escalation to data access",
+        "setup_requirements": [
+          "Linux VM with auditd configured",
+          "Windows VM with Advanced Audit Policies enabled",
+          "Central rsyslog server for log aggregation",
+          "Sample attack scenarios for log analysis exercises"
+        ],
+        "review": [
+          {
+            "key": "auditd Rules",
+            "value": "-w /etc/shadow -p rwa -k shadow_file: watches for read, write, and attribute changes to the shadow file. -a always,exit -S execve -k command_log: logs every command execution. These rules create a comprehensive audit trail for security investigation."
+          },
+          {
+            "key": "Windows Event 4625",
+            "value": "Failed logon attempt. Track failure reasons: 0xC000006A (wrong password), 0xC0000234 (account locked), 0xC0000072 (account disabled). Multiple 4625 events from the same source indicate brute force. Multiple failures across many accounts indicate password spraying."
+          },
+          {
+            "key": "Remote Logging",
+            "value": "Forward logs to a remote server that the attacker cannot access. Even if the attacker gains root and clears local logs, the remote copies survive. Configure rsyslog: *.* @@logserver.company.local:514 sends all logs to the remote server via TCP."
+          },
+          {
+            "key": "Log Analysis Priority",
+            "value": "Start with authentication failures (brute force detection). Then new account creation and privilege changes (persistence). Then unusual process execution (malware). Then sensitive file access (data theft). Then network connections to unusual destinations (C2 and exfiltration)."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "Patch Management",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Design an enterprise patch management lifecycle and strategy",
+        "Use vulnerability scanners to identify missing patches and prioritize remediation",
+        "Implement automated patching with WSUS, SCCM, and Ansible",
+        "Balance patching urgency with change management and operational stability"
+      ],
+      "readings": [
+        "NIST SP 800-40 Rev. 4: Guide to Enterprise Patch Management",
+        "CISA Known Exploited Vulnerabilities Catalog",
+        "CVSS v3.1 Specification Document"
+      ],
+      "lecture_notes": {
+        "introduction": "Unpatched systems are consistently among the top initial access vectors for successful cyberattacks. The window between vulnerability disclosure and active exploitation continues to shrink, with some vulnerabilities being exploited within hours of disclosure. Yet patching in enterprise environments is far more complex than simply clicking update. Production systems run business-critical applications that may break with OS updates. Change management processes require testing and approval before modifications. Maintenance windows are limited. And the sheer volume of patches, with Microsoft alone releasing 50 to 100 patches per month, makes prioritization essential. In this session we examine patch management as a structured lifecycle: vulnerability identification through scanning, risk-based prioritization using CVSS scores and exploitation intelligence, testing in a staging environment, deployment through automated tools, verification of successful installation, and rollback procedures for patches that cause problems. We discuss the tools that enable enterprise-scale patching: WSUS and SCCM for Windows environments, and Ansible or similar configuration management tools for Linux. We examine how to use vulnerability scanners like Nessus and OpenVAS to identify missing patches, and how to prioritize remediation using the CISA Known Exploited Vulnerabilities catalog, CVSS scores, and asset criticality.",
+        "key_concepts": [
+          "Patch management lifecycle: identify, prioritize, test, deploy, verify, and document for every patch cycle",
+          "CVSS scoring: base, temporal, and environmental scores for vulnerability prioritization on a 0-10 scale",
+          "CISA KEV catalog: list of vulnerabilities known to be actively exploited, requiring priority remediation",
+          "WSUS: Windows Server Update Services for centralized Windows patch distribution with approval workflows",
+          "SCCM/MECM: Microsoft Endpoint Configuration Manager for comprehensive patch management with compliance reporting",
+          "Ansible for Linux patching: playbooks for automated package updates across multiple systems with pre and post-update checks",
+          "Vulnerability scanning: Nessus, OpenVAS/GVM for identifying missing patches with CVSS-scored findings",
+          "Patch prioritization matrix: combining CVSS score, exploitation status, asset criticality, and exposure to determine urgency",
+          "Testing and staging: validating patches against representative systems before production deployment to prevent outages",
+          "Rollback procedures: system snapshots, backup verification, and documented rollback steps for every patch deployment"
+        ],
+        "demonstration": "Running an OpenVAS vulnerability scan against a deliberately unpatched Windows and Linux VM, analyzing the results to prioritize remediation using CVSS scores and CISA KEV status, applying patches using WSUS and Ansible, then rescanning to verify remediation and demonstrate reduced vulnerability count",
+        "setup_requirements": [
+          "OpenVAS/GVM scanner installed and configured",
+          "Intentionally unpatched Windows and Linux VMs as scan targets",
+          "WSUS server for Windows patch deployment",
+          "Ansible playbook for Linux patch automation"
+        ],
+        "review": [
+          {
+            "key": "CVSS Prioritization",
+            "value": "Critical (9.0-10.0): patch within 7 days, compensating controls immediately. High (7.0-8.9): patch within 30 days. Medium (4.0-6.9): patch within 90 days. Low (0.1-3.9): patch in next scheduled cycle. CISA KEV entries override these timelines: patch within 14 days regardless of CVSS."
+          },
+          {
+            "key": "Zero-Day Patching",
+            "value": "When a zero-day is disclosed with no patch available, implement compensating controls: WAF rules, firewall restrictions, disabling vulnerable features, or removing affected software. Monitor CISA advisories and vendor communications for patch availability. Deploy emergency patch within 24-48 hours of release."
+          },
+          {
+            "key": "Patch Testing",
+            "value": "Never deploy patches directly to production. Test on staging systems that mirror production: same applications, same configurations. Run functional tests after patching. Verify critical business applications work. Only after successful staging testing deploy to production in a maintenance window."
+          },
+          {
+            "key": "Compliance Reporting",
+            "value": "Generate monthly patch compliance reports showing: total systems, patched percentage, overdue critical patches, time-to-patch metrics, and trend over time. Target 95%+ compliance within SLA timelines. Report to management with risk assessment for non-compliant systems."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "Security Baselines and Compliance",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Apply CIS Benchmarks and DISA STIGs to harden operating systems",
+        "Automate compliance checking using scanning tools and scripts",
+        "Develop custom security baselines tailored to organizational requirements",
+        "Maintain ongoing compliance through continuous monitoring and remediation"
+      ],
+      "readings": [
+        "CIS Benchmark for Ubuntu Linux 22.04 (selected sections)",
+        "DISA STIG for Windows Server 2022 (selected sections)",
+        "NIST SP 800-128: Guide for Security-Focused Configuration Management"
+      ],
+      "lecture_notes": {
+        "introduction": "Security baselines provide the standardized, documented configurations that serve as the foundation for a secure operating environment. Without baselines, every system is configured differently, security gaps are unpredictable and undetectable, and compliance audits become impossible. CIS Benchmarks and DISA STIGs are the two most widely used baseline standards, providing detailed configuration checklists for virtually every operating system and major application. CIS Benchmarks are developed by consensus among security professionals and offer two implementation levels: Level 1 for general use and Level 2 for high-security environments. DISA STIGs are developed by the Defense Information Systems Agency for U.S. Department of Defense systems, providing the most stringent hardening requirements. In this session we work through the process of applying security baselines to both Windows and Linux systems. We examine the CIS Benchmark structure, understand the rationale behind each recommendation, and use automated tools to assess compliance and apply configurations. We discuss the challenge of balancing security with functionality: some baseline recommendations may break applications or reduce usability, requiring documented exceptions with compensating controls. We implement continuous compliance monitoring that checks system configurations against the baseline on a regular schedule and alerts on deviations.",
+        "key_concepts": [
+          "CIS Benchmarks: consensus-based security configuration guides with Level 1 (general) and Level 2 (high-security) recommendations",
+          "DISA STIGs: Security Technical Implementation Guides for DoD systems, more stringent than CIS with CAT I, II, III severity levels",
+          "CIS-CAT Pro: automated assessment tool that scans systems against CIS Benchmarks and generates compliance reports",
+          "SCAP (Security Content Automation Protocol): standardized format for expressing security configuration checklists, enabling automated assessment",
+          "OpenSCAP: open-source SCAP scanner for automated compliance checking against CIS and STIG profiles on Linux",
+          "Baseline exceptions: documenting and approving deviations from the baseline with compensating controls and risk acceptance",
+          "Continuous compliance monitoring: scheduled scans comparing current configuration against baseline with drift alerting",
+          "Configuration as Code: defining security baselines in Ansible playbooks or Chef cookbooks for automated, repeatable application",
+          "Audit readiness: maintaining evidence of baseline compliance for regulatory audits (PCI-DSS, HIPAA, SOX)",
+          "Custom baseline development: combining CIS/STIG recommendations with organization-specific requirements based on risk assessment"
+        ],
+        "demonstration": "Running OpenSCAP against an Ubuntu VM to assess CIS Benchmark Level 2 compliance, reviewing the HTML report to identify failing controls, remediating the top ten failures, then rescanning to show improved compliance score, followed by automating the remaining remediations in an Ansible playbook",
+        "setup_requirements": [
+          "Ubuntu VM with OpenSCAP and CIS content installed",
+          "Windows VM with CIS-CAT Pro or STIG Viewer",
+          "Ansible for automated remediation",
+          "Baseline compliance report template"
+        ],
+        "review": [
+          {
+            "key": "CIS Level 1 vs Level 2",
+            "value": "Level 1: practical hardening that can be applied to most systems with minimal impact on functionality. Example: require password minimum length of 14 characters. Level 2: deeper hardening for high-security systems that may impact usability. Example: disable USB storage devices, enable full audit logging."
+          },
+          {
+            "key": "STIG Severity",
+            "value": "CAT I (Critical): exploitation could lead to loss of confidentiality, integrity, or availability of classified/unclassified information. CAT II (Medium): could lead to degradation of security measures. CAT III (Low): could degrade measures protecting availability. CAT I findings must be remediated immediately."
+          },
+          {
+            "key": "Compliance Drift",
+            "value": "Systems drift from baseline over time due to: manual changes during troubleshooting, application installations, configuration modifications not going through change management. Continuous monitoring detects drift; Configuration as Code automatically corrects it."
+          },
+          {
+            "key": "Exception Management",
+            "value": "Some baseline requirements may break specific applications. Document: which control, why it cannot be applied, what compensating control is in place, who approved the exception, and when it will be reviewed. Never silently ignore a baseline failure."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Containerization Security",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Identify security concerns specific to container environments",
+        "Harden Docker containers using security best practices and CIS Docker Benchmark",
+        "Implement container image scanning and supply chain security",
+        "Configure runtime security controls including seccomp profiles and AppArmor"
+      ],
+      "readings": [
+        "NIST SP 800-190: Application Container Security Guide",
+        "Docker Security Best Practices Documentation",
+        "CIS Docker Benchmark"
+      ],
+      "lecture_notes": {
+        "introduction": "Containers have become the dominant deployment model for modern applications, and understanding their security model is essential for any OS security professional. Containers provide process-level isolation using Linux namespaces and cgroups, sharing the host kernel rather than running their own operating system like virtual machines. This sharing creates both efficiency and security trade-offs: containers start faster and use fewer resources, but the shared kernel means that a kernel vulnerability can potentially affect all containers on the host. Container security encompasses the entire lifecycle: securing the base images, scanning for vulnerabilities, building with minimal attack surface, configuring runtime security controls, and monitoring container behavior for anomalies. In this session we examine each phase of container security. We discuss the principle of minimal base images, using distroless or Alpine images instead of full Ubuntu images to reduce the attack surface from hundreds of packages to a handful. We implement container image scanning with tools like Trivy to identify known vulnerabilities in base images and application dependencies. We configure Docker security options including dropping all Linux capabilities and adding back only those required, applying seccomp profiles to restrict system calls, and running containers as non-root users. We examine container escape attacks and the defenses that prevent them, understanding the boundary between container isolation and full VM isolation.",
+        "key_concepts": [
+          "Container isolation mechanisms: Linux namespaces (PID, network, mount, user) and cgroups (resource limits) sharing the host kernel",
+          "Container vs VM isolation: VMs have separate kernels (strong isolation); containers share the host kernel (weaker isolation but better efficiency)",
+          "Minimal base images: using distroless, Alpine, or scratch images to minimize packages and reduce vulnerability surface area",
+          "Image scanning: Trivy, Grype, or Snyk scanning base images and application dependencies for known CVEs",
+          "Image signing and verification: Docker Content Trust and Sigstore/Cosign for verifying image integrity and authenticity",
+          "Running as non-root: USER directive in Dockerfile, rootless Docker/Podman to eliminate root-level kernel interaction",
+          "Linux capabilities: dropping all capabilities (--cap-drop=ALL) and adding only required ones (--cap-add=NET_BIND_SERVICE)",
+          "seccomp profiles: restricting which system calls a container can make, blocking dangerous calls like mount, ptrace, and unshare",
+          "Container escape attacks: exploiting kernel vulnerabilities, misconfigured capabilities, or mounted host paths to break isolation",
+          "Container network security: network policies restricting container-to-container communication, encrypted overlay networks"
+        ],
+        "demonstration": "Building a hardened Docker container: starting with a distroless base image, scanning with Trivy to verify zero critical vulnerabilities, running as non-root, dropping all capabilities, applying a custom seccomp profile, then demonstrating that a simulated attacker inside the container cannot escape or escalate privileges",
+        "setup_requirements": [
+          "Docker Engine installed on Linux VM",
+          "Trivy or Grype for image scanning",
+          "Sample vulnerable and hardened container images",
+          "seccomp profile templates and documentation"
+        ],
+        "review": [
+          {
+            "key": "Container Isolation vs VM",
+            "value": "VMs: each guest has its own kernel, hardware-enforced isolation via hypervisor. Containers: share the host kernel, isolation via namespaces and cgroups. A kernel vulnerability in a container environment affects all containers. Use VMs for multi-tenant isolation; containers for application packaging."
+          },
+          {
+            "key": "Image Scanning",
+            "value": "Trivy scan results show CVE ID, severity, package name, installed version, and fixed version. Integrate scanning into CI/CD: fail builds with critical vulnerabilities. Scan regularly because new CVEs are discovered daily for existing packages."
+          },
+          {
+            "key": "Capabilities",
+            "value": "Default Docker containers have 14 capabilities. Drop all and add back only what is needed. Most web applications need zero capabilities. A web server binding to port 80 needs only CAP_NET_BIND_SERVICE. Never use --privileged, which grants all capabilities including CAP_SYS_ADMIN."
+          },
+          {
+            "key": "Rootless Containers",
+            "value": "Running Docker daemon and containers without root using user namespaces. The container root maps to an unprivileged host user. Even if the container is compromised and the attacker gains root inside, they have no privileges on the host. Podman runs rootless by default."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "Mobile OS Security",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Compare the security architectures of iOS and Android operating systems",
+        "Identify mobile-specific threats and attack vectors",
+        "Evaluate mobile device management solutions for enterprise security",
+        "Assess the security implications of mobile OS customization and rooting/jailbreaking"
+      ],
+      "readings": [
+        "Apple Platform Security Guide: iOS and iPadOS sections",
+        "Android Security Architecture Documentation",
+        "NIST SP 800-124 Rev. 2: Guidelines for Managing Mobile Devices"
+      ],
+      "lecture_notes": {
+        "introduction": "Mobile operating systems present unique security challenges that differ fundamentally from desktop and server environments. Mobile devices operate in hostile physical environments where they can be lost, stolen, or used on untrusted networks. They run third-party applications from app stores that may contain malware or privacy-violating code. They contain sensitive data including corporate email, authentication credentials, and personal information. And they often serve as the second factor in multi-factor authentication, making their compromise particularly dangerous. In this session we compare the security architectures of the two dominant mobile platforms. iOS implements a closed ecosystem with mandatory code signing, App Store review, hardware-backed Secure Enclave for key storage, and strict application sandboxing. Android provides a more open platform with application sandboxing via Linux permissions and SELinux, verified boot, Google Play Protect scanning, and hardware-backed keystore. We examine the security implications of platform choices: iOS's closed ecosystem provides stronger baseline security but less flexibility; Android's openness provides customization but creates fragmentation and delayed security updates across manufacturers. We discuss jailbreaking and rooting, understanding why users do it, the security implications, and how enterprises detect and respond to modified devices.",
+        "key_concepts": [
+          "iOS security model: hardware root of trust, Secure Enclave for key storage, mandatory code signing, App Store review, and sandboxing",
+          "iOS Data Protection: file-level encryption with per-file keys tied to device passcode and hardware UID, four protection classes",
+          "Android security model: application sandboxing via Linux UID per app, SELinux enforcement, verified boot, and hardware-backed keystore",
+          "Android update fragmentation: manufacturer and carrier delays in security patches creating vulnerability windows across the ecosystem",
+          "Application sandboxing: each mobile app runs in its own process with restricted file system access and controlled inter-app communication",
+          "Mobile threat landscape: malicious apps, network-based attacks, device theft, phishing optimized for small screens, and SIM-based attacks",
+          "Jailbreaking (iOS) and rooting (Android): removing manufacturer restrictions, disabling security controls, and the resulting risk surface",
+          "Mobile Device Management: remote wipe, policy enforcement, app management, VPN configuration, and compliance checking",
+          "Mobile Application Management: containerizing corporate apps and data separately from personal apps on BYOD devices",
+          "Mobile app security: certificate pinning, secure local storage, biometric authentication APIs, and anti-tampering protections"
+        ],
+        "demonstration": "Examining Android application permissions and sandboxing by decompiling an APK with JADX to identify requested permissions and hardcoded secrets, then demonstrating how MDM policies can restrict app installation, enforce encryption, and remotely wipe a lost device",
+        "setup_requirements": [
+          "Android emulator with sample applications",
+          "JADX decompiler for APK analysis",
+          "iOS security architecture diagrams",
+          "MDM demonstration environment"
+        ],
+        "review": [
+          {
+            "key": "iOS Secure Enclave",
+            "value": "Dedicated security coprocessor that manages cryptographic keys, performs biometric matching, and handles Apple Pay. Keys never leave the Secure Enclave and are not accessible to the application processor, even if iOS is fully compromised."
+          },
+          {
+            "key": "Android SELinux",
+            "value": "Every process and file on Android has an SELinux context. Even if an attacker exploits an application vulnerability, SELinux confines the process to its designated permissions. A camera app compromised by an attacker still cannot access SMS messages or contacts."
+          },
+          {
+            "key": "Rooting/Jailbreaking Risk",
+            "value": "Removes manufacturer security controls, disables verified boot, allows unsigned code execution, and may disable SELinux. The device becomes vulnerable to any malware that gains access. Enterprise MDM solutions detect rooted/jailbroken devices and can block corporate access."
+          },
+          {
+            "key": "MDM Capabilities",
+            "value": "Enforce passcode policy, require device encryption, restrict app installation to approved list, configure VPN and Wi-Fi profiles, locate lost devices, remote wipe corporate data, check compliance (OS version, root status), and containerize work data."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "OS Forensics Basics",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Collect volatile and non-volatile forensic evidence from Windows and Linux systems",
+        "Analyze file system artifacts, registry entries, and log files for investigation",
+        "Maintain chain of custody and evidence integrity during forensic collection",
+        "Use forensic tools to investigate common attack scenarios on operating systems"
+      ],
+      "readings": [
+        "File System Forensic Analysis (Carrier) Ch. 1-4",
+        "Windows Forensic Analysis Toolkit (Carvey) Ch. 1-3",
+        "NIST SP 800-86: Guide to Integrating Forensic Techniques"
+      ],
+      "lecture_notes": {
+        "introduction": "When a security incident occurs, the operating system contains a wealth of forensic evidence that can reveal what happened, when it happened, how the attacker gained access, what they did, and what data was compromised. Collecting and analyzing this evidence correctly is essential for incident response, legal proceedings, and preventing recurrence. OS forensics is the systematic examination of operating system artifacts to reconstruct events and establish facts. In this session we cover the fundamentals of OS forensic investigation on both Windows and Linux platforms. We begin with the order of volatility: collecting the most ephemeral evidence first (memory, network connections, running processes) before moving to more persistent artifacts (files, logs, registry). We examine key forensic artifacts on each platform: Windows prefetch files that record application execution history, NTFS timestamps that show file creation, modification, and access times, the Windows Event Log that records security events, and the Registry that preserves user activity and system configuration history. On Linux, we examine bash history, authentication logs, cron job configurations, and file system timestamps. We discuss the tools of the trade: FTK Imager for disk imaging, Volatility for memory analysis, and Timeline Explorer for chronological event reconstruction. Throughout, we emphasize the importance of evidence integrity: cryptographic hashing of all evidence, chain of custody documentation, and the use of write blockers to prevent accidental evidence modification.",
+        "key_concepts": [
+          "Order of volatility: memory (most volatile), network connections, running processes, disk contents, logs, physical media (least volatile)",
+          "Memory forensics: capturing RAM with tools like FTK Imager or WinPMEM, analyzing with Volatility to find processes, network connections, and injected code",
+          "Disk imaging: creating bit-for-bit forensic copies with write blockers, verifying integrity with MD5/SHA-256 hash comparison",
+          "Windows forensic artifacts: Prefetch files, NTFS MFT timestamps, Shellbags, Recent Items, Jump Lists, and browser history",
+          "Windows Registry forensics: SAM (user accounts), NTUSER.DAT (user activity), SYSTEM (services and drivers), SOFTWARE (installed programs)",
+          "Linux forensic artifacts: /var/log/auth.log (authentication), .bash_history (commands), /etc/crontab (persistence), wtmp/btmp (login records)",
+          "File system timeline analysis: creating a chronological timeline of file creation, modification, and access across the entire file system",
+          "Evidence integrity: MD5 and SHA-256 hashing of all evidence, write blockers for physical media, documented chain of custody",
+          "Chain of custody: documenting who collected the evidence, when, how it was transported, where it was stored, and who accessed it",
+          "Anti-forensics: techniques attackers use to destroy evidence including log wiping, timestamp manipulation, and secure file deletion"
+        ],
+        "demonstration": "Performing a forensic investigation of a simulated compromised Linux server: capturing memory with LiME, imaging the disk, analyzing bash history for attacker commands, examining auth.log for unauthorized access, creating a file system timeline to identify modified files, and documenting findings with proper chain of custody",
+        "setup_requirements": [
+          "Compromised Linux VM with planted forensic artifacts",
+          "FTK Imager Lite or dc3dd for disk imaging",
+          "Volatility 3 for memory analysis",
+          "Timeline Explorer or log2timeline for timeline creation"
+        ],
+        "review": [
+          {
+            "key": "Order of Volatility",
+            "value": "Collect memory first (volatile, lost on power-off). Then capture network state (netstat, connections). Then running processes. Then image the disk. Then collect physical evidence. Memory contains running malware, encryption keys, and network connections that disappear on reboot."
+          },
+          {
+            "key": "Windows Prefetch",
+            "value": "C:\\Windows\\Prefetch\\*.pf files record application name, run count, and last eight execution timestamps. Even if malware is deleted, the Prefetch file may persist, proving it was executed. Essential artifact for proving malware execution."
+          },
+          {
+            "key": "Timeline Analysis",
+            "value": "Create a unified timeline from MFT timestamps, event logs, prefetch data, and browser history. Sorting chronologically reveals the attack narrative: initial access time, lateral movement, privilege escalation, data access, and exfiltration. Gaps in the timeline may indicate anti-forensics."
+          },
+          {
+            "key": "Evidence Integrity",
+            "value": "Hash the evidence immediately after collection: sha256sum disk_image.dd. Record the hash in the chain of custody document. Any subsequent verification must produce the same hash. If the hash changes, the evidence has been modified and may be inadmissible."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Practical Hardening Lab and Course Review",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Demonstrate comprehensive OS hardening skills on both Windows and Linux",
+        "Apply all course concepts to secure a system from default installation to production-ready state",
+        "Verify hardening effectiveness through vulnerability scanning and compliance checking",
+        "Synthesize operating system security knowledge for advanced coursework preparation"
+      ],
+      "readings": [
+        "Review all course materials and lab exercises",
+        "CIS Benchmark quick reference guides for Windows and Linux",
+        "Course summary and practical exam preparation guide"
+      ],
+      "lecture_notes": {
+        "introduction": "This final session brings together all fourteen weeks of operating system security knowledge into a comprehensive practical exercise. Over the semester, you have built a deep understanding of how operating systems provide security at the kernel level, how Windows and Linux implement access controls and audit logging, how services should be hardened and monitored, how patch management and security baselines maintain security over time, and how containers and mobile platforms extend these concepts to modern deployment models. In this capstone session, you will take a freshly installed system and harden it from default to production-ready, applying every concept from the course. You will configure user management with least privilege, set file permissions appropriate for each directory, harden network services, apply security baselines, configure logging and auditing, and verify your work with vulnerability scanning. This exercise mirrors what you will do in your professional career: taking responsibility for the security of systems and being able to verify and prove that they meet security standards. The practical exam will follow a similar format, testing your ability to perform these tasks under time pressure with minimal reference materials. The operating systems security skills you have developed are foundational: every advanced course in penetration testing, incident response, and security architecture assumes you can look at a system and identify what is properly secured and what is not.",
+        "key_concepts": [
+          "Comprehensive hardening workflow: OS installation, user management, file permissions, service configuration, network security, logging, patching, and verification",
+          "Defense in depth at the OS level: kernel security features, MAC policies, file permissions, service isolation, and logging working together",
+          "Verification methodology: vulnerability scanning, compliance checking, penetration testing, and log review to confirm hardening effectiveness",
+          "Documentation: recording all configuration changes, rationale, and verification results for audit and knowledge transfer",
+          "Continuous security: hardening is not a one-time event but an ongoing process of monitoring, patching, and responding to new threats",
+          "Cross-platform skills: ability to secure both Windows and Linux systems is essential in mixed enterprise environments",
+          "Container security integration: applying OS security principles to containerized workloads",
+          "Mobile security considerations: extending OS security concepts to mobile platforms",
+          "Forensic readiness: systems configured for both security and forensic investigation capability",
+          "Course progression: CY103 skills feed directly into advanced courses in penetration testing, incident response, and security architecture"
+        ],
+        "demonstration": "Instructor-led walkthrough of a complete hardening exercise: taking a fresh Ubuntu Server installation through CIS Level 2 compliance using a combination of manual configuration, Ansible automation, and OpenSCAP verification, demonstrating the before-and-after vulnerability scan comparison",
+        "setup_requirements": [
+          "Fresh Windows Server and Ubuntu Server VMs for hardening",
+          "CIS Benchmark reference guides",
+          "OpenSCAP and CIS-CAT scanning tools",
+          "Vulnerability scanner for before-and-after comparison"
+        ],
+        "review": [
+          {
+            "key": "Hardening Workflow",
+            "value": "Step 1: Update and patch. Step 2: Configure user accounts and groups. Step 3: Set file permissions. Step 4: Harden network services. Step 5: Apply security baseline. Step 6: Configure logging and auditing. Step 7: Enable host firewall. Step 8: Scan and verify. Step 9: Document everything."
+          },
+          {
+            "key": "Course Integration",
+            "value": "OS security is not isolated controls but an integrated system. Kernel security enables process isolation. Process isolation enables service sandboxing. Service hardening reduces attack surface. Logging detects attacks on the remaining surface. Patching closes newly discovered gaps. Each layer supports the others."
+          },
+          {
+            "key": "Practical Exam Preparation",
+            "value": "The practical exam provides a fresh system and a list of hardening requirements. You must configure the system to meet requirements, verify with scanning tools, and document your work. Time management is critical: patch first, then users, then services, then verify."
+          },
+          {
+            "key": "Next Steps",
+            "value": "CS110 Programming for Security builds automation skills to script the hardening tasks you have learned. Advanced CY courses apply OS security knowledge to penetration testing (attacking weaknesses you now understand) and incident response (investigating the artifacts you now know where to find)."
           }
         ]
       }
@@ -262,171 +875,562 @@
     "quizzes": [
       {
         "quiz": 1,
-        "week": 2,
-        "topic": "OS Architecture and Linux/Windows Security",
-        "duration": "20 minutes",
+        "week": 3,
+        "topic": "OS Architecture, Windows Security, and Linux Security",
+        "duration": "30 minutes",
         "questions": [
           {
-            "question": "A Linux server is running a web application as root. An attacker exploits an SQL injection vulnerability in the application. Explain the security impact of running the application as root versus running it as a dedicated non-privileged user, and list three specific hardening measures that would limit the blast radius.",
+            "question": "A Linux server runs a web application as root. An attacker exploits an SQL injection vulnerability. Explain the security impact of running as root versus a dedicated non-privileged user, and list three specific hardening measures that would limit the blast radius even if the application is compromised.",
             "type": "short_answer",
-            "points": 10,
-            "answer": "Running as root gives the attacker full system access upon exploitation, including reading /etc/shadow, installing rootkits, and pivoting to other systems. Running as a non-privileged user confines the attacker to that user's permissions. Three hardening measures: (1) SELinux/AppArmor policy confining the web application process to only necessary files and network ports. (2) Drop all Linux capabilities except those required (e.g., CAP_NET_BIND_SERVICE). (3) Use a read-only filesystem with a dedicated writable tmpfs for temporary data.",
+            "points": 8,
+            "answer": "Running as root gives the attacker full system access upon exploitation: reading /etc/shadow, installing rootkits, modifying system binaries, pivoting to other systems, and accessing all data on the server. Running as a non-privileged user (e.g., www-data) confines the attacker to that user's permissions: only files readable by www-data, no system modification, no access to other users' data. Three hardening measures: (1) SELinux/AppArmor policy confining the web process to only its required files, network ports, and system calls, preventing access even if the attacker escalates to root within the container. (2) Drop all Linux capabilities except CAP_NET_BIND_SERVICE (if needed for port 80/443). Without CAP_SYS_ADMIN, the attacker cannot mount file systems, load kernel modules, or perform most privilege escalation techniques. (3) systemd ProtectSystem=strict with a read-only file system and private /tmp, preventing the attacker from writing malware to the system or using /tmp for staging.",
             "rubric": [
               {
-                "key": "Explains root vs non-privileged impact clearly",
-                "value": 4
+                "key": "Clear explanation of root vs non-privileged impact",
+                "value": 3
               },
               {
-                "key": "Three valid hardening measures described",
-                "value": 4
+                "key": "Three valid hardening measures with technical detail",
+                "value": 3
               },
               {
-                "key": "Technical accuracy of explanations",
+                "key": "Demonstrates understanding of defense-in-depth at OS level",
                 "value": 2
               }
             ]
           },
           {
-            "question": "Describe how an attacker would use Mimikatz to extract credentials from a Windows system, and explain two specific defenses that prevent or mitigate this attack.",
+            "question": "Describe how an attacker uses Mimikatz to extract credentials from a Windows system, explain why this attack works at the OS architecture level, and describe two defenses that prevent or mitigate this attack.",
             "type": "short_answer",
-            "points": 10,
-            "answer": "Mimikatz reads LSASS process memory to extract NTLM hashes, Kerberos tickets, and plaintext passwords stored by WDigest. It requires local administrator or SYSTEM privileges. Defenses: (1) Enable Credential Guard, which uses virtualization-based security to isolate LSASS in a protected container that Mimikatz cannot access. (2) Disable WDigest authentication via registry (UseLogonCredential = 0) to prevent plaintext password caching in LSASS memory.",
+            "points": 7,
+            "answer": "Mimikatz reads the memory of the LSASS (Local Security Authority Subsystem Service) process, which stores authentication credentials including NTLM hashes, Kerberos TGTs, and plaintext passwords (if WDigest is enabled). It works because LSASS must hold these credentials in memory to support single sign-on and network authentication. Mimikatz requires SYSTEM or local administrator privileges to read LSASS memory. Defense 1: Enable Credential Guard, which uses Virtualization-Based Security (VBS) to isolate LSASS in a Hyper-V protected container. Even code running as SYSTEM on the host cannot read the protected LSASS memory because the hypervisor enforces isolation at the hardware level. Defense 2: Disable WDigest authentication by setting the registry key HKLM\\SYSTEM\\CurrentControlSet\\Control\\SecurityProviders\\WDigest\\UseLogonCredential to 0. This prevents plaintext passwords from being cached in LSASS memory. NTLM hashes are still present but are less useful without Kerberos tickets.",
             "rubric": [
               {
-                "key": "Correct description of Mimikatz technique",
-                "value": 4
-              },
-              {
-                "key": "First valid defense with technical detail",
+                "key": "Correct description of Mimikatz technique and LSASS role",
                 "value": 3
               },
               {
-                "key": "Second valid defense with technical detail",
+                "key": "Two valid defenses with technical mechanism explanation",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between Discretionary Access Control (file permissions) and Mandatory Access Control (SELinux) on Linux. Provide a specific scenario where DAC alone fails to prevent an attack but MAC succeeds.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "DAC: file owner sets permissions (rwx). The root user bypasses all DAC permissions. If an attacker gains root through any vulnerability, DAC provides zero protection because root can read, write, and execute any file. MAC (SELinux): the kernel enforces security policy based on security contexts assigned to processes and files. Even root is constrained by policy. A process running as root with context httpd_t can only access files labeled httpd_sys_content_t regardless of DAC permissions. Scenario: A web server running as root has a remote code execution vulnerability. With DAC only: the attacker gains a root shell and can read /etc/shadow, install a backdoor in /usr/bin, and access the database configuration with credentials. With SELinux: the attacker gains a root shell inside the httpd_t context. SELinux denies access to /etc/shadow (shadow_t context), denies writing to /usr/bin (bin_t context), and restricts database access to only the port and socket allowed by policy. The root shell is effectively contained to web server operations.",
+            "rubric": [
+              {
+                "key": "Clear distinction between DAC and MAC",
+                "value": 2
+              },
+              {
+                "key": "Correct explanation of root bypass in DAC",
+                "value": 2
+              },
+              {
+                "key": "Specific scenario showing MAC preventing what DAC allows",
                 "value": 3
               }
             ]
           }
         ],
-        "total_points": 20
+        "total_points": 22
       },
       {
         "quiz": 2,
-        "week": 4,
-        "topic": "Patch Management, Logging, and Container Security",
-        "duration": "20 minutes",
+        "week": 5,
+        "topic": "User Management, File Systems, and Process Security",
+        "duration": "30 minutes",
         "questions": [
           {
-            "question": "An organization's vulnerability scan reveals CVE-2024-1234 with a CVSS base score of 9.8 on a production database server. The vendor patch requires a reboot. Describe a risk-based approach to handling this, including what factors determine the patching timeline.",
+            "question": "A company discovers that a former employee's domain account was used to access sensitive file shares three weeks after their termination. Identify all the user management failures and describe the automated controls that should have been in place.",
             "type": "short_answer",
-            "points": 10,
-            "answer": "A CVSS 9.8 is Critical severity, indicating remote code execution with no authentication required. Factors for timeline: (1) Is there active exploitation in the wild (check CISA KEV)? If yes, emergency patch within 24-48 hours. (2) Is the server internet-facing or internal only? Internet-facing increases urgency. (3) What compensating controls exist (WAF rules, network segmentation)? These may buy time. (4) What is the business impact of downtime? Schedule maintenance window. Approach: Deploy compensating controls immediately, test patch in staging within 24 hours, deploy to production in the next available maintenance window (within 72 hours for critical with active exploitation).",
+            "points": 8,
+            "answer": "Failures: (1) Active Directory account not disabled upon termination. (2) No automated integration between HR system and IT for offboarding. (3) No regular review of active accounts against HR employment roster. (4) No monitoring for account usage by terminated employees. (5) No multi-factor authentication that would require the former employee's physical token. Automated controls: (1) HR-to-IT provisioning integration that automatically disables the AD account and revokes all group memberships when HR records termination. (2) Automated daily reconciliation comparing active AD accounts against HR employment database, flagging discrepancies. (3) SIEM alert for authentication from accounts flagged for termination review. (4) MFA requirement for all file share access, so even if the password is known, the physical second factor would prevent access. (5) Quarterly access review requiring managers to certify that all account holders in their team are current employees with appropriate access.",
             "rubric": [
               {
-                "key": "Identifies severity and urgency correctly",
+                "key": "Identifies multiple user management failures",
                 "value": 3
               },
               {
-                "key": "Lists relevant decision factors",
-                "value": 4
+                "key": "Describes automated offboarding controls",
+                "value": 3
               },
               {
-                "key": "Provides realistic timeline with compensating controls",
+                "key": "Addresses detection and prevention comprehensively",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A Linux system has the following permissions on /usr/bin/custom_app: -rwsr-xr-x 1 root root. The application has a buffer overflow vulnerability. Explain the security risk, the attack scenario, and three ways to mitigate the risk without removing the application.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "The SUID bit (s in owner execute position) means any user executing this program runs it with root privileges. Combined with the buffer overflow: any local user can exploit the overflow to gain a root shell because the process is already running as root. Attack: unprivileged user triggers the buffer overflow, overwrites the return address, redirects execution to attacker-controlled shellcode or ROP chain, and spawns a root shell. Mitigations: (1) Remove SUID and use Linux capabilities instead: setcap with only the specific capability needed (e.g., cap_net_raw if it needs raw sockets). The application gets only the required privilege, not full root. (2) Apply an AppArmor or SELinux profile to the binary, confining it to only its required files and operations even if exploited with root privileges. (3) Compile the application with security mitigations: full ASLR (position-independent executable), stack canaries (stack smashing protection), and RELRO (read-only GOT) to make exploitation significantly harder.",
+            "rubric": [
+              {
+                "key": "Correct explanation of SUID risk with buffer overflow",
+                "value": 2
+              },
+              {
+                "key": "Valid attack scenario description",
+                "value": 2
+              },
+              {
+                "key": "Three substantive mitigations with technical detail",
                 "value": 3
               }
             ]
           },
           {
-            "question": "A Docker container running as root was compromised. The attacker escaped the container and gained host access. Explain two specific mechanisms that failed and two controls that would have prevented the escape.",
+            "question": "Process Explorer shows svchost.exe (PID 1234) running under the SYSTEM account with an unusual DLL loaded from C:\\Users\\Public\\Downloads\\update.dll and an active network connection to an IP in Eastern Europe. Describe your investigation steps and the indicators that confirm this is malicious.",
             "type": "short_answer",
-            "points": 10,
-            "answer": "Failed mechanisms: (1) Running the container as root with all capabilities, allowing the attacker to use CAP_SYS_ADMIN to mount the host filesystem or exploit kernel vulnerabilities. (2) No seccomp profile, allowing dangerous system calls like mount, ptrace, and unshare. Prevention controls: (1) Run the container as a non-root user (USER directive in Dockerfile) with rootless Docker or Podman, eliminating root-level kernel interaction. (2) Apply a restrictive seccomp profile that blocks unnecessary system calls, and drop all capabilities except those explicitly required.",
+            "points": 7,
+            "answer": "Investigation: (1) Check the DLL path: legitimate svchost DLLs load from C:\\Windows\\System32. A DLL in C:\\Users\\Public\\Downloads is highly suspicious. (2) Check DLL signature: right-click the DLL in Process Explorer, verify digital signature. Unsigned or self-signed DLLs in svchost are suspicious. (3) Submit DLL hash to VirusTotal via Process Explorer integration. (4) Examine the network connection: destination IP, port, frequency, and data volume. Check threat intel for the IP. (5) Check parent process: svchost should be spawned by services.exe. If the parent is unexpected, the process may be masquerading. (6) Compare with legitimate svchost instances: they should use -k flags corresponding to service groups. Malicious indicators confirming compromise: DLL loaded from user-writable directory, unsigned DLL, network connection to unrecognized foreign IP, DLL hash flagged on VirusTotal, process behavior inconsistent with its declared service group. Immediate response: capture memory of the process, capture the DLL for analysis, check if other systems have the same DLL, then isolate the system.",
             "rubric": [
               {
-                "key": "Two failed mechanisms correctly identified",
-                "value": 4
+                "key": "Systematic investigation steps",
+                "value": 3
               },
               {
-                "key": "Two valid prevention controls with detail",
-                "value": 4
+                "key": "Correct identification of malicious indicators",
+                "value": 2
               },
               {
-                "key": "Technical accuracy throughout",
+                "key": "Appropriate immediate response actions",
                 "value": 2
               }
             ]
           }
         ],
-        "total_points": 20
+        "total_points": 22
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "Service Hardening, Registry Security, and Logging",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "You are hardening a Linux web server running Apache. Write the systemd security directives you would add to the Apache service unit file and explain what each directive protects against.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "ProtectSystem=strict: mounts the entire file system read-only except for /dev, /proc, and /sys. Prevents the compromised web server from modifying system binaries or configuration files. ReadWritePaths=/var/www/uploads: allows write access only to the upload directory. PrivateTmp=yes: creates a private /tmp namespace. Prevents the web server from accessing temporary files of other services. NoNewPrivileges=yes: prevents the process from gaining additional privileges through SUID binaries, capabilities, or other mechanisms. Blocks privilege escalation. CapabilityBoundingSet=CAP_NET_BIND_SERVICE: drops all Linux capabilities except the ability to bind to privileged ports. ProtectHome=yes: makes /home, /root, and /run/user inaccessible. Prevents access to user home directories. ProtectKernelTunables=yes: makes /proc and /sys read-only. Prevents modification of kernel parameters. PrivateDevices=yes: creates a private /dev with only essential pseudo-devices. Prevents access to physical devices. SystemCallFilter=@system-service: restricts system calls to those typically needed by services, blocking dangerous calls.",
+            "rubric": [
+              {
+                "key": "At least six directives with correct syntax",
+                "value": 3
+              },
+              {
+                "key": "Accurate explanation of what each protects against",
+                "value": 3
+              },
+              {
+                "key": "Demonstrates defense-in-depth approach",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "An organization's vulnerability scan reveals CVE-2024-1234 with a CVSS base score of 9.8 on a production database server. The vendor patch requires a reboot, and the next maintenance window is in five days. Describe a risk-based approach including immediate actions and the factors that determine whether an emergency maintenance window is warranted.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "CVSS 9.8 is Critical severity, typically indicating remote code execution without authentication. Immediate actions (within hours): (1) Check CISA KEV catalog for active exploitation. (2) Apply compensating controls: restrict network access to the database server to only required application servers via firewall rules. (3) Enable enhanced monitoring on the database server for signs of exploitation. (4) Begin patch testing on staging database immediately. Factors for emergency maintenance window: (1) Active exploitation in the wild: if yes, emergency patch within 24-48 hours regardless of schedule. (2) Internet-facing or internal only: internet-facing with CVSS 9.8 warrants emergency action. Internal-only with compensating controls may wait for the scheduled window. (3) Compensating control effectiveness: if firewall rules can fully restrict access to trusted sources, the risk is substantially reduced. (4) Business impact of unplanned downtime versus risk of exploitation. (5) Patch testing results: if the patch passes staging tests within 24 hours, proceed with emergency deployment. Decision: given CVSS 9.8, if active exploitation exists or the server is internet-accessible, request an emergency maintenance window within 48 hours.",
+            "rubric": [
+              {
+                "key": "Appropriate immediate compensating controls",
+                "value": 3
+              },
+              {
+                "key": "Correct risk factors for emergency vs scheduled patching",
+                "value": 2
+              },
+              {
+                "key": "Clear decision framework with justified recommendation",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "An attacker gains access to a Linux server and wants to cover their tracks. They run: echo > /var/log/auth.log and unset HISTFILE. What evidence survives these anti-forensic actions, and what logging configuration would have made these actions ineffective?",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Evidence that survives: (1) If auditd is configured, audit logs (/var/log/audit/audit.log) record the commands run including the echo and unset. auditd operates at the kernel level, independent of shell history. (2) If remote syslog is configured, a copy of auth.log already exists on the remote server that the attacker cannot access. (3) The file modification timestamp on auth.log shows when it was truncated, and the sudden drop in file size is anomalous. (4) Journal entries in systemd journal (journalctl) may retain authentication events if persistent journal storage is enabled. (5) wtmp/btmp binary logs may still contain login records if the attacker only cleared auth.log. Configuration for resilience: (1) Remote syslog: forward all logs to a central server in real-time (*.* @@logserver:514). The attacker would need to compromise the log server too. (2) auditd with immutable flag (-e 2): once set, audit rules cannot be changed without a reboot, preventing the attacker from disabling auditing. (3) Append-only attribute on log files: chattr +a /var/log/auth.log prevents truncation even by root. (4) Log integrity monitoring: hash-based verification detects tampering.",
+            "rubric": [
+              {
+                "key": "Identifies evidence surviving the anti-forensic actions",
+                "value": 3
+              },
+              {
+                "key": "Describes logging configuration that defeats these techniques",
+                "value": 3
+              },
+              {
+                "key": "Demonstrates understanding of defense-in-depth for logging",
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "total_points": 22
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "Patch Management, Security Baselines, and Compliance",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "A Docker container running as root with --privileged flag was compromised, and the attacker escaped to the host. Identify three specific security failures in this container configuration and describe the control that would have prevented each escape vector.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Failure 1: Running as root inside the container. Root in a container maps to root on the host (without user namespaces), providing maximum kernel-level interaction. Control: Run as non-root user using USER directive in Dockerfile and rootless Docker/Podman. Failure 2: --privileged flag grants ALL Linux capabilities including CAP_SYS_ADMIN, which allows mounting the host filesystem. The attacker can mount /dev/sda1 inside the container and access the entire host filesystem. Control: Never use --privileged. Drop all capabilities (--cap-drop=ALL) and add only required ones. Failure 3: No seccomp profile. The default Docker seccomp profile blocks 44 system calls including mount, ptrace, and unshare. --privileged disables the seccomp profile. Without it, the attacker can use dangerous system calls for escape. Control: Apply a restrictive custom seccomp profile even if elevated capabilities are needed. Additional: no AppArmor/SELinux confinement (--privileged disables these), no read-only root filesystem, and potentially host namespace sharing. Each represents a defense layer that --privileged removes.",
+            "rubric": [
+              {
+                "key": "Three distinct failures correctly identified",
+                "value": 3
+              },
+              {
+                "key": "Correct preventive control for each failure",
+                "value": 3
+              },
+              {
+                "key": "Technical accuracy of escape mechanism explanation",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Your CIS Benchmark scan shows 85% compliance on a production web server. The 15% non-compliance includes: USB storage not disabled, password history set to 5 instead of 24, and NTP not using authenticated time sources. The application team says disabling USB will break their backup process. How do you handle this?",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Password history: increase from 5 to 24 immediately. This is a straightforward policy change with no operational impact. Prevents password reuse across 24 changes. No exception needed. NTP authentication: configure chrony or ntpd with authenticated NTP sources using NTS (Network Time Security) or symmetric key authentication. Accurate and authentic time is critical for log correlation, certificate validation, and forensic timelines. No exception needed; implement within one week. USB storage: document a formal exception with compensating controls. Steps: (1) Verify the backup process genuinely requires USB (explore alternative: network-based backup). (2) If USB is truly required, implement compensating controls: whitelist only the specific USB devices used for backup by vendor and serial number, restrict USB access to only the backup service account, enable USB device insertion logging, physically secure the USB devices when not in use. (3) Document the exception with risk owner (application team manager), compensating controls, and review date (quarterly). (4) Track this as a known risk in the risk register. Never silently accept non-compliance; always document, mitigate, and review.",
+            "rubric": [
+              {
+                "key": "Addresses each finding with appropriate action",
+                "value": 2
+              },
+              {
+                "key": "Proper exception handling for USB with compensating controls",
+                "value": 3
+              },
+              {
+                "key": "Follows formal exception management process",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between a CIS Benchmark Level 1 and Level 2 recommendation using a specific example. When would an organization choose Level 1 over Level 2?",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "CIS Level 1: practical security settings that can be applied to most systems without significant impact on functionality or usability. Example: ensure password minimum length is 14 characters. This improves security with minimal user impact. CIS Level 2: defense-in-depth settings for high-security environments that may reduce functionality or usability. Example: ensure all removable media drives are disabled. This significantly reduces attack surface but prevents legitimate USB device use. Level 1 chosen when: (1) General-purpose workstations and servers where user productivity must be maintained. (2) Systems running diverse applications where restrictive settings may cause compatibility issues. (3) Organizations with moderate risk tolerance and limited security staff to manage exception requests. (4) Initial hardening phase before organizational maturity supports Level 2. Level 2 chosen when: (1) Systems handling classified or highly sensitive data. (2) Internet-facing servers with high attack exposure. (3) Regulated environments requiring maximum security (DoD, financial). (4) Systems with well-defined, limited functionality where restrictions do not impact operations. Many organizations apply Level 1 broadly and Level 2 selectively to high-value assets.",
+            "rubric": [
+              {
+                "key": "Clear distinction with specific Level 1 and Level 2 examples",
+                "value": 3
+              },
+              {
+                "key": "Appropriate scenarios for choosing each level",
+                "value": 2
+              },
+              {
+                "key": "Practical organizational considerations",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 22
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "Container Security, Mobile OS, and OS Forensics",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "During a forensic investigation of a compromised Windows workstation, you find that .bash_history equivalent (PowerShell ConsoleHost_history.txt) is empty, the Security Event Log shows a gap of six hours, and the system time was changed and changed back. What do these findings indicate, and what alternative evidence sources would you examine?",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "These findings indicate deliberate anti-forensic activity by a sophisticated attacker. Empty PowerShell history: the attacker cleared or redirected the history file to hide commands they executed. Time modification: changing the system clock to create false timestamps on created/modified files, then changing it back to hide the manipulation. However, the Security Event Log recorded Event ID 4616 (time change) creating evidence of the tampering. Event Log gap: the attacker cleared the Security log to remove evidence of their activities, but the gap itself is evidence that something was deleted. Alternative evidence sources: (1) Windows Prefetch files in C:\\Windows\\Prefetch: record application execution even if logs are cleared. Check for suspicious executables. (2) NTFS MFT (Master File Table): contains file creation/modification timestamps that may not match the manipulated times, revealing the deception. (3) Shimcache and Amcache: Windows application compatibility database records program execution history independently of event logs. (4) Memory analysis with Volatility: if memory was captured, running processes and network connections at the time of capture. (5) Remote SIEM: if event logs were forwarded before being cleared, the remote copies contain the deleted events. (6) Volume Shadow Copies: may contain previous versions of cleared log files.",
+            "rubric": [
+              {
+                "key": "Correctly interprets anti-forensic indicators",
+                "value": 3
+              },
+              {
+                "key": "At least four valid alternative evidence sources",
+                "value": 3
+              },
+              {
+                "key": "Demonstrates understanding of evidence resilience",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Compare iOS and Android security architectures in three specific areas: application sandboxing, update delivery, and hardware security. For each area, identify which platform has an advantage and explain why.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Application sandboxing: Both platforms sandbox applications, but iOS uses a more restrictive model with mandatory App Store review and strict inter-app communication controls. Android uses Linux UID per app with SELinux enforcement. Advantage: iOS, because the closed app review process catches many malicious apps before distribution, and the stricter IPC model limits data sharing between apps. Update delivery: iOS pushes updates directly from Apple to all supported devices simultaneously. Android updates pass through device manufacturers and carriers, causing months of delay. Advantage: iOS, significantly. Android fragmentation means many devices run months or years behind on security patches. Google's Project Treble has improved this but not eliminated the gap. Hardware security: iOS uses the custom-designed Secure Enclave coprocessor for key storage, biometric processing, and secure boot, with consistent implementation across all iPhones. Android uses ARM TrustZone TEE and hardware-backed keystore, but implementation quality varies across manufacturers. Google's Titan M chip in Pixel phones approaches Secure Enclave quality, but most Android devices rely on third-party implementations. Advantage: iOS for consistency; Android Pixel devices for open auditability.",
+            "rubric": [
+              {
+                "key": "Accurate comparison across all three areas",
+                "value": 3
+              },
+              {
+                "key": "Justified advantage assessment for each area",
+                "value": 2
+              },
+              {
+                "key": "Demonstrates nuanced understanding of both platforms",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A forensic investigator images a suspected compromised Linux server and finds that /var/log/auth.log shows a successful SSH login from an unknown IP at 2:00 AM, followed by commands creating a new user with sudo privileges. The investigator also finds a cron job running every 5 minutes that downloads and executes a script from an external URL. Describe the attack narrative and the persistence mechanism.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Attack narrative: (1) Initial access: the attacker gained SSH access at 2:00 AM from the unknown IP. This was likely achieved through credential compromise (brute force, credential stuffing, or stolen keys). The unusual time suggests the attacker chose a period of low monitoring. (2) Privilege escalation/persistence: after logging in, the attacker created a new user account with sudo privileges. This provides a backup access method if the original compromised account password is changed. The new account is persistence mechanism 1. (3) Persistent C2/malware delivery: the cron job downloading and executing a script every 5 minutes is persistence mechanism 2 and a C2 channel. Even if the backdoor user is discovered and removed, the cron job continues to fetch and execute commands. The external script can change at any time, allowing the attacker to update their tools or instructions. (4) The combination of a backdoor user AND a cron-based C2 shows a sophisticated attacker establishing redundant persistence. Forensic actions: check the SSH authorized_keys file for added keys (persistence mechanism 3). Check the external URL content. Examine what the cron script does. Check for additional persistence in systemd services, .bashrc modifications, or kernel modules.",
+            "rubric": [
+              {
+                "key": "Correct reconstruction of attack timeline",
+                "value": 3
+              },
+              {
+                "key": "Identifies both persistence mechanisms with explanation",
+                "value": 2
+              },
+              {
+                "key": "Suggests additional forensic investigation steps",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 22
       }
     ],
     "major_assignments": [
       {
         "assignment": 1,
         "title": "Operating System Hardening Project",
-        "week_assigned": 2,
-        "week_due": 5,
-        "points": 100,
-        "description": "Harden both a Linux and Windows server from a default installation to meet CIS Benchmark Level 2 compliance. Document every change with before/after evidence and produce a hardening guide.",
+        "week_assigned": 3,
+        "week_due": 7,
+        "points": 150,
+        "description": "Harden both a Linux (Ubuntu Server 22.04) and Windows Server 2022 from default installations to meet CIS Benchmark Level 2 compliance. Document every configuration change with before/after evidence, produce a reusable hardening guide, and verify effectiveness through vulnerability scanning.",
         "objectives": [
-          "Apply CIS Benchmark hardening standards to Linux and Windows",
-          "Verify hardening effectiveness with vulnerability scanning",
-          "Document all changes with before/after evidence",
-          "Produce a reusable hardening guide for each OS"
+          "Apply CIS Benchmark Level 2 hardening standards to both Linux and Windows",
+          "Verify hardening effectiveness with vulnerability scanning before and after",
+          "Document all changes with before/after evidence and security rationale",
+          "Produce reusable hardening guides suitable for production deployment"
         ],
         "requirements": {},
         "deliverables": [
-          "CIS Benchmark compliance report for Linux (before and after)",
-          "CIS Benchmark compliance report for Windows (before and after)",
-          "Hardening guide with step-by-step instructions",
-          "Vulnerability scan results showing remediation"
+          "CIS Benchmark compliance report for Linux showing before and after scores",
+          "CIS Benchmark compliance report for Windows showing before and after scores",
+          "Step-by-step hardening guide for each operating system with security rationale for each change",
+          "Vulnerability scan results showing before and after comparison",
+          "Exception documentation for any controls not applied with compensating controls"
         ],
         "grading_rubric": {
-          "linux_hardening": {
-            "points": 30,
+          "technical_implementation": {
+            "points": 45,
             "criteria": [
-              "CIS Level 2 compliance achieved",
-              "SELinux or AppArmor properly configured",
-              "All unnecessary services disabled",
-              "Proper file permissions and ownership"
+              "Linux: CIS Level 2 compliance achieved with 90%+ passing controls",
+              "Linux: SELinux or AppArmor properly configured in enforcing mode",
+              "Windows: CIS Level 2 compliance achieved with 90%+ passing controls",
+              "Windows: AppLocker or WDAC policies implemented and GPOs configured"
             ]
           },
-          "windows_hardening": {
-            "points": 30,
+          "visual_quality": {
+            "points": 35,
             "criteria": [
-              "CIS Level 2 compliance achieved",
-              "GPOs properly configured and applied",
-              "AppLocker or WDAC policies implemented",
-              "Audit policies configured"
+              "Before and after vulnerability scan comparison clearly presented",
+              "All critical and high findings remediated or documented with exceptions",
+              "Functional testing confirms services still operate correctly after hardening",
+              "Compliance score improvement quantified and documented"
             ]
           },
-          "verification": {
-            "points": 20,
+          "performance_optimization": {
+            "points": 40,
             "criteria": [
-              "Before and after vulnerability scan comparison",
-              "All critical findings remediated",
-              "Functional testing confirms services still operate",
-              "Compliance score improvement documented"
+              "Clear step-by-step hardening guide reproducible by another administrator",
+              "Screenshots of all configuration changes with proper annotation",
+              "Security rationale explaining why each change improves security",
+              "Rollback procedures included for each major change"
             ]
           },
           "documentation": {
-            "points": 20,
+            "points": 30,
             "criteria": [
-              "Clear step-by-step hardening guide",
-              "Screenshots of all configuration changes",
-              "Explanation of security rationale for each change",
-              "Rollback procedures included"
+              "Professional documentation suitable for production environment use",
+              "Exception documentation with compensating controls for any skipped items",
+              "Testing methodology documented",
+              "Guide is organized logically following the hardening workflow"
             ]
           }
         },
         "rubric": [
           {
             "attributes": {
-              "points": 100,
+              "points": 150,
               "criteria": [
-                "Both operating systems hardened to CIS Level 2 compliance",
-                "Comprehensive documentation with before/after evidence",
+                "Both operating systems hardened to CIS Level 2 compliance with evidence",
+                "Comprehensive documentation with before/after proof of improvement",
                 "Reusable hardening guide suitable for production deployment",
                 "Demonstrates thorough understanding of OS security mechanisms"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Enterprise Logging and Monitoring Architecture",
+        "week_assigned": 8,
+        "week_due": 11,
+        "points": 150,
+        "description": "Design and implement a comprehensive logging and monitoring architecture for a mixed Windows/Linux environment. Configure audit policies on both platforms, implement centralized log collection, create detection rules for common attack scenarios, and demonstrate detection capability through simulated attacks.",
+        "objectives": [
+          "Configure comprehensive audit logging on Windows and Linux systems",
+          "Implement centralized log collection with integrity protection",
+          "Create detection rules for common attack scenarios",
+          "Demonstrate detection capability through simulated attack exercises"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Audit policy configuration document for Windows (Advanced Audit Policy) and Linux (auditd rules)",
+          "Centralized logging architecture diagram with data flow and retention plan",
+          "Detection rules for at least five attack scenarios with expected alerts",
+          "Simulated attack exercise results showing successful detection for each scenario",
+          "Logging best practices guide with tuning recommendations"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 50,
+            "criteria": [
+              "Windows Advanced Audit Policy covers all critical event categories",
+              "Linux auditd rules monitor all security-relevant activities",
+              "Centralized log collection functioning with integrity verification",
+              "Detection rules correctly trigger on simulated attack scenarios"
+            ]
+          },
+          "visual_quality": {
+            "points": 30,
+            "criteria": [
+              "Architecture diagram clearly shows log flow from sources to central repository",
+              "Detection rules are well-documented with rationale and expected behavior",
+              "Attack simulation results clearly show detection with evidence",
+              "False positive analysis included for each detection rule"
+            ]
+          },
+          "performance_optimization": {
+            "points": 40,
+            "criteria": [
+              "At least five distinct attack scenarios detected",
+              "Attack scenarios cover multiple attack phases (initial access, escalation, persistence, exfiltration)",
+              "Detection rules minimize false positives while maintaining detection capability",
+              "Log volume and storage analysis included with practical retention recommendations"
+            ]
+          },
+          "documentation": {
+            "points": 30,
+            "criteria": [
+              "Professional documentation suitable for SOC team reference",
+              "Tuning guide for adjusting detection thresholds",
+              "Troubleshooting section for common logging issues",
+              "Implementation timeline and rollout plan"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Comprehensive logging architecture covering Windows and Linux",
+                "Effective detection rules with demonstrated capability",
+                "Professional documentation suitable for SOC operations",
+                "Practical and implementable design with performance considerations"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Container Security Assessment and Hardening",
+        "week_assigned": 12,
+        "week_due": 15,
+        "points": 200,
+        "description": "Assess the security of a provided containerized application stack (web frontend, API backend, database), identify vulnerabilities at the image, configuration, and runtime levels, implement comprehensive hardening, and produce a security assessment report with before/after comparison.",
+        "objectives": [
+          "Assess container security across image, configuration, and runtime dimensions",
+          "Implement container hardening following CIS Docker Benchmark",
+          "Verify hardening effectiveness through re-assessment",
+          "Produce a professional container security assessment report"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Image vulnerability scan results for all three containers (before and after)",
+          "Docker configuration audit against CIS Docker Benchmark",
+          "Hardened Dockerfiles and docker-compose.yml with security annotations",
+          "Runtime security configuration including seccomp profiles and capability restrictions",
+          "Container security assessment report with remediation evidence",
+          "Automated security scanning pipeline configuration"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 70,
+            "criteria": [
+              "All critical and high image vulnerabilities remediated or documented",
+              "CIS Docker Benchmark compliance achieved for host and container configuration",
+              "Containers run as non-root with dropped capabilities and seccomp profiles",
+              "Network policies restrict container-to-container communication to required paths only"
+            ]
+          },
+          "visual_quality": {
+            "points": 40,
+            "criteria": [
+              "Clear before-and-after comparison of vulnerability scan results",
+              "Dockerfiles annotated with security rationale for each directive",
+              "Architecture diagram showing container network communication paths",
+              "Evidence of runtime security controls functioning correctly"
+            ]
+          },
+          "performance_optimization": {
+            "points": 50,
+            "criteria": [
+              "Automated scanning pipeline catches new vulnerabilities in CI/CD",
+              "Base images selected for minimal attack surface",
+              "Multi-stage builds used to exclude build tools from production images",
+              "Container orchestration security considerations addressed"
+            ]
+          },
+          "documentation": {
+            "points": 40,
+            "criteria": [
+              "Professional container security assessment report",
+              "Hardening guide suitable for development team adoption",
+              "CI/CD integration documentation for continuous security scanning",
+              "Risk register for any accepted vulnerabilities with justification"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 200,
+              "criteria": [
+                "Thorough container security assessment across all dimensions",
+                "Effective hardening with measurable improvement demonstrated",
+                "Automated security pipeline for continuous vulnerability detection",
+                "Professional documentation suitable for development and security teams"
               ]
             }
           }
@@ -436,31 +1440,31 @@
   },
   "grading_breakdown": {
     "weekly_quizzes": {
-      "percentage": 15,
-      "description": "Regular assessment of OS security concepts and hardening techniques"
+      "percentage": 20,
+      "description": "Five quizzes assessing OS security concepts, hardening techniques, and practical security analysis skills"
     },
     "lab_assignments": {
-      "percentage": 25,
-      "description": "Hands-on exercises with Linux and Windows security configuration"
+      "percentage": 15,
+      "description": "Hands-on lab exercises with Windows and Linux security configuration, containerization, and forensic tools"
     },
     "major_assignments": {
-      "percentage": 25,
-      "description": "Comprehensive OS hardening project with CIS Benchmark compliance"
+      "percentage": 30,
+      "description": "Three comprehensive projects: OS hardening, logging architecture, and container security assessment"
     },
     "midterm_examination": {
       "percentage": 15,
-      "description": "Assessment covering OS architecture, access controls, and hardening"
+      "description": "Assessment covering OS architecture, Windows/Linux security, user management, file systems, and service hardening"
     },
-    "final_examination": {
+    "final_project": {
       "percentage": 20,
-      "description": "Cumulative exam covering all operating system security topics"
+      "description": "Hands-on practical exam requiring comprehensive hardening and security verification of both Windows and Linux systems"
     }
   },
   "course_policies": {
-    "attendance": "Attendance is mandatory for all lab sessions. More than 2 unexcused absences may result in a grade reduction.",
-    "late_submissions": "Late assignments are penalized 10% per day. No submissions accepted more than 5 days late without prior arrangement.",
-    "collaboration": "Lab exercises may be completed in pairs. Hardening reports and documentation must be individual work.",
-    "academic_integrity": "All configuration changes must be performed on designated lab VMs only. Modifying shared infrastructure is prohibited.",
-    "lab_safety": "Students must only modify systems within their assigned lab environment. Unauthorized changes to shared resources will result in disciplinary action."
+    "attendance": "Attendance is mandatory for all lab sessions. More than 2 unexcused absences may result in a grade reduction of one letter grade. Lab sessions involve shared infrastructure that cannot be replicated independently.",
+    "late_submissions": "Late assignments are penalized 10% per day for up to 5 days. No submissions accepted more than 5 days late without prior written arrangement. VM snapshots are reset weekly, so lab work must be completed within the assigned timeframe.",
+    "collaboration": "Lab exercises may be completed in pairs. Hardening reports, compliance documentation, and exam work must be individual. Configuration scripts may be shared within the class but must be independently applied and verified.",
+    "academic_integrity": "All configuration changes must be performed on designated lab VMs only. Modifying shared infrastructure, accessing other students' VMs, or using tools against unauthorized systems is strictly prohibited and will result in course failure.",
+    "technology_requirements": "Students must have a laptop capable of running VirtualBox or VMware with at least 16GB RAM and 150GB free storage for Windows and Linux VMs. University lab infrastructure provides shared Active Directory and centralized logging servers."
   }
 }

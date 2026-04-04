@@ -4,7 +4,7 @@
     "title": "Mobile Game Development",
     "credit_hours": 3,
     "duration": "15 weeks",
-    "meeting_schedule": "Monday, Wednesday - 3 hours per week",
+    "meeting_schedule": "Tuesday, Thursday - 3 hours per week",
     "prerequisites": [
       "GD301 - Game Programming",
       "GD201 - 2D Game Development"
@@ -14,252 +14,866 @@
     {
       "week_number": 1,
       "session_number": 1,
-      "topic": "Introduction to Mobile Game Development",
+      "topic": "Mobile Platform Differences: iOS and Android",
       "duration": "90 minutes",
       "learning_objectives": [
-        "Understand the mobile gaming landscape and market dynamics",
-        "Identify key differences between desktop and mobile game development",
-        "Compare iOS and Android platform capabilities and constraints"
+        "Compare iOS and Android hardware architectures and their impact on game development",
+        "Understand mobile GPU rendering models and how they differ from desktop GPUs",
+        "Identify the key constraints of mobile development: memory, battery, thermal, and storage",
+        "Configure Unity for dual-platform mobile development"
       ],
       "readings": [
         "Beginning Mobile Game Development Ch. 1-2",
         "Apple Human Interface Guidelines - Game Design",
-        "Android Game Developer Documentation - Overview"
+        "Android Game Developer Documentation - Platform Overview",
+        "ARM GPU Best Practices Developer Guide Ch. 1-2"
       ],
       "lecture_notes": {
-        "introduction": "Welcome to Mobile Game Development. Mobile is the largest gaming platform by revenue and player count, and developing for it requires a distinct mindset from desktop or console development.",
+        "introduction": "Welcome to Mobile Game Development. Mobile gaming generates more revenue than console and PC gaming combined, but developing for mobile requires a fundamentally different mindset. Desktop game developers have gigabytes of RAM, dedicated GPUs with hundreds of watts of thermal headroom, and precise keyboard-mouse input. Mobile developers have constrained memory (2-6GB shared between CPU and GPU), tile-based GPUs that minimize memory bandwidth at the expense of different performance characteristics, battery-powered devices that throttle under sustained load, and imprecise touch input on a screen that your thumbs occlude. These constraints are not limitations to work around -- they are the defining characteristics of the platform. A great mobile game is not a desktop game made smaller; it is a game designed from the ground up for the way people use phones and tablets. Today we survey the iOS and Android hardware landscape, examine the tile-based deferred rendering architecture used by mobile GPUs (Apple GPU, Adreno, Mali), discuss the fragmentation challenge on Android versus the controlled ecosystem of iOS, and set up Unity for building to both platforms simultaneously.",
         "key_concepts": [
-          "Mobile gaming market overview and revenue models",
-          "iOS vs Android hardware capabilities and fragmentation",
-          "Mobile GPU architectures (tile-based rendering)",
-          "Memory and storage constraints on mobile devices",
-          "Battery life considerations for sustained gameplay"
+          "iOS hardware ecosystem: A-series and M-series chips, Metal API, controlled device matrix (iPhone/iPad models)",
+          "Android hardware ecosystem: Qualcomm Snapdragon, Samsung Exynos, MediaTek Dimensity, Vulkan and OpenGL ES APIs",
+          "Tile-based deferred rendering (TBDR): mobile GPUs process the screen in small tiles to minimize memory bandwidth",
+          "Android fragmentation: thousands of device configurations with varying GPU capabilities, screen sizes, and OS versions",
+          "Memory constraints: typical 2-4GB RAM shared between system and GPU, aggressive OS memory pressure and app termination",
+          "Battery and thermal budgets: sustained high-performance workloads cause thermal throttling and battery drain",
+          "Storage considerations: initial download size limits (200MB for cellular), expandable storage on Android, SSD vs eMMC speeds",
+          "Display diversity: aspect ratios from 16:9 to 21:9, refresh rates from 60Hz to 120Hz, notches and punch-holes",
+          "Unity mobile build targets: iOS (Xcode required, ARM64 only), Android (SDK, NDK, Gradle, ARM64 and ARMv7)",
+          "Minimum spec targeting: defining the lowest hardware tier you support and designing scalable quality settings"
         ],
-        "demonstration": "Setting up a Unity project with mobile build targets for both iOS and Android, including configuring player settings and testing with device simulators",
+        "demonstration": "Setting up a Unity project with both iOS and Android build targets configured, demonstrating the differences in Player Settings for each platform, building and deploying to a physical Android device, and running the Unity Profiler over USB to observe the baseline frame time breakdown on mobile hardware.",
         "setup_requirements": [
-          "Unity 2023.2 LTS with iOS and Android build support modules",
-          "Xcode 15+ for iOS builds (macOS required)",
-          "Android Studio with SDK 33+ and NDK",
-          "Physical iOS or Android device for testing"
+          "Unity 2023.2 LTS with iOS and Android build support modules installed",
+          "Android Studio with SDK 33+ and NDK installed",
+          "Xcode 15+ on macOS for iOS builds",
+          "Physical Android device with USB debugging enabled, or physical iOS device with developer provisioning"
         ],
         "review": [
           {
-            "key": "Tile-Based Rendering",
-            "value": "Mobile GPUs process the screen in small tiles to minimize memory bandwidth, which fundamentally affects how shaders and overdraw should be handled"
+            "key": "Tile-Based Deferred Rendering",
+            "value": "Mobile GPUs divide the screen into small tiles (16x16 or 32x32 pixels) and render each tile entirely in on-chip memory before writing the result to main memory once. This dramatically reduces memory bandwidth but means overdraw is especially expensive."
           },
           {
-            "key": "Platform Fragmentation",
-            "value": "Android spans thousands of device configurations while iOS has a controlled set; both require careful minimum-spec targeting and scalable quality settings"
-          }
-        ]
-      }
-    },
-    {
-      "week_number": 1,
-      "session_number": 2,
-      "topic": "Touch Input Design and Mobile UI Patterns",
-      "duration": "90 minutes",
-      "learning_objectives": [
-        "Design intuitive touch-based control schemes for games",
-        "Implement multi-touch gesture recognition",
-        "Apply mobile-specific UI patterns for game interfaces"
-      ],
-      "readings": [
-        "Touch Interaction Design for Games Ch. 3-5",
-        "Unity Input System Documentation - Touch Support"
-      ],
-      "lecture_notes": {
-        "introduction": "Touch input is fundamentally different from keyboard and mouse. Your thumbs occlude the screen, precision is lower, and players expect gesture-based interactions that feel native to the device.",
-        "key_concepts": [
-          "Touch event lifecycle: began, moved, stationary, ended, canceled",
-          "Virtual joystick and button placement ergonomics",
-          "Multi-touch gesture recognition (pinch, swipe, rotate)",
-          "Haptic feedback integration for touch confirmation",
-          "Adaptive UI layouts for different screen sizes and aspect ratios"
-        ],
-        "demonstration": "Implementing a virtual joystick with dead zones and a gesture recognizer that handles simultaneous tap, swipe, and pinch inputs using Unity's new Input System",
-        "setup_requirements": [
-          "Unity Input System package installed",
-          "Unity project from previous session",
-          "Mobile device or touch-capable simulator"
-        ],
-        "review": [
-          {
-            "key": "Virtual Joystick Dead Zones",
-            "value": "A small circular area at the joystick center where input is ignored, preventing jitter from imprecise thumb placement; typically 10-15% of joystick radius"
+            "key": "Android Fragmentation",
+            "value": "Over 24,000 distinct Android device models with different GPUs, screen sizes, OS versions, and performance levels. Requires defining a minimum spec, testing on representative devices across GPU vendors, and implementing scalable quality settings."
           },
           {
-            "key": "Fitts's Law on Mobile",
-            "value": "Touch targets should be at least 44x44 points (Apple) or 48x48 dp (Android) to be reliably tappable; game UI buttons often need to be even larger"
+            "key": "Thermal Throttling",
+            "value": "After 5-15 minutes of sustained high GPU/CPU load, mobile devices reduce clock speeds to prevent overheating. A game that runs at 60fps initially may drop to 30fps after extended play if it runs too close to the hardware's thermal limit."
+          },
+          {
+            "key": "Shared Memory Architecture",
+            "value": "Unlike desktop systems with dedicated VRAM, mobile devices share a single pool of RAM between CPU and GPU. A texture loaded for rendering directly competes with memory used for game logic, audio, and the operating system."
           }
         ]
       }
     },
     {
       "week_number": 2,
-      "session_number": 3,
-      "topic": "Mobile Performance Optimization",
+      "session_number": 2,
+      "topic": "Touch Input Design Patterns",
       "duration": "90 minutes",
       "learning_objectives": [
-        "Profile mobile game performance using platform-specific tools",
-        "Optimize rendering for mobile GPU architectures",
-        "Manage memory and CPU budgets on constrained devices"
+        "Design intuitive touch-based control schemes for different game genres",
+        "Implement multi-touch gesture recognition for tap, swipe, pinch, and rotate",
+        "Apply ergonomic principles to virtual joystick and button placement",
+        "Handle input conflicts when multiple touch gestures overlap"
       ],
       "readings": [
-        "Unity Mobile Optimization Guide",
-        "ARM GPU Best Practices Developer Guide Ch. 4-6"
+        "Touch Interaction Design for Games Ch. 3-5",
+        "Unity Input System Documentation - Touch Support",
+        "Apple HIG - Touch and Gestures",
+        "Material Design - Touch Mechanics"
       ],
       "lecture_notes": {
-        "introduction": "Performance is not optional on mobile. Players expect 60fps, thermal throttling can cut your performance in half during extended sessions, and a game that drains the battery will get uninstalled.",
+        "introduction": "Touch input is fundamentally different from keyboard and mouse. Your thumbs occlude the bottom third of the screen, precision is measured in millimeters not pixels, there is no hover state, and players expect gesture-based interactions that feel native to the device. A mobile game that simply maps keyboard controls to on-screen buttons will always feel inferior to a game designed around touch from the start. The best mobile games -- Brawl Stars, Monument Valley, Geometry Dash -- use control schemes that feel natural on a touchscreen and would be worse on any other input device. Today we study the touch event lifecycle (began, moved, stationary, ended, canceled), design ergonomic control layouts based on thumb reach zones, implement a virtual joystick with dead zones and edge clamping, build a gesture recognizer that handles simultaneous tap-swipe-pinch without conflicts, and add haptic feedback to confirm touch interactions. We will work with Unity's new Input System, which provides a unified API for touch, gamepad, and keyboard input that simplifies cross-platform development. By the end of this session, you should be able to design a touch control scheme for any game genre and implement it with proper dead zones, gesture disambiguation, and haptic feedback.",
         "key_concepts": [
-          "Mobile profiling with Unity Profiler, Xcode Instruments, and Android GPU Inspector",
-          "Draw call batching and instancing for mobile GPUs",
-          "Texture compression formats: ASTC, ETC2, PVRTC",
-          "Shader complexity budgets and mobile-friendly alternatives",
-          "Thermal throttling detection and adaptive quality scaling"
+          "Touch event lifecycle: TouchPhase.Began, Moved, Stationary, Ended, Canceled and their frame timing",
+          "Thumb ergonomics: comfortable reach zones for left and right thumbs in portrait and landscape orientations",
+          "Virtual joystick design: static vs dynamic positioning, dead zone radius (10-15% of stick range), edge behavior",
+          "Gesture recognition: tap (short touch with minimal movement), swipe (directional movement above velocity threshold), pinch/rotate (two-finger)",
+          "Gesture disambiguation: priority systems and timing windows to resolve conflicts between tap and swipe, or single-tap and double-tap",
+          "Haptic feedback: UIImpactFeedbackGenerator on iOS, Vibrator API on Android, triggering on button press and collision events",
+          "Fitts's Law on mobile: minimum touch target size of 44pt (iOS) / 48dp (Android) for reliable tapping",
+          "Safe area handling: adjusting UI layout for notches, rounded corners, and home indicator bars",
+          "Input buffering for touch: queuing rapid touch inputs to prevent dropped inputs during high-action moments",
+          "Accessibility: supporting alternative input methods, adjustable control sizes, and one-handed play options"
         ],
-        "demonstration": "Profiling a sample scene on a physical device, identifying a draw call bottleneck, and reducing it from 400 to under 100 draw calls through static batching and texture atlasing",
+        "demonstration": "Implementing a complete touch input system for a top-down action game: a dynamic virtual joystick on the left side for movement (with dead zone and smooth return), a tap-to-shoot mechanic on the right side, swipe-to-dodge that coexists with the shoot tap without conflict, and haptic feedback on shooting and taking damage. Testing on a physical device to verify thumb reach comfort.",
         "setup_requirements": [
-          "Physical mobile device connected for profiling",
-          "Unity Profiler configured for remote profiling",
-          "Sample scene with intentional performance issues"
+          "Unity project with Input System package installed and configured for touch",
+          "Physical mobile device for testing touch ergonomics",
+          "UI Canvas configured with CanvasScaler for multiple screen sizes",
+          "Simple game character for demonstrating input response"
         ],
         "review": [
           {
-            "key": "ASTC Compression",
-            "value": "Adaptive Scalable Texture Compression supports variable block sizes from 4x4 to 12x12, allowing quality/size tradeoff per texture; universally supported on modern mobile GPUs"
+            "key": "Virtual Joystick Dead Zone",
+            "value": "A circular region at the center of the joystick where input is ignored, preventing jitter from imprecise thumb placement. Typically 10-15% of the joystick radius. Without a dead zone, the character drifts when the player rests their thumb on the stick."
           },
           {
-            "key": "Thermal Throttling",
-            "value": "After sustained heavy load, mobile devices reduce clock speeds to prevent overheating; games must monitor thermal state and reduce quality proactively to maintain framerate"
+            "key": "Gesture Disambiguation",
+            "value": "The process of determining which gesture the player intended when multiple gestures could match the same touch sequence. For example, a tap requires waiting a short delay (150-200ms) to confirm it is not the start of a swipe."
+          },
+          {
+            "key": "Dynamic Joystick",
+            "value": "A virtual joystick that appears wherever the player first touches the screen rather than being fixed in one position. Accommodates different hand sizes and grip positions. Disappears when the finger is lifted."
+          },
+          {
+            "key": "Safe Area Insets",
+            "value": "The rectangular region of the screen not obscured by device hardware (notches, rounded corners, home indicators). All interactive UI elements must be placed within the safe area. Unity provides Screen.safeArea to query the safe rectangle."
           }
         ]
       }
     },
     {
       "week_number": 3,
-      "session_number": 5,
-      "topic": "Monetization Models and Analytics Integration",
+      "session_number": 3,
+      "topic": "Mobile UI/UX Conventions",
       "duration": "90 minutes",
       "learning_objectives": [
-        "Evaluate different mobile game monetization strategies",
-        "Implement in-app purchase flows for iOS and Android",
-        "Integrate analytics SDKs to track player behavior and revenue metrics"
+        "Apply mobile-native UI design patterns to game interfaces",
+        "Implement responsive layouts that adapt to diverse screen sizes and aspect ratios",
+        "Design onboarding flows that teach game mechanics without interrupting play",
+        "Evaluate mobile game UI against platform-specific usability guidelines"
       ],
       "readings": [
-        "Free-to-Play: Making Money From Games You Give Away Ch. 3-7",
-        "Apple StoreKit Documentation - In-App Purchases",
-        "Google Play Billing Library Documentation"
+        "Mobile Game Design Essentials Ch. 6-8",
+        "Apple Human Interface Guidelines - UI Components",
+        "Material Design 3 - Game UI Patterns",
+        "Nielsen Norman Group: Mobile Game Usability Heuristics"
       ],
       "lecture_notes": {
-        "introduction": "A great mobile game that nobody can sustain financially is a failed product. Understanding monetization is as important as understanding game design, and analytics is how you measure whether your approach is working.",
+        "introduction": "Mobile game UI must accomplish everything desktop game UI does while contending with smaller screens, touch-only input, and players who give you about 30 seconds before deciding whether to keep playing or uninstall. Every tap should produce immediate visual feedback. Every menu should be reachable within two taps from gameplay. Every piece of information the player needs should be visible without memorizing icon meanings. Mobile players are often in environments with distractions -- on a bus, waiting in line, on a couch with the TV on -- so your UI must be self-explanatory and forgiving. Today we study the UI conventions that successful mobile games have established: bottom-aligned navigation for thumb accessibility, modal sheets that slide up from the bottom rather than dialog boxes, progress indicators that motivate continued play, currency and shop interfaces that are clear about what costs real money, and onboarding sequences that teach through doing rather than telling. We implement a complete game HUD with health bar, score, and ability cooldowns that adapts to screen sizes from a 5-inch phone to a 12.9-inch iPad, respects safe areas, and provides clear visual feedback for every player action.",
         "key_concepts": [
-          "Monetization models: premium, freemium, ad-supported, hybrid",
-          "In-app purchase types: consumable, non-consumable, subscriptions",
-          "Ad integration: rewarded video, interstitial, banner placement strategy",
-          "Key metrics: ARPDAU, LTV, retention rates, conversion funnels",
-          "Ethical monetization and avoiding predatory patterns"
+          "Mobile UI hierarchy: gameplay HUD (always visible), menus (one tap away), settings (two taps away), deep settings (three taps)",
+          "Bottom navigation pattern: primary actions within thumb reach at screen bottom, consistent across the app",
+          "Responsive layout with anchors: UI elements positioned relative to screen edges and safe areas, not absolute coordinates",
+          "Canvas Scaler strategies: Scale With Screen Size for consistent proportions, or Constant Physical Size for touch targets",
+          "Onboarding through play: progressive disclosure of mechanics through guided early-game sequences, not tutorial text screens",
+          "Visual feedback principles: every tap produces a response within 100ms (animation, sound, haptic), every state change is animated",
+          "Currency display conventions: clear distinction between premium (paid) and soft (earned) currencies, confirmation before real-money purchases",
+          "Notification badges and progression indicators: red dots for new content, progress bars for motivation, reward previews",
+          "Localization considerations: UI layouts that accommodate text expansion (German is 30% longer than English), RTL language support",
+          "Accessibility features: colorblind-safe palettes, scalable text, voiceover support, reduced motion options"
         ],
-        "demonstration": "Implementing a Unity IAP flow with server-side receipt validation, and integrating Firebase Analytics to track custom events for purchase funnel analysis",
+        "demonstration": "Building a complete mobile game HUD: health bar with animated damage and healing, score counter with punch animation on increase, ability buttons with cooldown radial fill, and a pause menu that slides up from the bottom with volume controls and quit confirmation. Testing the layout on phone (16:9), modern phone (19.5:9 with notch), and tablet (4:3) aspect ratios to verify responsive behavior.",
         "setup_requirements": [
-          "Unity IAP package configured",
-          "Apple Developer account with sandbox tester",
-          "Google Play Console with test track configured",
-          "Firebase project with Analytics enabled"
+          "Unity project with UI Toolkit or Canvas-based UI system",
+          "Device simulator with multiple screen configurations",
+          "UI sprite atlas for game HUD elements",
+          "DOTween or similar animation library for UI transitions"
         ],
         "review": [
           {
-            "key": "LTV (Lifetime Value)",
-            "value": "The total revenue a player generates over their entire engagement with the game; calculated as ARPDAU multiplied by average lifetime in days; must exceed customer acquisition cost for profitability"
+            "key": "Progressive Disclosure",
+            "value": "Introducing game mechanics one at a time through gameplay rather than front-loading all information. Level 1 teaches movement, Level 2 teaches combat, Level 3 teaches abilities. Each mechanic is learned by doing, not by reading."
           },
           {
-            "key": "Receipt Validation",
-            "value": "Server-side verification of purchase receipts with Apple/Google servers to prevent fraud; client-side validation alone is insufficient because the binary can be modified"
+            "key": "Responsive Anchoring",
+            "value": "UI elements are anchored to screen edges (top-left, bottom-center, etc.) with percentage-based offsets rather than fixed pixel positions. When the screen size changes, elements maintain their relative positions and appropriate spacing."
+          },
+          {
+            "key": "100ms Feedback Rule",
+            "value": "Player actions must produce visible feedback within 100ms to feel responsive. For touch: immediate color change on touch-down, animation on touch-up. For gameplay: immediate visual and audio acknowledgment of every input even before the game state resolves."
+          },
+          {
+            "key": "Premium Currency UX",
+            "value": "Real-money transactions require explicit confirmation dialogs, clear display of what the player receives, and a separate visual treatment from free currencies. Platform guidelines require specific disclosure language for purchases."
           }
         ]
       }
     },
     {
       "week_number": 4,
-      "session_number": 7,
-      "topic": "App Store Optimization and Launch Strategy",
+      "session_number": 4,
+      "topic": "Performance Budgets and Profiling",
       "duration": "90 minutes",
       "learning_objectives": [
-        "Apply ASO techniques to maximize organic discoverability",
-        "Prepare app store listings that convert views to installs",
-        "Plan a mobile game launch and soft-launch strategy"
+        "Establish and enforce performance budgets for mobile game subsystems",
+        "Profile mobile games using Unity Profiler, Xcode Instruments, and Android GPU Inspector",
+        "Identify and resolve CPU, GPU, and memory bottlenecks on mobile hardware",
+        "Implement thermal monitoring and adaptive quality scaling"
       ],
       "readings": [
-        "App Store Optimization: The Ultimate Guide (2024 Edition)",
-        "Apple App Store Review Guidelines - Games Section",
-        "Google Play Store Listing Guidelines"
+        "Unity Mobile Optimization Guide",
+        "ARM GPU Best Practices Developer Guide Ch. 4-6",
+        "Apple Developer Documentation - MetricKit",
+        "Android Performance Patterns - Memory Management"
       ],
       "lecture_notes": {
-        "introduction": "You can build the best mobile game in the world, but if nobody finds it on the store, it will fail. App Store Optimization is the discipline of making your game discoverable and compelling to potential players.",
+        "introduction": "Performance is not optional on mobile. A game that drains the battery in 45 minutes will be uninstalled. A game that makes the phone uncomfortably hot will be uninstalled. A game that stutters during critical gameplay moments will receive a one-star review. Mobile performance optimization starts with establishing budgets: how many milliseconds does each subsystem get per frame, how many megabytes of memory can you use, and how many watts of power can you sustain without triggering thermal throttling. These budgets must be set before development begins and enforced throughout production with automated profiling. Today we cover the complete mobile profiling toolkit: Unity's built-in Profiler for CPU and GPU timing over USB, Xcode Instruments for Metal GPU trace and energy impact on iOS, Android GPU Inspector for Vulkan/GLES analysis, and Unity Memory Profiler for tracking managed and native heap usage. We profile a sample game that runs fine in the editor but drops to 25fps on a mid-range phone, identify the specific bottlenecks (too many draw calls, uncompressed textures consuming 400MB, GC spikes from per-frame allocations), and fix each one with measurable improvement. We also implement a thermal monitoring system that detects when the device is getting hot and proactively reduces quality settings to maintain frame rate.",
         "key_concepts": [
-          "Keyword research and metadata optimization for app store search",
-          "Screenshot and preview video best practices for conversion",
-          "Ratings and reviews management strategies",
-          "Soft-launch methodology: geography selection, KPI thresholds, iteration cycles",
-          "Platform-specific submission requirements and common rejection reasons"
+          "Frame budget at 60fps: 16.67ms total, typically 8-10ms rendering, 2ms physics, 2ms scripts, 2ms headroom",
+          "Memory budget: 300-500MB for a typical mobile game on a device with 3-4GB total RAM (OS takes 1-2GB)",
+          "Draw call budget: 100-200 draw calls on mid-range devices, 50-100 on low-end, with batching to consolidate",
+          "Unity Profiler over USB: connecting to a device build for real CPU/GPU frame timing and GC allocation tracking",
+          "Xcode Instruments: Metal GPU trace for per-draw-call GPU timing, Energy Log for power consumption measurement",
+          "Android GPU Inspector: frame-by-frame GPU workload analysis, shader profiling, counter collection",
+          "GC allocation detection: identifying per-frame allocations that cause periodic GC pauses (string operations, LINQ, boxing)",
+          "Texture memory analysis: identifying uncompressed or oversized textures using Unity Memory Profiler",
+          "Thermal state monitoring: using iOS NSProcessInfo.thermalState or Android PowerManager to detect throttling",
+          "Adaptive quality scaling: dynamically adjusting render resolution, shadow quality, particle count, and LOD distance based on frame time or thermal state"
         ],
-        "demonstration": "Conducting keyword research using App Annie and Sensor Tower, crafting an optimized App Store Connect listing, and reviewing real examples of successful and unsuccessful game store pages",
+        "demonstration": "Profiling a sample mobile game on a physical device: identifying that it is GPU-bound at 24ms/frame due to 380 draw calls, finding 3 uncompressed 2048x2048 textures consuming 192MB, and detecting a 4ms GC spike every 2 seconds from string concatenation in the score display. Fixing each issue (enabling static batching, switching to ASTC compression, caching the score string) and verifying the game now runs at a stable 60fps with 280MB memory usage.",
         "setup_requirements": [
-          "App Store Connect access",
-          "Google Play Console access",
-          "Marketing asset creation tools (Figma or equivalent)",
-          "Analytics dashboard from previous session"
+          "Physical mobile device connected via USB for profiling",
+          "Unity Profiler configured for remote connection to device builds",
+          "Sample game build with intentional performance problems",
+          "Unity Memory Profiler package installed"
         ],
         "review": [
           {
-            "key": "Soft-Launch",
-            "value": "Releasing in a limited market (e.g., Canada, Australia, Philippines) to gather real player data on retention and monetization before committing to a global launch and marketing spend"
+            "key": "GC Allocation Spike",
+            "value": "When per-frame allocations (string concatenation, LINQ, new arrays) accumulate enough garbage, the GC pauses the game thread for 2-10ms to collect it. On mobile, this causes visible frame drops. Prevent by pre-allocating, pooling, and using StringBuilder."
           },
           {
-            "key": "Conversion Rate Optimization",
-            "value": "The percentage of store page visitors who install the game; optimized through compelling screenshots showing gameplay, clear value proposition in description, and strong ratings above 4.0 stars"
+            "key": "ASTC Compression",
+            "value": "Adaptive Scalable Texture Compression offers variable block sizes from 4x4 (highest quality) to 12x12 (highest compression). A 2048x2048 RGBA texture is 16MB uncompressed but only 2-4MB with ASTC 6x6. Supported on all modern iOS and Android GPUs."
+          },
+          {
+            "key": "Thermal Budget",
+            "value": "The sustained power draw a device can handle without throttling. Running at maximum GPU utilization continuously will exceed the thermal budget within minutes. Target 70-80% GPU utilization to allow headroom for thermal stability."
+          },
+          {
+            "key": "Adaptive Quality",
+            "value": "A runtime system that monitors frame time or thermal state and adjusts quality settings dynamically. When frame time exceeds budget, reduce render resolution, shadow quality, or particle count. When frame time is well under budget, increase quality."
           }
         ]
       }
     },
     {
       "week_number": 5,
+      "session_number": 5,
+      "topic": "Mobile Rendering Optimization",
+      "duration": "90 minutes",
+      "learning_objectives": [
+        "Optimize rendering for tile-based mobile GPU architectures",
+        "Implement draw call reduction through batching, atlasing, and instancing",
+        "Select appropriate texture compression formats for iOS and Android",
+        "Design shader complexity tiers for different mobile hardware generations"
+      ],
+      "readings": [
+        "Unity URP Mobile Rendering Documentation",
+        "Qualcomm Adreno GPU Performance Guide",
+        "Apple Metal Best Practices Guide - Rendering",
+        "GPU Pro 7 Ch. 5 - Mobile Rendering Techniques"
+      ],
+      "lecture_notes": {
+        "introduction": "Mobile GPUs are not small desktop GPUs. They use a fundamentally different rendering architecture -- tile-based deferred rendering -- that processes the screen in small tiles using fast on-chip memory to minimize bandwidth to the power-hungry main memory. This architecture makes certain operations cheap (depth testing, alpha blending within a tile) and others expensive (reading from framebuffer textures, overdraw that fills multiple tiles). Understanding this architecture is the key to writing performant mobile shaders and scene setups. Today we focus on the rendering-specific optimizations that make the difference between 30fps and 60fps on mobile: reducing draw calls through static batching and sprite atlasing, minimizing overdraw with proper sorting and alpha-test alternatives to alpha-blend, choosing the right texture compression format for each platform (ASTC for both modern platforms, ETC2 for legacy Android), writing mobile-friendly shaders that avoid expensive operations (dependent texture reads, excessive branching, high register pressure), and leveraging URP's built-in mobile optimizations (single-pass instanced rendering, SRP Batcher). We will profile each optimization to quantify its impact on real mobile hardware.",
+        "key_concepts": [
+          "TBDR optimization: minimize overdraw (sorted rendering), avoid framebuffer fetches, use tile-local operations",
+          "Draw call reduction: static batching for non-moving UI, SRP Batcher for varied materials, GPU instancing for repeated meshes",
+          "Texture atlasing: packing multiple small textures into one large texture to enable batching of objects with different sprites",
+          "Alpha blending vs alpha testing: alpha-blended objects prevent early-Z optimization; alpha test (cutout) allows it but has edge aliasing",
+          "ASTC texture compression: universal on modern iOS and Android, variable block sizes for quality/size tradeoff per texture",
+          "ETC2 compression: OpenGL ES 3.0 mandatory format, useful for legacy Android devices lacking ASTC support",
+          "Mobile shader complexity: avoid pow(), log(), sqrt() chains; minimize texture samples; prefer half-precision (float16) where possible",
+          "URP mobile features: 2D Renderer for 2D games, Forward Renderer with single main light, disabled features for mobile profiles",
+          "Render scale: rendering at 80-90% resolution and upscaling to native, saving 20-35% fragment shading cost with minimal visual impact",
+          "Overdraw visualization: using URP's overdraw debug view to identify overlapping transparent elements that waste fill rate"
+        ],
+        "demonstration": "Taking a mobile scene from 400 draw calls and 22ms frame time to under 100 draw calls and 10ms: combining UI sprites into an atlas, enabling SRP Batcher for 3D materials, replacing alpha-blended foliage with alpha-tested cutout, switching textures from uncompressed to ASTC 6x6, and enabling 85% render scale with bilinear upscale. Measuring each change independently with the profiler.",
+        "setup_requirements": [
+          "Unity URP project with a mobile game scene",
+          "Physical mobile device for profiling",
+          "Sprite atlas tool for UI texture packing",
+          "URP Rendering Debugger for overdraw visualization"
+        ],
+        "review": [
+          {
+            "key": "SRP Batcher",
+            "value": "Unity's Scriptable Render Pipeline batching system that reduces the CPU cost of setting up draw calls by caching shader property data on the GPU. Unlike static batching, it works with different meshes as long as they share the same shader variant."
+          },
+          {
+            "key": "Render Scale",
+            "value": "Rendering the scene at a lower resolution than the display's native resolution and upscaling the result. At 85% scale, you render 72% as many pixels (0.85 x 0.85), saving significant fragment shading cost. The quality loss is often imperceptible on mobile screens."
+          },
+          {
+            "key": "Half-Precision",
+            "value": "Using 16-bit floating-point (half/mediump) instead of 32-bit (float/highp) in shaders where full precision is not needed (colors, UVs, most lighting). Doubles the ALU throughput on many mobile GPUs and reduces register pressure."
+          },
+          {
+            "key": "Overdraw Cost on TBDR",
+            "value": "Each additional layer of transparent geometry at a pixel requires the fragment shader to run again within the tile. On mobile, where fill rate is limited, overlapping transparent particles or UI elements can easily become the primary bottleneck."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Monetization Models",
+      "duration": "90 minutes",
+      "learning_objectives": [
+        "Evaluate premium, freemium, ad-supported, and hybrid monetization strategies",
+        "Design ethical monetization that respects player experience and regulatory requirements",
+        "Implement in-app purchase flows with server-side receipt validation",
+        "Analyze key business metrics: ARPDAU, LTV, CPI, and conversion funnels"
+      ],
+      "readings": [
+        "Free-to-Play: Making Money From Games You Give Away Ch. 3-7",
+        "Apple StoreKit 2 Documentation",
+        "Google Play Billing Library 6.0 Documentation",
+        "FTC Guidelines on Mobile Game Monetization (2024)"
+      ],
+      "lecture_notes": {
+        "introduction": "A great mobile game that nobody can sustain financially is a failed product. Understanding monetization is as important as understanding rendering optimization, because both determine whether the game survives. The mobile market has converged on several proven models: premium (pay once, own forever), freemium (free to play with optional purchases), ad-supported (free with ads as the revenue source), and hybrid approaches that combine these elements. Each model has profound implications for game design -- a premium game optimizes for initial purchase conversion, while a freemium game optimizes for long-term retention and recurring spending. Today we examine each model's economics, design principles, and ethical boundaries. Freemium in particular requires careful design to avoid predatory mechanics: loot boxes with undisclosed odds, pay-to-win advantages in competitive games, and dark patterns that pressure children into purchases have rightfully drawn regulatory scrutiny worldwide. We will implement a complete IAP flow using Apple StoreKit 2 and Google Play Billing Library through Unity's IAP wrapper, including the critical server-side receipt validation step that prevents fraud, and design a monetization framework that generates revenue while respecting the player.",
+        "key_concepts": [
+          "Premium model: one-time purchase, no additional monetization, relies on volume sales and marketing",
+          "Freemium model: free download, revenue from IAP (consumables, cosmetics, battlepasses, subscriptions)",
+          "Ad-supported model: rewarded video (player opts in for reward), interstitial (forced between sessions), banner (persistent low-revenue)",
+          "Hybrid model: combining IAP with ads, ad removal as a purchase, rewarded ads as a retention mechanic",
+          "IAP types: consumable (currency packs), non-consumable (permanent unlocks), auto-renewing subscriptions",
+          "Server-side receipt validation: verifying purchases with Apple/Google servers to prevent tampered receipts and refund fraud",
+          "ARPDAU: Average Revenue Per Daily Active User, the primary metric for comparing monetization effectiveness",
+          "LTV: Lifetime Value = ARPDAU x average player lifetime in days, must exceed CPI for profitability",
+          "Conversion funnel: free player > first session > day-1 return > first purchase > recurring spender, with drop-off at each stage",
+          "Ethical monetization: disclosed odds for randomized rewards, no pay-to-win in competitive modes, age-gating for purchases, spending limits"
+        ],
+        "demonstration": "Implementing a complete IAP flow in Unity: configuring products in Apple App Store Connect and Google Play Console, using Unity IAP to present a storefront, handling the purchase flow with loading states and error handling, validating receipts server-side using a Firebase Cloud Function that calls Apple and Google verification APIs, and restoring purchases on reinstall. Testing the full flow in sandbox mode.",
+        "setup_requirements": [
+          "Unity IAP package configured for both iOS and Android",
+          "Apple Developer account with App Store Connect sandbox tester",
+          "Google Play Console with internal testing track configured",
+          "Firebase project for server-side receipt validation function"
+        ],
+        "review": [
+          {
+            "key": "Server-Side Receipt Validation",
+            "value": "Verifying purchase receipts with Apple/Google servers from your own backend rather than trusting the client. Client-side validation alone is insecure because the app binary can be modified to report fake purchases. Server validation is mandatory for any real monetization."
+          },
+          {
+            "key": "ARPDAU",
+            "value": "Total daily revenue divided by daily active users. A healthy F2P game targets $0.05-0.15 ARPDAU for casual games, $0.15-0.50 for mid-core. Tracks the effectiveness of monetization independent of audience size."
+          },
+          {
+            "key": "Conversion Rate",
+            "value": "The percentage of players who make at least one purchase. Typical F2P games see 2-5% conversion. The first purchase has the highest friction; subsequent purchases convert at higher rates. First-purchase offers and starter packs optimize this step."
+          },
+          {
+            "key": "Rewarded Video Ads",
+            "value": "Players voluntarily watch a 15-30 second video ad in exchange for an in-game reward (currency, extra life, power-up). Generates $10-40 eCPM, higher than any other ad format, and players perceive it as a fair exchange rather than an interruption."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Analytics Integration",
+      "duration": "90 minutes",
+      "learning_objectives": [
+        "Integrate analytics SDKs to track player behavior and business metrics",
+        "Design event taxonomies that provide actionable insights for game improvement",
+        "Build retention, monetization, and engagement dashboards from tracked events",
+        "Use cohort analysis and funnel visualization to identify design problems"
+      ],
+      "readings": [
+        "Game Analytics: Maximizing the Value of Player Data Ch. 2-5",
+        "Firebase Analytics Documentation",
+        "Unity Analytics Documentation",
+        "GameAnalytics Best Practices Guide"
+      ],
+      "lecture_notes": {
+        "introduction": "Analytics is how you know whether your game is succeeding or failing. Without analytics, every design decision is based on intuition. With analytics, you can measure exactly where players quit, which levels are too hard, which items players buy, and whether your latest content update improved retention or hurt it. The mobile game industry runs on data: day-1 retention below 40% means your onboarding is failing, day-7 below 15% means your core loop is not engaging, and LTV below CPI means you are losing money on every player you acquire. Today we integrate Firebase Analytics and design a comprehensive event taxonomy for a mobile game. An event taxonomy is the vocabulary your analytics speaks -- poorly designed events give you noise, while well-designed events give you actionable insights. We track the complete player journey: first open, tutorial completion, first gameplay session, first IAP, and every engagement milestone. We build dashboards that visualize retention curves, conversion funnels, level completion rates, and session length distributions. We then use cohort analysis to compare players who saw the old tutorial against players who saw the new tutorial, demonstrating how analytics drives data-informed design decisions.",
+        "key_concepts": [
+          "Event taxonomy design: naming conventions (verb_noun: level_completed, item_purchased), parameter standards, event hierarchy",
+          "Automatic events: first_open, session_start, screen_view collected without code, providing baseline engagement data",
+          "Custom events: game-specific tracking for level completion, currency earned/spent, feature usage, error occurrences",
+          "User properties: persistent attributes like player_level, subscription_status, preferred_mode for segmenting analytics",
+          "Retention metrics: D1, D7, D30 retention rates measured as percentage of cohort returning after N days",
+          "Funnel analysis: tracking step-by-step progression through onboarding, purchase flow, or level sequences to identify drop-off points",
+          "Cohort analysis: comparing behavior of player groups defined by acquisition date, source, or A/B test variant",
+          "Session metrics: session count per day, average session length, time between sessions, session depth (levels per session)",
+          "Revenue analytics: ARPDAU, ARPPU (Average Revenue Per Paying User), purchase frequency, average transaction value",
+          "Privacy compliance: GDPR consent flows, Apple ATT (App Tracking Transparency), data minimization principles"
+        ],
+        "demonstration": "Integrating Firebase Analytics into a Unity mobile game: initializing the SDK, logging custom events for level_started, level_completed (with parameters: level_id, time_to_complete, deaths, score), item_purchased, and ad_watched. Building a Firebase dashboard showing D1/D7 retention, a level completion funnel, and revenue by country. Then implementing Apple's ATT consent dialog and GDPR consent flow for EU users.",
+        "setup_requirements": [
+          "Firebase project with Analytics enabled",
+          "Firebase Unity SDK installed in the project",
+          "Apple Developer account for ATT consent testing",
+          "Sample game with multiple levels and an IAP store"
+        ],
+        "review": [
+          {
+            "key": "D1 Retention",
+            "value": "The percentage of players who return to the game the day after first install. Industry benchmark: 35-45% for casual, 25-35% for mid-core. Below 30% typically indicates problems with the onboarding or first session experience."
+          },
+          {
+            "key": "Funnel Analysis",
+            "value": "Visualizing the drop-off at each step of a multi-step process. If 1000 players start the tutorial but only 400 complete it, the 60% drop-off identifies the tutorial as a problem area worth redesigning."
+          },
+          {
+            "key": "App Tracking Transparency",
+            "value": "Apple's iOS 14.5+ requirement to request user permission before tracking across apps. Affects attribution and ad targeting. Must be shown before any tracking occurs. Denial rates are typically 70-80%."
+          },
+          {
+            "key": "Cohort Analysis",
+            "value": "Grouping players by their install date (or other attribute) and comparing their behavior over time. Reveals whether game updates improve or hurt metrics for new players, independent of the existing player base."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Push Notifications and Player Engagement",
+      "duration": "90 minutes",
+      "learning_objectives": [
+        "Design push notification strategies that re-engage lapsed players without causing uninstalls",
+        "Implement local and remote push notifications on iOS and Android",
+        "Build engagement systems: daily rewards, streak bonuses, and time-limited events",
+        "Measure notification effectiveness with open rates, return rates, and uninstall correlation"
+      ],
+      "readings": [
+        "Hooked: How to Build Habit-Forming Products Ch. 3-5 (game context)",
+        "Apple Push Notification Service Documentation",
+        "Firebase Cloud Messaging Documentation",
+        "Mobile Engagement Best Practices (Leanplum, 2024)"
+      ],
+      "lecture_notes": {
+        "introduction": "A player who does not return to your game will never spend money in it, watch an ad, or recommend it to friends. Re-engagement is the most valuable action in mobile gaming, and push notifications are the primary tool for driving it. But notifications are a double-edged sword: well-timed, relevant notifications bring players back; poorly timed, irrelevant notifications drive them to disable notifications or uninstall entirely. The difference between a notification that says 'Come back and play!' and one that says 'Your troops have finished training and the alliance war starts in 2 hours' is the difference between spam and service. Today we implement both local notifications (scheduled by the game client for predictable events like timer completions, energy refills, and daily reward resets) and remote notifications (sent from a server to target specific player segments based on behavior). We also build the in-game engagement systems that create reasons to return: daily login rewards with escalating value and streak bonuses, time-limited events with unique rewards, and social features that create obligations (alliance activities, gift exchanges). We measure notification effectiveness rigorously: opt-in rate, open rate, return rate after notification, session depth after notification-driven return, and critically, the correlation between notification frequency and uninstall rate.",
+        "key_concepts": [
+          "Local notifications: scheduled by the app for predictable events (timer complete, energy full, daily reward available)",
+          "Remote notifications: sent from a server via APNS/FCM targeting specific player segments based on behavior data",
+          "Notification permission: iOS requires explicit opt-in (ask at the right moment, not on first launch), Android 13+ requires permission",
+          "Notification content: specific and relevant ('Your farm is ready to harvest') beats generic ('Come back and play!')",
+          "Optimal timing: sending during the player's typical play window, respecting quiet hours, limiting to 2-3 per week maximum",
+          "Daily reward systems: escalating rewards over consecutive days with a streak bonus, reset after missed days (or partial reset)",
+          "Time-limited events: creating urgency with exclusive rewards available only during a window (weekend events, seasonal content)",
+          "Social engagement hooks: alliance activities, gift systems, leaderboards, and cooperative goals that create return obligations",
+          "Notification A/B testing: testing message content, timing, and frequency against control groups to optimize open rates",
+          "Uninstall correlation: monitoring whether notification frequency increases uninstall rates, finding the optimal frequency ceiling"
+        ],
+        "demonstration": "Implementing a complete notification system: local notifications for daily reward availability and energy refill, remote notifications via Firebase Cloud Messaging targeting players who have not played in 3 days, an in-game daily reward calendar UI with streak tracking, and a time-limited weekend event with exclusive cosmetic rewards. Setting up A/B testing for notification timing using Firebase Remote Config.",
+        "setup_requirements": [
+          "Firebase Cloud Messaging configured for both iOS and Android",
+          "Unity Mobile Notifications package installed",
+          "Firebase Remote Config for A/B testing notification parameters",
+          "Sample game with energy system and daily reward calendar"
+        ],
+        "review": [
+          {
+            "key": "Permission Timing",
+            "value": "Requesting notification permission on first launch yields 40-50% opt-in. Requesting after the player experiences a timer or reward they would want to be notified about yields 60-70% opt-in. Always show a pre-permission screen explaining the benefit before the system dialog."
+          },
+          {
+            "key": "Daily Reward Streak",
+            "value": "Rewards escalate over consecutive days (Day 1: 100 coins, Day 7: rare item). Missing a day resets the streak, creating motivation to return daily. Some designs offer partial reset (back 2 days) to be less punishing."
+          },
+          {
+            "key": "Notification Fatigue",
+            "value": "Players who receive more than 3-5 notifications per week show increased uninstall rates. The optimal frequency depends on genre: casual games tolerate fewer notifications than strategy games where timers and wars create legitimate reasons for alerts."
+          },
+          {
+            "key": "Segmented Targeting",
+            "value": "Sending different notification content to different player segments: lapsed players get re-engagement messages, active non-spenders get value proposition messages, spenders get new content announcements. One-size-fits-all messaging underperforms segmented approaches by 40-60%."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
       "session_number": 9,
-      "topic": "Cross-Platform Development and Live Operations",
+      "topic": "App Store Optimization (ASO)",
+      "duration": "90 minutes",
+      "learning_objectives": [
+        "Apply ASO techniques to maximize organic discoverability on app stores",
+        "Create compelling store listings that convert impressions to installs",
+        "Conduct keyword research and competitive analysis for app store search ranking",
+        "Plan soft-launch and phased rollout strategies"
+      ],
+      "readings": [
+        "App Store Optimization: The Ultimate Guide (2024 Edition)",
+        "Apple App Store Review Guidelines Section 2 - Performance",
+        "Google Play Store Listing Guidelines",
+        "Sensor Tower ASO Guide"
+      ],
+      "lecture_notes": {
+        "introduction": "You can build the best mobile game in the world, but if nobody finds it on the app store, it will fail. App Store Optimization is the discipline of making your game discoverable and compelling to potential players. ASO is to mobile games what SEO is to websites -- it determines whether your game appears in search results when players look for games in your genre. The two major app stores (Apple App Store and Google Play Store) each have their own search algorithms, but both weigh similar factors: keyword relevance in title and metadata, install velocity (how many installs per time period), user ratings and review sentiment, retention and engagement metrics, and conversion rate (impressions to install page views to installs). Today we cover the complete ASO workflow: researching keywords using tools like App Annie and Sensor Tower, crafting a title and subtitle that balance branding with keyword inclusion, writing a description that converts readers to installers, creating screenshots and preview videos that showcase gameplay (not menus), and managing ratings and reviews. We also discuss soft-launch strategy: releasing in a limited market (typically Canada, Australia, or Philippines) to gather real player data on retention and monetization before committing to a worldwide launch with marketing spend.",
+        "key_concepts": [
+          "Keyword research: identifying search terms with high volume and low competition using ASO tools",
+          "Title optimization: 30 characters on iOS, 50 on Android, must include primary keyword and game name",
+          "Subtitle/short description: secondary keywords and value proposition in 30 characters (iOS) or 80 characters (Android)",
+          "Screenshot optimization: first 2-3 screenshots drive most conversion, must show gameplay with benefit-oriented captions",
+          "Preview video: 15-30 second gameplay trailer that auto-plays on the store page, must capture attention in first 3 seconds",
+          "Ratings and reviews management: in-app review prompts timed after positive experiences, responding to negative reviews",
+          "Localized store listings: translating and adapting metadata and screenshots for each target market",
+          "Soft-launch methodology: limited market release (1-3 countries), KPI thresholds for retention and monetization, iteration before global launch",
+          "A/B testing store listings: Google Play Experiments and Apple Product Page Optimization for testing screenshots and descriptions",
+          "Conversion rate optimization: measuring and improving the funnel from store impression to install page view to install"
+        ],
+        "demonstration": "Conducting keyword research for a puzzle game using Sensor Tower: finding keywords with 40+ search volume and under 30 competition score, crafting an optimized title and subtitle, creating a store listing with gameplay screenshots that include benefit captions ('200+ Handcrafted Puzzles'), and setting up a Google Play Store Listing Experiment to A/B test two screenshot sets against each other.",
+        "setup_requirements": [
+          "App Store Connect and Google Play Console access",
+          "ASO tool access (Sensor Tower free tier or App Annie)",
+          "Figma or equivalent for screenshot creation with device frames",
+          "Screen recording tool for preview video capture"
+        ],
+        "review": [
+          {
+            "key": "Soft-Launch",
+            "value": "Releasing in a small market (e.g., Canada, 3% of US market size) to measure retention and monetization with real players before investing in marketing. If D1 retention is below 40% and D7 below 15%, iterate before launching globally."
+          },
+          {
+            "key": "Conversion Rate",
+            "value": "The percentage of users who visit the store page and install. Average is 25-35% on iOS, 20-30% on Play Store. Optimized through compelling screenshots, clear value proposition, and strong ratings (4.0+ stars)."
+          },
+          {
+            "key": "Keyword Stuffing",
+            "value": "Overloading metadata with keywords at the expense of readability. Both stores penalize this. The title should read naturally while including primary keywords. Keyword density matters less than relevance and download velocity."
+          },
+          {
+            "key": "In-App Review Prompt",
+            "value": "Using SKStoreReviewController (iOS) or Google In-App Review API (Android) to prompt players to rate the game. Timing matters: prompt after a positive experience (level completion, reward collection), not during frustration or on first launch."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "Cross-Platform Frameworks",
       "duration": "90 minutes",
       "learning_objectives": [
         "Architect games for cross-platform deployment from a single codebase",
         "Implement platform abstraction layers for input, rendering, and services",
-        "Design live operations systems for ongoing content delivery and player engagement"
+        "Evaluate cross-platform frameworks: Unity, Unreal, Godot, Flutter, React Native for games",
+        "Handle platform-specific code paths with conditional compilation and dependency injection"
       ],
       "readings": [
         "Cross-Platform Game Development with Unity Ch. 8-10",
-        "Live Ops Handbook: Running Games as a Service"
+        "Unity Platform-Dependent Compilation Documentation",
+        "Design Patterns: Service Locator and Dependency Injection"
       ],
       "lecture_notes": {
-        "introduction": "Modern mobile games rarely exist on a single platform, and they are never truly finished at launch. Cross-platform architecture and live operations are what separate a product from a project.",
+        "introduction": "Modern mobile games rarely exist on a single platform. Publishing on both iOS and Android is the minimum, and many games extend to PC, console, and web. Cross-platform development from a single codebase is economically necessary -- maintaining separate iOS and Android codebases doubles your development cost, bug surface, and maintenance burden. Unity and Unreal Engine are the dominant cross-platform solutions for games, handling the heavy lifting of rendering, audio, and input abstraction. But platform differences still leak through: IAP flows differ between Apple StoreKit and Google Play Billing, push notification registration differs between APNS and FCM, and even basic features like haptic feedback and file system access have platform-specific APIs. Today we architect a platform abstraction layer that isolates all platform-specific code behind common interfaces, allowing the game logic to interact with a single set of service interfaces while concrete implementations handle the platform differences. We use the service locator pattern at application startup to register the appropriate implementation for each platform, and conditional compilation for the small number of cases where even the registration code must differ.",
         "key_concepts": [
-          "Platform abstraction patterns: service locator and dependency injection",
-          "Conditional compilation and platform-specific code paths",
-          "Remote configuration and feature flags for live tuning",
-          "Live event systems: time-limited content, seasonal events, battle passes",
-          "Over-the-air content updates using addressable assets"
+          "Platform abstraction layer: interfaces for IAP, ads, analytics, notifications, haptics, cloud saves",
+          "Service locator pattern: a central registry mapping interface types to platform-specific concrete implementations",
+          "Dependency injection: providing platform implementations to game systems through constructors or properties",
+          "Conditional compilation: #if UNITY_IOS / #if UNITY_ANDROID for platform-specific code paths",
+          "Unity's platform defines: UNITY_IOS, UNITY_ANDROID, UNITY_WEBGL, UNITY_STANDALONE, UNITY_EDITOR",
+          "Cross-platform input: Unity Input System actions mapped to touch, gamepad, and keyboard transparently",
+          "Rendering scalability: quality settings profiles per platform with different resolution, effects, and draw distance",
+          "Asset variants: platform-specific texture compression (ASTC for mobile, BC7 for PC) via import settings",
+          "Build automation: scripting build pipelines that produce iOS, Android, and PC builds from a single project",
+          "Testing across platforms: device farms (AWS Device Farm, Firebase Test Lab) for automated testing on many devices"
         ],
-        "demonstration": "Building a platform abstraction layer that handles input, ads, and IAP differently on iOS vs Android from a single codebase, then setting up Firebase Remote Config to tune game parameters without an app update",
+        "demonstration": "Building a platform abstraction layer with three services: IAPService, AnalyticsService, and HapticsService. Implementing AppleIAPService and GoogleIAPService concrete classes, registering them in a ServiceLocator at startup based on platform, then showing the game store UI calling ServiceLocator.Get<IAPService>().PurchaseProduct() without knowing which platform it is running on. Demonstrating the same game building and running on Android and iOS from the single codebase.",
         "setup_requirements": [
-          "Unity project with both iOS and Android targets",
-          "Firebase Remote Config configured",
-          "Unity Addressables package installed",
-          "Version control with branching strategy for live updates"
+          "Unity project with both iOS and Android build targets",
+          "Interface-based service architecture scaffolded",
+          "Both Apple and Google IAP SDKs configured in the project",
+          "Build automation script for multi-platform builds"
         ],
         "review": [
           {
-            "key": "Addressable Assets",
-            "value": "Unity's system for loading assets by address string rather than direct reference, enabling on-demand downloading of content bundles after initial install to reduce app size and support live content updates"
+            "key": "Service Locator Pattern",
+            "value": "A central object that maps interface types to concrete implementations. At startup: ServiceLocator.Register<IAPService>(new AppleIAPService()) on iOS. Game code: ServiceLocator.Get<IAPService>().Purchase(). Platform-specific code is isolated in registration and implementation classes."
+          },
+          {
+            "key": "Conditional Compilation",
+            "value": "Code blocks wrapped in #if UNITY_IOS ... #elif UNITY_ANDROID ... #endif are only compiled for the target platform. Useful for platform-specific imports and SDK initialization, but should not be scattered throughout game logic."
+          },
+          {
+            "key": "Asset Variants",
+            "value": "Unity import settings can specify different compression formats per platform. A texture can be ASTC 6x6 on iOS, ASTC 6x6 on Android, and BC7 on PC, all configured in a single import settings panel without duplicating the source asset."
+          },
+          {
+            "key": "Device Farms",
+            "value": "Cloud services that provide access to hundreds of real physical devices for automated testing. Firebase Test Lab runs your APK on dozens of Android devices and reports crashes, screenshots, and performance data without requiring you to own each device."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "Live Operations and Updates",
+      "duration": "90 minutes",
+      "learning_objectives": [
+        "Design live operations systems for ongoing content delivery and player engagement",
+        "Implement remote configuration for live tuning without app updates",
+        "Build a content delivery pipeline using addressable assets for hot content updates",
+        "Plan live event schedules and seasonal content cadences"
+      ],
+      "readings": [
+        "Live Ops Handbook: Running Games as a Service Ch. 1-5",
+        "Firebase Remote Config Documentation",
+        "Unity Addressables Documentation - Content Update Workflow",
+        "GDC Vault: Live Operations Lessons from Clash Royale"
+      ],
+      "lecture_notes": {
+        "introduction": "A mobile game is never finished at launch. The most successful mobile games operate as live services, releasing new content, running time-limited events, and tuning game balance continuously for years after initial release. Live operations is the practice of keeping the game fresh, profitable, and growing after launch. Remote configuration allows you to change game parameters -- difficulty curves, IAP prices, event schedules, feature flags -- without shipping an app update through the store review process. Addressable assets enable downloading new content (levels, characters, cosmetics) from a CDN without an app update. Feature flags enable gradual rollouts and A/B testing of new features. Together, these systems transform a static shipped product into a dynamic service that can respond to player behavior in hours instead of weeks. Today we implement the complete live ops technology stack: Firebase Remote Config for real-time parameter tuning, Unity Addressables for downloadable content with versioning and caching, feature flags for controlled rollouts, and a time-limited event system that activates automatically based on server time. We also discuss the operational cadence: how often to release content, when to run events, and how to plan a content calendar that keeps players engaged month after month.",
+        "key_concepts": [
+          "Remote configuration: server-controlled key-value pairs that override local defaults, fetched and activated at app start",
+          "Feature flags: boolean remote config values that enable/disable features for all users or specific segments",
+          "A/B testing with remote config: randomly assigning players to groups that see different values for the same parameter",
+          "Addressable content updates: uploading new asset bundles to a CDN, updating the content catalog, and having the game download them",
+          "Content versioning: tracking which content version each player has and serving appropriate updates",
+          "Live event system: server-time-driven events with start/end timestamps, exclusive rewards, and event-specific gameplay",
+          "Seasonal content: holiday-themed events, battle passes with tiered rewards, and limited-time cosmetics that drive FOMO",
+          "Emergency kill switches: feature flags that can instantly disable a broken feature without an app update",
+          "Content calendar planning: scheduling events, content drops, and updates across a 3-6 month rolling window",
+          "Graceful offline handling: caching last-known remote config, using local defaults when server is unreachable"
+        ],
+        "demonstration": "Setting up a complete live ops pipeline: configuring Firebase Remote Config with default values for difficulty_multiplier, event_active, and event_end_date; implementing fetch-and-activate on app start with 12-hour cache expiry; creating an Addressable content group with a seasonal character skin hosted on Firebase Hosting; building a time-limited event UI that appears/disappears based on server timestamps from Remote Config; and demonstrating an emergency kill switch that disables a feature across all players within minutes.",
+        "setup_requirements": [
+          "Firebase project with Remote Config and Hosting configured",
+          "Unity Addressables package with remote content catalog",
+          "CDN hosting for addressable content bundles",
+          "Sample game with configurable difficulty and event system"
+        ],
+        "review": [
+          {
+            "key": "Remote Config Fetch Lifecycle",
+            "value": "Fetch (download from server) > Activate (apply to runtime) > Use (read values). Fetched values do not take effect until activated, allowing you to control the exact moment changes apply. Default values provide fallback when offline."
           },
           {
             "key": "Feature Flags",
-            "value": "Server-controlled booleans or values that enable or disable features at runtime without requiring an app update; critical for A/B testing, gradual rollouts, and emergency kill switches"
+            "value": "Server-controlled booleans that gate feature visibility. Enable a new feature for 5% of users first, monitor for crashes, then ramp to 100%. If a bug is found, disable instantly without an app update."
+          },
+          {
+            "key": "Content Catalog",
+            "value": "A JSON manifest listing all addressable assets, their locations (local or remote), and their content hashes. The game downloads the catalog at startup and uses it to resolve asset addresses to download URLs."
+          },
+          {
+            "key": "Battle Pass",
+            "value": "A seasonal progression system with free and premium reward tracks. Players earn progress through daily/weekly challenges. Premium track requires purchase ($5-10). Resets each season (4-8 weeks). Drives both engagement and revenue."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Mobile-Specific Testing",
+      "duration": "90 minutes",
+      "learning_objectives": [
+        "Design and execute mobile-specific test plans covering interruptions, permissions, and edge cases",
+        "Test across device configurations using physical devices and cloud device farms",
+        "Validate app lifecycle behavior: backgrounding, memory warnings, low storage, and connectivity loss",
+        "Implement automated UI testing for mobile game flows"
+      ],
+      "readings": [
+        "Mobile Game Testing Best Practices Guide",
+        "Firebase Test Lab Documentation",
+        "Apple Xcode XCTest UI Testing Documentation",
+        "Android Espresso Testing Documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Mobile testing goes far beyond 'does the game work.' Mobile devices exist in an environment of constant interruption: phone calls, notifications, low battery warnings, OS updates, and connectivity changes. Your game must handle all of these gracefully. A player in the middle of a boss fight receives a phone call. When they return 3 minutes later, the game must resume exactly where they left off. The phone runs low on memory and the OS sends a memory warning. Your game must reduce its footprint without crashing. The player enters a subway tunnel and loses cellular connectivity. Your game must handle the loss of network without corrupting save data or losing progress. These scenarios are not edge cases -- they are the reality of every mobile gaming session. Today we design a comprehensive mobile test plan that covers interruption handling, memory pressure, storage exhaustion, connectivity transitions, permission revocation, OS version compatibility, and accessibility features. We execute these tests on physical devices and automate them using cloud device farms. We also implement automated UI tests that verify the critical path through our game's menus and purchase flows, running them on every build in CI.",
+        "key_concepts": [
+          "Interruption testing: phone calls, alarms, notifications, multitasking, control center/notification shade overlay",
+          "App lifecycle: onPause/onResume (Android), applicationWillResignActive/didBecomeActive (iOS), save state before background",
+          "Memory pressure testing: simulating low-memory conditions and verifying the game reduces footprint without crashing",
+          "Connectivity testing: WiFi to cellular handoff, airplane mode, intermittent connectivity, offline gameplay",
+          "Permission testing: camera, microphone, notification, tracking permissions granted, denied, and revoked after initial grant",
+          "Device farm testing: running automated test suites on 20-50 real devices via Firebase Test Lab or AWS Device Farm",
+          "OS version compatibility: testing on minimum supported OS version and latest version, verifying no deprecated API crashes",
+          "Screen size regression: verifying UI layout on smallest supported phone, largest tablet, and foldable devices",
+          "Automated UI testing: XCTest (iOS) and Espresso (Android) for scripted interaction flows and screenshot comparison",
+          "Crash reporting: Firebase Crashlytics integration for real-time crash monitoring with stack traces and device metadata"
+        ],
+        "demonstration": "Executing a mobile test plan on a physical device: verifying save state persistence through a backgrounding cycle, testing IAP flow interruption (kill the app mid-purchase and verify pending transaction recovery on relaunch), simulating airplane mode during a network request and verifying graceful error handling, revoking notification permission in Settings and verifying the game does not crash on notification send, and setting up Firebase Test Lab to run a Robo test crawl on 20 different Android devices with crash and screenshot reporting.",
+        "setup_requirements": [
+          "Physical iOS and Android test devices",
+          "Firebase Crashlytics and Test Lab configured",
+          "Network conditioning tools (Network Link Conditioner on iOS, Toxiproxy on Android)",
+          "Automated test scripts for critical user flows"
+        ],
+        "review": [
+          {
+            "key": "Backgrounding State Save",
+            "value": "When the OS signals the app is going to background (onPause/applicationWillResignActive), immediately save the game state to persistent storage. The OS may terminate the app at any time after backgrounding without further notice."
+          },
+          {
+            "key": "Pending Transaction Recovery",
+            "value": "If an IAP is interrupted (app crash, network loss, kill), the purchase may have been charged but the game did not deliver the item. On relaunch, check for pending transactions via StoreKit/Play Billing and complete delivery."
+          },
+          {
+            "key": "Firebase Crashlytics",
+            "value": "Real-time crash reporting SDK that captures stack traces, device info, and breadcrumbs for every crash. Provides crash-free user percentage (target: 99.5%+), groups crashes by root cause, and alerts on new crash patterns."
+          },
+          {
+            "key": "Robo Test",
+            "value": "Firebase Test Lab's automated crawler that explores an app by tapping UI elements, taking screenshots, and logging crashes. Runs on multiple devices simultaneously. Useful for finding crashes on untested device configurations without writing test scripts."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "Submission and Certification",
+      "duration": "90 minutes",
+      "learning_objectives": [
+        "Prepare app store submissions that pass review on the first attempt",
+        "Navigate Apple App Store Review Guidelines and Google Play policies",
+        "Handle common rejection reasons and appeal processes",
+        "Manage release channels: internal testing, closed beta, open beta, and production"
+      ],
+      "readings": [
+        "Apple App Store Review Guidelines (2024)",
+        "Google Play Developer Program Policies",
+        "Common App Store Rejection Reasons (AppFollow Report, 2024)",
+        "TestFlight and Google Play Console Internal Testing Documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "The app store review process is the final gate between your game and players. Apple reviews every app update submitted to the App Store, with a typical turnaround of 24-48 hours. Google Play uses a combination of automated scanning and human review. Both platforms have extensive guidelines covering content ratings, privacy policies, monetization disclosures, and technical requirements. Failing review delays your launch and can cost weeks if the rejection requires significant changes. The most common rejection reasons are avoidable: missing privacy policy URL, inadequate login information for review, undisclosed data collection, broken links, and crashes during review. Today we walk through the complete submission process for both platforms: configuring app metadata, preparing review information, building and uploading the binary, managing release channels (internal testing, TestFlight/closed beta, production), and handling rejections with effective appeals. We also cover age ratings (ESRB/IARC), content moderation requirements for user-generated content, and the specific disclosure requirements for loot boxes and randomized purchase mechanics in various jurisdictions.",
+        "key_concepts": [
+          "App Store Connect submission: build upload via Xcode, metadata completion, review information, phased release",
+          "Google Play Console submission: AAB upload, release tracks (internal, closed, open, production), managed publishing",
+          "Review information: demo accounts, feature descriptions, notes for reviewers explaining non-obvious functionality",
+          "Privacy policy requirements: URL required by both platforms, must accurately describe data collection and usage",
+          "Content ratings: IARC questionnaire on Google Play, manual rating on App Store, legal requirements vary by country",
+          "In-app purchase disclosure: loot box odds disclosure required in many jurisdictions (China, Belgium, Japan)",
+          "Age gating: COPPA compliance for under-13 users (US), age verification requirements in various markets",
+          "Rejection handling: reading the rejection reason carefully, making the minimum required change, and resubmitting with review notes",
+          "Phased rollout: releasing to 1% > 5% > 20% > 50% > 100% of users over days, monitoring crash rates at each stage",
+          "Emergency hotfix process: expedited review requests on iOS, staged rollout halt on Android, rollback procedures"
+        ],
+        "demonstration": "Walking through a complete Apple App Store submission: uploading a build from Xcode, filling in metadata (description, keywords, screenshots, preview video), configuring age rating, setting up the privacy questionnaire, providing review notes and demo credentials, and submitting for review. Then doing the same for Google Play Console: uploading an AAB, configuring the store listing, setting up the content rating questionnaire, and releasing to the internal testing track for team verification before promoting to production.",
+        "setup_requirements": [
+          "Apple Developer account with App Store Connect access",
+          "Google Play Developer account with Play Console access",
+          "Signed iOS build (.ipa) and Android App Bundle (.aab)",
+          "Privacy policy hosted at a public URL",
+          "Store listing assets: screenshots, preview video, icon"
+        ],
+        "review": [
+          {
+            "key": "App Review Turnaround",
+            "value": "Apple: typically 24-48 hours for initial review, faster for subsequent updates. Google: 1-7 days for new apps, usually within hours for updates. Expedited review is available on iOS for critical bug fixes."
+          },
+          {
+            "key": "Common Rejection Reasons",
+            "value": "Crashes during review, missing privacy policy, requesting unnecessary permissions, misleading screenshots, undisclosed subscriptions, and broken or non-functional features. All are avoidable with thorough pre-submission testing."
+          },
+          {
+            "key": "Phased Rollout",
+            "value": "Gradually releasing an update to increasing percentages of users over 7 days. If crash rates spike at 1% rollout, halt and fix before reaching more users. Both platforms support this feature for production releases."
+          },
+          {
+            "key": "AAB vs APK",
+            "value": "Google Play requires Android App Bundle (AAB) format, not APK. AAB lets Google Play generate optimized APKs per device (correct architecture, screen density, language). Reduces download size by 15-20% compared to universal APK."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "Post-Launch Management",
+      "duration": "90 minutes",
+      "learning_objectives": [
+        "Monitor live game health using crash reports, analytics, and user feedback",
+        "Plan and execute update cadences that maintain player engagement",
+        "Respond to negative reviews and community feedback constructively",
+        "Analyze post-launch data to prioritize feature development and content creation"
+      ],
+      "readings": [
+        "Running Game Studios: Everything You Need to Know Ch. 12-14",
+        "App Annie State of Mobile Gaming (latest annual report)",
+        "Post-Launch Game Analytics: Lessons from 100 Mobile Games (GDC Vault)"
+      ],
+      "lecture_notes": {
+        "introduction": "Launch day is not the finish line -- it is the starting line. The most successful mobile games generate the majority of their lifetime revenue in the months and years after launch, not during the launch window. Post-launch management is the ongoing practice of monitoring game health, responding to player feedback, fixing bugs, releasing content updates, and iterating on game design based on real player data. Your analytics dashboard becomes your primary tool: retention curves tell you whether players are staying, revenue metrics tell you whether monetization is working, crash reports tell you what is broken, and review sentiment tells you what players think. Today we study the post-launch workflow: setting up real-time monitoring dashboards that alert you to anomalies (crash rate spike, revenue drop, retention change), establishing an update cadence (weekly bug fixes, biweekly content updates, monthly features), managing the community through review responses and social media, and using player data to prioritize what to build next. We also discuss the difficult decision of when to sunset a game: the metrics that indicate a game has reached the end of its profitable lifecycle, and the respectful way to shut down a live service.",
+        "key_concepts": [
+          "Live monitoring dashboard: crash-free rate, DAU, D1/D7/D30 retention, ARPDAU, session metrics, all with alerting thresholds",
+          "Crash triage: prioritizing crashes by frequency and severity, fixing top-3 crashes within 24 hours of detection",
+          "Update cadence: weekly hotfixes for critical bugs, biweekly content drops, monthly feature releases, quarterly major updates",
+          "Review management: responding to negative reviews within 24 hours, addressing specific complaints, updating response when fixed",
+          "Community management: official social media presence, Discord/Reddit engagement, transparent communication about known issues",
+          "Data-driven prioritization: using retention data to identify which features to improve, funnel data to find design problems",
+          "User acquisition re-evaluation: adjusting CPI targets and channel mix based on actual LTV data from launched game",
+          "Competitor monitoring: tracking competitor updates, new entrants, and market shifts that affect your game's position",
+          "Sunset planning: declining DAU, negative ROI on updates, graceful shutdown with player communication and refund policies",
+          "Post-mortem: honest team reflection on what went right, what went wrong, and what to do differently on the next project"
+        ],
+        "demonstration": "Building a post-launch monitoring setup: Firebase Crashlytics dashboard with crash-free rate alerts below 99.5%, Firebase Analytics dashboard with DAU and retention trend visualization, App Store Connect and Play Console review monitoring with sentiment analysis, and a prioritization spreadsheet that maps analytics findings to development tasks ranked by expected impact on retention and revenue.",
+        "setup_requirements": [
+          "Firebase Crashlytics and Analytics dashboards configured",
+          "App Store Connect and Google Play Console with a published app",
+          "Slack or email integration for crash rate and anomaly alerts",
+          "Spreadsheet template for data-driven prioritization"
+        ],
+        "review": [
+          {
+            "key": "Crash-Free Rate",
+            "value": "The percentage of user sessions that do not experience a crash. Target: 99.5% or higher. A rate below 99% indicates a critical stability problem. Firebase Crashlytics tracks this automatically and can alert on drops."
+          },
+          {
+            "key": "Review Response Strategy",
+            "value": "Respond to 1-star and 2-star reviews within 24 hours with empathy and specific action. 'We are aware of this crash on Samsung devices and a fix is in our next update (v2.1.3).' Players who see their issue acknowledged often update their review."
+          },
+          {
+            "key": "Data-Driven Prioritization",
+            "value": "Rank development tasks by expected impact on key metrics. If D1 retention is low, prioritize onboarding improvements. If monetization conversion is low, prioritize shop UX. If crash rate is high, prioritize stability. Data determines what to build next."
+          },
+          {
+            "key": "Update Fatigue",
+            "value": "Too-frequent mandatory updates annoy players, especially large downloads on cellular. Keep mandatory updates to critical fixes. Deliver content updates via remote config and addressable assets without requiring store updates."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Final Project Presentations",
+      "duration": "90 minutes",
+      "learning_objectives": [
+        "Present a complete mobile game published to a test track with all course systems integrated",
+        "Demonstrate analytics, monetization, live ops, and performance optimization in a real product",
+        "Articulate business and design decisions with supporting data",
+        "Evaluate peer projects against mobile industry standards"
+      ],
+      "readings": [
+        "Game Postmortem Writing Guide",
+        "Mobile Game Pitch Deck Best Practices"
+      ],
+      "lecture_notes": {
+        "introduction": "Today each student presents their final project: a complete mobile game published to a test track (TestFlight or Google Play Internal Testing) with integrated analytics, monetization, live operations, and performance optimization. Your presentation is a professional pitch that demonstrates not just your technical skills but your understanding of the mobile game business. You should be prepared to show live analytics data from real test sessions, demonstrate your IAP flow working in sandbox mode, show your remote config updating game parameters in real time, present your store listing with optimized metadata, and discuss your performance profiling results on target mobile hardware. This is the closest simulation to a real mobile game launch that an academic setting can provide. Your post-mortem should reflect honestly on what worked, what did not, and what you learned about the unique challenges and opportunities of mobile game development. The mobile game industry values execution over ideas -- today you demonstrate execution.",
+        "key_concepts": [
+          "Live demo on device: showing the game running on a real phone, not an emulator or editor",
+          "Analytics walkthrough: presenting real data from test sessions showing retention, engagement, and monetization events",
+          "Monetization demonstration: completing a sandbox IAP purchase and showing receipt validation in server logs",
+          "Remote config live change: modifying a parameter in Firebase console and showing it update in the running game",
+          "Performance evidence: profiler data showing frame time, memory usage, and thermal behavior on target hardware",
+          "Store listing review: presenting the optimized app store page with screenshots, description, and keyword analysis",
+          "Post-mortem analysis: structured reflection on development process, technical decisions, and business strategy",
+          "Peer evaluation: constructive feedback on UX, performance, and monetization approach",
+          "Portfolio presentation: framing the project for job applications in mobile game studios",
+          "Industry readiness: demonstrating understanding of the end-to-end mobile game lifecycle"
+        ],
+        "demonstration": "Each student presents for 8-10 minutes with 3-5 minutes of Q&A. Presentations include a live game demo on a physical device, a walkthrough of analytics dashboards with real data, and a post-mortem discussion of key decisions and lessons learned.",
+        "setup_requirements": [
+          "Physical mobile device with the final game installed from a test track",
+          "Firebase Analytics and Remote Config dashboards accessible on a laptop",
+          "Presentation slides with performance profiling data and store listing screenshots",
+          "Written post-mortem document submitted before presentation"
+        ],
+        "review": [
+          {
+            "key": "Test Track Publication",
+            "value": "The game must be published to TestFlight (iOS) or Google Play Internal Testing (Android) to demonstrate the ability to build, sign, upload, and distribute a real mobile application through official channels."
+          },
+          {
+            "key": "Live Analytics Evidence",
+            "value": "Real data from test sessions displayed in Firebase Analytics dashboards: session counts, event logs, retention calculation from multiple test days, and monetization events from sandbox purchases."
+          },
+          {
+            "key": "Professional Pitch",
+            "value": "Presenting the game as if pitching to a publisher or studio: clear value proposition, target audience, monetization strategy with expected metrics, competitive analysis, and development roadmap."
+          },
+          {
+            "key": "Post-Mortem Honesty",
+            "value": "The best post-mortems are honest about failures. A student who acknowledges that their monetization design was too aggressive or their retention was below target and explains what they would change demonstrates more learning than one who claims everything went perfectly."
           }
         ]
       }
@@ -270,46 +884,66 @@
       {
         "quiz": 1,
         "week": 3,
-        "topic": "Mobile Platforms, Touch Input, and Performance",
+        "topic": "Mobile Platforms, Touch Input, and Mobile UI",
         "duration": "20 minutes",
         "questions": [
           {
             "question": "A mobile game runs at a stable 60fps for the first 10 minutes of play, then gradually drops to 35fps over the next 20 minutes with no change in scene complexity. The device surface is noticeably warm. Explain the most likely cause and describe two concrete strategies the developer should implement to address this problem.",
             "type": "short_answer",
-            "points": 10,
-            "answer": "The most likely cause is thermal throttling. As the device heats up from sustained GPU/CPU load, the operating system reduces clock speeds to prevent hardware damage, resulting in lower frame rates despite constant scene complexity. Two strategies: (1) Implement an adaptive quality system that monitors device thermal state (using iOS ProcessInfo.thermalState or Android PowerManager) and dynamically reduces rendering resolution, shadow quality, or particle counts when thermal pressure increases. (2) Reduce sustained GPU load by using more aggressive LOD transitions, lowering the render resolution to 85-90% and upscaling, and ensuring shaders avoid expensive operations like dependent texture reads in fragment shaders.",
+            "points": 8,
+            "answer": "The most likely cause is thermal throttling. As the device heats up from sustained GPU/CPU load, the operating system reduces clock speeds to prevent hardware damage, resulting in lower frame rates despite constant scene complexity. Strategy 1: Implement an adaptive quality system that monitors device thermal state (using iOS ProcessInfo.thermalState or Android PowerManager) and dynamically reduces rendering resolution, shadow quality, or particle counts when thermal pressure increases. Strategy 2: Reduce sustained GPU load proactively by targeting 70-80% GPU utilization rather than maximum. Use lower render resolution (85-90% with upscaling), implement more aggressive LOD transitions, and ensure shaders avoid expensive operations like dependent texture reads in fragment shaders.",
             "rubric": [
               {
                 "key": "Correctly identifies thermal throttling as the cause",
-                "value": 4
-              },
-              {
-                "key": "First mitigation strategy is concrete and technically sound",
                 "value": 3
               },
               {
-                "key": "Second mitigation strategy is concrete and technically sound",
+                "key": "First strategy is concrete with specific technical approach",
                 "value": 3
+              },
+              {
+                "key": "Second strategy is concrete with specific technical approach",
+                "value": 2
               }
             ]
           },
           {
-            "question": "Explain why ASTC is generally preferred over ETC2 and PVRTC for mobile texture compression in 2024, and describe one scenario where you might still choose ETC2.",
+            "question": "Explain the difference between a static and dynamic virtual joystick, and describe when each is the better choice. Include the role of dead zones in both designs.",
             "type": "short_answer",
-            "points": 10,
-            "answer": "ASTC is preferred because it offers variable block sizes (4x4 to 12x12 texels) allowing developers to choose the quality-to-size ratio per texture, it supports both LDR and HDR content, and it handles all texture types (color, normals, masks) with good quality. It is universally supported on modern iOS (A8+) and Android (OpenGL ES 3.2+) devices. You might still choose ETC2 when targeting very old Android devices running OpenGL ES 3.0 that lack ASTC support but do support ETC2, as ETC2 is mandatory in the OpenGL ES 3.0 specification.",
+            "points": 7,
+            "answer": "A static virtual joystick is always visible at a fixed screen position. The player must reach to the joystick's location to use it. A dynamic virtual joystick appears wherever the player first touches the screen and centers itself at that touch point, disappearing when the finger lifts. Static is better for games requiring precise, sustained directional control (fighting games, twin-stick shooters) because the player develops muscle memory for the joystick location. Dynamic is better for casual games and situations where different players hold the device differently, because it accommodates any hand position and does not permanently occupy screen space. Dead zones apply to both: a circular area at the joystick center (10-15% of radius) where input is ignored. Without a dead zone, even resting a thumb on a static joystick causes drift because the thumb is never perfectly centered.",
             "rubric": [
               {
-                "key": "Explains ASTC variable block size advantage",
+                "key": "Correctly distinguishes static and dynamic joystick behaviors",
                 "value": 3
               },
               {
-                "key": "Mentions ASTC universal support on modern devices",
-                "value": 3
+                "key": "Appropriate use case for each type with reasoning",
+                "value": 2
               },
               {
-                "key": "Valid scenario for choosing ETC2 (legacy device support)",
-                "value": 4
+                "key": "Explains dead zone purpose and typical radius",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A mobile game's UI buttons are 30x30 dp on Android. A playtester reports that they frequently miss buttons during fast-paced gameplay. Identify the problem, cite the relevant guideline, and explain the fix.",
+            "type": "short_answer",
+            "points": 5,
+            "answer": "The buttons are below the minimum recommended touch target size. Android Material Design guidelines specify a minimum of 48x48 dp for touch targets, and Apple Human Interface Guidelines specify 44x44 points. At 30x30 dp, the buttons are approximately 60% of the minimum size, making them unreliable to tap, especially during fast-paced gameplay where the player cannot carefully aim their finger. Fix: Increase the touch target to at least 48x48 dp. If the visual button must remain small for design reasons, extend the invisible touch area (hit rect) beyond the visual bounds while keeping the visual element at its designed size.",
+            "rubric": [
+              {
+                "key": "Identifies buttons as below minimum touch target size",
+                "value": 2
+              },
+              {
+                "key": "Cites correct guideline values (48dp Android or 44pt iOS)",
+                "value": 2
+              },
+              {
+                "key": "Provides appropriate fix including hit area extension option",
+                "value": 1
               }
             ]
           }
@@ -319,46 +953,273 @@
       {
         "quiz": 2,
         "week": 5,
-        "topic": "Monetization, ASO, and Cross-Platform Architecture",
-        "duration": "20 minutes",
+        "topic": "Performance Budgets, Rendering Optimization, and Monetization",
+        "duration": "25 minutes",
         "questions": [
           {
-            "question": "A free-to-play mobile game has Day 1 retention of 40%, Day 7 retention of 15%, Day 30 retention of 5%, and an ARPDAU of $0.08. Calculate the approximate LTV of an average player assuming the retention curve is roughly exponential, and explain whether the game can profitably acquire users at a CPI (cost per install) of $2.00.",
+            "question": "A free-to-play mobile game has Day 1 retention of 40%, Day 7 retention of 15%, Day 30 retention of 5%, and an ARPDAU of $0.08. Calculate the approximate LTV and explain whether the game can profitably acquire users at a CPI of $2.00.",
             "type": "calculation",
-            "points": 10,
-            "answer": "Using the area-under-the-curve method with the given retention points, the estimated average player lifetime is approximately 15-20 days. LTV = ARPDAU x average lifetime = $0.08 x ~17 = ~$1.36. At a CPI of $2.00, the game cannot profitably acquire users because LTV ($1.36) is less than CPI ($2.00). The LTV/CPI ratio is approximately 0.68, well below the commonly targeted minimum of 1.5-2.0. The developer needs to either improve monetization (higher ARPDAU) or improve retention to extend average lifetime, or find cheaper acquisition channels.",
+            "points": 8,
+            "answer": "Using the area-under-the-curve method with the given retention points and assuming a roughly exponential decay, the estimated average player lifetime is approximately 15-20 days. LTV = ARPDAU x average lifetime = $0.08 x 17 days = approximately $1.36. At a CPI of $2.00, the game cannot profitably acquire users because LTV ($1.36) < CPI ($2.00). The LTV/CPI ratio is 0.68, well below the target of 1.5-2.0 that accounts for overhead costs. The developer needs to either improve monetization to raise ARPDAU (better IAP offers, rewarded ads) or improve retention to extend average lifetime (better content, engagement features), or reduce CPI by finding cheaper acquisition channels.",
             "rubric": [
               {
                 "key": "Reasonable LTV calculation using retention and ARPDAU",
-                "value": 4
-              },
-              {
-                "key": "Correct conclusion that CPI exceeds LTV",
                 "value": 3
               },
               {
-                "key": "Suggests viable paths to profitability",
+                "key": "Correct conclusion that LTV < CPI means unprofitable acquisition",
                 "value": 3
+              },
+              {
+                "key": "Identifies at least one viable path to profitability",
+                "value": 2
               }
             ]
           },
           {
-            "question": "Describe the service locator pattern as applied to cross-platform mobile game development, and explain how it solves the problem of platform-specific IAP implementations on iOS and Android.",
+            "question": "Explain why ASTC texture compression is generally preferred over ETC2 for mobile games in 2024-2025, and describe one scenario where ETC2 is still the correct choice.",
             "type": "short_answer",
-            "points": 10,
-            "answer": "The service locator pattern uses a central registry that maps interface types to concrete implementations. For cross-platform IAP, you define an IPurchaseService interface with methods like PurchaseProduct() and RestorePurchases(). At startup, the game registers the appropriate concrete implementation: ApplePurchaseService on iOS (wrapping StoreKit) or GooglePurchaseService on Android (wrapping Google Play Billing Library). Game code only depends on the IPurchaseService interface and retrieves it from the service locator, so the same game logic works on both platforms without conditional compilation scattered throughout the codebase. This keeps platform-specific code isolated in the concrete service implementations.",
+            "points": 6,
+            "answer": "ASTC is preferred because it offers variable block sizes (4x4 to 12x12 texels) allowing quality-to-size tradeoff per texture, supports both LDR and HDR content, handles all texture types (color, normals, masks) with good quality, and is supported on all modern iOS (A8+) and Android (OpenGL ES 3.2+, Vulkan) devices. ETC2 has fixed 4x4 block size with no quality-size flexibility and produces worse quality for normal maps and gradient-heavy textures. ETC2 is still correct when targeting very old Android devices running OpenGL ES 3.0 that lack ASTC support, as ETC2 is mandatory in the ES 3.0 spec. If your minimum spec includes 2015-era budget phones, ETC2 ensures universal compatibility.",
             "rubric": [
               {
-                "key": "Correctly describes the service locator pattern with registry concept",
+                "key": "Explains ASTC variable block size and quality advantages",
+                "value": 2
+              },
+              {
+                "key": "Notes ASTC universal support on modern devices",
+                "value": 2
+              },
+              {
+                "key": "Valid scenario for choosing ETC2 with reasoning",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A mobile game has 380 draw calls and is GPU-bound at 22ms/frame on a mid-range phone. Describe three specific rendering optimizations, estimate each one's impact, and explain which mobile GPU characteristic makes draw call reduction especially important.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Optimization 1: Enable SRP Batcher or static batching to combine objects sharing shaders. Estimated impact: reduce draw calls from 380 to ~150, saving 3-5ms from reduced CPU draw call overhead and GPU state changes. Optimization 2: Switch textures from uncompressed to ASTC 6x6 compression. Estimated impact: reduce texture memory bandwidth by 4-8x, saving 2-3ms from reduced GPU memory fetch time. Optimization 3: Enable render scale at 85% and upscale. Estimated impact: reduce fragment count by 28% (0.85^2), saving 2-3ms of fragment shading time. Draw call reduction is especially important on mobile because mobile GPUs use tile-based deferred rendering, where each draw call requires the driver to compute per-tile visibility lists. High draw call counts increase the CPU overhead of tile binning and can cause the driver to become the bottleneck even when the GPU has spare capacity.",
+            "rubric": [
+              {
+                "key": "Three distinct optimizations with reasonable impact estimates",
                 "value": 3
               },
               {
-                "key": "Explains interface abstraction for IAP across platforms",
-                "value": 4
+                "key": "Estimates total to a reasonable reduction (into budget range)",
+                "value": 2
               },
               {
-                "key": "Identifies the benefit of isolating platform-specific code",
+                "key": "Correctly explains TBDR tile binning overhead for draw calls",
                 "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 22
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "Analytics, Engagement, and Notifications",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "A mobile game has D1 retention of 42%, D7 retention of 12%, and D30 retention of 1%. Based on industry benchmarks, diagnose the likely problem area and describe what analytics events you would examine to confirm your diagnosis.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "D1 retention of 42% is acceptable (benchmark: 35-45% for casual). The severe drop from D1 (42%) to D7 (12%) and near-total loss by D30 (1%) indicates the core gameplay loop fails to sustain engagement after the initial session. Players try the game and return once, but find insufficient reason to keep playing after the first few days. To confirm, examine: (1) Session depth by day: are D2-D7 sessions getting shorter, indicating declining interest? (2) Level completion funnel: do players hit a wall at a specific level that causes rage-quitting? (3) Content consumption rate: do players exhaust available content within the first week? (4) Feature usage: are engagement features (daily rewards, events, social) being used or ignored? (5) Last action before churn: what is the most common final event before a player never returns?",
+            "rubric": [
+              {
+                "key": "Correctly identifies core loop engagement as the problem, not onboarding",
+                "value": 3
+              },
+              {
+                "key": "Names at least three specific analytics events to investigate",
+                "value": 3
+              },
+              {
+                "key": "Analysis is logical and connects retention pattern to likely causes",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain why requesting push notification permission on first app launch is suboptimal, and describe a better approach with the expected impact on opt-in rates.",
+            "type": "short_answer",
+            "points": 6,
+            "answer": "Requesting on first launch is suboptimal because the player has no context for why the game needs to send notifications. They have not experienced any game mechanic (timers, events, rewards) that would benefit from notifications. The system dialog offers a binary choice with no explanation, and many players reflexively deny permission for any app they have not yet decided to keep. Expected opt-in rate on first launch: 40-50%. Better approach: Wait until the player completes their first gameplay session and encounters a natural notification trigger -- for example, when they start a timer-based action (building, training, harvesting) that will complete later. Before showing the system dialog, display a custom pre-permission screen that explains the specific benefit: 'Get notified when your crops are ready to harvest so you never lose progress.' Then show the system dialog. Expected opt-in rate with this approach: 60-70%.",
+            "rubric": [
+              {
+                "key": "Explains why first-launch request lacks context and triggers reflexive denial",
+                "value": 2
+              },
+              {
+                "key": "Describes a better timing approach with specific trigger example",
+                "value": 2
+              },
+              {
+                "key": "Mentions pre-permission screen and reasonable opt-in rate improvement",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "What is the purpose of a conversion funnel in analytics, and describe the five stages of a typical mobile game monetization funnel.",
+            "type": "short_answer",
+            "points": 6,
+            "answer": "A conversion funnel tracks the percentage of users who complete each stage of a multi-step process, revealing where the highest drop-off occurs so developers can focus optimization efforts. Typical mobile game monetization funnel: (1) Free player installs the game (100% baseline). (2) Player reaches the store/shop screen (30-50% of players). (3) Player views a specific IAP offer (15-25% of players). (4) Player initiates a purchase (3-8% of players). (5) Player completes the purchase successfully (2-5% of players, accounting for payment failures and cancellations). The funnel reveals which step loses the most players. If 50% reach the store but only 5% view an offer, the store layout needs improvement. If 8% initiate purchase but only 3% complete, the payment flow has friction.",
+            "rubric": [
+              {
+                "key": "Correctly defines funnel purpose as identifying drop-off points",
+                "value": 2
+              },
+              {
+                "key": "Five stages are reasonable and ordered correctly",
+                "value": 2
+              },
+              {
+                "key": "Provides example of actionable insight from funnel data",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "ASO, Cross-Platform, and Live Operations",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "Describe the service locator pattern as applied to cross-platform mobile game development, and explain how it solves the problem of platform-specific IAP implementations on iOS and Android.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "The service locator pattern uses a central registry that maps interface types to concrete implementations. For cross-platform IAP: define an IIAPService interface with methods like PurchaseProduct(string productId) and RestorePurchases(). Create AppleIAPService (wrapping StoreKit 2) and GoogleIAPService (wrapping Play Billing Library 6.0). At app startup, register the appropriate implementation: on iOS, ServiceLocator.Register<IIAPService>(new AppleIAPService()); on Android, ServiceLocator.Register<IIAPService>(new GoogleIAPService()). All game code calls ServiceLocator.Get<IIAPService>().PurchaseProduct(id) without knowing which platform it is running on. Platform-specific code is confined to two places: the concrete service implementations and the startup registration. This prevents conditional compilation (#if UNITY_IOS) from being scattered throughout the codebase.",
+            "rubric": [
+              {
+                "key": "Correctly describes the service locator registry concept",
+                "value": 3
+              },
+              {
+                "key": "Shows interface abstraction with concrete platform implementations",
+                "value": 3
+              },
+              {
+                "key": "Identifies benefit of isolating platform-specific code",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between a remote config change and an addressable content update for a live mobile game, and describe when you would use each.",
+            "type": "short_answer",
+            "points": 6,
+            "answer": "Remote config changes modify key-value parameters (numbers, strings, booleans) that the game reads at runtime. Changes take effect within minutes when the game fetches the latest config. Use for: tuning difficulty multipliers, enabling/disabling features with flags, changing event schedules, adjusting IAP prices, A/B testing parameter values. No new content is downloaded -- only small JSON values change. Addressable content updates deliver new binary assets (textures, models, audio, levels) by uploading updated asset bundles to a CDN and updating the content catalog. The game downloads new bundles as needed. Use for: adding new characters, levels, seasonal cosmetics, or fixing art bugs. Requires the player to download data (possibly on WiFi). Use remote config for tuning existing behavior and addressable updates for delivering new content.",
+            "rubric": [
+              {
+                "key": "Correctly distinguishes parameter tuning from content delivery",
+                "value": 2
+              },
+              {
+                "key": "Appropriate use cases for remote config",
+                "value": 2
+              },
+              {
+                "key": "Appropriate use cases for addressable content with download consideration",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "What is a soft-launch, and describe the three KPIs you would evaluate before deciding to proceed to a worldwide launch.",
+            "type": "short_answer",
+            "points": 6,
+            "answer": "A soft-launch is releasing the game in a limited market (typically 1-3 countries like Canada, Australia, or Philippines) to gather real player data before committing to a global launch with marketing spend. The three KPIs: (1) D1 retention: must exceed 40% for casual, 30% for mid-core. Below these thresholds, the first-time user experience needs work before spending on acquisition. (2) D7 retention: must exceed 15-20%. Indicates the core loop sustains engagement beyond novelty. (3) LTV vs projected CPI: the estimated LTV from soft-launch monetization data must exceed the projected CPI for the target global markets by a factor of at least 1.5-2x to account for overhead. If any of these are below threshold, iterate on the game and re-evaluate before launching globally.",
+            "rubric": [
+              {
+                "key": "Correctly defines soft-launch with market selection",
+                "value": 2
+              },
+              {
+                "key": "Three KPIs are appropriate with reasonable threshold values",
+                "value": 2
+              },
+              {
+                "key": "Explains the iterate-before-launching decision framework",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "Testing, Submission, and Post-Launch Management",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "A player is in the middle of a boss fight when they receive a phone call. Describe the sequence of app lifecycle events on iOS, what the game must do at each step, and what should happen when the player returns to the game.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Lifecycle sequence on iOS: (1) applicationWillResignActive: the app is about to lose focus. The game should immediately pause gameplay, save the current state to persistent storage (boss health, player position, active effects), and mute audio. (2) applicationDidEnterBackground: the app is now in the background. Reduce memory footprint if possible. The OS may terminate the app at any time from this point without further notice. (3) When the player finishes the call, applicationWillEnterForeground is called, followed by applicationDidBecomeActive. The game should restore from the saved state, resume audio, and display the pause menu (do not auto-resume gameplay). The player should see the exact game state from when the call arrived and choose when to unpause. If the OS terminated the app during the call, the next launch should detect the saved mid-gameplay state and offer to resume from the save point.",
+            "rubric": [
+              {
+                "key": "Correct lifecycle event sequence on iOS",
+                "value": 3
+              },
+              {
+                "key": "Appropriate actions at each lifecycle stage (save, pause, mute)",
+                "value": 3
+              },
+              {
+                "key": "Handles both return-from-background and terminated-by-OS cases",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "List three common reasons for Apple App Store review rejection that are specific to games, and describe how to avoid each one.",
+            "type": "short_answer",
+            "points": 6,
+            "answer": "(1) Crashes during review: the reviewer tests on devices the developer may not have tested on, or the game crashes on first launch due to server connectivity issues during review. Avoid: test on multiple device models including the oldest supported, ensure the game handles server unavailability gracefully (offline mode or clear error message), and verify the demo account credentials work. (2) Undisclosed loot box/gacha odds: Apple requires apps with randomized virtual item purchases to disclose the odds of receiving each item before purchase. Avoid: display drop rates for all randomized reward systems before the player can spend money, and include this in the review notes. (3) Misleading screenshots: store screenshots that show gameplay or graphics not representative of the actual game. Avoid: capture screenshots from the actual game build being submitted, label any aspirational or cinematic content clearly, and ensure screenshots show real gameplay.",
+            "rubric": [
+              {
+                "key": "Three distinct game-specific rejection reasons",
+                "value": 2
+              },
+              {
+                "key": "Prevention strategies are specific and actionable",
+                "value": 2
+              },
+              {
+                "key": "Reasons are accurately attributed to Apple's guidelines",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "After launching a mobile game, your D7 retention drops from 18% to 12% following a content update. Describe how you would use analytics to diagnose the cause and what immediate actions you would take.",
+            "type": "short_answer",
+            "points": 6,
+            "answer": "Diagnosis with analytics: (1) Compare cohort behavior: separate players who updated from those on the old version. If old-version players maintain 18% D7, the update caused the drop. (2) Examine session data: check if session length or sessions-per-day decreased after the update, indicating less engaging gameplay. (3) Check level/feature funnels: identify if the new content introduced a progression wall or frustration point where players drop off. (4) Review crash data: check if the update introduced new crashes that are terminating sessions. (5) Check the last event before churn for the new cohort. Immediate actions: (1) If a crash is detected, prepare an emergency hotfix and request expedited review. (2) If a difficulty spike is found, use remote config to reduce difficulty of the problematic content without an app update. (3) If the cause is unclear, halt any active user acquisition campaigns to stop paying to acquire users who will churn. (4) Communicate with the community about known issues.",
+            "rubric": [
+              {
+                "key": "Systematic analytics diagnosis approach with cohort comparison",
+                "value": 2
+              },
+              {
+                "key": "Identifies multiple possible causes and how to distinguish them",
+                "value": 2
+              },
+              {
+                "key": "Immediate actions are appropriate and prioritized",
+                "value": 2
               }
             ]
           }
@@ -371,56 +1232,56 @@
         "assignment": 1,
         "title": "Mobile-Optimized Game Prototype",
         "week_assigned": 2,
-        "week_due": 4,
-        "points": 100,
-        "description": "Design and build a fully playable mobile game prototype that demonstrates mastery of touch input design, mobile UI patterns, and performance optimization. The game must run at a stable 60fps on a mid-range mobile device and implement at least two distinct touch interaction mechanics.",
+        "week_due": 5,
+        "points": 150,
+        "description": "Design and build a fully playable mobile game prototype that demonstrates mastery of touch input design, mobile UI patterns, and performance optimization. The game must run at a stable 60fps on a mid-range mobile device, implement at least two distinct touch interaction mechanics (e.g., virtual joystick + tap-to-shoot, swipe + pinch), feature a responsive mobile UI that adapts to different screen sizes and safe areas, and include basic Firebase Analytics integration tracking session and level events.",
         "objectives": [
-          "Implement intuitive touch-based controls with proper dead zones and feedback",
-          "Design a mobile-native UI that adapts to different screen sizes and safe areas",
-          "Optimize rendering and memory usage to sustain 60fps on target hardware",
-          "Integrate basic analytics to track player interaction patterns"
+          "Implement intuitive touch-based controls with proper dead zones and haptic feedback",
+          "Design a mobile-native UI that adapts to different screen sizes, aspect ratios, and safe areas",
+          "Optimize rendering and memory usage to sustain 60fps on mid-range target hardware",
+          "Integrate Firebase Analytics to track session starts, level completions, and custom engagement events"
         ],
         "requirements": {},
         "deliverables": [
           "Unity project with iOS and Android build targets configured",
-          "APK build tested on a physical Android device",
-          "Performance profiling report showing frame times and memory usage",
-          "Technical document describing input system design decisions (2-3 pages)"
+          "APK or IPA build tested on a physical mobile device",
+          "Performance profiling report with frame time, memory, and draw call analysis (2-3 pages)",
+          "Technical document describing input system architecture and UI responsive design (3-4 pages)"
         ],
         "grading_rubric": {
-          "touch_input_design": {
-            "points": 30,
+          "technical_implementation": {
+            "points": 50,
             "criteria": [
-              "Touch controls feel responsive and natural",
-              "Virtual joystick or touch areas have proper dead zones",
-              "Multi-touch interactions work without conflicts",
-              "Haptic feedback is used appropriately"
+              "Touch controls feel responsive with proper dead zones and gesture disambiguation",
+              "Multi-touch interactions work without conflicts or dropped inputs",
+              "Analytics events are logged correctly and visible in Firebase dashboard",
+              "Code is well-structured with clear input handling separation"
             ]
           },
-          "mobile_ui_quality": {
-            "points": 25,
+          "visual_quality": {
+            "points": 35,
             "criteria": [
-              "UI respects safe areas on notched devices",
-              "Touch targets meet minimum size guidelines (44pt / 48dp)",
-              "UI scales correctly across different screen sizes and aspect ratios",
-              "Visual feedback for all interactive elements"
+              "UI respects safe areas on notched and punch-hole devices",
+              "Touch targets meet minimum size guidelines (44pt iOS / 48dp Android)",
+              "UI scales correctly across phone and tablet aspect ratios",
+              "Visual feedback for every interactive element (press states, animations)"
             ]
           },
-          "performance": {
-            "points": 30,
+          "performance_optimization": {
+            "points": 40,
             "criteria": [
-              "Sustains 60fps on target mid-range device",
-              "Memory usage stays under 500MB",
-              "No frame spikes above 33ms during normal gameplay",
-              "Texture compression and draw call batching properly implemented"
+              "Sustains 60fps on target mid-range device (profiling evidence required)",
+              "Memory usage stays under 400MB on device",
+              "No GC allocation spikes above 1KB per frame during gameplay",
+              "Textures use ASTC compression, draw calls are batched appropriately"
             ]
           },
           "documentation": {
-            "points": 15,
+            "points": 25,
             "criteria": [
-              "Clear explanation of input design rationale",
-              "Profiling data presented with analysis",
-              "Optimization decisions documented with before/after metrics",
+              "Input design rationale explains each control scheme decision",
+              "Profiling data presented with analysis and optimization narrative",
+              "UI responsive design approach documented with multi-device screenshots",
               "Professional formatting and writing"
             ]
           }
@@ -428,12 +1289,12 @@
         "rubric": [
           {
             "attributes": {
-              "points": 100,
+              "points": 150,
               "criteria": [
                 "Polished touch controls that feel native to mobile",
-                "Rock-solid 60fps performance on mid-range hardware",
+                "Rock-solid 60fps performance on mid-range hardware with profiling evidence",
                 "Thoughtful mobile UI that adapts to device variations",
-                "Thorough documentation with profiling evidence"
+                "Analytics integration proving player behavior tracking works"
               ]
             }
           }
@@ -441,59 +1302,131 @@
       },
       {
         "assignment": 2,
-        "title": "Monetized Mobile Game with Live Operations",
-        "week_assigned": 4,
-        "week_due": 5,
-        "points": 100,
-        "description": "Extend the prototype from Assignment 1 with a monetization layer and live operations infrastructure. Implement at least one IAP flow with server-side receipt validation, integrate analytics tracking for a purchase funnel, and build a remote configuration system that allows tuning game parameters without an app update.",
+        "title": "Monetized Mobile Game with Analytics",
+        "week_assigned": 5,
+        "week_due": 9,
+        "points": 150,
+        "description": "Extend the prototype from Assignment 1 with a complete monetization layer, analytics-driven insights, and engagement systems. Implement at least one IAP flow with server-side receipt validation, a rewarded ad placement, daily reward system, and push notification for at least one game event. The app store listing (on a test track) must be prepared with optimized metadata.",
         "objectives": [
           "Implement a complete IAP flow with server-side receipt validation",
-          "Integrate analytics tracking for key monetization events",
-          "Build a remote configuration system for live game tuning",
-          "Prepare an app store listing with optimized metadata and assets"
+          "Integrate rewarded video ads with player-friendly placement",
+          "Build a daily reward system with streak tracking and notification",
+          "Prepare an optimized app store listing on a test track"
         ],
         "requirements": {},
         "deliverables": [
-          "Updated Unity project with IAP and analytics integration",
-          "Server-side receipt validation endpoint (can use Firebase Functions)",
-          "App Store Connect or Google Play Console listing (sandbox/test track)",
-          "ASO analysis document with keyword research and competitor comparison (2-3 pages)"
+          "Updated Unity project with IAP, ads, engagement systems, and notifications",
+          "Server-side receipt validation endpoint (Firebase Cloud Function or equivalent)",
+          "App store listing on TestFlight or Google Play Internal Testing track",
+          "Monetization strategy document with analytics plan, KPI targets, and ASO analysis (3-4 pages)"
         ],
         "grading_rubric": {
-          "monetization_implementation": {
-            "points": 35,
+          "technical_implementation": {
+            "points": 50,
             "criteria": [
-              "IAP flow completes successfully in sandbox environment",
-              "Receipt validation is performed server-side",
-              "Purchase restoration works correctly",
-              "Error states are handled gracefully with user feedback"
+              "IAP flow completes successfully in sandbox with server-side validation",
+              "Rewarded ad integration works with proper loading, showing, and reward delivery",
+              "Daily reward system tracks streaks and persists across sessions",
+              "Push notifications fire for at least one game event (timer completion, daily reward)"
             ]
           },
-          "analytics_integration": {
-            "points": 25,
+          "visual_quality": {
+            "points": 30,
             "criteria": [
-              "Key funnel events are tracked (store view, purchase initiated, purchase completed)",
-              "Custom events provide actionable player behavior data",
-              "Analytics dashboard shows real data from test sessions",
-              "ARPDAU and retention can be calculated from tracked events"
+              "Store/shop UI clearly distinguishes free and premium content",
+              "Purchase confirmation flow prevents accidental purchases",
+              "Daily reward calendar is visually clear and motivating",
+              "App store listing screenshots show real gameplay with benefit captions"
             ]
           },
-          "live_operations": {
-            "points": 25,
+          "performance_optimization": {
+            "points": 30,
             "criteria": [
-              "Remote config changes reflect in-game without app update",
-              "Feature flags can enable/disable game features remotely",
-              "Graceful fallback when remote config is unavailable",
-              "Configuration changes are applied without restarting the game"
+              "Ad SDK integration does not cause frame rate drops during gameplay",
+              "IAP flow handles errors gracefully (network loss, validation failure)",
+              "Analytics event volume does not impact game performance",
+              "Notification permission is requested at an appropriate moment"
             ]
           },
-          "aso_and_listing": {
+          "documentation": {
+            "points": 40,
+            "criteria": [
+              "Monetization strategy explains model choice with expected KPI targets",
+              "ASO analysis includes keyword research and competitive comparison",
+              "Analytics event taxonomy is documented with rationale for each event",
+              "Ethical considerations are addressed (no predatory mechanics, disclosed odds)"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Complete monetization pipeline from IAP to validation to delivery",
+                "Analytics integration that provides actionable business insights",
+                "Engagement systems that create genuine reasons to return",
+                "Professional-quality app store listing ready for public launch"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Live Operations and Cross-Platform Deployment",
+        "week_assigned": 10,
+        "week_due": 13,
+        "points": 100,
+        "description": "Add live operations infrastructure to the game: remote configuration for live tuning, addressable content for a downloadable content pack, a time-limited event system driven by server timestamps, and cross-platform testing across at least two devices. Demonstrate a live parameter change affecting the running game in real time.",
+        "objectives": [
+          "Implement Firebase Remote Config for live game parameter tuning",
+          "Build an addressable content pack that downloads new content without an app update",
+          "Create a time-limited event system driven by server-controlled timestamps",
+          "Verify cross-platform functionality on at least two different devices or platforms"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Unity project with Remote Config, Addressables, and event system integrated",
+          "Remote addressable content hosted on Firebase Hosting or equivalent CDN",
+          "Video demonstrating a live Remote Config change affecting the running game",
+          "Cross-platform test report documenting behavior on two devices (2 pages)"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 40,
+            "criteria": [
+              "Remote Config fetches, activates, and applies values correctly",
+              "Addressable content downloads and loads without errors",
+              "Event system activates and deactivates based on server timestamps",
+              "Graceful fallback when remote services are unreachable"
+            ]
+          },
+          "visual_quality": {
             "points": 15,
             "criteria": [
-              "Keywords are researched with competitive analysis",
-              "Screenshots follow platform guidelines and show gameplay",
-              "Description is compelling and optimized for search",
-              "Professional presentation of store listing materials"
+              "Event UI clearly communicates time remaining and rewards",
+              "Downloaded content integrates seamlessly with existing art style",
+              "Loading states for content downloads are clear and non-blocking",
+              "UI handles the event appearing and disappearing without layout breaks"
+            ]
+          },
+          "performance_optimization": {
+            "points": 20,
+            "criteria": [
+              "Content download does not block gameplay",
+              "Remote Config fetch does not add visible startup delay",
+              "Addressable content cache is managed properly (not re-downloading unchanged content)",
+              "Cross-platform performance is acceptable on both test devices"
+            ]
+          },
+          "documentation": {
+            "points": 25,
+            "criteria": [
+              "Live ops architecture is documented with sequence diagrams",
+              "Remote Config parameter list documented with default values and ranges",
+              "Cross-platform test report documents device-specific behaviors and differences",
+              "Content update workflow is documented for team handoff"
             ]
           }
         },
@@ -502,10 +1435,10 @@
             "attributes": {
               "points": 100,
               "criteria": [
-                "Complete IAP flow with proper server-side validation",
-                "Meaningful analytics that could drive business decisions",
-                "Functional remote config for live game tuning",
-                "Professional-quality app store listing"
+                "Functional live ops that demonstrates real-time parameter tuning",
+                "Working content delivery pipeline without app store update",
+                "Event system that creates urgency and engagement",
+                "Cross-platform deployment verified on real devices"
               ]
             }
           }
@@ -515,31 +1448,31 @@
   },
   "grading_breakdown": {
     "weekly_quizzes": {
-      "percentage": 15,
-      "description": "Regular assessment of mobile platform knowledge and development principles"
+      "percentage": 20,
+      "description": "Five quizzes covering mobile platforms, performance, monetization, analytics, live ops, and post-launch management"
     },
     "lab_assignments": {
-      "percentage": 20,
-      "description": "Hands-on exercises in touch input, performance profiling, and platform-specific integration"
+      "percentage": 15,
+      "description": "Weekly hands-on exercises in touch input, profiling, IAP integration, analytics setup, and store listing preparation"
     },
     "major_assignments": {
       "percentage": 30,
-      "description": "Two major projects covering mobile prototype development and monetization/live ops integration"
+      "description": "Three major projects: mobile prototype, monetized game with analytics, and live operations deployment"
     },
     "midterm_examination": {
       "percentage": 15,
-      "description": "Comprehensive assessment of mobile platforms, optimization, and monetization concepts"
+      "description": "Comprehensive assessment of mobile platforms, touch input, performance optimization, and monetization concepts"
     },
     "final_project": {
       "percentage": 20,
-      "description": "Complete mobile game published to a test track with analytics, monetization, and live operations"
+      "description": "Complete mobile game published to a test track with analytics, monetization, live operations, and performance optimization"
     }
   },
   "course_policies": {
-    "attendance": "Attendance is mandatory for all lab sessions and device testing workshops. More than 2 unexcused absences may result in course failure.",
-    "late_submissions": "Late assignments are penalized 10% per day. No submissions accepted more than 5 days late without prior arrangement. Build submissions must compile and run on target devices.",
-    "collaboration": "Individual assignments must be completed independently. Students may share device testing resources but all code must be original or properly attributed.",
-    "academic_integrity": "All code must be original or properly attributed. Use of AI code generation tools must be disclosed. Submitting purchased or copied asset store templates as original work will result in course failure.",
-    "technology_requirements": "Students must have access to a physical iOS or Android device for testing. Lab computers have Xcode and Android Studio available. Personal Apple Developer accounts are recommended but not required."
+    "attendance": "Attendance is mandatory for all lab sessions and device testing workshops. More than 2 unexcused absences may result in a reduced final grade. Device testing sessions require advance scheduling.",
+    "late_submissions": "Late assignments are penalized 10% per day. No submissions accepted more than 5 days late without prior arrangement. All build submissions must compile, install, and run on a physical mobile device.",
+    "collaboration": "Individual assignments must be completed independently. Students may share device testing resources but all code, design, and documentation must be original or properly attributed.",
+    "academic_integrity": "All code must be original or properly attributed. Use of AI code generation tools must be disclosed. Submitting purchased or copied Asset Store templates as original work will result in course failure.",
+    "technology_requirements": "Students must have access to a physical iOS or Android device for testing. Lab computers have Xcode and Android Studio available. A personal Apple Developer account ($99/year) is recommended for TestFlight distribution but not required."
   }
 }

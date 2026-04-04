@@ -14,245 +14,900 @@
     {
       "week_number": 1,
       "session_number": 1,
-      "topic": "Advanced Threat Detection with Machine Learning",
-      "duration": "50 minutes",
+      "topic": "Advanced Firewall Architectures",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Apply machine learning techniques to network anomaly detection",
-        "Evaluate ML-based IDS effectiveness and limitations",
-        "Implement a behavioral network baseline with automated deviation alerts"
+        "Evaluate next-generation firewall capabilities beyond traditional packet filtering",
+        "Design multi-tier firewall architectures for enterprise environments",
+        "Configure application-layer inspection and deep packet inspection policies",
+        "Analyze firewall performance tradeoffs when enabling advanced features"
       ],
       "readings": [
-        "Machine Learning and Security Ch. 5-7",
-        "Academic papers on ML-based network intrusion detection"
+        "Network Security Through Data Analysis, 2nd Ed. Ch. 8-9",
+        "NIST SP 800-41 Rev. 1 - Guidelines on Firewalls and Firewall Policy",
+        "Palo Alto Networks NGFW Architecture Whitepaper"
       ],
       "lecture_notes": {
-        "introduction": "Traditional signature-based detection cannot keep pace with novel threats. Machine learning enables detection of previously unseen attacks by learning normal network behavior and identifying deviations.",
+        "introduction": "Traditional firewalls operated at layers 3 and 4 of the OSI model, making allow-or-deny decisions based on source and destination IP addresses, port numbers, and protocol type. While effective for simple perimeter defense, this approach is fundamentally blind to the content of network traffic. Modern enterprise networks demand far more granular inspection. Next-generation firewalls (NGFWs) integrate application-layer awareness, user identity correlation, intrusion prevention, TLS decryption, and threat intelligence feeds into a single platform. This session examines the architectural evolution from stateless packet filters to stateful inspection to application-aware NGFWs. We will analyze how these systems decompose traffic into application flows, apply policy based on user identity rather than IP address, and leverage sandboxing to detonate suspicious files inline. Understanding the internal architecture of NGFWs is critical for designing firewall policies that balance security visibility with network performance, and for recognizing the inherent limitations that attackers exploit to bypass even the most advanced firewalls.",
         "key_concepts": [
-          "Supervised vs unsupervised ML for network security",
-          "Feature engineering from network flow data",
-          "Anomaly detection: isolation forests, autoencoders",
-          "Classification: random forests for traffic categorization",
-          "False positive management in ML-based detection"
+          "Evolution from packet filters to stateful inspection to NGFWs: each generation adds visibility into higher protocol layers while maintaining backward compatibility with lower-layer filtering",
+          "Application-layer identification using protocol decoding, SSL decryption, and behavioral heuristics rather than relying solely on port numbers, enabling policy enforcement regardless of port evasion",
+          "User-identity-based firewall policies integrating with Active Directory, LDAP, or SAML to apply rules based on who the user is, not just which IP address they occupy",
+          "Deep packet inspection (DPI) mechanics: reassembling fragmented packets, decompressing payloads, and inspecting content against signature databases and behavioral patterns",
+          "TLS/SSL inspection architecture: the firewall terminates TLS, inspects plaintext, then re-encrypts to the destination, requiring trusted CA certificate deployment across the organization",
+          "Multi-zone firewall design: DMZ, internal, management, guest, and IoT zones with explicit inter-zone policies following the principle of least privilege for lateral traffic",
+          "Firewall high-availability configurations: active-passive, active-active, and clustered designs with session state synchronization to prevent connection drops during failover",
+          "Performance considerations: enabling DPI, TLS inspection, and sandboxing degrades throughput by 40-70% versus raw packet forwarding; capacity planning must account for worst-case inspection load",
+          "Firewall evasion techniques: protocol tunneling (DNS tunneling, HTTP/S encapsulation), fragmentation attacks, and slow-rate application-layer attacks that bypass timeout-based state tracking"
         ],
-        "demonstration": "Training an isolation forest model on NetFlow data to detect anomalous network behavior, then testing against simulated attack traffic",
+        "demonstration": "Deploying a pfSense firewall with Suricata IPS integration in a virtualized lab, configuring application-aware rules to differentiate between HTTPS web browsing and HTTPS-tunneled SSH traffic, then demonstrating how DNS-over-HTTPS traffic bypasses traditional DNS-based filtering and how to detect it",
         "setup_requirements": [
-          "Python with scikit-learn and pandas",
-          "NetFlow dataset (CICIDS2017 or similar)",
-          "Jupyter notebook environment"
+          "VMware or VirtualBox with pfSense VM and two client VMs",
+          "Suricata IPS with ET Open ruleset installed",
+          "Wireshark for traffic capture analysis",
+          "DNS-over-HTTPS testing tools (doh-client)"
         ],
         "review": [
           {
-            "key": "Isolation Forest",
-            "value": "Unsupervised anomaly detection algorithm that isolates observations by randomly selecting features and split values. Anomalies require fewer splits to isolate, yielding a shorter path length."
+            "key": "NGFW vs Traditional Firewall",
+            "value": "Traditional firewalls see packets; NGFWs see applications and users. A traditional firewall allows TCP/443; an NGFW distinguishes between HTTPS to a banking site, HTTPS tunneling SSH, and HTTPS carrying malware. This application awareness is the foundation of modern perimeter security."
           },
           {
-            "key": "Feature Engineering",
-            "value": "Extracting meaningful features from raw network data: flow duration, packet count, byte count, inter-arrival times, port entropy, protocol ratios"
-          }
-        ]
-      }
-    },
-    {
-      "week_number": 1,
-      "session_number": 2,
-      "topic": "Software-Defined Networking Security",
-      "duration": "50 minutes",
-      "learning_objectives": [
-        "Analyze the security implications of SDN architecture",
-        "Implement micro-segmentation with SDN controllers",
-        "Identify SDN-specific attack vectors and defenses"
-      ],
-      "readings": [
-        "SDN: Software Defined Networks Ch. 8-10",
-        "OpenFlow specification security considerations"
-      ],
-      "lecture_notes": {
-        "introduction": "SDN separates the control plane from the data plane, enabling programmable network security. This creates both powerful defense capabilities and new attack surfaces.",
-        "key_concepts": [
-          "SDN architecture: controller, southbound API, northbound API",
-          "OpenFlow protocol and flow table management",
-          "Micro-segmentation: per-workload firewall policies via SDN",
-          "SDN attacks: controller compromise, flow table poisoning, DoS of control plane",
-          "Network Function Virtualization (NFV) for security services"
-        ],
-        "demonstration": "Using an OpenDaylight controller to implement micro-segmentation policies and demonstrating how flow rules dynamically isolate a compromised host",
-        "setup_requirements": [
-          "Mininet SDN emulator",
-          "OpenDaylight or ONOS controller",
-          "SDN flow rule testing tools"
-        ],
-        "review": [
-          {
-            "key": "SDN Controller Security",
-            "value": "The controller is the single point of control (and failure). Compromise gives the attacker control over all network flows. Must be hardened, redundant, and monitored."
+            "key": "TLS Inspection Tradeoffs",
+            "value": "Without TLS inspection, the firewall is blind to 90%+ of traffic. With it, you break end-to-end encryption, create a single point of decryption vulnerability, and may violate privacy regulations. Best practice: inspect corporate traffic, exempt banking/healthcare/personal sites, and protect the inspection keys rigorously."
           },
           {
-            "key": "Micro-segmentation via SDN",
-            "value": "SDN enables firewall policies at the individual VM/container level, not just at network boundaries. Dramatically limits lateral movement after a breach."
+            "key": "Zone-Based Architecture",
+            "value": "Flat networks allow unrestricted lateral movement after a breach. Zone-based firewall design creates internal boundaries that limit blast radius. Each zone-to-zone traffic flow must have an explicit policy. Default inter-zone policy should be deny-all."
+          },
+          {
+            "key": "Performance Planning",
+            "value": "A firewall rated at 10 Gbps for packet forwarding may deliver only 3 Gbps with DPI and TLS inspection enabled. Always size firewalls based on worst-case inspection throughput, not marketing throughput numbers. Monitor CPU and session table utilization continuously."
+          },
+          {
+            "key": "Evasion Awareness",
+            "value": "Attackers tunnel C2 traffic through DNS, encode data in HTTP headers, or use cloud services as relay points. Firewalls must combine signature detection with behavioral analysis (beacon timing, data volume anomalies) to catch evasion techniques."
           }
         ]
       }
     },
     {
       "week_number": 2,
-      "session_number": 3,
-      "topic": "Advanced Persistent Threat Detection and Hunting",
-      "duration": "50 minutes",
+      "session_number": 2,
+      "topic": "Next-Generation IDS/IPS Systems",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Characterize APT tactics, techniques, and procedures",
-        "Develop threat hunting hypotheses based on MITRE ATT&CK",
-        "Implement detection engineering for APT techniques"
+        "Compare signature-based, anomaly-based, and behavioral detection approaches",
+        "Deploy and tune Suricata IPS with custom rule creation",
+        "Evaluate detection effectiveness using metrics including precision, recall, and F1 score",
+        "Design IDS/IPS architecture for encrypted traffic environments"
       ],
       "readings": [
-        "Threat Hunting with MITRE ATT&CK",
-        "Mandiant APT reports"
+        "Practical Intrusion Analysis: Prevention and Detection for the Twenty-First Century, Ch. 3-5",
+        "Suricata User Guide - Rule Writing Documentation",
+        "MITRE ATT&CK Technique Coverage Analysis for IDS Rulesets"
       ],
       "lecture_notes": {
-        "introduction": "Advanced Persistent Threats operate with nation-state resources and patience. Detecting them requires going beyond automated alerts to proactive, intelligence-driven hunting.",
+        "introduction": "Intrusion detection and prevention systems form the core of network-based threat detection. First-generation IDS relied on matching known attack signatures against network traffic, a reactive approach that was effective against known threats but useless against novel attacks. Modern IDS/IPS platforms combine multiple detection paradigms: signature matching catches known bad patterns, statistical anomaly detection identifies deviations from normal baselines, and behavioral analysis models track sequences of actions that match attack kill chains even when individual actions appear benign. The distinction between IDS (detection and alerting) and IPS (inline blocking) determines placement architecture. IDS operates on a network tap or SPAN port, analyzing copies of traffic without affecting flow. IPS sits inline, able to drop malicious packets in real-time but introducing latency and the risk of blocking legitimate traffic on false positives. This session covers the internal architecture of modern detection engines, focusing on Suricata as an open-source platform that supports multi-threaded packet processing, protocol-aware inspection, file extraction, and Lua scripting for custom detection logic. We examine how to write effective rules, tune detection to minimize false positives while maintaining high detection rates, and architect IDS/IPS deployments that provide visibility even when most traffic is encrypted.",
         "key_concepts": [
-          "APT lifecycle: initial access, execution, persistence, privilege escalation, lateral movement, exfiltration",
-          "MITRE ATT&CK-based hunting methodology",
-          "Network-based APT indicators: beaconing patterns, DNS anomalies, encrypted C2",
-          "Hunting for lateral movement: anomalous SMB, RDP, WMI traffic",
-          "Threat intelligence integration for IOC-based detection"
+          "Signature-based detection: pattern matching against known malicious byte sequences, effective for known threats with near-zero false positives but blind to zero-day attacks and evasion variants",
+          "Anomaly detection: establishing statistical baselines for traffic volume, protocol distribution, and connection patterns, then alerting on deviations that exceed configurable thresholds",
+          "Behavioral detection: modeling multi-step attack sequences where individual actions may be benign but the sequence matches known attack kill chains (e.g., reconnaissance then exploitation then lateral movement)",
+          "Suricata rule anatomy: action (alert/drop), protocol, source/destination, direction operator, and detection options including content matching, PCRE, byte_test, and flowbits for stateful detection",
+          "Rule performance tuning: ordering content matches from most specific to least specific, using fast_pattern to optimize multi-pattern matching, and avoiding overly broad rules that cause CPU exhaustion",
+          "Detection metrics: true positive rate (recall), precision, F1 score, and the ROC curve for evaluating threshold sensitivity tradeoffs between detection completeness and false positive volume",
+          "IPS deployment modes: inline bridging (transparent), routed inline, and TAP-mode with active response; each has different failure modes and network architecture implications",
+          "Encrypted traffic challenges: JA3/JA3S fingerprinting of TLS handshakes, certificate metadata analysis, and encrypted traffic analytics (ETA) using flow-level features when content inspection is impossible",
+          "Multi-sensor architecture: distributing IDS sensors at network ingress, between security zones, and at cloud connectivity points to provide layered visibility"
         ],
-        "demonstration": "Hunting for APT-style beaconing in NetFlow data using JA3 fingerprints and timing analysis to identify encrypted C2 channels",
+        "demonstration": "Writing custom Suricata rules to detect a simulated command-and-control beacon using JA3 TLS fingerprinting and flow-based detection, then running the rules against a PCAP containing mixed legitimate and malicious traffic to calculate detection rate and false positive rate",
         "setup_requirements": [
-          "Zeek with JA3 module",
-          "NetFlow analysis tools",
-          "Threat intelligence feeds for enrichment"
+          "Suricata 7.x installed on a Linux VM",
+          "ET Open and custom rule files",
+          "PCAP datasets containing labeled malicious traffic",
+          "JA3 fingerprint database for comparison"
         ],
         "review": [
           {
-            "key": "Beaconing Detection",
-            "value": "APT malware regularly contacts C2 servers at predictable intervals. Detecting beaconing: analyze connection timing patterns using standard deviation of inter-connection intervals. Low jitter = beaconing."
+            "key": "Signature vs Behavioral",
+            "value": "Signatures catch known attacks with high precision. Behavioral detection catches novel attacks but generates more false positives. Production deployments combine both: signatures for known threats with high-confidence automated blocking, behavioral rules for unknown threats with analyst investigation."
           },
           {
             "key": "JA3 Fingerprinting",
-            "value": "MD5 hash of TLS ClientHello parameters (cipher suites, extensions, curves). Each TLS client produces a unique fingerprint. Known malware JA3 hashes enable detection regardless of destination."
+            "value": "JA3 hashes the TLS ClientHello parameters (cipher suites, extensions, elliptic curves) into a fingerprint that identifies the TLS client implementation. Malware often has a distinctive JA3 fingerprint that differs from legitimate browsers, enabling detection even when content is encrypted."
+          },
+          {
+            "key": "Tuning Philosophy",
+            "value": "A new IDS deployment generates thousands of alerts daily. Tuning is iterative: suppress known false positives, threshold noisy rules, and create exceptions for legitimate traffic patterns. The goal is a manageable alert queue where every alert warrants investigation."
+          },
+          {
+            "key": "IPS Failure Modes",
+            "value": "Inline IPS can fail-open (pass all traffic when the engine crashes, losing security) or fail-closed (block all traffic, causing an outage). The choice depends on whether security or availability is the higher priority for each network segment."
+          },
+          {
+            "key": "Detection Coverage Mapping",
+            "value": "Map IDS rules to MITRE ATT&CK techniques to identify gaps. If you have rules for Initial Access and Execution but none for Lateral Movement or Exfiltration, you have blind spots in the kill chain that attackers will exploit."
           }
         ]
       }
     },
     {
       "week_number": 3,
-      "session_number": 5,
-      "topic": "Encrypted Traffic Analysis",
-      "duration": "50 minutes",
+      "session_number": 3,
+      "topic": "Software-Defined Networking Security",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Analyze encrypted traffic without decryption using metadata",
-        "Implement TLS inspection and its privacy implications",
-        "Use traffic analysis techniques to classify encrypted flows"
+        "Analyze the security implications of separating control and data planes",
+        "Implement dynamic microsegmentation policies using SDN controllers",
+        "Identify SDN-specific attack vectors including controller compromise and flow table poisoning",
+        "Design resilient SDN architectures that mitigate single points of failure"
       ],
       "readings": [
-        "Encrypted Traffic Analysis research papers",
-        "Cisco ETA (Encrypted Traffic Analytics) whitepaper"
+        "SDN: Software Defined Networks by Nadeau and Gray, Ch. 8-12",
+        "OpenFlow Specification v1.5 Security Considerations",
+        "NIST SP 800-160 Vol. 2 - Developing Cyber-Resilient Systems"
       ],
       "lecture_notes": {
-        "introduction": "With over 90% of web traffic now encrypted, defenders can no longer rely on deep packet inspection. Encrypted traffic analysis uses metadata and behavioral patterns to detect threats without decryption.",
+        "introduction": "Software-defined networking fundamentally restructures how networks are built and managed by separating the control plane (the intelligence that decides where traffic goes) from the data plane (the hardware that forwards packets). In traditional networks, every router and switch contains its own control logic, making coordinated security policy changes slow and error-prone. SDN centralizes this intelligence in a controller that has a global view of the entire network topology and can programmatically modify forwarding rules across all switches simultaneously. For security, this is transformative: an SDN controller can implement microsegmentation at the individual workload level, instantly quarantine a compromised host by modifying flow rules, redirect suspicious traffic to a sandbox for analysis, and enforce dynamic access policies based on real-time threat intelligence. However, this centralization also creates new risks. The SDN controller becomes the single most critical asset in the network. If compromised, an attacker gains the ability to redirect, intercept, or block any network traffic at will. The southbound API between controller and switches (typically OpenFlow) becomes an attack surface. Flow table capacity limits on physical switches can be exploited for denial-of-service. This session examines both the defensive power and the attack surface of SDN, providing the knowledge to architect SDN deployments that maximize security benefits while mitigating the risks inherent in centralized network control.",
         "key_concepts": [
-          "TLS metadata: certificate info, SNI, JA3/JA3S fingerprints",
-          "Flow-based analysis: packet sizes, timing, directionality",
-          "Machine learning on encrypted traffic: classifying applications and malware",
-          "TLS inspection (man-in-the-middle proxy): capabilities and privacy concerns",
-          "DNS-over-HTTPS and DNS-over-TLS impact on visibility"
+          "SDN architecture: application layer (security apps), control layer (controller with global network view), and infrastructure layer (switches executing flow rules) connected by northbound and southbound APIs",
+          "OpenFlow protocol: controller pushes flow rules to switches defining match criteria and actions (forward, drop, mirror, modify); flow rules are evaluated in priority order in hardware flow tables",
+          "Microsegmentation via SDN: defining per-workload firewall policies at the switch level rather than at network boundaries, allowing policies like 'web server A can talk to database B on port 5432 only'",
+          "Dynamic quarantine: when a threat is detected, the SDN controller instantly modifies flow rules to isolate the compromised host while maintaining forensic logging of its traffic for investigation",
+          "SDN controller security: hardening the controller OS, encrypting the southbound API with TLS, implementing role-based access control for northbound API calls, and deploying controller clusters for redundancy",
+          "Flow table poisoning: an attacker who can inject flow rules (via a compromised switch or controller API) can redirect traffic to an interception point or create covert exfiltration channels",
+          "Controller DoS attacks: overwhelming the controller with packet-in events from crafted traffic that does not match any existing flow rule, forcing the controller to process each packet individually",
+          "Network Function Virtualization (NFV): deploying security functions (firewall, IDS, DLP) as virtual appliances that SDN traffic steering chains together based on policy",
+          "East-west traffic visibility: in traditional networks, traffic between servers on the same VLAN never touches a firewall; SDN enables inspection of all traffic regardless of topology"
         ],
-        "demonstration": "Classifying encrypted traffic flows using packet size distributions and timing patterns to distinguish between legitimate HTTPS and malware C2",
+        "demonstration": "Using Mininet to emulate a data center network with an ONOS SDN controller, implementing microsegmentation policies that restrict lateral movement between application tiers, then demonstrating real-time quarantine by automatically isolating a simulated compromised host when Suricata detects malicious activity",
         "setup_requirements": [
-          "pcap files with encrypted traffic",
-          "Python with traffic analysis libraries",
-          "JA3/JA3S extraction tools"
+          "Mininet SDN emulator with Open vSwitch",
+          "ONOS or OpenDaylight SDN controller",
+          "Python scripts for flow rule management",
+          "Suricata integrated for threat detection triggering"
         ],
         "review": [
           {
-            "key": "Metadata Analysis",
-            "value": "Even encrypted traffic reveals: who talks to whom, when, how much data, certificate details, TLS parameters. This metadata alone can identify threats without breaking encryption."
+            "key": "Microsegmentation Value",
+            "value": "Traditional firewalls protect the perimeter. Once an attacker is inside, they move laterally unimpeded. Microsegmentation applies firewall rules at every workload boundary, so compromising one server does not grant access to others. This is the foundation of zero-trust networking."
           },
           {
-            "key": "Traffic Classification",
-            "value": "ML models trained on packet size distributions and inter-arrival times can classify encrypted traffic (web browsing, streaming, file transfer, malware C2) with high accuracy."
+            "key": "Controller as Crown Jewel",
+            "value": "The SDN controller is simultaneously the most powerful defensive tool and the highest-value target. It must be treated like a domain controller: hardened OS, minimal services, encrypted communications, multi-factor authentication, audit logging, and physical security."
+          },
+          {
+            "key": "Flow Table Limitations",
+            "value": "Physical switches have finite TCAM memory for flow tables (typically 2,000-16,000 entries). Microsegmentation at scale can exhaust flow tables. Design must use hierarchical policies and wildcards to minimize table entries while maintaining granular control."
+          },
+          {
+            "key": "NFV Service Chaining",
+            "value": "SDN can steer traffic through a sequence of virtual security appliances (firewall then IDS then DLP) based on policy. This enables flexible security architectures where new functions can be inserted without re-cabling the network."
+          },
+          {
+            "key": "East-West Visibility Gap",
+            "value": "In data centers, 80% of traffic is east-west (server to server) and never crosses a perimeter firewall. SDN provides the only practical way to enforce security policies on this traffic at scale without deploying physical appliances on every link."
           }
         ]
       }
     },
     {
       "week_number": 4,
-      "session_number": 7,
-      "topic": "Network Deception and Active Defense",
-      "duration": "50 minutes",
+      "session_number": 4,
+      "topic": "Zero Trust Network Architecture Implementation",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Deploy honeypots and honeynets for threat intelligence",
-        "Implement network deception with decoy assets",
-        "Design an active defense strategy within legal boundaries"
+        "Design a zero trust architecture following NIST SP 800-207 principles",
+        "Implement policy enforcement points and policy decision points",
+        "Integrate identity, device posture, and context into access decisions",
+        "Evaluate commercial and open-source zero trust solutions"
       ],
       "readings": [
-        "The Art of Intrusion Detection Ch. 5-8",
-        "MITRE Shield active defense framework"
+        "NIST SP 800-207 - Zero Trust Architecture",
+        "Google BeyondCorp papers (original 2014 and BeyondCorp Enterprise)",
+        "CISA Zero Trust Maturity Model v2.0"
       ],
       "lecture_notes": {
-        "introduction": "Active defense shifts from purely reactive security to strategically engaging with adversaries using deception, misdirection, and deliberate engagement to gather intelligence.",
+        "introduction": "The zero trust security model eliminates the concept of a trusted internal network. In traditional perimeter-based security, users and devices inside the corporate network are implicitly trusted, and security controls focus on keeping threats out. This model has proven inadequate as cloud adoption, remote work, and sophisticated attackers who achieve initial access make the perimeter meaningless. Zero trust operates on the principle of never trust, always verify. Every access request, whether from inside or outside the network, must be authenticated, authorized, and continuously validated before granting access to resources. The architecture requires three core components: a strong identity foundation that verifies who the user is and what device they are using, a policy engine that evaluates access requests against contextual attributes (identity, device health, location, time, data sensitivity), and policy enforcement points deployed at every resource boundary to mediate access. Google pioneered this approach with BeyondCorp, which treats the corporate network as untrusted and routes all access through an identity-aware proxy. NIST SP 800-207 provides a vendor-neutral framework for implementing zero trust. This session covers the practical engineering challenges of deploying zero trust: migrating from perimeter-based to identity-based access, handling legacy applications that cannot participate in modern authentication, and the organizational change management required to shift from network-centric to identity-centric security.",
         "key_concepts": [
-          "Honeypots: low-interaction (Cowrie, Dionaea) vs high-interaction",
-          "Honeynets: networks of honeypots simulating real infrastructure",
-          "Honey tokens: fake credentials, documents, and database records",
-          "Canary tokens: tripwires that alert when accessed",
-          "Legal and ethical boundaries of active defense"
+          "Zero trust core principles: verify explicitly (authenticate and authorize every request), use least-privilege access (just-in-time and just-enough access), and assume breach (minimize blast radius, segment access, verify end-to-end encryption)",
+          "NIST SP 800-207 architecture components: Policy Engine (PE) makes access decisions, Policy Administrator (PA) establishes/terminates connections, Policy Enforcement Point (PEP) mediates all resource access",
+          "Identity-centric access: replacing network location (VPN, IP range) as the basis for trust with verified identity, device health attestation, and behavioral context as the access decision inputs",
+          "Device posture assessment: verifying OS patch level, endpoint protection status, disk encryption, jailbreak detection, and certificate validity before granting access to sensitive resources",
+          "Continuous authorization: access is not granted once and forgotten; the policy engine continuously re-evaluates conditions and can revoke access mid-session if risk conditions change",
+          "Micro-perimeters: each application or data resource has its own access policy enforced at the resource boundary, eliminating the assumption that adjacent resources share the same trust level",
+          "Google BeyondCorp implementation: access proxy architecture where all employee access to internal applications goes through an identity-aware proxy regardless of network location",
+          "Legacy application integration: reverse proxies, application wrapping, and network-level micro-segmentation as bridging strategies for applications that cannot support modern authentication protocols",
+          "CISA Zero Trust Maturity Model: five pillars (Identity, Devices, Networks, Applications/Workloads, Data) across four maturity levels (Traditional, Initial, Advanced, Optimal) for planning migration"
         ],
-        "demonstration": "Deploying Cowrie SSH honeypot, generating canary tokens, and analyzing attacker behavior captured by the honeypot",
+        "demonstration": "Configuring an identity-aware access proxy using open-source tools (Pomerium or oauth2-proxy) that enforces per-application access policies based on user identity and device posture, demonstrating how the same user is granted different access levels depending on whether they connect from a managed corporate laptop versus a personal device",
         "setup_requirements": [
-          "Cowrie SSH honeypot",
-          "Canary token generator",
-          "Isolated network for honeypot deployment"
+          "Pomerium or oauth2-proxy deployed on Docker",
+          "Identity provider (Keycloak) with test users and groups",
+          "Two sample web applications with different sensitivity levels",
+          "Device posture simulation scripts"
         ],
         "review": [
           {
-            "key": "Honeypot Value",
-            "value": "Any interaction with a honeypot is suspicious by definition (legitimate users have no reason to access it). Provides high-fidelity alerts with zero false positives for early breach detection."
+            "key": "Never Trust, Always Verify",
+            "value": "Zero trust does not mean zero access. It means every access request is evaluated on its merits: who is the user, what is the device state, what resource is being accessed, and what is the risk context. The goal is informed trust decisions, not blanket denial."
           },
           {
-            "key": "Canary Tokens",
-            "value": "Files (Word docs, PDFs) or credentials that trigger an alert when opened or used. Plant in file shares, admin directories, or credential stores. Any access indicates compromise."
+            "key": "VPN vs Zero Trust",
+            "value": "VPN provides network-level access: once connected, the user can reach everything on the network. Zero trust provides application-level access: each application has its own policy. Compromising a VPN gives broad access; compromising a zero trust session gives access only to the specific application."
+          },
+          {
+            "key": "Migration Strategy",
+            "value": "Organizations cannot switch to zero trust overnight. Start with high-value applications, implement identity-aware access proxies, and gradually reduce reliance on network-based trust. Run perimeter and zero trust controls in parallel during transition."
+          },
+          {
+            "key": "Continuous Validation",
+            "value": "Zero trust sessions are not fire-and-forget. If a device fails a health check mid-session, or if user behavior becomes anomalous, the policy engine should re-evaluate and potentially terminate the session. This requires real-time signal collection from identity, endpoint, and network sources."
+          },
+          {
+            "key": "Data-Centric Security",
+            "value": "Ultimately, zero trust is about protecting data, not networks. Classify data by sensitivity, apply policies based on data classification, and ensure encryption and access controls follow the data regardless of where it resides (on-premises, cloud, SaaS)."
           }
         ]
       }
     },
     {
       "week_number": 5,
-      "session_number": 9,
-      "topic": "Security Automation and Orchestration (SOAR)",
-      "duration": "50 minutes",
+      "session_number": 5,
+      "topic": "Microsegmentation Strategies and Implementation",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Design automated incident response playbooks",
-        "Implement SOAR workflows for common alert types",
-        "Integrate security tools through APIs and automation"
+        "Design microsegmentation policies using application dependency mapping",
+        "Implement host-based microsegmentation using agent-based and agentless approaches",
+        "Develop migration strategies from flat networks to segmented architectures",
+        "Measure microsegmentation effectiveness through lateral movement testing"
       ],
       "readings": [
-        "SOAR platform documentation (Shuffle/TheHive)",
-        "Security automation best practices"
+        "Zero Trust Networks, 2nd Ed. by Gilman and Barth, Ch. 6-8",
+        "Illumio/VMware NSX microsegmentation architecture guides",
+        "NIST SP 800-125B - Secure Virtual Network Configuration for VM Protection"
       ],
       "lecture_notes": {
-        "introduction": "Security teams are overwhelmed by alert volume. SOAR platforms automate repetitive response tasks, enabling analysts to focus on complex investigations while routine incidents are handled automatically.",
+        "introduction": "Microsegmentation extends the zero trust principle to its logical conclusion: every workload operates within its own security boundary with explicitly defined communication policies. Traditional network segmentation uses VLANs and firewalls to create coarse-grained zones (DMZ, internal, production, development). While better than flat networks, these zones still allow unrestricted lateral movement within each zone. When an attacker compromises a single server in the production zone, they can freely communicate with every other server in that zone. Microsegmentation eliminates this by defining allowed communication paths at the individual workload level. A web server can communicate with its specific database server on its specific port, and nothing else. Implementation approaches vary: network-based microsegmentation uses SDN or cloud security groups to enforce policies at the switch level, while host-based microsegmentation deploys agents on each workload that enforce policies in the host firewall. Each approach has tradeoffs in visibility, performance, and management complexity. The critical first step in any microsegmentation project is application dependency mapping. Before you can write policies that define what is allowed, you must understand what communication currently occurs. This requires observing traffic flows, often for weeks, to build a complete picture of application dependencies. Writing policies without this understanding will break applications and generate immediate rollback pressure from operations teams.",
         "key_concepts": [
-          "SOAR architecture: orchestration, automation, response, case management",
-          "Playbook design: trigger conditions, decision trees, automated actions",
-          "API integration: SIEM, firewall, EDR, threat intelligence",
-          "Automated enrichment: IP reputation, domain age, hash lookup",
-          "Human-in-the-loop decisions for high-impact actions"
+          "Application dependency mapping: observing and documenting all communication flows between workloads to understand what traffic is legitimate before writing restriction policies",
+          "Host-based microsegmentation: agents on each workload enforce firewall policies locally, providing consistent enforcement across physical, virtual, and cloud environments without depending on network infrastructure",
+          "Network-based microsegmentation: using SDN flow rules or cloud security groups to enforce policies at the network layer, providing enforcement without installing agents but limited to environments where the network infrastructure supports it",
+          "Policy modeling: starting in observe-only mode to detect policy violations without blocking, then progressively tightening to enforcement mode as confidence in policy completeness grows",
+          "Workload identity: labeling workloads by function (web, app, database), environment (production, staging, development), and application rather than by IP address, enabling policies that survive workload migration",
+          "Lateral movement containment: microsegmentation limits the blast radius of a compromise by preventing an attacker on a compromised web server from reaching the database server, even though both are on the same network segment",
+          "Ring-fencing critical assets: applying the strictest microsegmentation policies to high-value targets (domain controllers, databases, key management systems) as the highest-priority first phase",
+          "Operational challenges: policy management at scale (thousands of workloads), handling dynamic environments (auto-scaling, container orchestration), and maintaining policies through application updates",
+          "Compliance alignment: microsegmentation directly supports PCI DSS requirement for cardholder data environment isolation, HIPAA network segmentation requirements, and regulatory expectations for defense in depth"
         ],
-        "demonstration": "Building a SOAR playbook that automatically triages phishing alerts: extracts IOCs, checks reputation, blocks malicious URLs, and escalates to an analyst if uncertain",
+        "demonstration": "Using a host-based microsegmentation tool (Illumio or open-source equivalent) to map application dependencies in a multi-tier lab environment, define allow-list policies, switch from observe to enforce mode, and then attempt lateral movement from a simulated compromised host to verify that segmentation policies block unauthorized communication",
         "setup_requirements": [
-          "Shuffle SOAR platform or TheHive + Cortex",
-          "SIEM with alert API",
-          "VirusTotal API key for enrichment"
+          "Multi-tier lab environment with web, application, and database VMs",
+          "Host-based firewall management tool or iptables automation scripts",
+          "Traffic flow monitoring (tcpdump or NetFlow collection)",
+          "Lateral movement testing tools (Metasploit or CrackMapExec)"
         ],
         "review": [
           {
-            "key": "Playbook Design",
-            "value": "Define trigger (SIEM alert), enrichment steps (lookup IOCs), decision points (malicious threshold), automated actions (block IP, disable account), and escalation criteria (analyst review)."
+            "key": "Map Before You Segment",
+            "value": "The number one cause of microsegmentation project failure is writing policies without understanding existing traffic flows. Observe mode for 2-4 weeks captures legitimate communication patterns. Missing a critical dependency means breaking production when enforcement begins."
           },
           {
-            "key": "MTTR Impact",
-            "value": "SOAR reduces Mean Time to Respond from hours to minutes for common incident types. Automated containment of confirmed threats while analysts handle ambiguous cases."
+            "key": "Allow-List vs Deny-List",
+            "value": "Microsegmentation uses allow-list policies: only explicitly permitted communication is allowed, and everything else is denied. This is the opposite of traditional firewalls that deny known bad and allow everything else. Allow-listing provides far stronger security but requires complete knowledge of legitimate traffic."
+          },
+          {
+            "key": "Label-Based Policy",
+            "value": "Policies based on workload labels (role=web-server, env=production, app=payment) survive infrastructure changes like VM migration, IP reassignment, and auto-scaling. IP-based policies break whenever addresses change and do not scale to dynamic environments."
+          },
+          {
+            "key": "Phased Deployment",
+            "value": "Phase 1: Ring-fence critical assets (domain controllers, databases). Phase 2: Segment between application tiers. Phase 3: Segment within tiers. Phase 4: Segment individual workloads. Each phase provides incremental security improvement while managing operational risk."
+          },
+          {
+            "key": "Testing Effectiveness",
+            "value": "Microsegmentation is only as good as its testing. Regular lateral movement exercises (red team or automated) should verify that segmentation policies actually prevent unauthorized communication. Policy drift and exceptions accumulate over time without testing."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Advanced Wireless Attacks and Defense",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Execute and defend against advanced wireless attacks including KRACK, Dragonblood, and evil twin attacks",
+        "Implement enterprise wireless security with 802.1X/EAP and RADIUS",
+        "Deploy wireless intrusion detection and prevention systems",
+        "Design secure wireless architecture for enterprise environments with BYOD policies"
+      ],
+      "readings": [
+        "802.11 Wireless Networks: The Definitive Guide, 3rd Ed. Ch. 10-14",
+        "NIST SP 800-153 - Guidelines for Securing WLANs",
+        "WPA3 Specification and Dragonblood vulnerability analysis papers"
+      ],
+      "lecture_notes": {
+        "introduction": "Wireless networks present unique security challenges because the transmission medium, radio waves, cannot be physically contained. Any attacker within radio range can receive and potentially inject packets, making wireless inherently more exposed than wired networks. The evolution of wireless security from WEP (broken within minutes) to WPA2 (vulnerable to KRACK and PMKID attacks) to WPA3 (addressing known weaknesses but introducing new ones like Dragonblood) reflects an ongoing arms race between protocol designers and attackers. Enterprise wireless security goes beyond choosing the right encryption protocol. It requires certificate-based authentication using 802.1X with EAP-TLS to prevent credential theft, network segmentation to isolate wireless clients from critical infrastructure, wireless intrusion detection to identify rogue access points and attack tools, and physical layer security considerations including radio frequency planning to minimize signal leakage beyond building boundaries. Modern enterprises face additional complexity from bring-your-own-device (BYOD) policies, IoT devices that may not support modern authentication protocols, and guest wireless networks that must provide internet access without exposing the corporate network. This session covers the full spectrum of wireless threats and defenses, from the cryptographic details of protocol attacks to the architectural decisions that determine whether a wireless deployment is a security liability or a properly managed access medium.",
+        "key_concepts": [
+          "WPA3-Personal (SAE): Simultaneous Authentication of Equals replaces PSK four-way handshake, providing forward secrecy and resistance to offline dictionary attacks against captured handshakes",
+          "WPA3-Enterprise (192-bit): mandatory Suite B cryptography with GCMP-256, HMAC-SHA384, and ECDSA-384 for environments requiring the highest wireless security levels",
+          "KRACK attack mechanics: key reinstallation attacks exploit the WPA2 four-way handshake by replaying message 3, causing the client to reinstall an already-used key with a reset nonce, enabling decryption",
+          "Dragonblood vulnerabilities: side-channel attacks against WPA3-SAE that leak information about the password during the Dragonfly handshake, enabling offline dictionary attacks on weak passwords",
+          "802.1X/EAP-TLS enterprise authentication: using client certificates for mutual authentication between device and RADIUS server, eliminating password-based attacks entirely",
+          "Evil twin attacks: attacker creates a rogue access point mimicking a legitimate network, capturing credentials or conducting man-in-the-middle attacks; defense requires 802.1X mutual authentication and WIDS",
+          "Wireless IDS/IPS (WIDS/WIPS): dedicated sensors monitoring the RF spectrum for rogue access points, client deauthentication attacks, and anomalous wireless activity patterns",
+          "RF containment and site survey: planning access point placement and power levels to provide coverage within the facility while minimizing signal leakage to adjacent areas where attackers could operate",
+          "BYOD segmentation: dynamic VLAN assignment based on device type, posture assessment, and user role, isolating personal devices from corporate resources while allowing internet access",
+          "IoT wireless challenges: many IoT devices support only WPA2-PSK or older protocols, requiring dedicated IoT VLANs with strict network-level access controls to compensate for weak device-level security"
+        ],
+        "demonstration": "Setting up a controlled wireless lab with a legitimate WPA3-Enterprise access point and a FreeRADIUS server, then conducting an evil twin attack using hostapd to demonstrate credential capture against WPA2-PSK clients, followed by showing how 802.1X/EAP-TLS authentication prevents the attack because the rogue access point cannot present a valid server certificate",
+        "setup_requirements": [
+          "Two wireless adapters supporting monitor mode and packet injection",
+          "FreeRADIUS server with EAP-TLS certificate infrastructure",
+          "hostapd for rogue access point creation",
+          "Wireshark with 802.11 dissector for wireless packet analysis"
+        ],
+        "review": [
+          {
+            "key": "WPA3 Is Not a Panacea",
+            "value": "WPA3 fixes the major weaknesses of WPA2 (offline handshake attacks, KRACK) but introduces new complexity. Dragonblood showed that even well-designed protocols can have implementation vulnerabilities. Defense in depth remains essential: strong authentication, segmentation, and monitoring."
+          },
+          {
+            "key": "Certificates Over Passwords",
+            "value": "802.1X with EAP-TLS uses certificates for authentication, eliminating the entire class of password-based attacks (dictionary attacks, credential stuffing, phishing for wireless passwords). The operational cost of certificate management is justified by the security improvement for enterprise networks."
+          },
+          {
+            "key": "Rogue AP Detection",
+            "value": "A rogue access point on the corporate network bypasses all perimeter security controls. WIDS sensors continuously scan for unauthorized access points. Critical defense includes 802.1X mutual authentication so clients reject connections to access points that cannot prove their identity."
+          },
+          {
+            "key": "Signal Containment",
+            "value": "Wireless signals do not stop at building walls. An attacker in the parking lot can reach internal networks. Directional antennas, power management, and RF shielding reduce the attack surface. Site surveys should map signal coverage and identify leakage points."
+          },
+          {
+            "key": "IoT Wireless Isolation",
+            "value": "IoT devices with weak or no authentication must be isolated on dedicated VLANs with network-level access controls. The IoT VLAN should have no route to corporate resources, only to the specific cloud services each device requires. Monitor IoT traffic for anomalies indicating compromise."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "IoT Network Security",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Assess security risks specific to IoT network protocols including MQTT, CoAP, and Zigbee",
+        "Design network architectures that isolate IoT devices from critical infrastructure",
+        "Implement monitoring and anomaly detection for IoT network traffic",
+        "Develop IoT security policies addressing device lifecycle from provisioning to decommissioning"
+      ],
+      "readings": [
+        "Practical IoT Hacking by Fotios Chantzis et al., Ch. 5-8",
+        "NIST SP 800-183 - Networks of Things",
+        "OWASP IoT Top 10 2024"
+      ],
+      "lecture_notes": {
+        "introduction": "The Internet of Things has expanded the network attack surface by orders of magnitude. By 2025, an estimated 75 billion IoT devices are connected globally, many with minimal security capabilities. Unlike traditional IT devices that receive regular security updates and run modern operating systems, IoT devices frequently use stripped-down embedded operating systems, run firmware that is rarely updated, use hardcoded credentials, communicate over insecure protocols, and have no mechanism for endpoint security agents. From a network security perspective, IoT devices pose a dual challenge: they are easy to compromise and can be used as pivot points into the broader network, and they are difficult to secure at the device level because manufacturers prioritize cost and time-to-market over security. The network must compensate for device-level security weaknesses by providing strong segmentation, traffic monitoring, and access control. IoT network protocols introduce their own security considerations. MQTT, widely used for IoT messaging, supports TLS and authentication but many deployments leave these disabled for performance reasons. CoAP, designed as a lightweight HTTP alternative for constrained devices, uses DTLS for security but many implementations omit it. Zigbee and Z-Wave mesh networking protocols have their own encryption schemes with varying strength. This session covers the strategies for securing IoT at the network level when you cannot trust the devices themselves, building defense architectures that contain the damage when an IoT device is inevitably compromised.",
+        "key_concepts": [
+          "IoT attack surface: hardcoded credentials, unencrypted communications, lack of firmware update mechanisms, debug interfaces left enabled, and insecure default configurations that users never change",
+          "MQTT security: enabling TLS encryption, implementing username/password or certificate-based authentication, and using access control lists to restrict which topics each device can publish to or subscribe to",
+          "CoAP and DTLS: Constrained Application Protocol uses UDP for lightweight communication; DTLS provides encryption but adds overhead that some constrained devices cannot handle, creating a security gap",
+          "Zigbee and Z-Wave security: mesh networking protocols with AES-128 encryption but vulnerable to key interception during pairing, replay attacks, and insufficient authentication in some implementations",
+          "Network segmentation for IoT: dedicated IoT VLANs or subnets with firewall rules restricting IoT-to-corporate traffic, allowing only specific cloud service destinations required by each device class",
+          "IoT traffic profiling: establishing baseline communication patterns for each device type (expected destination IPs, port numbers, data volumes, communication intervals) and alerting on deviations",
+          "IoT gateway security: deploying protocol-aware gateways that terminate IoT protocols, inspect and filter messages, and relay sanitized data to corporate systems, acting as a security boundary",
+          "Device inventory and lifecycle management: maintaining a complete inventory of all IoT devices, their firmware versions, known vulnerabilities, and patch status; establishing decommissioning procedures",
+          "Supply chain risks: IoT devices may contain backdoors from manufacturers, compromised firmware from supply chain attacks, or pre-installed malware; verification procedures must be part of procurement"
+        ],
+        "demonstration": "Setting up an MQTT broker with and without TLS/authentication, demonstrating how an attacker can subscribe to all topics on an unprotected broker to intercept sensor data, inject false commands, and compromise device operations, then showing how proper TLS, authentication, and ACL configuration prevents these attacks",
+        "setup_requirements": [
+          "Mosquitto MQTT broker with TLS configuration",
+          "MQTT client tools (mosquitto_sub, mosquitto_pub, MQTT Explorer)",
+          "Simulated IoT device publishing sensor data",
+          "Network traffic analyzer for IoT protocol inspection"
+        ],
+        "review": [
+          {
+            "key": "Network Compensates for Device Weakness",
+            "value": "You cannot install antivirus on a smart lightbulb. The network must provide the security that the device cannot: segment IoT devices, monitor their traffic, and restrict their communication to only what is necessary. The network is the security control plane for IoT."
+          },
+          {
+            "key": "MQTT Authentication Is Not Optional",
+            "value": "An MQTT broker without authentication allows any client to subscribe to all topics and publish to any topic. In an industrial setting, this means an attacker could read sensor data or send commands to actuators. Always enable TLS and authentication, even on internal networks."
+          },
+          {
+            "key": "Traffic Baseline Anomaly Detection",
+            "value": "IoT devices have predictable communication patterns: a temperature sensor sends readings every 60 seconds to one cloud endpoint. If it suddenly starts scanning the local network or connecting to unfamiliar IP addresses, it is compromised. Baseline-based anomaly detection is highly effective for IoT."
+          },
+          {
+            "key": "Firmware Update Strategy",
+            "value": "Devices that cannot receive firmware updates are permanently vulnerable once a vulnerability is discovered. Procurement policies should require OTA update capability and vendor commitment to security patches for a defined support lifetime."
+          },
+          {
+            "key": "Decommissioning Risk",
+            "value": "IoT devices that are decommissioned but not wiped may contain WiFi credentials, API keys, and network configuration. Decommissioning procedures must include factory reset or physical destruction of storage, and revocation of any credentials the device held."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "SCADA/ICS Network Security",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Analyze the Purdue Model and its application to ICS network segmentation",
+        "Identify vulnerabilities in industrial protocols including Modbus, DNP3, and OPC UA",
+        "Design defense-in-depth architectures for operational technology environments",
+        "Evaluate the security implications of IT/OT convergence"
+      ],
+      "readings": [
+        "NIST SP 800-82 Rev. 3 - Guide to OT Security",
+        "ICS-CERT advisories and case studies (Colonial Pipeline, Stuxnet, TRITON)",
+        "ISA/IEC 62443 Industrial Automation and Control Systems Security Standards"
+      ],
+      "lecture_notes": {
+        "introduction": "Industrial control systems and SCADA networks manage the physical infrastructure that society depends on: power grids, water treatment plants, manufacturing facilities, oil and gas pipelines, and transportation systems. The security of these systems has implications far beyond data loss. A successful attack on an ICS can cause physical damage, environmental contamination, or loss of human life. Historically, ICS networks were air-gapped from corporate IT networks and the internet, providing security through isolation. That isolation has eroded as organizations connect OT networks to IT systems for monitoring, data analytics, and remote management. This IT/OT convergence brings the full spectrum of cyber threats to environments that were never designed to defend against them. ICS protocols like Modbus, developed in 1979, have no authentication or encryption because they were designed for closed, trusted networks. Programmable logic controllers (PLCs) and remote terminal units (RTUs) often run proprietary real-time operating systems that cannot be patched without vendor involvement and scheduled downtime. The consequences of patching failures in ICS are also different: a patch that causes a reboot in an IT server is an inconvenience, but a patch that causes a reboot in a PLC controlling a chemical reactor could trigger a safety incident. The Purdue Model provides a hierarchical framework for segmenting ICS networks into zones with controlled data flows between layers, and ISA/IEC 62443 defines security requirements for industrial automation. This session examines how to secure these critical systems given their unique constraints.",
+        "key_concepts": [
+          "Purdue Model levels: Level 0 (physical process), Level 1 (basic control - PLCs/RTUs), Level 2 (area supervisory - HMIs/SCADA), Level 3 (site operations - historians/MES), Level 3.5 (DMZ), Levels 4-5 (enterprise IT)",
+          "ICS protocol vulnerabilities: Modbus TCP has no authentication or encryption; DNP3 Secure Authentication adds HMAC but is not widely deployed; OPC UA provides modern security but legacy devices cannot upgrade",
+          "IT/OT convergence risks: connecting OT networks to IT for remote monitoring exposes ICS to ransomware, credential theft, and lateral movement from compromised IT systems",
+          "Defense-in-depth for ICS: unidirectional security gateways (data diodes) allowing data out of OT but preventing any traffic into OT, ICS-specific firewalls with protocol-aware inspection, and network monitoring tuned for ICS protocols",
+          "ICS-specific threats: TRITON/TRISIS targeted safety instrumented systems (SIS) to disable safety shutdowns; Stuxnet destroyed centrifuges by altering PLC programming; Colonial Pipeline ransomware shut down fuel distribution",
+          "Patch management in OT: patches require vendor validation, scheduled downtime windows (often quarterly or annual), and rollback plans; virtual patching through ICS-aware IPS rules provides interim protection",
+          "ISA/IEC 62443 zones and conduits: defining security zones with common security requirements and conduits (controlled communication paths) between zones with explicit access policies",
+          "Monitoring OT networks: passive network monitoring that does not inject traffic (critical in environments where unexpected packets can disrupt real-time control), asset discovery, and protocol-aware anomaly detection",
+          "Safety system independence: safety instrumented systems (SIS) must be isolated from control networks to prevent an attacker who compromises the control system from disabling safety protections"
+        ],
+        "demonstration": "Building a simulated ICS environment using GRFICSv2 (a virtual ICS training platform), demonstrating a Modbus command injection attack that alters PLC values, then implementing network monitoring with Zeek to detect the anomalous Modbus commands and configuring firewall rules based on the Purdue Model to prevent the attack",
+        "setup_requirements": [
+          "GRFICSv2 virtual ICS environment",
+          "Modbus TCP client tools for command injection simulation",
+          "Zeek network monitor with ICS protocol parsers",
+          "Network diagram template for Purdue Model design"
+        ],
+        "review": [
+          {
+            "key": "Availability Over Confidentiality",
+            "value": "In IT, confidentiality is often the top priority. In OT, availability and safety come first. A water treatment plant must continue operating; the risk of shutting it down for patching may exceed the risk of the vulnerability. Security controls must not compromise safety or uptime."
+          },
+          {
+            "key": "Purdue Model DMZ",
+            "value": "The Level 3.5 DMZ is the critical boundary between IT and OT. All data exchange between enterprise IT and industrial control systems must flow through the DMZ. Direct connections from IT to OT bypass all protection and create a direct attack path to physical processes."
+          },
+          {
+            "key": "Protocol-Aware Monitoring",
+            "value": "Standard IT IDS rules do not understand Modbus or DNP3. ICS-aware monitoring tools parse industrial protocols to detect abnormal commands (writing unexpected values to PLC registers, issuing emergency shutdown commands) that would appear as normal TCP traffic to IT security tools."
+          },
+          {
+            "key": "Data Diodes",
+            "value": "Unidirectional security gateways physically enforce one-way data flow: OT data can be sent to IT for analysis, but no data can flow back. This provides the strongest possible protection against remote attacks on ICS while preserving monitoring capability."
+          },
+          {
+            "key": "Safety System Isolation",
+            "value": "TRITON demonstrated that if safety systems are reachable from the control network, an attacker can disable them before triggering a dangerous condition. Safety instrumented systems must have independent network connectivity that cannot be reached from the process control network."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "Encrypted Traffic Analysis and Threat Detection",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Apply metadata analysis techniques to detect threats in encrypted traffic without decryption",
+        "Implement JA3/JA3S TLS fingerprinting for malware identification",
+        "Design encrypted traffic analytics (ETA) systems using flow-level features",
+        "Evaluate the tradeoffs between TLS inspection and metadata-based analysis"
+      ],
+      "readings": [
+        "Machine Learning for Encrypted Traffic Analysis by Anderson and McGrew (Cisco research papers)",
+        "JA3 and JA3S TLS fingerprinting documentation",
+        "Cisco Encrypted Traffic Analytics whitepaper"
+      ],
+      "lecture_notes": {
+        "introduction": "The widespread adoption of TLS encryption presents a fundamental challenge for network security: the majority of network traffic is now opaque to traditional inspection tools. Over 95% of web traffic is encrypted with HTTPS, and malware authors have adopted TLS to blend their command-and-control traffic with legitimate encrypted communications. The traditional solution, TLS interception via man-in-the-middle proxies, breaks end-to-end encryption, introduces performance overhead, creates privacy concerns, and does not work for certificate-pinned applications or protocols like QUIC. Encrypted traffic analysis (ETA) represents an alternative approach that extracts security-relevant insights from encrypted traffic without decryption. Even when the payload is encrypted, substantial metadata remains visible: TLS handshake parameters, certificate information, DNS queries, connection timing, data volume patterns, and flow sequences. Research has demonstrated that these metadata features are sufficient to identify the application generating the traffic, detect known malware families, and identify anomalous behavior patterns consistent with compromise. JA3 fingerprinting, which hashes the TLS ClientHello parameters into a compact fingerprint, can identify specific client implementations (and by extension, specific malware families) based on their unique TLS configuration. Flow-level analytics examine patterns across multiple connections: beacon-like regularity in connection timing, small consistent payload sizes suggesting C2 heartbeats, and data volume asymmetries suggesting exfiltration. This session covers the practical implementation of encrypted traffic analysis, demonstrating that meaningful security monitoring is possible even when payload inspection is not.",
+        "key_concepts": [
+          "TLS handshake metadata: the ClientHello and ServerHello messages are sent in plaintext before encryption begins, revealing cipher suites, extensions, supported versions, and server certificate information",
+          "JA3 fingerprinting: hashing the TLS ClientHello fields (SSL version, cipher suites, extensions, elliptic curves, EC point formats) into an MD5 hash that uniquely identifies the TLS client implementation",
+          "JA3S fingerprinting: the server-side complement to JA3, hashing the ServerHello response; the JA3+JA3S pair identifies both ends of the TLS negotiation for more precise identification",
+          "Certificate analysis: examining certificate issuer, subject, validity period, SAN entries, and certificate chain for indicators of malicious infrastructure (self-signed, recently issued, free CA, short validity)",
+          "Flow-based behavioral analysis: examining connection timing patterns (beaconing regularity), data volume patterns (exfiltration vs heartbeat), session duration distributions, and connection concurrency",
+          "DNS correlation: pairing DNS queries with subsequent TLS connections to identify domain-fronting, DNS-over-HTTPS tunneling, and connections to dynamically generated domains (DGA detection)",
+          "HASSH fingerprinting: applying the JA3 concept to SSH handshakes, fingerprinting SSH client and server implementations to detect unauthorized SSH tools or anomalous client behavior",
+          "Machine learning for ETA: training classifiers on labeled encrypted traffic to identify application types, malware families, and anomalous patterns using features extracted from flow metadata without payload inspection",
+          "Limitations of ETA: encrypted traffic analysis cannot replace content inspection for all use cases; it cannot detect threats embedded in encrypted payloads that do not exhibit behavioral anomalies"
+        ],
+        "demonstration": "Building an encrypted traffic analysis pipeline using Zeek to extract TLS metadata and flow features, computing JA3 fingerprints, matching them against a database of known malware fingerprints, and applying a trained random forest classifier to identify suspicious encrypted flows in a mixed traffic PCAP",
+        "setup_requirements": [
+          "Zeek network monitor with JA3 plugin installed",
+          "JA3 fingerprint database (ja3er.com dataset)",
+          "Python with scikit-learn for flow classification",
+          "PCAP files containing labeled malicious and benign encrypted traffic"
+        ],
+        "review": [
+          {
+            "key": "Metadata Is Enough",
+            "value": "Research shows that TLS metadata alone can identify malware with over 99% accuracy for known families. The key features are JA3 fingerprint, certificate metadata, DNS query patterns, and connection behavior. You do not need to decrypt traffic to detect most threats."
+          },
+          {
+            "key": "Beaconing Detection",
+            "value": "C2 malware communicates at regular intervals (beaconing). Even with encrypted traffic and randomized payloads, the timing regularity is detectable. Calculate inter-connection intervals and flag connections with low timing variance, especially to uncommon destinations."
+          },
+          {
+            "key": "Domain Fronting",
+            "value": "Attackers route C2 traffic through legitimate CDN domains so the TLS SNI and DNS query show a trusted domain while the HTTP Host header (encrypted) routes to the attacker. DNS-to-connection correlation and JA3 analysis can help detect this technique."
+          },
+          {
+            "key": "ETA Complements TLS Inspection",
+            "value": "ETA and TLS inspection are not mutually exclusive. Use TLS inspection for traffic where content analysis is required (DLP, regulatory compliance) and ETA for traffic where decryption is impractical or inappropriate (certificate-pinned applications, personal devices, high-volume traffic)."
+          },
+          {
+            "key": "Evolving Adversary Tactics",
+            "value": "Sophisticated attackers randomize JA3 fingerprints, use legitimate cloud services for C2, and add jitter to beaconing intervals. Detection must evolve beyond single indicators to multi-feature behavioral models that are harder to evade."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "Threat Hunting in Enterprise Networks",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Develop hypothesis-driven threat hunting methodologies based on MITRE ATT&CK",
+        "Use network telemetry sources including NetFlow, DNS logs, and proxy logs for proactive hunting",
+        "Build threat hunting queries and analytics for detecting living-off-the-land techniques",
+        "Establish a repeatable threat hunting program with metrics and feedback loops"
+      ],
+      "readings": [
+        "The Threat Hunting Playbook by Sqrrl (now Amazon)",
+        "MITRE ATT&CK techniques for network-based detection",
+        "SANS Threat Hunting Survey annual report"
+      ],
+      "lecture_notes": {
+        "introduction": "Threat hunting is the proactive search for adversaries who have bypassed automated detection systems and are operating undetected within an environment. Unlike incident response, which is reactive and triggered by alerts, threat hunting starts with a hypothesis about adversary behavior and actively searches for evidence of that behavior in security telemetry. The fundamental assumption of threat hunting is that automated detection will miss some attacks, especially sophisticated adversaries using living-off-the-land techniques, stolen credentials, and encrypted channels. A 2024 study found that the median dwell time for undetected intrusions was 10 days in organizations with active threat hunting programs versus 204 days in organizations without. The threat hunting process follows a cycle: generate a hypothesis based on threat intelligence (for example, APT29 has been targeting our industry sector using compromised OAuth tokens), identify the data sources where evidence of this technique would appear (Azure AD sign-in logs, OAuth token usage patterns), develop queries or analytics to search for the hypothesized behavior, investigate any matches, and feed findings back into automated detection. Network telemetry is a rich source for threat hunting because it provides visibility into communication patterns that endpoint detection may miss: beaconing to C2 infrastructure, data staging and exfiltration, lateral movement between systems, and DNS tunneling for covert channels. This session covers the methodology, tools, and practical techniques for building an effective network threat hunting capability.",
+        "key_concepts": [
+          "Hypothesis-driven hunting: starting with a specific, testable hypothesis about adversary behavior rather than generic searches; hypotheses come from threat intelligence, incident reports, and MITRE ATT&CK techniques",
+          "Hunting data sources: NetFlow/IPFIX for connection metadata, DNS logs for domain resolution patterns, proxy logs for web activity, firewall logs for blocked connections, and full packet capture for deep investigation",
+          "MITRE ATT&CK for hunters: using the framework to systematically generate hypotheses for each tactic, identifying techniques relevant to your environment and developing detection queries for each",
+          "Living-off-the-land network indicators: PowerShell remoting (WinRM on port 5985/5986), WMI over DCOM, PsExec SMB traffic, and RDP connections between non-standard hosts that indicate legitimate tools used for malicious purposes",
+          "Beacon detection analytics: statistical analysis of connection intervals to identify regular callback patterns, calculating jitter ratios, and applying frequency analysis to time-series connection data",
+          "DNS hunting: identifying DGA domains through entropy analysis, detecting DNS tunneling through unusually long subdomain labels or high query volumes to single domains, and correlating DNS queries with threat intelligence",
+          "Data staging and exfiltration indicators: identifying unusual outbound data volumes from servers that normally only serve requests, connections to cloud storage services from non-standard hosts, and compressed archive creation followed by outbound transfers",
+          "Hunt documentation and feedback: every hunt should produce a report documenting the hypothesis, methodology, findings, and recommended detection improvements; successful hunts become automated detection rules",
+          "Threat hunting maturity model: from ad-hoc hunting based on articles to structured programs with dedicated hunters, integrated threat intelligence, and automated analytics that continuously scan for known hunt patterns"
+        ],
+        "demonstration": "Conducting a structured threat hunt for DNS tunneling using Zeek DNS logs: calculating subdomain entropy for all DNS queries over 24 hours, identifying domains with anomalously high entropy or query frequency, investigating the top candidates, and creating a Suricata rule to automatically detect the pattern going forward",
+        "setup_requirements": [
+          "Zeek DNS logs from a simulated enterprise network",
+          "Python scripts for entropy calculation and statistical analysis",
+          "DNS tunneling tool (iodine or dnscat2) for generating test traffic",
+          "Suricata for creating automated detection rules"
+        ],
+        "review": [
+          {
+            "key": "Hunting Is Not Alerting",
+            "value": "Threat hunting starts where automated detection ends. Hunters look for adversary behaviors that did not trigger alerts: subtle patterns, low-and-slow operations, and techniques that blend with legitimate traffic. If your hunt only finds things that already generated alerts, you are not hunting."
+          },
+          {
+            "key": "Hypothesis Quality Determines Hunt Quality",
+            "value": "A vague hypothesis like 'look for bad stuff in DNS logs' produces noise. A specific hypothesis like 'APT41 uses DNS TXT queries to base64-encoded subdomains exceeding 50 characters for data exfiltration' produces focused, testable analysis."
+          },
+          {
+            "key": "Hunt-to-Detect Pipeline",
+            "value": "Every successful hunt should result in a new automated detection rule. The hunt proved the adversary behavior is detectable in your telemetry. Convert the hunting query into a SIEM rule, IDS signature, or SOAR playbook so you do not need to manually hunt for it again."
+          },
+          {
+            "key": "Network Hunting Advantages",
+            "value": "Endpoint detection can be evaded by sophisticated attackers who disable or blind EDR agents. Network telemetry is harder to tamper with because the adversary does not control the network infrastructure. DNS queries, connection metadata, and traffic patterns persist even when endpoint visibility is compromised."
+          },
+          {
+            "key": "Baseline Knowledge Is Essential",
+            "value": "You cannot find anomalies without knowing what is normal. Hunters need deep familiarity with the environment: what DNS servers are used, what IP ranges are internal, what outbound traffic patterns are normal, and what administrative tools are legitimately deployed."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "Red Team Network Operations",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Plan and execute red team network operations including initial access, lateral movement, and exfiltration",
+        "Use network-focused attack tools including Responder, CrackMapExec, and Impacket",
+        "Develop covert command-and-control channels that evade network detection",
+        "Document red team findings in actionable reports that drive defensive improvements"
+      ],
+      "readings": [
+        "Red Team Development and Operations by Joe Vest and James Tubberville",
+        "Impacket library documentation and attack examples",
+        "MITRE ATT&CK network-based techniques for red teams"
+      ],
+      "lecture_notes": {
+        "introduction": "Red team operations simulate real-world adversary behavior to test an organization's detection and response capabilities. Unlike penetration testing, which focuses on finding vulnerabilities, red teaming focuses on achieving objectives while evading detection, testing the full security stack from prevention controls through detection systems to incident response processes. Network operations are central to red team engagements because nearly every attack involves network communication: initial access through phishing or external exploitation, establishing command-and-control channels, moving laterally between systems, and exfiltrating data. A skilled red team operator must understand network security from the attacker's perspective: which protocols are monitored, what detection rules exist, how to blend malicious traffic with legitimate network activity, and how to maintain persistent access without triggering alerts. Modern red team network operations have evolved significantly beyond basic port scanning and exploitation. Teams now use domain fronting through CDN providers, DNS-over-HTTPS for covert channels, legitimate cloud services for C2 relay, and protocol-specific evasion techniques that exploit gaps in network monitoring. The defenders' perspective is equally important: understanding red team techniques enables blue teams to build detection strategies that cover the actual attack surface rather than theoretical threats. This session covers the offensive network techniques that red teams employ and the detection opportunities they create.",
+        "key_concepts": [
+          "Red team engagement scoping: defining objectives (access to specific data, systems, or network zones), rules of engagement (authorized networks, time windows, prohibited actions), and success criteria that align with organizational risk concerns",
+          "Initial access techniques: spear-phishing with macro-enabled documents, external service exploitation, supply chain compromise, and credential stuffing against exposed authentication portals",
+          "Command-and-control architectures: malleable C2 profiles (Cobalt Strike), DNS-based C2 (dnscat2), HTTPS-based C2 with domain fronting, and serverless C2 using cloud functions as redirectors",
+          "Lateral movement via network protocols: NTLM relay attacks using Responder, Pass-the-Hash/Pass-the-Ticket with Impacket, WMI and PowerShell remoting, and PsExec-style SMB-based execution",
+          "Network credential harvesting: LLMNR/NBT-NS poisoning with Responder to capture NTLMv2 hashes, ARP spoofing for traffic interception, and Kerberoasting for service account password cracking",
+          "Data exfiltration techniques: chunked exfiltration over DNS, steganography in image uploads to legitimate services, encrypted archive upload to cloud storage, and slow-rate exfiltration that stays below volume-based detection thresholds",
+          "Covert channel design: using allowed protocols (HTTPS, DNS) as transport for C2 traffic, timing-based channels that encode data in connection intervals, and protocol-compliant traffic that passes deep packet inspection",
+          "Evasion of network detection: traffic shaping to avoid beacon detection (jitter, randomized intervals), rotating C2 domains and IP addresses, using legitimate cloud infrastructure as relay points, and mimicking normal user traffic patterns",
+          "Red team reporting: documenting the attack path with timestamps, detection gaps identified, specific recommendations for each gap, and risk ratings based on the impact of each finding"
+        ],
+        "demonstration": "Conducting a controlled red team exercise in the lab: using Responder to capture NTLMv2 hashes via LLMNR poisoning, cracking captured hashes with Hashcat, using the credentials with CrackMapExec for lateral movement via SMB, and establishing a covert DNS C2 channel with dnscat2, while simultaneously monitoring all activity from the defender's perspective using Zeek and Suricata",
+        "setup_requirements": [
+          "Isolated lab network with Active Directory domain",
+          "Responder for LLMNR/NBT-NS poisoning",
+          "CrackMapExec and Impacket for lateral movement",
+          "dnscat2 for DNS-based C2 demonstration"
+        ],
+        "review": [
+          {
+            "key": "Red Team vs Pentest",
+            "value": "Penetration testing asks: can we find vulnerabilities? Red teaming asks: can we achieve this objective without being detected? The red team tests detection and response capabilities, not just preventive controls. The value is in identifying what the blue team misses."
+          },
+          {
+            "key": "LLMNR/NBT-NS Poisoning",
+            "value": "When a DNS lookup fails, Windows falls back to LLMNR and NBT-NS multicast protocols. Responder answers these broadcasts, directing the victim to the attacker, who captures NTLMv2 authentication hashes. Defense: disable LLMNR and NBT-NS via Group Policy."
+          },
+          {
+            "key": "Covert C2 Design Principles",
+            "value": "Effective C2 channels use allowed protocols, mimic legitimate traffic patterns, rotate infrastructure, and include fallback communication methods. The most common evasion technique is using HTTPS to a domain hosted on a major CDN, making the traffic indistinguishable from normal web browsing."
+          },
+          {
+            "key": "Detection-Informed Offense",
+            "value": "The best red team operators understand blue team detection capabilities. Knowing what the SIEM rules look for, what traffic the IDS inspects, and what endpoints EDR monitors allows targeted evasion and identifies the most impactful detection gaps."
+          },
+          {
+            "key": "Actionable Reporting",
+            "value": "A red team report that says 'we got domain admin' without explaining how and what to fix is useless. Each finding must include: the technique used, the detection gap exploited, the specific detection improvement that would catch it, and the priority based on risk."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Blue Team Network Defense Drills",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Execute structured defense drills responding to simulated network attacks in real-time",
+        "Operate a security operations center with defined roles and communication procedures",
+        "Perform network forensic analysis during active incidents to identify scope and impact",
+        "Develop and execute containment strategies that minimize business disruption"
+      ],
+      "readings": [
+        "Blue Team Handbook: SOC, SIEM, and Threat Hunting Use by Don Murdoch",
+        "NIST SP 800-61 Rev. 2 - Computer Security Incident Handling Guide",
+        "Security Operations Center: Building, Operating, and Maintaining Your SOC by Muniz et al."
+      ],
+      "lecture_notes": {
+        "introduction": "Blue team defense drills translate theoretical knowledge into practical skill under pressure. Knowing how to analyze a PCAP in a classroom is fundamentally different from identifying and containing an active attack while alerts are firing, stakeholders are asking questions, and the attacker is still operating. Effective incident response requires not just technical skill but also communication, coordination, and decision-making under uncertainty. A security operations center operates as a team: the triage analyst performs initial alert investigation and escalation, the incident handler coordinates the response and communicates with management, the forensic analyst performs deep technical investigation, and the network analyst traces the attacker's path through network telemetry. Each role has defined responsibilities, and the team must communicate continuously to maintain shared situational awareness. Defense drills simulate realistic attack scenarios in a controlled environment where the blue team practices detection, investigation, containment, and eradication. Unlike tabletop exercises that discuss hypothetical scenarios, these drills involve actual attack traffic on real (lab) infrastructure, requiring the team to use production tools and techniques under time pressure. This session puts students in the SOC with defined roles, facing a multi-phase simulated attack that requires coordinated defense. The attack scenario includes initial compromise through a phishing payload, lateral movement using stolen credentials, privilege escalation to domain administrator, and data staging for exfiltration. The blue team must detect each phase, investigate scope, contain the threat, and preserve forensic evidence.",
+        "key_concepts": [
+          "SOC role definitions: Tier 1 triage analyst (initial alert review, false positive filtering), Tier 2 incident handler (deep investigation, containment decisions), Tier 3 threat hunter/forensic analyst (root cause analysis, advanced investigation)",
+          "Incident command structure: incident commander (decision authority), communications officer (stakeholder updates), technical lead (directs investigation), scribe (documents actions and timeline)",
+          "Network forensic analysis during incidents: packet capture analysis, NetFlow timeline reconstruction, DNS query history, authentication log correlation, and lateral movement path mapping",
+          "Containment strategies: network isolation (VLAN change, firewall block, SDN quarantine), credential invalidation (password reset, token revocation), and endpoint isolation (EDR quarantine, network disconnection)",
+          "Evidence preservation: full packet capture of attacker traffic, system memory acquisition before remediation, log preservation with timestamps, and chain-of-custody documentation for potential legal proceedings",
+          "Communication during incidents: structured status updates at defined intervals, clear escalation criteria, management briefings with business impact focus, and external communication coordination for regulatory notification",
+          "Attacker dwell time indicators: identifying how long the adversary has been present by tracing the earliest evidence of compromise in historical logs, DNS queries, and authentication records",
+          "Eradication verification: confirming that all attacker footholds (persistence mechanisms, additional accounts, implants on other systems) have been identified and removed before declaring the incident resolved",
+          "Post-incident review: conducting a blameless retrospective focused on detection time, response actions, communication effectiveness, and specific improvements for each gap identified"
+        ],
+        "demonstration": "Executing a live defense drill where the instructor operates as the red team executing a pre-scripted multi-phase attack while students operate the SOC in defined roles, using Zeek, Suricata, and Elastic SIEM to detect and respond to the attack in real-time, with debriefing after each phase to discuss detection opportunities and response decisions",
+        "setup_requirements": [
+          "Lab environment with Active Directory, web servers, and database servers",
+          "Elastic SIEM with Zeek and Suricata log ingestion",
+          "Pre-scripted attack scenario with defined phases and timing",
+          "SOC role assignment cards with responsibilities and procedures"
+        ],
+        "review": [
+          {
+            "key": "Drill Realism Matters",
+            "value": "Drills that are too easy or too scripted build false confidence. Effective drills include realistic noise (false positives), time pressure, incomplete information, and attacker actions that adapt to the defenders' responses. Discomfort during drills means learning is happening."
+          },
+          {
+            "key": "Communication Is The Hard Part",
+            "value": "Most drill failures are communication failures, not technical failures. The analyst who detected the threat did not tell the handler, the handler did not escalate to management, or containment was delayed because no one had the authority to act. Practice communication under pressure."
+          },
+          {
+            "key": "Containment Speed vs Thoroughness",
+            "value": "Fast containment (immediately disconnect the compromised host) stops the attacker but may lose volatile evidence. Thorough containment (capture memory, full packet capture, then isolate) preserves evidence but gives the attacker more time. The right balance depends on the severity and the organization's priorities."
+          },
+          {
+            "key": "Evidence Preservation",
+            "value": "Incident response often destroys forensic evidence: reimaging a compromised system eliminates malware artifacts, rotating credentials before capturing authentication logs loses the attacker's access timeline. Preserve evidence first, then remediate."
+          },
+          {
+            "key": "Blameless Retrospective",
+            "value": "Post-incident reviews that blame individuals discourage reporting and transparency. Focus on system improvements: what detection was missing, what process was unclear, what tool was insufficient. Every incident is an opportunity to improve the security program."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "Security Orchestration, Automation, and Response (SOAR)",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Design automated incident response playbooks for common alert types",
+        "Integrate security tools through APIs to build automated workflows",
+        "Implement human-in-the-loop decision points for high-impact automated actions",
+        "Measure SOAR effectiveness through metrics including mean time to respond and analyst productivity"
+      ],
+      "readings": [
+        "SOAR platform documentation (Shuffle SOAR or Tines)",
+        "Gartner Market Guide for SOAR Solutions",
+        "SANS automation and orchestration survey"
+      ],
+      "lecture_notes": {
+        "introduction": "Security operations centers face an asymmetric challenge: alert volumes grow exponentially while analyst headcount grows linearly at best. A typical enterprise SOC processes 10,000 to 50,000 alerts per day, and analysts can manually investigate 20 to 40 alerts per shift. Without automation, the vast majority of alerts go uninvestigated, creating blind spots that adversaries exploit. Security orchestration, automation, and response platforms address this gap by automating the repetitive, well-defined steps of incident response while preserving human judgment for complex decisions. SOAR platforms operate on the concept of playbooks: predefined workflows that specify the sequence of automated actions to take when a specific alert type is triggered. A phishing alert playbook might automatically extract URLs and attachments from the reported email, check them against threat intelligence, search for other users who received the same email, quarantine the email from all mailboxes, and create a case with all collected evidence for an analyst to review. The automation handles in seconds what would take an analyst 20 to 30 minutes of manual work across multiple tools. The key design principle of effective SOAR implementation is knowing where to draw the line between automation and human judgment. Low-risk, high-confidence actions (enriching an IP address with threat intelligence, checking a file hash against VirusTotal) should be fully automated. High-impact actions (blocking a production IP address, disabling a user account, quarantining a server) should require human approval unless the confidence level is extremely high. This session covers the architecture, playbook design, tool integration, and operational metrics of SOAR platforms.",
+        "key_concepts": [
+          "SOAR architecture: trigger engine (receives alerts from SIEM, email, tickets), orchestration engine (executes playbook steps in sequence or parallel), integration layer (APIs to security tools), case management (tracks investigations)",
+          "Playbook design patterns: linear (sequential steps), branching (decision trees based on enrichment results), parallel (multiple enrichments simultaneously), and looping (iterating over multiple indicators)",
+          "Tool integration via APIs: connecting SIEM, firewall, EDR, email gateway, threat intelligence, ticketing, and identity providers into automated workflows through REST APIs",
+          "Automated enrichment: IP/domain reputation lookup, file hash analysis, WHOIS information, geolocation, user account lookup, and asset criticality assessment as the foundation for automated decision-making",
+          "Human-in-the-loop design: automated actions up to the decision point, then presenting the analyst with enriched context and recommended action, requiring approval for high-impact responses",
+          "Common SOAR playbooks: phishing triage, malware alert response, brute force containment, compromised credential response, and vulnerability alert prioritization, each automating 80-90% of manual work",
+          "Mean Time to Respond (MTTR): the primary metric for SOAR effectiveness; compare MTTR before and after automation for each alert type to quantify the value of automation investment",
+          "Playbook testing and maintenance: playbooks are code and require testing, version control, and maintenance; API changes in integrated tools break playbooks; regression testing is essential",
+          "Alert fatigue reduction: SOAR reduces the number of alerts requiring human attention by auto-closing false positives and auto-resolving known-good patterns, focusing analyst time on genuine threats"
+        ],
+        "demonstration": "Building a SOAR playbook in Shuffle (open-source SOAR) that automatically responds to a phishing report: extracts email headers and body, detonates attachments in a sandbox (VirusTotal), checks URLs against threat intelligence, searches the email gateway for other recipients, and creates a case with all findings for analyst review, with automatic quarantine if the verdict is malicious",
+        "setup_requirements": [
+          "Shuffle SOAR platform deployed on Docker",
+          "VirusTotal API key for file and URL analysis",
+          "Simulated email gateway API",
+          "Simulated SIEM for alert generation"
+        ],
+        "review": [
+          {
+            "key": "Automate the Boring, Not the Important",
+            "value": "Automate enrichment, context gathering, and evidence collection. Require human judgment for containment actions that could disrupt business operations. The analyst should spend time on decisions, not data collection."
+          },
+          {
+            "key": "Playbook Testing Is Essential",
+            "value": "A playbook that fails during a real incident is worse than no playbook because the team may not realize it failed and assume automated actions were taken. Test playbooks regularly with simulated alerts and verify that every step executes correctly."
+          },
+          {
+            "key": "Integration Depth",
+            "value": "The value of SOAR is directly proportional to the number and depth of tool integrations. Each additional integration (SIEM, firewall, EDR, email, identity) enables more comprehensive automated workflows. Budget time for building and maintaining integrations."
+          },
+          {
+            "key": "Metrics Drive Improvement",
+            "value": "Track MTTR by alert type, false positive auto-closure rate, analyst time saved per playbook, and playbook failure rate. These metrics justify SOAR investment and identify which playbooks need improvement."
+          },
+          {
+            "key": "Playbooks as Living Documents",
+            "value": "The threat landscape changes, tools update their APIs, and organizational processes evolve. Playbooks require regular review and updates. Assign playbook ownership to specific analysts responsible for maintaining and improving each playbook."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "Network Security Automation and Infrastructure as Code",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Implement network security policies as code using Terraform and Ansible",
+        "Design CI/CD pipelines for automated security policy deployment and testing",
+        "Build automated compliance checking for network security configurations",
+        "Develop self-healing security architectures that automatically remediate configuration drift"
+      ],
+      "readings": [
+        "Infrastructure as Code, 2nd Ed. by Kief Morris, Ch. 12-14",
+        "Terraform security provider documentation",
+        "Ansible network automation modules documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Manual network security configuration does not scale. An enterprise with hundreds of firewalls, thousands of security groups, and tens of thousands of access control entries cannot maintain consistent security posture through manual changes. Configuration drift, where deployed configurations gradually deviate from the intended state, is inevitable when humans manually manage security infrastructure. Infrastructure as code (IaC) applies software engineering practices to infrastructure management: security configurations are defined in version-controlled code, changes go through review processes, automated pipelines deploy configurations, and drift detection systems alert when reality diverges from the defined state. For network security, IaC means that firewall rules, security group policies, IDS configurations, and access control lists are all defined in declarative code rather than configured through web interfaces or CLI sessions. This approach provides several critical benefits: configuration changes are auditable through version control history, peer review of security changes catches errors before deployment, automated testing validates that changes do not break connectivity or create security gaps, and rollback to a known-good state is as simple as reverting a commit. The concept extends to self-healing architectures where automated systems continuously compare the deployed state against the declared state and automatically remediate any drift. If someone manually adds an insecure firewall rule, the automation detects the change and reverts it within minutes. This session covers the practical implementation of security automation, from defining security policies as code through building deployment pipelines to implementing continuous compliance monitoring.",
+        "key_concepts": [
+          "Security policy as code: defining firewall rules, security groups, ACLs, and IDS configurations in declarative languages (Terraform HCL, Ansible YAML) that are version-controlled and peer-reviewed",
+          "Terraform for network security: managing cloud security groups, WAF rules, network ACLs, and firewall configurations as code with state management and plan-before-apply workflows",
+          "Ansible for security automation: using network modules to configure firewalls, switches, and IDS/IPS systems with idempotent playbooks that ensure desired state regardless of current state",
+          "CI/CD for security policies: automated pipelines that lint security configurations, run compliance checks, test connectivity, deploy to staging, verify, and promote to production with approval gates",
+          "Automated compliance checking: tools that continuously compare deployed configurations against security baselines (CIS Benchmarks, organizational standards) and report or auto-remediate deviations",
+          "Drift detection and remediation: monitoring for unauthorized manual changes to security configurations and automatically reverting them to the declared state, with alerting for investigation",
+          "Policy testing: writing automated tests that verify security policies work as intended (blocked traffic is actually blocked, allowed traffic actually passes) before deploying to production",
+          "GitOps for network security: using Git as the single source of truth for all security configurations, with automated reconciliation ensuring the deployed state always matches the Git repository",
+          "Change management automation: automated change requests, approval workflows, deployment windows, and rollback procedures integrated into the deployment pipeline"
+        ],
+        "demonstration": "Building a Terraform configuration that defines AWS VPC security groups and network ACLs for a multi-tier application, creating a CI pipeline using GitHub Actions that runs security linting (tfsec), compliance checking (Checkov), and connectivity testing before deploying changes, then demonstrating how manually modifying a security group triggers drift detection and automated remediation",
+        "setup_requirements": [
+          "Terraform with AWS provider configured",
+          "GitHub repository with Actions enabled",
+          "tfsec and Checkov security scanning tools",
+          "AWS free tier account with VPC and EC2 access"
+        ],
+        "review": [
+          {
+            "key": "Version Control Is Non-Negotiable",
+            "value": "Every security configuration change must go through version control. This provides: an audit trail of who changed what and when, the ability to peer-review changes before deployment, easy rollback when changes cause problems, and a single source of truth for the intended security state."
+          },
+          {
+            "key": "Plan Before Apply",
+            "value": "Terraform's plan phase shows exactly what changes will be made before they are applied. Review the plan for unintended consequences: will this rule change block legitimate traffic? Will this security group modification expose a service? Never apply without reviewing the plan."
+          },
+          {
+            "key": "Test Security Policies Like Code",
+            "value": "Automated tests should verify that firewall rules block what they claim to block. Deploy the policy to a test environment, run connectivity tests that verify blocked paths are actually blocked, and verify allowed paths still work. Policy errors in production cause outages or security gaps."
+          },
+          {
+            "key": "Drift Is the Enemy",
+            "value": "Manual changes made outside the IaC pipeline (emergency fixes, ad-hoc troubleshooting) create drift between the declared state and the actual state. Drift detection and automated remediation ensure that the security posture you defined is the security posture you have."
+          },
+          {
+            "key": "Self-Healing Security",
+            "value": "The ultimate goal is a security infrastructure that automatically corrects deviations. If an insecure configuration is manually applied, the automation detects it and reverts it within minutes. This makes security the default state, not a target that requires constant effort to maintain."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Capstone: Integrated Network Security Architecture Lab",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Design and implement a comprehensive network security architecture integrating all course technologies",
+        "Defend against a multi-phase simulated attack using layered security controls",
+        "Demonstrate detection, containment, and remediation capabilities across the full attack lifecycle",
+        "Present and justify architectural decisions to a panel of evaluators"
+      ],
+      "readings": [
+        "Review all course materials and lab documentation",
+        "NIST Cybersecurity Framework 2.0 for architecture alignment",
+        "SANS 20 Critical Security Controls implementation guide"
+      ],
+      "lecture_notes": {
+        "introduction": "The capstone lab is the culminating assessment for this course, requiring students to synthesize all technologies, techniques, and architectural principles covered during the semester into a cohesive, defense-in-depth network security architecture. Working in teams, students design, build, and defend a multi-zone enterprise network incorporating next-generation firewalls, IDS/IPS, SDN microsegmentation, zero trust access controls, encrypted traffic analysis, threat hunting capabilities, and automated response through SOAR playbooks. The network environment simulates a realistic enterprise with a DMZ hosting public-facing services, an internal corporate network with Active Directory, a production database tier, an OT/IoT segment, and cloud connectivity. Each team must justify their architectural decisions with reference to the threats they address and the detection capabilities they provide. The defensive architecture is then tested against a multi-phase red team scenario executed by the instructor, progressing through initial access, command and control establishment, credential theft, lateral movement, privilege escalation, data access, and attempted exfiltration. Teams are evaluated not only on preventing attack phases but on detection speed, response effectiveness, forensic evidence preservation, and the quality of their post-incident analysis. This capstone demonstrates mastery of the course material by requiring students to apply advanced network security concepts to a realistic, complex scenario under time pressure, exactly mirroring the challenges they will face as network security professionals. The lab spans two weeks, with this session covering architecture design review and the first phase of the red team scenario.",
+        "key_concepts": [
+          "Defense-in-depth architecture: layering preventive controls (firewalls, microsegmentation), detective controls (IDS/IPS, ETA, threat hunting), and responsive controls (SOAR, automated containment) so that no single control failure leads to compromise",
+          "Architecture documentation: network diagrams, data flow matrices, security control inventory, detection coverage mapping to MITRE ATT&CK, and residual risk assessment for accepted limitations",
+          "Multi-zone design: implementing the Purdue Model concepts with IT zones (DMZ, corporate, management), OT zones (control, process), and cloud zones with explicit inter-zone policies",
+          "Detection coverage analysis: mapping deployed detection capabilities to MITRE ATT&CK techniques to identify and acknowledge coverage gaps, prioritizing based on threat intelligence for the organization's sector",
+          "Automated response integration: SOAR playbooks that trigger containment actions based on detection events, with graduated responses from alert enrichment through automated isolation to analyst escalation",
+          "Red team resilience: architecture designed to detect and contain attacks even when individual controls are bypassed, with multiple detection opportunities at each phase of the kill chain",
+          "Forensic readiness: log collection, retention policies, full packet capture capability, and evidence preservation procedures built into the architecture from the start rather than added after an incident",
+          "Post-incident analysis: structured root cause analysis, detection timeline reconstruction, response effectiveness assessment, and specific recommendations for architectural improvements",
+          "Presentation and defense: communicating technical architecture decisions to both technical and non-technical audiences, justifying resource allocation and explaining residual risk"
+        ],
+        "demonstration": "Instructor-led review of example capstone architectures from previous semesters, discussing what worked well and what failed during red team testing, followed by team breakout sessions to finalize architecture designs before the live defense exercise",
+        "setup_requirements": [
+          "Full lab environment with multi-zone network topology",
+          "All security tools from the semester deployed and configured",
+          "Red team attack scripts prepared by the instructor",
+          "Evaluation rubric distributed to all teams"
+        ],
+        "review": [
+          {
+            "key": "No Perfect Architecture",
+            "value": "Every architecture has gaps. The mark of a mature security professional is acknowledging those gaps, understanding why they exist (resource constraints, technology limitations, operational requirements), and having compensating controls or monitoring in place for known weaknesses."
+          },
+          {
+            "key": "Detection Coverage Over Prevention",
+            "value": "A determined attacker will eventually bypass preventive controls. The architecture must be designed with the assumption that initial access will succeed, and the defensive value is in rapid detection and containment that limits the impact of the breach."
+          },
+          {
+            "key": "Simplicity and Maintainability",
+            "value": "An architecture with 47 different security tools and hundreds of custom rules looks impressive on paper but is unmaintainable in practice. Choose tools that integrate well, cover multiple detection needs, and can be managed by the team that will operate them."
+          },
+          {
+            "key": "End-to-End Thinking",
+            "value": "Trace the attack path from initial access to objective completion. At each step, ask: what control prevents this? What control detects this? How fast can we respond? The answer should not be 'nothing' at any step in the kill chain."
+          },
+          {
+            "key": "Continuous Improvement",
+            "value": "The capstone is a snapshot. Real security architectures evolve continuously based on new threats, new technologies, lessons from incidents, and changes to the business. Build the architecture with evolution in mind: modular components, standardized interfaces, and documented decision rationale."
           }
         ]
       }
@@ -262,175 +917,586 @@
     "quizzes": [
       {
         "quiz": 1,
-        "week": 2,
-        "topic": "ML Detection, SDN Security, and APT Hunting",
-        "duration": "25 minutes",
+        "week": 3,
+        "topic": "Firewall Architectures, IDS/IPS, and SDN Security",
+        "duration": "30 minutes",
         "questions": [
           {
-            "question": "You are analyzing NetFlow data and notice that host 10.0.5.22 has been connecting to IP 198.51.100.42:443 every 300 seconds (+/- 5 seconds) for the past 72 hours, transferring approximately 2KB per connection. Explain what this traffic pattern suggests, what additional data points you would analyze to confirm, and how you would determine if it is malicious.",
+            "question": "An enterprise deploys a next-generation firewall with TLS inspection enabled. During a security audit, they discover that 30% of their traffic bypasses TLS inspection because applications use certificate pinning. Explain what certificate pinning is, why it prevents TLS inspection, describe two alternative detection methods for the uninspected traffic, and recommend an architectural change that provides visibility without breaking certificate pinning.",
             "type": "short_answer",
-            "points": 10,
-            "answer": "The regular 300-second interval with minimal jitter strongly suggests automated beaconing, consistent with C2 communication. The small, consistent data size suggests check-in/heartbeat traffic rather than data exfiltration. Additional analysis: (1) JA3 fingerprint of the TLS client to compare against known malware fingerprints. (2) Certificate analysis: is the certificate self-signed, recently issued, or from a free CA? (3) Domain/IP reputation lookup. (4) Historical first-seen date: new connections to previously uncontacted IPs are suspicious. (5) Check if 10.0.5.22 connects to any other unusual IPs. To confirm malicious: isolate the host (without alerting), capture memory for forensic analysis, and examine the process making the connections.",
+            "points": 8,
+            "answer": "Certificate pinning is a security mechanism where an application stores (pins) the expected server certificate or public key and rejects any other certificate, even if it is signed by a trusted CA. TLS inspection works by presenting a proxy-generated certificate signed by a corporate CA installed on client devices. Pinned applications reject this proxy certificate because it does not match the pinned certificate, causing connection failures, so these applications are exempted from TLS inspection. Alternative detection methods: (1) JA3/JA3S fingerprinting of the TLS handshake metadata to identify the client application and detect known malware fingerprints without decrypting content. (2) Flow-based behavioral analysis examining connection timing patterns, data volume, and destination reputation to identify suspicious communication patterns in the encrypted traffic. Architectural recommendation: deploy encrypted traffic analytics (ETA) that operates on flow metadata and TLS handshake parameters rather than decrypted content. This provides detection capability for certificate-pinned traffic without breaking the application's security model. Combine with DNS monitoring to correlate certificate-pinned connections with domain lookups for additional context.",
             "rubric": [
               {
-                "key": "Correctly identifies beaconing pattern",
+                "key": "Correctly explains certificate pinning and why it defeats TLS inspection",
+                "value": 2
+              },
+              {
+                "key": "Describes two valid alternative detection methods with technical accuracy",
                 "value": 4
               },
               {
-                "key": "Relevant additional analysis data points",
+                "key": "Provides a practical architectural recommendation",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Compare and contrast deploying an IDS in TAP/SPAN mode versus deploying an IPS inline. For each mode, describe the failure behavior, the impact on network latency, and the detection capabilities. Then recommend which mode should be used at the network perimeter versus between internal security zones, with justification.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "TAP/SPAN (IDS) mode: The sensor receives a copy of traffic without being in the data path. Failure behavior: if the sensor crashes, traffic flow is unaffected (fail-safe for availability). Latency impact: zero, because traffic does not pass through the sensor. Detection capabilities: full detection and alerting, but cannot block traffic; can only generate alerts for response by other systems. Inline (IPS) mode: The sensor sits in the data path and all traffic passes through it. Failure behavior: depends on configuration; fail-open passes all traffic unfiltered (security gap) or fail-closed blocks all traffic (availability outage). Latency impact: adds 0.1-2ms per packet depending on rule complexity and traffic volume. Detection capabilities: full detection plus active blocking, can drop malicious packets in real-time. Recommendation: Network perimeter should use inline IPS because this is where blocking known threats has the highest value and the latency is acceptable for a single choke point. Between internal security zones, use TAP/SPAN mode for detection because: (1) latency accumulates across multiple hops and can affect application performance, (2) false positives in inline mode between internal zones cause production outages, and (3) internal traffic should be monitored for anomalies rather than blocked by signature, since most internal traffic is legitimate.",
+            "rubric": [
+              {
+                "key": "Accurately describes failure behavior for both modes",
+                "value": 2
+              },
+              {
+                "key": "Correctly compares latency and detection capabilities",
                 "value": 3
               },
               {
-                "key": "Appropriate confirmation methodology",
+                "key": "Provides justified deployment recommendation for perimeter vs internal",
                 "value": 3
               }
             ]
           },
           {
-            "question": "Explain why an SDN controller is both a powerful security tool and a critical risk. Describe two security architectures that mitigate the risk of SDN controller compromise.",
+            "question": "An organization is deploying SDN with microsegmentation. The security team discovers that their physical switches support only 4,000 flow table entries, but their microsegmentation policy requires 12,000 rules. Describe the technical cause of this limitation, propose three strategies to reduce the number of flow table entries while maintaining security, and explain the risk of each strategy.",
             "type": "short_answer",
-            "points": 10,
-            "answer": "Power: The SDN controller has a global view of the entire network and can programmatically modify any flow rule instantly. This enables real-time micro-segmentation, automated quarantine, and dynamic policy enforcement. Risk: Controller compromise gives the attacker god-mode over the network: redirect traffic, disable security rules, create covert channels, or cause total network outage. Architecture 1: Controller clustering with Byzantine fault tolerance. Deploy 3+ controllers where flow rule changes require consensus. Even if one controller is compromised, the others reject malicious rules. Architecture 2: Separation of security policy controllers from routing controllers. A dedicated security controller enforces firewall rules with its own authentication, separate from the routing controller. Compromise of the routing controller does not bypass security policies.",
+            "points": 7,
+            "answer": "Technical cause: Physical switches store flow rules in TCAM (Ternary Content-Addressable Memory), which is expensive and power-hungry. TCAM capacity is fixed by hardware and cannot be expanded. Each microsegmentation rule (source workload + destination workload + port + action) consumes one or more TCAM entries. Strategy 1: Hierarchical policy aggregation. Group workloads by function (all web servers share one policy) and apply rules at the group level rather than per-workload. Risk: reduces granularity; compromise of one web server gives access to all web servers in the group. Strategy 2: Proactive flow rule installation. Only install flow rules for active communications rather than all possible rules. The controller installs rules on-demand when traffic is first observed. Risk: first-packet latency increases as each new flow requires a controller round-trip; during a burst of new connections, the controller may become a bottleneck. Strategy 3: Split enforcement between network and host. Use SDN flow rules for inter-zone policies (coarse segmentation) and host-based firewalls (iptables) for intra-zone microsegmentation. Risk: host-based firewall can be disabled if the host is compromised; two enforcement systems must be kept in sync, increasing management complexity.",
             "rubric": [
               {
-                "key": "Explains SDN controller power correctly",
+                "key": "Correctly identifies TCAM as the limiting factor",
+                "value": 2
+              },
+              {
+                "key": "Proposes three valid strategies for reducing flow table entries",
                 "value": 3
               },
               {
-                "key": "Explains SDN controller risk correctly",
-                "value": 3
+                "key": "Accurately identifies risks for each strategy",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the key differences between a traditional VPN-based remote access architecture and a zero trust network access (ZTNA) architecture. For each, describe what happens after a user authenticates, what network resources they can reach, and how the architecture responds to a compromised user device.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "VPN-based architecture: After authentication, the user's device is connected to the corporate network via an encrypted tunnel. The device receives a corporate IP address and can reach any resource on the network that is not blocked by internal firewalls. If the device is compromised, the attacker has network-level access to the entire corporate network, can scan for vulnerabilities, move laterally, and access any service reachable from the VPN subnet. Detection depends on the compromised device generating suspicious network traffic that triggers IDS alerts. ZTNA architecture: After authentication, the user is granted access to specific applications, not to the network. The user's device connects to an identity-aware proxy or cloud-based ZTNA broker that mediates access on a per-application basis. Each application access request is evaluated against the user's identity, device posture (patch level, endpoint protection status), and contextual factors (location, time, risk score). If the device is compromised, the attacker can only reach the specific applications the user was authorized for, not the broader network. If device posture changes (EDR detects malware), the ZTNA policy engine can immediately revoke access to all applications. The attacker cannot scan the network or discover other resources because they have no network-level connectivity. Key difference: VPN trusts the network location; ZTNA trusts the verified identity and device state. VPN grants broad access once; ZTNA continuously validates before each access decision.",
+            "rubric": [
+              {
+                "key": "Accurately describes post-authentication behavior for both architectures",
+                "value": 2
               },
               {
-                "key": "Two valid mitigation architectures",
-                "value": 4
+                "key": "Correctly explains the scope of accessible resources for each",
+                "value": 2
+              },
+              {
+                "key": "Describes compromised device scenario accurately for both",
+                "value": 3
               }
             ]
           }
         ],
-        "total_points": 20
+        "total_points": 30
       },
       {
         "quiz": 2,
-        "week": 4,
-        "topic": "Encrypted Traffic Analysis, Deception, and SOAR",
-        "duration": "25 minutes",
+        "week": 5,
+        "topic": "Zero Trust, Microsegmentation, and Wireless Security",
+        "duration": "30 minutes",
         "questions": [
           {
-            "question": "A security architect argues that TLS inspection (MITM proxy) should be deployed on all network traffic for security visibility. Present two strong arguments for and two against this approach, considering both security and organizational factors.",
+            "question": "A hospital network has three segments: medical devices (MRI machines, infusion pumps), clinical workstations, and electronic health records (EHR) servers. Design a microsegmentation policy for this environment. Specify what traffic should be allowed between each pair of segments and what should be blocked, considering both security requirements and clinical workflow needs. Explain how your design complies with HIPAA network segmentation requirements.",
             "type": "short_answer",
-            "points": 10,
-            "answer": "For: (1) Restores visibility into 90%+ of network traffic, enabling DLP, malware detection, and compliance monitoring that is otherwise blind to encrypted content. (2) Enables IDS signatures and content filtering to detect threats that would bypass perimeter controls inside encrypted channels. Against: (1) Breaks end-to-end encryption, creating a single point of decryption where all traffic is exposed. If the proxy is compromised, all traffic is compromised. Also breaks certificate pinning for applications that implement it. (2) Privacy and legal concerns: intercepting encrypted traffic may violate employee privacy expectations, healthcare (HIPAA) and financial regulations, and may be illegal in some jurisdictions without explicit consent. Banking and healthcare sites should be exempted.",
+            "points": 8,
+            "answer": "Medical Devices to EHR Servers: BLOCKED for direct access. Medical devices should send data through a clinical middleware gateway that translates device protocols (HL7, DICOM) and sanitizes data before writing to the EHR. Rationale: medical devices run legacy OS that cannot be patched and are a high compromise risk; direct database access would allow a compromised device to read or modify all patient records. Medical Devices to Clinical Workstations: BLOCKED for initiated connections from devices; ALLOW clinical workstations to connect to device management interfaces on specific ports only. Rationale: clinicians need to view device data, but devices should not initiate connections to workstations. Clinical Workstations to EHR Servers: ALLOW on specific application ports (HTTPS/443 for EHR web interface, HL7 FHIR API ports) with user authentication. BLOCK direct database ports (1433, 5432). Rationale: clinicians need EHR access through the application layer, not direct database access. HIPAA compliance: HIPAA Security Rule requires that ePHI access be limited to authorized users and systems. Microsegmentation enforces technical access controls that complement administrative controls (user authentication). Audit logs of all inter-segment traffic provide the required access monitoring. The middleware gateway serves as a security boundary that limits the blast radius if a medical device is compromised, protecting ePHI from unauthorized access.",
             "rubric": [
               {
-                "key": "Two valid arguments for TLS inspection",
-                "value": 4
+                "key": "Correct traffic policies for all three segment pairs",
+                "value": 3
               },
               {
-                "key": "Two valid arguments against",
-                "value": 4
+                "key": "Clinical workflow preserved while maintaining security",
+                "value": 3
               },
               {
-                "key": "Consideration of both security and organizational factors",
+                "key": "HIPAA compliance explanation is accurate",
                 "value": 2
               }
             ]
           },
           {
-            "question": "Design a SOAR playbook for automatically responding to a 'brute force SSH login' SIEM alert. Include the trigger condition, at least four automated steps, one decision point requiring human judgment, and the expected outcome.",
+            "question": "Your organization discovers a rogue wireless access point connected to the corporate network in a conference room. It is broadcasting the same SSID as the corporate WiFi with WPA2-PSK. Explain how this attack works, what data the attacker can capture, and describe the specific technical controls that would prevent this attack and detect it if prevention fails.",
             "type": "short_answer",
-            "points": 10,
-            "answer": "Trigger: SIEM alert when >10 failed SSH login attempts from the same source IP within 5 minutes. Step 1: Enrich the source IP (geolocation, reputation lookup via VirusTotal/AbuseIPDB, check if it is a known VPN/Tor exit node). Step 2: Query SIEM for this IP's historical activity across all systems (has it targeted other hosts?). Step 3: Check if any of the attempted usernames correspond to actual system accounts. Step 4: If the IP is external and reputation is malicious, automatically create a firewall block rule for the source IP (24-hour temporary block). Decision point: If the IP is internal or belongs to a known partner, escalate to an analyst for investigation (could be a misconfigured service, compromised internal host, or legitimate user lockout). Step 5: Create an incident ticket with all enrichment data. Expected outcome: External brute force blocked within 2 minutes of detection. Internal/partner sources investigated by an analyst with full context pre-gathered.",
+            "points": 7,
+            "answer": "Attack mechanism: The rogue AP broadcasts the corporate SSID with a stronger signal than the legitimate AP in the conference room. Client devices automatically connect to the strongest signal for the known SSID. Since it uses WPA2-PSK with the corporate password (which the attacker obtained or guessed), the connection appears legitimate to the client. Data captured: The attacker controls the network path and can perform man-in-the-middle attacks. They can capture DNS queries, unencrypted traffic, and with SSL stripping or certificate manipulation, potentially intercept credentials for sites without HSTS. They can also redirect clients to phishing pages. Prevention controls: (1) Deploy 802.1X/EAP-TLS authentication instead of WPA2-PSK. With EAP-TLS, the client authenticates the server certificate before sending credentials. The rogue AP cannot present a valid server certificate signed by the corporate CA, so the client rejects the connection. (2) Implement 802.1X port authentication on all Ethernet ports so the rogue AP cannot connect to the corporate network even if physically plugged in. Detection controls: (1) Deploy WIDS sensors that continuously scan the RF spectrum for access points broadcasting the corporate SSID that are not in the authorized AP inventory. Alert on any unauthorized SSID match. (2) Monitor switch port MAC addresses and alert on new devices connected to ports in public areas.",
             "rubric": [
               {
-                "key": "Clear trigger condition",
+                "key": "Correctly explains the rogue AP attack mechanism",
                 "value": 2
               },
               {
-                "key": "Four logical automated steps",
-                "value": 4
-              },
-              {
-                "key": "Appropriate human decision point",
+                "key": "Accurately describes data capture capabilities",
                 "value": 2
               },
               {
-                "key": "Clear expected outcome",
+                "key": "Provides specific prevention and detection controls",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "A CISO asks you to implement zero trust for their organization of 5,000 employees. They want to start with one pilot use case. Recommend a specific first pilot application, explain why it is a good starting point, describe the minimum infrastructure components needed, and outline the success criteria for the pilot.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Recommended pilot: Internal HR/payroll application (e.g., Workday or internal HR portal). Why it is a good starting point: (1) It has a well-defined user population (HR team + all employees for self-service), making policy creation manageable. (2) It contains sensitive PII data, providing clear security justification for the investment. (3) It is a web application accessible via HTTPS, which is the simplest application type for ZTNA integration. (4) It is not mission-critical for real-time operations, so any access issues during migration are manageable. Minimum infrastructure: (1) Identity provider with MFA (Okta, Azure AD) configured for all HR application users. (2) ZTNA access proxy (Zscaler Private Access, Cloudflare Access, or open-source Pomerium) positioned between users and the HR application. (3) Device posture assessment agent that checks OS patch level and endpoint protection status. (4) Conditional access policies: require MFA, require managed device for PII access, allow read-only from personal devices. Success criteria: (1) 100% of HR application access goes through the ZTNA proxy with no direct network access path. (2) Access failures for unauthorized users or non-compliant devices are logged and occur within 1 second. (3) No increase in IT help desk tickets related to HR application access after 30-day stabilization. (4) Successful demonstration that a user on an unmanaged device is restricted to read-only self-service functions.",
+            "rubric": [
+              {
+                "key": "Reasonable pilot application choice with justified rationale",
+                "value": 2
+              },
+              {
+                "key": "Correctly identifies minimum infrastructure components",
+                "value": 3
+              },
+              {
+                "key": "Specific, measurable success criteria",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "IoT Security, SCADA/ICS, and Encrypted Traffic Analysis",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "An MQTT broker serving an IoT deployment of 500 smart building sensors is discovered to be running without authentication or TLS encryption on the corporate network. Describe the specific attacks an adversary on the same network can execute, the potential impact on building operations, and provide a step-by-step remediation plan that can be implemented without replacing the IoT devices.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Attacks possible: (1) Subscribe to all topics (# wildcard) to read every sensor reading (temperature, occupancy, access control events), gaining surveillance capability over the building. (2) Publish false data to sensor topics, causing HVAC systems to respond to fake temperature readings, potentially making areas uninhabitable or wasting energy. (3) Publish commands to actuator topics to unlock doors, disable alarms, or manipulate building systems. (4) Denial of service by flooding the broker with messages, disrupting legitimate sensor communication. Impact: Physical safety risk if HVAC or fire systems are manipulated. Security risk if access control is compromised. Operational disruption if building management systems receive false data. Privacy risk if occupancy sensors reveal employee movement patterns. Remediation plan (without device replacement): Step 1: Immediately move the MQTT broker to an isolated IoT VLAN with firewall rules blocking all traffic except from known IoT device IP addresses on the MQTT port. This contains the exposure within hours. Step 2: Enable TLS on the broker using a server certificate. Most MQTT client libraries support TLS even on constrained devices. Step 3: Enable username/password authentication on the broker and configure unique credentials per device or device class. Step 4: Implement topic-level ACLs so each device can only publish to its own topics and subscribe only to its command topics. Step 5: Deploy an MQTT-aware monitoring tool that logs all connections and publishes, alerting on subscription to wildcard topics or publications from unauthorized clients.",
+            "rubric": [
+              {
+                "key": "Identifies specific attacks with technical accuracy",
+                "value": 3
+              },
+              {
+                "key": "Explains potential impact on building operations",
+                "value": 2
+              },
+              {
+                "key": "Provides actionable remediation steps that work without device replacement",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain the Purdue Model for ICS network segmentation. A water treatment facility wants to allow remote monitoring of their SCADA system from the corporate IT network. Describe the correct architecture for enabling this monitoring while maintaining OT security, and explain what would happen if they instead created a direct VPN from corporate IT to the SCADA network.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "The Purdue Model defines hierarchical levels: Level 0 (physical process - pumps, valves), Level 1 (basic control - PLCs/RTUs), Level 2 (area supervisory - HMIs/SCADA servers), Level 3 (site operations - historians, engineering workstations), Level 3.5 (DMZ between IT and OT), Levels 4-5 (enterprise IT and internet). Correct architecture for remote monitoring: A data historian or replica database is placed in the Level 3.5 DMZ. The SCADA system at Level 2 pushes data to the historian in the DMZ through a unidirectional gateway (data diode) that physically prevents any traffic from flowing from IT toward OT. Corporate IT users at Level 4 connect to the historian in the DMZ to view monitoring dashboards. They never have any network path to the actual SCADA system. The DMZ historian provides read-only access to operational data without creating a bidirectional connection to the OT network. Direct VPN from IT to SCADA consequences: A direct VPN creates a bidirectional network path from the corporate IT network to the SCADA system. If any corporate IT system is compromised by ransomware, a phishing attack, or an internet-facing vulnerability, the attacker can traverse the VPN connection directly to the SCADA system controlling water treatment. This is exactly how the 2021 Oldsmar water treatment plant incident and similar attacks occur. Malware like TRITON specifically targets safety systems once it reaches the OT network. The entire purpose of the Purdue Model DMZ is to prevent this scenario.",
+            "rubric": [
+              {
+                "key": "Correctly describes Purdue Model levels",
+                "value": 2
+              },
+              {
+                "key": "Designs correct DMZ-based monitoring architecture",
+                "value": 3
+              },
+              {
+                "key": "Explains the danger of direct IT-to-OT connectivity",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Your network monitoring team detects an internal host making HTTPS connections to a cloud storage provider every 300 seconds, transferring exactly 4KB each time. The traffic passes all firewall rules (cloud storage is allowed) and the TLS certificate is valid. Using only encrypted traffic analysis techniques (no decryption), describe how you would determine whether this traffic is legitimate or malicious, and what specific metadata features you would analyze.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Analysis approach using encrypted traffic metadata: (1) JA3 fingerprint: Extract the JA3 hash of the TLS ClientHello. Compare against known browser and application JA3 fingerprints. If the JA3 does not match any known legitimate application on that host, it may be a custom tool or malware. (2) Connection timing analysis: Calculate the inter-connection interval variance. Legitimate user activity has high variance (random browsing patterns). A 300-second interval with low jitter (less than 5% variance) is characteristic of automated beaconing. Plot the connection timestamps and calculate the coefficient of variation. (3) Payload size consistency: Legitimate cloud storage uploads vary widely in size. A consistent 4KB payload suggests a heartbeat or check-in message, not user-driven data upload. Compare against the baseline upload size distribution for this cloud service. (4) DNS resolution pattern: Check if the host resolves the cloud storage domain through corporate DNS or uses DNS-over-HTTPS. Check if the domain was first seen recently or has been accessed by other hosts. (5) Certificate analysis: Even though the certificate is valid, check the specific certificate details: is it the certificate used by the cloud provider's main service or a custom domain with a Let's Encrypt certificate hosted on the cloud platform? (6) Source process correlation: If EDR is available, correlate the connection times with the process making the connections. A browser process is expected; an unsigned executable or PowerShell script making regular cloud storage connections is suspicious. Determination: The combination of regular timing (beaconing), consistent small payload (heartbeat), and origin from a non-standard process would indicate malicious C2 communication using a legitimate cloud service as a relay.",
+            "rubric": [
+              {
+                "key": "Identifies relevant metadata features (JA3, timing, payload size, DNS)",
+                "value": 3
+              },
+              {
+                "key": "Applies statistical analysis concepts to the metadata",
+                "value": 3
+              },
+              {
+                "key": "Reaches a reasoned conclusion about malicious vs legitimate",
                 "value": 2
               }
             ]
           }
         ],
-        "total_points": 20
+        "total_points": 23
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "Threat Hunting, Red Team Operations, and Blue Team Defense",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Design a threat hunt hypothesis for detecting credential theft via LLMNR/NBT-NS poisoning in an enterprise network. Specify the hypothesis, the data sources you would search, the specific queries or analytics you would apply, and how you would distinguish between legitimate LLMNR traffic and Responder-based poisoning.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Hypothesis: An attacker is using Responder to poison LLMNR/NBT-NS broadcasts on the corporate network, capturing NTLMv2 authentication hashes from Windows clients that fail DNS resolution. Data sources: (1) Network traffic captures or Zeek logs showing LLMNR (UDP/5355) and NBT-NS (UDP/137) traffic. (2) Windows Security Event logs (Event ID 4624, 4625) showing authentication attempts. (3) DHCP logs showing IP address assignments for correlation. Analytics: (1) Identify all hosts responding to LLMNR queries. In a normal environment, LLMNR responses should come from the queried hostname. If a single IP address responds to LLMNR queries for many different hostnames, it is likely running Responder. (2) Correlate LLMNR responses with DHCP assignments: does the responding host's hostname match the name being queried? If host 10.0.1.50 (hostname WORKSTATION-5) responds to an LLMNR query for FILESERVER-1, this is poisoning. (3) Check for NTLM authentication attempts to unusual hosts: if many users authenticate (Event 4624/4625) to a host that is not a legitimate server, it is likely capturing credentials. Distinguishing legitimate from malicious: Legitimate LLMNR: the response comes from the host whose name was queried, and it resolves to that host's actual IP. Poisoning: the response comes from a different host claiming to be the queried name. Key indicator: one host answering LLMNR queries for many different names it does not own.",
+            "rubric": [
+              {
+                "key": "Specific, testable hypothesis",
+                "value": 2
+              },
+              {
+                "key": "Correct data sources identified",
+                "value": 2
+              },
+              {
+                "key": "Effective distinction between legitimate and malicious LLMNR",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "During a red team engagement, the red team established C2 using HTTPS connections to a domain hosted on a major CDN (domain fronting). The blue team's IDS, proxy logs, and firewall logs all show the traffic going to the CDN's IP addresses with valid certificates. Explain why traditional detection methods fail for domain fronting, and describe two advanced detection techniques that could identify this traffic.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Why traditional detection fails: Domain fronting exploits the difference between the TLS SNI (Server Name Indication) and the HTTP Host header. The TLS handshake and DNS resolution show a connection to a legitimate domain (e.g., images.cdn-provider.com). The firewall sees a connection to a CDN IP address on port 443 with a valid certificate. The proxy log shows an HTTPS connection to a high-reputation domain. All of these appear completely legitimate. However, inside the encrypted HTTPS payload, the HTTP Host header directs the CDN to route the request to the attacker's backend server. Since the real destination is hidden inside the encrypted HTTP headers, no traditional network inspection reveals the true target. Detection technique 1: TLS-to-HTTP header comparison. If the organization performs TLS inspection for some traffic, compare the SNI domain in the TLS ClientHello with the Host header in the decrypted HTTP request. A mismatch (SNI says images.cdn-provider.com but Host header says attacker-c2.cdn-provider.com) is a strong indicator of domain fronting. For uninspected traffic, this comparison is not possible, limiting this technique. Detection technique 2: Behavioral analysis of CDN traffic patterns. Legitimate CDN usage shows diverse request patterns: many different URL paths, varying response sizes, and irregular timing. Domain fronting C2 exhibits regular beacon timing, consistent small request/response sizes, and repeated access to the same URL path. Statistical analysis of CDN connection patterns (timing regularity, payload size distribution, URL path entropy) can identify anomalous CDN traffic consistent with C2 communication even without decryption.",
+            "rubric": [
+              {
+                "key": "Correctly explains why domain fronting evades traditional detection",
+                "value": 3
+              },
+              {
+                "key": "First detection technique is technically valid",
+                "value": 2
+              },
+              {
+                "key": "Second detection technique is technically valid",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "You are the incident commander during a blue team defense drill. Your Tier 1 analyst reports that Suricata generated an alert for lateral movement via PsExec from a workstation (10.0.1.100) to a domain controller (10.0.1.10). Describe your immediate response steps in order, what information you need before making containment decisions, and the specific containment actions you would authorize.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Immediate response steps in order: Step 1 (0-2 minutes): Verify the alert is not a false positive. Ask the Tier 1 analyst to confirm: Is PsExec a tool used by IT admins in this environment? Is 10.0.1.100 an IT admin workstation? Is this activity occurring during business hours? Check if there is a change management ticket for domain controller maintenance. Step 2 (2-5 minutes): If PsExec to a domain controller is unexpected, escalate immediately to Tier 2. This is a critical severity event because domain controller access means potential domain compromise. Step 3 (5-10 minutes): Gather context before containment. Information needed: (a) What user account executed PsExec? Is it a service account, admin account, or regular user? (b) What process on 10.0.1.100 launched PsExec? (c) Has 10.0.1.100 shown any other suspicious activity (alerts, unusual DNS, beaconing)? (d) Has the domain controller shown any changes (new accounts created, group membership changes, scheduled tasks)? Step 4: Containment decisions. If confirmed unauthorized: (a) Immediately disable the user account used for PsExec access (prevents further authenticated actions). (b) Isolate workstation 10.0.1.100 using EDR quarantine (maintains forensic state while preventing further lateral movement). (c) Do NOT immediately isolate the domain controller. Instead, capture its memory and monitor it closely. Isolating a DC causes widespread authentication failures. (d) Initiate a krbtgt password reset if there is evidence of Kerberos ticket theft. (e) Begin checking all other systems for similar PsExec activity from the compromised workstation to determine full scope.",
+            "rubric": [
+              {
+                "key": "Logical ordering of response steps",
+                "value": 2
+              },
+              {
+                "key": "Identifies correct information needed before containment",
+                "value": 2
+              },
+              {
+                "key": "Appropriate containment actions with DC-specific considerations",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 22
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "SOAR, Security Automation, and Integrated Defense",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Design a SOAR playbook for responding to a detection of DNS tunneling from an internal host. Include the trigger condition, at least five automated enrichment and response steps, two decision points requiring human judgment, and explain what artifacts the playbook should preserve for forensic analysis.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Trigger: SIEM alert when DNS analytics detect a host making more than 100 DNS queries per minute to a single domain with subdomain labels exceeding 30 characters (high entropy) for more than 5 minutes, indicating DNS tunneling for data exfiltration or C2. Automated steps: (1) Query DNS logs for the full history of the suspicious domain, collecting all subdomains queried and response records. (2) Look up the domain registration date, registrar, and hosting infrastructure. Recently registered domains on bulletproof hosting are higher risk. (3) Check the domain against threat intelligence feeds (VirusTotal, OTX, MISP). (4) Query the SIEM for all other internal hosts that have queried this domain to identify the full scope of potential compromise. (5) Capture the current DNS cache of the affected host and the DNS server query logs for evidence preservation. Decision point 1 (human judgment): If the domain is associated with a known legitimate service (e.g., a CDN or SaaS provider that uses long subdomain labels), an analyst must determine whether the traffic is a false positive or a legitimate service being abused as a tunneling channel. Decision point 2 (human judgment): Before blocking the domain at the DNS resolver, an analyst must verify that no legitimate business applications depend on this domain. Blocking a domain used by a critical application causes an outage. If both decisions confirm malicious activity: (6) Block the domain at the DNS resolver and firewall. (7) Isolate the source host via EDR quarantine. (8) Create an incident ticket with all enrichment data. Forensic artifacts to preserve: Complete DNS query log for the domain from the DNS server, full packet capture of DNS traffic from the affected host, memory dump of the affected host (the tunneling tool is likely running in memory), and the DNS resolver cache showing the resolved addresses.",
+            "rubric": [
+              {
+                "key": "Specific trigger condition with measurable thresholds",
+                "value": 2
+              },
+              {
+                "key": "Five logical automated steps",
+                "value": 2
+              },
+              {
+                "key": "Two appropriate human decision points",
+                "value": 2
+              },
+              {
+                "key": "Correct forensic artifacts identified",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "An organization manages 200 AWS security groups across 15 accounts using Terraform. A developer manually added a rule allowing SSH (port 22) from 0.0.0.0/0 to a production security group to debug an issue. Explain how infrastructure-as-code drift detection would identify this change, describe the automated remediation workflow, and discuss whether the remediation should be automatic or require approval.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Drift detection process: Terraform stores the desired state of all security groups in its state file, which reflects the last applied configuration from code. A scheduled pipeline (running every 15-30 minutes) executes 'terraform plan' against each account. The plan compares the desired state (code) with the actual state (AWS API). The plan output will show: 'security group sg-abc123 has an unexpected ingress rule: SSH from 0.0.0.0/0.' This drift is flagged as a security violation because the rule was not in the Terraform code. Automated remediation workflow: (1) The drift detection pipeline identifies the unauthorized rule. (2) An automated compliance check (Checkov or custom policy) classifies the drift as a critical security violation because it exposes SSH to the internet. (3) The pipeline triggers an alert to the security team with details: who owns the security group, what account, what VPC, and the specific rule added. (4) For critical violations (internet-exposed ports), the pipeline automatically applies 'terraform apply' to revert the security group to its declared state, removing the unauthorized SSH rule. (5) A notification is sent to both the security team and the developer who made the change, explaining that the manual change was reverted and providing instructions for requesting the change through the proper IaC process. Automatic vs approval: For critical security violations (0.0.0.0/0 on SSH, RDP, or database ports), remediation should be automatic with notification. The risk of an internet-exposed management port is immediate and severe (exploitation within minutes of exposure). For lower-severity drift (internal rule changes between private subnets), requiring approval is appropriate because the risk is lower and the change may be addressing a legitimate operational need that the IaC code needs to be updated to reflect.",
+            "rubric": [
+              {
+                "key": "Correctly explains Terraform drift detection mechanism",
+                "value": 2
+              },
+              {
+                "key": "Describes a complete remediation workflow",
+                "value": 3
+              },
+              {
+                "key": "Reasoned argument for when to auto-remediate vs require approval",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain how a defense-in-depth architecture provides resilience against a sophisticated attacker who bypasses the perimeter firewall. Using a scenario where the attacker gains initial access via a phishing email, describe the specific control that should detect or block the attack at each subsequent phase: C2 establishment, credential theft, lateral movement, privilege escalation, and data exfiltration.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Phishing delivers a macro-enabled document. Perimeter firewall is bypassed because the email arrives from a legitimate email service over HTTPS. C2 establishment: The malware connects to a C2 server. Detection: Encrypted traffic analytics identifies the new outbound connection with JA3 fingerprint matching known malware, or behavioral analysis detects regular beacon timing to an uncommon destination. IDS rules for known C2 infrastructure domains. Network monitoring detects DNS queries to newly registered domains. Credential theft: The attacker dumps credentials from memory using Mimikatz. Detection: EDR detects LSASS memory access by a non-system process. If EDR is evaded, the network control is monitoring for Kerberoasting traffic (TGS requests for service accounts with RC4 encryption) via IDS rules. Lateral movement: The attacker uses stolen credentials to move to another system via SMB or WinRM. Detection: Microsegmentation policies block the workstation from connecting to servers it does not normally access. SIEM correlation detects the stolen account authenticating from an unusual source host. Network IDS alerts on PsExec or WMI traffic between workstations. Privilege escalation: The attacker escalates to domain administrator. Detection: SIEM alerts on sensitive group membership changes (Domain Admins). Honey tokens (fake high-privilege accounts) trigger alerts when used. Network monitoring detects DCSync replication traffic from a non-domain-controller source. Data exfiltration: The attacker stages and exfiltrates sensitive data. Detection: DLP monitors detect sensitive data patterns in outbound traffic. Network monitoring detects unusual outbound data volumes from servers. DNS monitoring detects high-volume or high-entropy DNS queries indicating DNS tunneling exfiltration. Cloud access security broker (CASB) detects unusual uploads to cloud storage services.",
+            "rubric": [
+              {
+                "key": "Identifies a specific detection control for each of the five phases",
+                "value": 3
+              },
+              {
+                "key": "Controls are technically accurate and appropriate for each phase",
+                "value": 3
+              },
+              {
+                "key": "Demonstrates understanding of layered defense where each control compensates for potential failure of others",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
       }
     ],
     "major_assignments": [
       {
         "assignment": 1,
-        "title": "Advanced Network Defense Architecture",
+        "title": "Advanced Network Defense Architecture Design",
         "week_assigned": 2,
         "week_due": 5,
-        "points": 100,
-        "description": "Design and implement an advanced network defense architecture incorporating ML-based detection, deception technologies, and automated response for a provided enterprise scenario.",
+        "points": 150,
+        "description": "Design and implement a multi-zone network defense architecture for a provided enterprise scenario. The architecture must incorporate next-generation firewall policies, IDS/IPS deployment with custom rules, SDN-based microsegmentation, and zero trust access controls. Deliver a complete architecture document, working lab implementation, and detection effectiveness assessment.",
         "objectives": [
-          "Deploy ML-based anomaly detection on network traffic",
-          "Implement deception technologies for early breach detection",
-          "Build automated response playbooks for detected threats",
-          "Demonstrate detection of simulated APT-style attacks"
+          "Deploy NGFW with application-aware policies and TLS inspection for inspectable traffic",
+          "Configure IDS/IPS with custom rules targeting MITRE ATT&CK techniques relevant to the scenario",
+          "Implement SDN microsegmentation restricting lateral movement between application tiers",
+          "Design zero trust access policies for remote user access to the environment"
         ],
         "requirements": {},
         "deliverables": [
-          "Architecture design document with defense-in-depth justification",
-          "Working ML detection model with training and testing results",
-          "Deployed honeypots and canary tokens with monitoring",
-          "SOAR playbook for automated threat response"
+          "Network architecture diagram with security zones, data flows, and control placement",
+          "NGFW configuration export with policy documentation and justification for each rule",
+          "Custom IDS/IPS rules with detection coverage mapped to MITRE ATT&CK matrix",
+          "SDN microsegmentation policy document with application dependency map",
+          "Zero trust access policy definitions and identity-aware proxy configuration",
+          "Detection effectiveness report from testing with simulated attack traffic"
         ],
         "grading_rubric": {
-          "ml_detection": {
+          "technical_implementation": {
+            "points": 50,
+            "criteria": [
+              "NGFW correctly configured with application-aware policies and TLS inspection",
+              "IDS/IPS rules are syntactically correct and detect targeted attack techniques",
+              "SDN microsegmentation policies correctly restrict unauthorized lateral movement",
+              "Zero trust access proxy correctly enforces identity-based per-application access"
+            ]
+          },
+          "visual_quality": {
             "points": 30,
             "criteria": [
-              "Appropriate ML algorithm selection with justification",
-              "Feature engineering from network data",
-              "Model training with proper train/test split",
-              "Detection demonstrated against simulated attacks"
+              "Network diagrams are clear, professional, and accurately represent the architecture",
+              "Data flow matrices correctly document allowed and blocked traffic between zones",
+              "MITRE ATT&CK coverage map clearly shows detection capabilities and gaps"
             ]
           },
-          "deception_technologies": {
-            "points": 25,
+          "performance_optimization": {
+            "points": 40,
             "criteria": [
-              "Honeypots deployed and capturing attacker behavior",
-              "Canary tokens placed in strategic locations",
-              "Alerts generated on deception asset interaction",
-              "Deception integrated with SIEM"
-            ]
-          },
-          "automation": {
-            "points": 25,
-            "criteria": [
-              "SOAR playbook functional for detected threats",
-              "Automated enrichment and containment",
-              "Human escalation for ambiguous cases",
-              "End-to-end workflow tested"
+              "Detection effectiveness: demonstrated detection of simulated attacks with metrics",
+              "False positive management: tuning approach documented with noise reduction results",
+              "Scalability considerations: architecture can handle the stated traffic volumes"
             ]
           },
           "documentation": {
-            "points": 20,
+            "points": 30,
             "criteria": [
-              "Architecture design well-justified",
-              "Detection performance metrics reported",
-              "Operational procedures documented",
-              "Limitations and assumptions clearly stated"
+              "Architecture decisions are justified with threat model references",
+              "Deployment procedures are documented for reproducibility",
+              "Limitations and residual risks are clearly stated",
+              "Recommendations for future improvements are actionable"
             ]
           }
         },
         "rubric": [
           {
             "attributes": {
-              "points": 100,
+              "points": 150,
               "criteria": [
-                "Comprehensive defense architecture integrating multiple advanced techniques",
-                "Demonstrated detection capability against realistic attack scenarios",
-                "Functional automation reducing response time",
-                "Professional documentation suitable for enterprise deployment"
+                "Complete defense-in-depth architecture with multiple security layers",
+                "Working implementation demonstrating all required security controls",
+                "Effective detection of simulated attack scenarios with quantified metrics",
+                "Professional documentation suitable for enterprise architecture review"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Wireless and IoT Security Assessment",
+        "week_assigned": 6,
+        "week_due": 9,
+        "points": 150,
+        "description": "Conduct a comprehensive security assessment of a simulated environment containing enterprise wireless infrastructure, IoT devices, and an ICS/SCADA network segment. Identify vulnerabilities, demonstrate exploitation of critical findings, implement network-level defenses, and produce a professional assessment report with remediation recommendations.",
+        "objectives": [
+          "Assess enterprise wireless security configuration and identify weaknesses",
+          "Evaluate IoT device communication security and network isolation",
+          "Analyze ICS/SCADA network architecture against the Purdue Model",
+          "Implement network-level compensating controls for device-level vulnerabilities"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Wireless security assessment report with findings and evidence",
+          "IoT device communication analysis with protocol-level vulnerability documentation",
+          "ICS/SCADA network architecture assessment against Purdue Model and IEC 62443",
+          "Network defense implementation: segmentation policies, monitoring rules, and access controls",
+          "Executive summary with risk ratings and prioritized remediation roadmap"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 50,
+            "criteria": [
+              "Wireless vulnerabilities correctly identified with exploitation evidence",
+              "IoT protocol analysis demonstrates understanding of MQTT, CoAP, or Zigbee security",
+              "ICS assessment correctly maps environment to Purdue Model levels",
+              "Implemented defenses demonstrably mitigate identified vulnerabilities"
+            ]
+          },
+          "visual_quality": {
+            "points": 30,
+            "criteria": [
+              "Assessment methodology is systematic and reproducible",
+              "Findings are supported by captured evidence (screenshots, packet captures)",
+              "Network diagrams clearly show current state and recommended architecture"
+            ]
+          },
+          "performance_optimization": {
+            "points": 40,
+            "criteria": [
+              "Vulnerability severity ratings are justified using CVSS and environmental context",
+              "Remediation recommendations are prioritized by risk and implementation effort",
+              "Compensating controls are practical for environments where direct remediation is not possible"
+            ]
+          },
+          "documentation": {
+            "points": 30,
+            "criteria": [
+              "Executive summary effectively communicates risk to non-technical stakeholders",
+              "Technical findings include sufficient detail for remediation teams",
+              "Report follows a standard assessment methodology (OWASP, NIST, PTES)",
+              "Findings are mapped to relevant compliance requirements"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Thorough assessment covering wireless, IoT, and ICS/SCADA domains",
+                "Demonstrated exploitation of critical vulnerabilities with evidence",
+                "Practical defense implementations addressing identified risks",
+                "Professional report suitable for presentation to executive leadership"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Red Team/Blue Team Network Operations Exercise",
+        "week_assigned": 10,
+        "week_due": 13,
+        "points": 200,
+        "description": "Execute a full red team/blue team exercise on the course lab network. Teams alternate between attacking and defending, documenting techniques, detections, and gaps. The red team plans and executes a multi-phase attack operation, while the blue team operates a SOC, hunts for threats, and implements automated response. Both perspectives are documented in a comprehensive after-action report.",
+        "objectives": [
+          "Plan and execute red team network operations including initial access, C2, lateral movement, and exfiltration",
+          "Operate a blue team SOC detecting and responding to the red team attack in real-time",
+          "Conduct threat hunts based on hypotheses derived from red team intelligence",
+          "Build SOAR playbooks that automate detection and response for observed attack techniques"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Red team operation plan with objectives, techniques, and C2 architecture",
+          "Red team execution log with timestamps, techniques used, and detection evasion methods",
+          "Blue team SOC logs with detection timeline, investigation notes, and containment actions",
+          "Threat hunt reports documenting hypotheses, data analysis, and findings",
+          "SOAR playbooks created during the exercise with testing documentation",
+          "After-action report with detection gaps, response time analysis, and improvement recommendations"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 70,
+            "criteria": [
+              "Red team operations demonstrate sophistication and realistic tradecraft",
+              "Blue team detections are based on evidence analysis, not just alert correlation",
+              "Threat hunts produce actionable findings from hypothesis-driven investigation",
+              "SOAR playbooks correctly automate response for at least two attack techniques"
+            ]
+          },
+          "visual_quality": {
+            "points": 40,
+            "criteria": [
+              "Attack timeline visualization clearly shows red team progression",
+              "Detection timeline shows blue team response overlaid on attack phases",
+              "Gap analysis clearly identifies where and why detection failed"
+            ]
+          },
+          "performance_optimization": {
+            "points": 50,
+            "criteria": [
+              "Red team achieves objectives using multiple attack paths",
+              "Blue team response times demonstrate effective SOC operations",
+              "Automated response reduces MTTR for detected techniques",
+              "Post-exercise detection rules cover previously undetected techniques"
+            ]
+          },
+          "documentation": {
+            "points": 40,
+            "criteria": [
+              "After-action report provides balanced red/blue team perspective",
+              "Each finding includes specific, actionable improvement recommendations",
+              "Techniques are mapped to MITRE ATT&CK with detection coverage analysis",
+              "Report quality suitable for presentation to security leadership"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 200,
+              "criteria": [
+                "Comprehensive red team operation demonstrating advanced network attack techniques",
+                "Effective blue team operations with detection, investigation, and containment",
+                "Threat hunting produces findings beyond what automated detection identified",
+                "Professional after-action report with measurable improvement recommendations"
               ]
             }
           }
@@ -440,31 +1506,31 @@
   },
   "grading_breakdown": {
     "weekly_quizzes": {
-      "percentage": 10,
-      "description": "Assessment of advanced network security concepts and techniques"
+      "percentage": 20,
+      "description": "Five quizzes covering advanced network security concepts, architectures, and defensive techniques"
     },
     "lab_assignments": {
-      "percentage": 25,
-      "description": "Hands-on labs with ML detection, deception, and SOAR automation"
+      "percentage": 15,
+      "description": "Weekly hands-on labs including firewall configuration, IDS tuning, wireless assessment, and SOAR development"
     },
     "major_assignments": {
       "percentage": 30,
-      "description": "Advanced network defense architecture project"
+      "description": "Three major projects: network defense architecture, wireless/IoT/ICS assessment, and red team/blue team exercise"
     },
     "midterm_examination": {
       "percentage": 15,
-      "description": "Practical exam: detect and respond to simulated network attacks"
+      "description": "Practical midterm: design and defend a network architecture against simulated attacks covering weeks 1-8"
     },
     "final_project": {
       "percentage": 20,
-      "description": "Capstone: defend a network against a multi-phase simulated APT"
+      "description": "Capstone integrated lab: build and defend a complete enterprise network security architecture against a multi-phase red team scenario"
     }
   },
   "course_policies": {
-    "attendance": "Attendance is mandatory for all lab sessions. More than 2 unexcused absences may result in course failure.",
-    "late_submissions": "Late assignments are penalized 10% per day. No submissions accepted more than 5 days late without prior arrangement.",
-    "collaboration": "Lab exercises may be completed in pairs. Reports and code must be individual work.",
-    "academic_integrity": "All detection models and automation must be your own work. Using pre-built models without modification and analysis is not acceptable.",
-    "lab_safety": "All testing must be conducted within the isolated lab environment. ML models must be trained on provided datasets only."
+    "attendance": "Attendance is mandatory for all lab sessions and defense drills. More than 2 unexcused absences results in a 5% grade reduction per additional absence. Lab-based sessions cannot be made up without instructor approval.",
+    "late_submissions": "Assignments lose 10% per day late up to 5 days. After 5 days, submissions are not accepted without documented extenuating circumstances approved by the instructor before the deadline.",
+    "collaboration": "Lab exercises may be completed in assigned pairs. All written reports, quiz responses, and individual components must be your own work. Team assignments require individual contribution documentation.",
+    "academic_integrity": "All network security tools, scripts, and configurations must be your own work or properly attributed. Using pre-built attack scripts without understanding and documenting their operation is not acceptable. Unauthorized access to systems outside the lab environment will result in course failure.",
+    "technology_requirements": "Students must have a laptop capable of running VMware Workstation or VirtualBox with at least 16GB RAM and 100GB free disk space. Lab VMs will be provided. All testing must be conducted within the isolated lab environment."
   }
 }

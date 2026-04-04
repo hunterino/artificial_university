@@ -14,227 +14,644 @@
     {
       "week_number": 1,
       "session_number": 1,
-      "topic": "Introduction to VR/AR Hardware and Platforms",
+      "topic": "VR/AR Hardware Landscape",
       "duration": "80 minutes",
       "learning_objectives": [
-        "Survey the current landscape of VR and AR hardware",
-        "Understand the rendering requirements that distinguish VR from traditional 3D",
-        "Compare standalone, tethered, and passthrough VR/AR architectures"
+        "Survey the current spectrum of VR and AR hardware platforms",
+        "Understand the rendering requirements that distinguish XR from traditional 3D",
+        "Compare standalone, tethered, and passthrough VR/AR architectures",
+        "Evaluate hardware selection criteria for different XR application types"
       ],
       "readings": [
         "VR Developer Gems Ch. 1-2",
         "Meta Quest Developer Documentation - Getting Started",
-        "Apple visionOS Developer Documentation - Fundamentals"
+        "Apple visionOS Developer Documentation - Fundamentals",
+        "The VR Book (Jerald) Ch. 1-4"
       ],
       "lecture_notes": {
-        "introduction": "Virtual and augmented reality represent a fundamental shift in how humans interact with digital content. Instead of looking at a screen, the user is inside the experience. This changes everything about how we design, render, and think about interactive applications.",
+        "introduction": "Virtual and augmented reality represent a fundamental shift in how humans interact with digital content. Instead of looking at a screen, the user is inside the experience. This changes everything about how we design, render, and think about interactive applications. The VR/AR hardware landscape has matured rapidly: standalone headsets like the Meta Quest 3 deliver six-degree-of-freedom tracking without external sensors, Apple Vision Pro introduces spatial computing with high-fidelity mixed reality, and enterprise headsets like HoloLens 2 serve industrial applications. Each device class presents different capabilities, constraints, and development paradigms. The rendering requirements are also fundamentally different from traditional 3D: you must render the scene twice (once per eye) at 72-120Hz with under 20ms total frame time, or the user experiences discomfort or motion sickness. There is no acceptable frame drop in VR -- every missed frame is a comfort violation that the user perceives viscerally. Today we survey the hardware landscape, examine the stereoscopic rendering pipeline, compare display technologies (LCD, OLED, micro-OLED, pancake lenses), and discuss the tracking systems that enable positional and rotational head tracking. By the end of this session, you should understand the technical specifications that matter for XR development and be able to evaluate which hardware platform suits a given application.",
         "key_concepts": [
-          "VR headset architectures: standalone (Quest 3), tethered (Valve Index), hybrid (PSVR2)",
-          "AR device spectrum: phone-based (ARKit/ARCore), headset-based (HoloLens, Vision Pro)",
-          "Stereoscopic rendering pipeline: two viewpoints, lens distortion correction",
-          "Display technologies: LCD, OLED, micro-OLED, pancake lenses, fresnel lenses",
-          "Tracking systems: inside-out (camera-based), outside-in (base stations), hybrid"
+          "VR headset categories: standalone (Quest 3), tethered PC-VR (Valve Index), console VR (PSVR2), spatial computing (Vision Pro)",
+          "AR device spectrum: phone-based AR (ARKit/ARCore), optical see-through (HoloLens 2), video passthrough (Quest 3 MR)",
+          "Stereoscopic rendering: rendering from two slightly offset eye positions to create binocular depth perception",
+          "Display technologies: LCD (bright, fast), OLED (deep blacks, pentile), micro-OLED (high density, used in Vision Pro)",
+          "Lens technologies: fresnel (light, cheap, god rays), pancake (thin, good clarity, light loss), aspheric (heavy, excellent clarity)",
+          "Tracking systems: inside-out (camera-based SLAM), outside-in (base stations), hybrid (cameras + IMU)",
+          "Degrees of freedom: 3DoF (rotation only) vs 6DoF (rotation + position), controller tracking vs hand tracking",
+          "Refresh rate requirements: 72Hz (Quest minimum), 90Hz (standard), 120Hz (premium), and why higher is better for comfort",
+          "Field of view: horizontal FOV (90-120 degrees typical), vertical FOV, and the impact on immersion and comfort",
+          "IPD adjustment: inter-pupillary distance matching between physical lenses and virtual cameras for correct stereo perception"
         ],
-        "demonstration": "Setting up a Unity XR project targeting Meta Quest, configuring the XR Interaction Toolkit, and deploying a basic scene to a headset with head tracking and passthrough",
+        "demonstration": "Setting up a Unity XR project targeting Meta Quest 3: installing XR Plugin Management, configuring the Oculus XR Plugin, setting up the XR Interaction Toolkit, deploying a basic scene to the headset via USB, and verifying head tracking, passthrough, and controller input are all functional. Examining the stereoscopic camera rig and measuring the baseline frame time.",
         "setup_requirements": [
-          "Unity 2023.2 LTS with XR Plugin Management",
+          "Unity 2023.2 LTS with XR Plugin Management installed",
           "Meta Quest 3 or Quest Pro headset in developer mode",
-          "Meta XR SDK and XR Interaction Toolkit packages",
-          "USB-C cable for deployment and debugging"
+          "Meta XR SDK and XR Interaction Toolkit packages installed",
+          "USB-C cable for deployment and wireless ADB configured for convenience"
         ],
         "review": [
           {
             "key": "Stereoscopic Rendering",
-            "value": "Rendering the scene twice from slightly offset eye positions to create depth perception; each eye gets a separate render target that is then corrected for lens distortion before display"
+            "value": "Rendering the scene twice from offset eye positions (typically 63mm apart, matching average human IPD) to create depth perception. Each eye gets a separate render target corrected for lens distortion before display."
           },
           {
             "key": "Inside-Out Tracking",
-            "value": "Headset cameras observe the environment to determine position and orientation without external sensors; uses visual-inertial odometry combining camera data with IMU readings"
-          }
-        ]
-      }
-    },
-    {
-      "week_number": 1,
-      "session_number": 2,
-      "topic": "Spatial Interaction Design and Hand Tracking",
-      "duration": "80 minutes",
-      "learning_objectives": [
-        "Design interaction systems for 3D spatial input",
-        "Implement hand tracking with gesture recognition",
-        "Apply direct and indirect manipulation paradigms in VR"
-      ],
-      "readings": [
-        "Designing Immersive Experiences Ch. 4-6",
-        "Meta Hand Tracking SDK Documentation",
-        "Unity XR Interaction Toolkit - Interactables Guide"
-      ],
-      "lecture_notes": {
-        "introduction": "In VR, the user's hands are the primary interface. Unlike a mouse with 2D coordinates, hands exist in 3D space with full articulation. Designing interactions that feel natural while remaining precise and discoverable is one of the hardest problems in VR development.",
-        "key_concepts": [
-          "Controller-based input: buttons, triggers, thumbsticks, 6DoF tracking",
-          "Hand tracking joint data: 26 joints per hand with position and rotation",
-          "Gesture recognition: pinch, grab, point, thumbs up, custom gestures",
-          "Direct manipulation: grabbing, pushing, rotating objects with virtual hands",
-          "Ray-based interaction: far-field selection using pointer rays from hands or controllers"
-        ],
-        "demonstration": "Implementing a hand tracking system that supports both pinch-to-grab for nearby objects and ray-based pointing for distant UI panels, with visual feedback showing grab radius and ray intersection",
-        "setup_requirements": [
-          "Meta Quest headset with hand tracking enabled",
-          "XR Interaction Toolkit configured for hand tracking",
-          "Sample scene with grabbable objects and UI panels",
-          "Hand mesh visualization assets"
-        ],
-        "review": [
-          {
-            "key": "Pinch Gesture",
-            "value": "Bringing the thumb and index finger together; the standard selection gesture in hand tracking because it has clear start/end states, works reliably across hand sizes, and mimics a natural grasping motion"
+            "value": "Headset cameras observe the environment to determine position and orientation without external sensors. Uses visual-inertial odometry combining camera feature tracking with IMU data for low-latency, drift-resistant tracking."
           },
           {
-            "key": "Interaction Affordances",
-            "value": "Visual cues that communicate how objects can be manipulated: glow on hover, outline on grab readiness, size pulse on valid targets; critical in VR where there is no cursor to indicate interactability"
+            "key": "6DoF vs 3DoF",
+            "value": "6DoF tracks both rotation (pitch, yaw, roll) and position (x, y, z), allowing the user to lean, duck, and walk. 3DoF tracks only rotation. All modern VR headsets provide 6DoF for the headset and controllers."
+          },
+          {
+            "key": "Frame Budget",
+            "value": "At 90Hz, each frame must complete in 11.1ms. This includes rendering both eyes, submitting to the compositor, and leaving headroom for late-stage reprojection. Exceeding the budget causes judder that rapidly induces nausea."
           }
         ]
       }
     },
     {
       "week_number": 2,
-      "session_number": 4,
-      "topic": "VR Locomotion Systems and Motion Sickness Mitigation",
+      "session_number": 2,
+      "topic": "XR Development Setup with Unity XR",
       "duration": "80 minutes",
       "learning_objectives": [
-        "Implement multiple VR locomotion techniques",
-        "Understand the physiological causes of VR-induced motion sickness",
-        "Apply evidence-based comfort techniques to reduce nausea"
+        "Configure the Unity XR development pipeline for Meta Quest hardware",
+        "Understand the XR Interaction Toolkit architecture and component model",
+        "Implement basic head-tracked rendering and controller input",
+        "Deploy, debug, and profile XR applications on headset hardware"
       ],
       "readings": [
-        "VR Locomotion Research Survey (Boletsis, 2017)",
-        "Oculus VR Best Practices Guide - Comfort and Health",
-        "The VR Book Ch. 9 - Locomotion"
+        "Unity XR Interaction Toolkit Documentation",
+        "Meta Quest Development Setup Guide",
+        "Unity XR Plugin Management Documentation"
       ],
       "lecture_notes": {
-        "introduction": "Moving through virtual space without physically walking creates a sensory conflict between your visual system and vestibular system. This conflict causes motion sickness in many users. Every locomotion choice is a tradeoff between freedom of movement and user comfort.",
+        "introduction": "Before we can build compelling VR experiences, we need a solid development pipeline. XR development has unique workflow challenges: you are building for hardware that sits on someone's face, the editor experience cannot fully substitute for headset testing, and debugging requires specialized tools because you cannot see the screen while wearing the headset. Unity's XR ecosystem consists of several interconnected packages: XR Plugin Management handles the abstraction layer between Unity and device-specific SDKs, the XR Interaction Toolkit provides the interaction framework (grab, teleport, UI interaction), and device-specific plugins (Oculus XR Plugin, OpenXR) provide the hardware interface. Today we set up a complete XR development environment: configuring the project for Meta Quest, understanding the XR Origin (the player's root transform in VR space), setting up controller bindings using the Input System, implementing basic interactions (grab, poke, ray), and establishing a deployment workflow that minimizes iteration time. We also set up remote profiling so we can analyze frame timing, draw calls, and GPU utilization while the app runs on the headset. The development loop in VR is longer than traditional development because every change requires a build-and-deploy cycle, so we will discuss strategies for minimizing this overhead including Link/AirLink for tethered testing and scene hot-reloading.",
         "key_concepts": [
-          "Teleportation locomotion: arc pointer, blink transition, boundary preview",
-          "Continuous locomotion: thumbstick-based, head-directed vs hand-directed",
-          "Room-scale movement: guardian boundaries, redirected walking",
-          "Comfort techniques: vignetting during movement, snap turning, stable reference frames",
-          "Vestibular conflict: why visual motion without physical motion causes nausea"
+          "XR Origin: the root transform representing the player's physical space in the virtual world, with camera offset for floor vs eye level",
+          "XR Interaction Toolkit architecture: Interactors (controllers/hands), Interactables (objects), Interaction Manager (mediator)",
+          "Controller bindings: mapping physical buttons (trigger, grip, thumbstick, A/B/X/Y) to Input System actions",
+          "XR Ray Interactor: projecting a ray from the controller for distant object selection and UI interaction",
+          "XR Direct Interactor: near-field grab interaction using controller or hand position for picking up objects",
+          "Tracked Pose Driver: syncing Unity transforms with headset and controller tracked positions and rotations",
+          "Quest Link and Air Link: testing VR scenes in the editor with the headset connected via USB or WiFi",
+          "Android Logcat for Quest: reading debug logs from the headset for crash diagnosis and debug output",
+          "OVR Metrics Tool: Meta's real-time performance overlay showing FPS, GPU/CPU utilization, and thermal state",
+          "Iterative development workflow: editor testing with XR Device Simulator, Link testing for visual checks, on-device builds for final verification"
         ],
-        "demonstration": "Building a locomotion system that offers both teleportation and continuous movement with configurable comfort settings: adjustable vignette intensity, snap turn vs smooth turn toggle, and speed-dependent field-of-view reduction",
+        "demonstration": "Setting up a complete XR interaction scene: XR Origin with standing-height camera offset, left and right XR Controllers with Ray Interactors for distant selection and Direct Interactors for near grab, a set of Grab Interactable cubes, and a world-space UI canvas with XR UI Input Module for pointer-based menu interaction. Deploying to Quest via USB, verifying all interactions, and running OVR Metrics Tool overlay to check frame timing.",
         "setup_requirements": [
-          "Unity XR project with locomotion providers configured",
-          "Large virtual environment for testing different locomotion methods",
-          "Quest headset with guardian boundary set up",
-          "Comfort preference survey form for playtesting"
+          "Unity XR project from Week 1 with XR Interaction Toolkit configured",
+          "Meta Quest headset connected via USB-C for deployment",
+          "Input System package with XR controller action maps",
+          "OVR Metrics Tool installed on the Quest headset"
         ],
         "review": [
           {
-            "key": "Vignetting",
-            "value": "Dynamically reducing the peripheral field of view during artificial locomotion by fading edges to black; reduces motion sickness because peripheral vision is most sensitive to optic flow that conflicts with vestibular input"
+            "key": "XR Origin",
+            "value": "The transform hierarchy representing the player's tracked space. Camera Offset child contains the Main Camera (tracked to headset position). The XR Origin's world position determines where the player's floor level maps to in the virtual scene."
           },
           {
-            "key": "Snap Turning",
-            "value": "Rotating the viewpoint in discrete increments (typically 30-45 degrees) rather than smoothly; eliminates the continuous rotational optic flow that is a primary trigger for VR nausea"
+            "key": "Interactor/Interactable Pattern",
+            "value": "Interactors (on controllers/hands) detect Interactables (on world objects) and manage hover, select, and activate states. The Interaction Manager ensures only one interactor can select an object at a time and handles event routing."
+          },
+          {
+            "key": "OVR Metrics Tool",
+            "value": "A Quest system overlay that displays real-time FPS, CPU and GPU frame times, thermal state, and memory usage directly in the headset view. Essential for verifying performance meets requirements during on-device testing."
+          },
+          {
+            "key": "XR Device Simulator",
+            "value": "A Unity Editor tool that simulates headset and controller input using keyboard and mouse, allowing basic XR interaction testing without wearing a headset. Useful for rapid iteration on interaction logic, not for visual or comfort testing."
           }
         ]
       }
     },
     {
       "week_number": 3,
-      "session_number": 7,
-      "topic": "3D User Interfaces in VR and Spatial Audio",
+      "session_number": 3,
+      "topic": "Spatial Interaction Design",
       "duration": "80 minutes",
       "learning_objectives": [
-        "Design and implement user interfaces that exist in 3D virtual space",
-        "Apply spatial audio techniques to enhance immersion and provide navigational cues",
-        "Integrate HRTF-based audio rendering for accurate sound spatialization"
+        "Design interaction systems for 3D spatial input in VR environments",
+        "Implement direct and indirect manipulation paradigms for different use cases",
+        "Create interaction affordances that communicate interactability without tutorials",
+        "Handle interaction edge cases: object overlap, hand-through-wall, and release prediction"
       ],
       "readings": [
-        "3D User Interfaces: Theory and Practice Ch. 7-9",
-        "Meta Spatial Audio SDK Documentation",
-        "Resonance Audio Developer Guide"
+        "Designing Immersive Experiences Ch. 4-6",
+        "3D User Interfaces: Theory and Practice Ch. 5-8",
+        "Unity XR Interaction Toolkit - Interactables Guide"
       ],
       "lecture_notes": {
-        "introduction": "Traditional 2D UI paradigms break down in VR. Menus cannot hover in screen space because there is no screen. Text must be readable at varying distances. And audio is no longer stereo output - it must exist in 3D space just like visual elements, because your ears are as important as your eyes for spatial presence.",
+        "introduction": "In VR, interaction is spatial. Unlike a 2D screen where the mouse provides a universal pointing device, VR interaction happens in three-dimensional space with tracked controllers or bare hands. This opens extraordinary design possibilities -- the player can reach out and touch objects, grab them with a natural pinch, throw them with physical velocity, and manipulate them with two-handed gestures -- but it also introduces design challenges that do not exist in traditional gaming. How does the player know which objects can be interacted with? On a 2D screen, a hover state and cursor change indicate interactability. In VR, there is no cursor. You need visual affordances: objects that glow on proximity, outlines that appear when the hand is in grab range, physics-based highlights that respond to nearby controllers. How do you handle the player reaching through a solid wall? In VR, the tracked hand can go anywhere, including inside solid geometry. You need to decide whether the virtual hand stops at the wall (breaking hand-tracking alignment) or passes through (breaking immersion). Today we implement a comprehensive interaction system with both direct manipulation (near-field grab, push, poke) and indirect manipulation (far-field ray pointer), create rich visual affordances using highlight shaders and proximity detection, and solve the common edge cases of VR interaction design.",
         "key_concepts": [
-          "World-space UI panels: curved canvases, follow-head vs fixed-position menus",
-          "Text rendering in VR: SDF fonts, minimum angular size for readability",
-          "Diegetic UI: interfaces embedded in the game world (wrist watch, clipboard)",
-          "HRTF (Head-Related Transfer Function): modeling how ears perceive sound direction",
-          "Spatial audio techniques: distance attenuation, occlusion, room reverb simulation"
+          "Direct manipulation: reaching out and physically grabbing, pushing, or poking virtual objects within arm's reach",
+          "Indirect manipulation: using a ray or pointer to interact with objects beyond arm's reach",
+          "Interaction affordances: visual cues that communicate interactability (glow on proximity, outline on hover, size pulse on valid target)",
+          "Grab mechanics: attach point selection (nearest point vs predefined handle), grab offset (maintain relative hand position), release velocity calculation",
+          "Two-handed interaction: scaling objects with two grabs, rotating with bimanual manipulation, tool-using gestures",
+          "Haptic feedback: controller vibration patterns for grab confirmation, collision, button press, and error states",
+          "Interaction priority: resolving conflicts when multiple interactables overlap in grab range",
+          "Socket interactions: snap-to-target placement for puzzle pieces, inventory slots, and tool holders",
+          "Physics-based interaction: interactable objects with rigidbodies that respond to gravity and collision when not held",
+          "Accessibility in interaction: adjustable grab radius, sticky grab option, alternative input methods for users with limited mobility"
         ],
-        "demonstration": "Building a diegetic inventory system attached to the player's wrist that opens on forearm inspection, with spatial audio cues that play from item positions in 3D space using Meta Spatial Audio SDK",
+        "demonstration": "Building an interactive VR workbench: grabbable tools (hammer, screwdriver) with defined grip points, a physics-based nail that responds to hammer impact, a socket system for returning tools to their holders, two-handed object scaling for examining small parts, ray-based interaction for a wall-mounted instruction panel, and haptic feedback patterns for each interaction type. All objects have proximity-based glow affordances.",
         "setup_requirements": [
-          "Unity project with XR Interaction Toolkit",
-          "Meta Spatial Audio SDK installed",
-          "TextMeshPro with SDF font assets",
-          "Sample audio files for spatialization testing"
+          "Unity XR project with XR Interaction Toolkit from Week 2",
+          "3D models for tools, workbench, and small parts",
+          "Highlight shader for proximity-based glow effect",
+          "Haptic feedback profiles configured for each interaction type"
         ],
         "review": [
           {
-            "key": "HRTF",
-            "value": "A function describing how sound is filtered by the shape of the ears, head, and torso before reaching the eardrums; enables headphone audio to be perceived as coming from specific 3D positions by applying the correct frequency-dependent delays and amplitude differences"
+            "key": "Grab Attach Point",
+            "value": "The point on an object where the controller or hand attaches when grabbed. Predefined handles ensure the player always grabs a tool by the handle. Dynamic attach preserves the grab offset for more natural manipulation of arbitrary objects."
           },
           {
-            "key": "Diegetic UI",
-            "value": "User interface elements that exist as objects within the game world rather than as overlaid HUD elements; examples include a wrist-mounted health display or a physical map the character holds; preferred in VR because they maintain immersion and have a natural depth position"
+            "key": "Release Velocity",
+            "value": "When the player releases a grabbed object, its velocity is set based on the controller's tracked velocity at release. Averaging velocity over the last 3-5 frames prevents erratic throws from tracking noise on the release frame."
+          },
+          {
+            "key": "Socket Interactable",
+            "value": "A target location that attracts and snaps interactable objects into position. When the player brings an object near a compatible socket, it smoothly interpolates to the socket position and locks in place. Used for inventory, puzzles, and tool storage."
+          },
+          {
+            "key": "Haptic Feedback",
+            "value": "Controller vibration triggered on interaction events. Different amplitude and duration patterns communicate different events: short pulse for button click, sustained low vibration for grab, sharp burst for collision impact."
           }
         ]
       }
     },
     {
       "week_number": 4,
-      "session_number": 10,
-      "topic": "AR Marker Tracking and Mixed Reality",
+      "session_number": 4,
+      "topic": "Hand Tracking and Controllers",
       "duration": "80 minutes",
       "learning_objectives": [
-        "Implement AR marker detection and image tracking",
-        "Build mixed reality experiences that blend virtual and physical environments",
-        "Use scene understanding APIs to anchor virtual content to real-world surfaces"
+        "Implement hand tracking with gesture recognition for controller-free interaction",
+        "Design input systems that seamlessly transition between hand tracking and controller input",
+        "Build custom gesture recognizers for pinch, grab, point, and application-specific gestures",
+        "Handle hand tracking limitations: occlusion, range, and reliability"
       ],
       "readings": [
-        "ARCore Developer Guide - Augmented Images",
-        "ARKit Documentation - Image Detection and Tracking",
-        "Meta Quest Mixed Reality Developer Guide"
+        "Meta Hand Tracking SDK Documentation",
+        "Unity XR Hands Package Documentation",
+        "Designing for Hand Tracking (Meta Developer Blog)"
       ],
       "lecture_notes": {
-        "introduction": "Augmented reality bridges the gap between virtual and physical worlds. Marker tracking gives us precise anchor points to attach virtual content to the real world, while scene understanding lets us place content on surfaces, behind furniture, and interacting with the physical environment.",
+        "introduction": "Hand tracking enables the most natural form of VR interaction: using your actual hands. The Meta Quest cameras track 26 joints per hand in real time, providing position and rotation data for every finger segment. This enables gestures that would be impossible with controllers: precise finger pointing, expressive hand poses, and natural grasping with individual finger articulation. However, hand tracking also introduces significant challenges. Tracking reliability depends on lighting conditions and hand visibility to cameras. Hands can occlude each other, causing tracking loss. There is no haptic feedback when grabbing -- the player feels nothing physical, which creates a disconnect. And the tracking latency (20-30ms) is higher than controller tracking, making fast interactions feel slightly delayed. Today we implement a complete hand tracking system: skeletal hand visualization using tracked joint data, pinch and grab gesture recognition using thumb-finger distance thresholds, pointing gesture detection for ray-based interaction, and a seamless fallback to controller input when hands leave the tracking volume. We also design custom gestures specific to our application and handle the graceful degradation when tracking quality drops.",
         "key_concepts": [
-          "Image marker detection: reference image databases, tracking quality and distance limits",
-          "Plane detection: horizontal and vertical surface recognition and boundary estimation",
-          "Scene mesh: real-time 3D reconstruction of the physical environment",
-          "Occlusion: virtual objects hidden behind real-world surfaces for realism",
-          "Spatial anchors: persistent placement of virtual content that survives across sessions"
+          "Hand skeleton data: 26 joints per hand (wrist, palm, thumb x4, index x5, middle x5, ring x5, pinky x5) with position and rotation",
+          "Pinch gesture recognition: measuring distance between thumb tip and index tip, with threshold for pinch-start and pinch-end hysteresis",
+          "Grab gesture detection: monitoring finger curl angles to detect a closed fist vs open hand",
+          "Point gesture: detecting extended index finger with other fingers curled, for ray-based pointing",
+          "Custom gesture design: defining application-specific hand poses using joint angle thresholds and relative positions",
+          "Hand-controller transitions: detecting when the player picks up or puts down controllers and switching input mode automatically",
+          "Tracking confidence: the SDK reports per-hand tracking confidence (high, low); low confidence should trigger visual feedback or fallback",
+          "Hand mesh visualization: rendering a mesh or skeleton representation of the tracked hands for visual feedback",
+          "Pinch distance vs pinch strength: using normalized 0-1 values for analog control (drawing bow, adjusting dial) vs binary state for selection",
+          "Occlusion handling: when one hand occludes the other from cameras, tracking quality degrades; design interactions to avoid both hands in the same camera view"
         ],
-        "demonstration": "Building a mixed reality application on Quest 3 that uses passthrough to show the real room, detects a physical poster as an image marker to spawn a 3D character, uses scene mesh for occlusion so the character can hide behind real furniture, and persists the character's position using spatial anchors",
+        "demonstration": "Implementing a dual-input VR experience: hand tracking with pinch-to-select for menu interaction and grab for object manipulation, automatic transition to controller mode when the player picks up controllers, custom thumbs-up gesture for confirming actions, and a hand tracking quality indicator that fades to a warning icon when confidence drops. Testing in varied lighting conditions to demonstrate reliability boundaries.",
         "setup_requirements": [
-          "Meta Quest 3 with passthrough enabled",
-          "Meta Scene API and Spatial Anchor API configured",
-          "Printed image markers for tracking",
-          "Room with Scene API room setup completed"
+          "Meta Quest headset with hand tracking enabled in settings",
+          "Unity XR Hands package installed and configured",
+          "Hand mesh or skeleton visualization assets",
+          "Test scene with both near-field and far-field interactable objects"
         ],
         "review": [
           {
-            "key": "Spatial Anchors",
-            "value": "Persistent coordinate references tied to physical locations that survive app restarts and can be shared between devices; the anchor stores the spatial relationship to tracked environmental features so virtual content stays in place even after the device is turned off"
+            "key": "Pinch Hysteresis",
+            "value": "Using different distance thresholds for pinch-start (fingers close together) and pinch-end (fingers farther apart) to prevent rapid on/off flickering when the finger distance is near the threshold. Typical values: start at 1.5cm, end at 3cm."
           },
           {
-            "key": "Scene Mesh Occlusion",
-            "value": "Using the real-time 3D mesh of the physical environment as an invisible depth layer so virtual objects are correctly hidden when behind real furniture or walls; requires rendering the scene mesh to the depth buffer without writing to the color buffer"
+            "key": "Finger Curl",
+            "value": "The angle of flexion of each finger, calculated from the joint chain. Fully extended = 0 degrees, fully curled = ~160 degrees. Used to detect open hand vs fist for grab gestures."
+          },
+          {
+            "key": "Tracking Confidence",
+            "value": "The SDK's estimate of tracking quality for each hand. High confidence means all joints are accurately tracked. Low confidence means the hand is partially occluded or in poor lighting. The application should provide visual feedback when confidence is low."
+          },
+          {
+            "key": "Controller-Hand Transition",
+            "value": "The Quest automatically detects when controllers are held or set down. The application should smoothly fade between controller models and hand meshes, and adjust interaction behavior (controller ray vs hand pinch) accordingly."
           }
         ]
       }
     },
     {
       "week_number": 5,
-      "session_number": 13,
-      "topic": "VR/AR Performance Optimization and Platform Deployment",
+      "session_number": 5,
+      "topic": "Locomotion Systems",
       "duration": "80 minutes",
       "learning_objectives": [
-        "Optimize VR/AR applications to meet the strict performance requirements of immersive rendering",
-        "Apply foveated rendering and other VR-specific optimization techniques",
-        "Prepare and submit applications to VR/AR distribution platforms"
+        "Implement teleportation, continuous, and room-scale locomotion for VR",
+        "Understand the physiological causes of VR motion sickness and apply evidence-based mitigations",
+        "Design locomotion systems that offer player choice in comfort settings",
+        "Evaluate locomotion tradeoffs between freedom of movement and user comfort"
+      ],
+      "readings": [
+        "VR Locomotion Research Survey (Boletsis, 2017)",
+        "Oculus VR Best Practices Guide - Comfort and Health",
+        "The VR Book (Jerald) Ch. 9 - Locomotion"
+      ],
+      "lecture_notes": {
+        "introduction": "Moving through virtual space without physically walking creates a sensory conflict between your visual system and vestibular system. Your eyes see motion, but your inner ear detects no corresponding acceleration. This mismatch is the primary cause of VR-induced motion sickness, which can range from mild unease to severe nausea. Every locomotion choice is a tradeoff between freedom of movement and user comfort. Teleportation is the most comfortable method because there is no continuous visual motion that conflicts with the vestibular system -- the player points, the screen blinks, and they are at the new location. But teleportation feels disconnected and breaks immersion. Continuous thumbstick locomotion feels natural and provides full movement freedom, but causes nausea in a significant percentage of users, especially during rotation. Room-scale movement -- physically walking within the tracked play space -- is perfectly comfortable because visual and vestibular inputs match, but it is limited to the physical room size. Today we implement all three locomotion methods, add configurable comfort settings (vignetting intensity, snap turn angle, movement speed), and create a comfort settings menu accessible from within VR. We discuss the physiology of motion sickness, the specific visual patterns that trigger it (optic flow in peripheral vision, rotational motion, altitude changes), and the evidence-based mitigations that reduce it without eliminating movement.",
+        "key_concepts": [
+          "Teleportation: arc pointer visualization, valid/invalid landing indicators, blink or fade transition, no motion sickness",
+          "Continuous locomotion: thumbstick-driven, head-directed vs hand-directed movement, causes nausea in susceptible users",
+          "Room-scale movement: physical walking within guardian boundaries, 1:1 visual-vestibular match, limited by room size",
+          "Snap turning: discrete rotation in 15-45 degree increments, eliminates continuous rotational optic flow that triggers nausea",
+          "Smooth turning: continuous rotation, more immersive but triggers nausea more than any other locomotion component",
+          "Vignetting (tunneling): darkening peripheral vision during artificial movement, reducing the optic flow mismatch area",
+          "Comfort settings menu: player-configurable options for turn type, turn speed, vignette intensity, and movement speed",
+          "Guardian/boundary system: visible walls that appear when the player approaches the physical play space boundary",
+          "Redirected walking: subtly rotating the virtual world during physical walking to fit a larger virtual space in a smaller room",
+          "Vestibular conflict model: nausea occurs when visual motion (optic flow) contradicts vestibular signals (no acceleration detected)"
+        ],
+        "demonstration": "Building a multi-mode locomotion system: teleportation with an arc pointer that changes color over valid/invalid surfaces and blink-to-target with a brief fade, continuous thumbstick movement with head-directed steering, snap turn and smooth turn toggle, and an in-VR comfort settings panel where the player adjusts vignette intensity (0-100%), snap turn angle (15/30/45/90), and movement speed. Testing each mode and measuring the impact of comfort settings on the experience.",
+        "setup_requirements": [
+          "Unity XR project with XR Interaction Toolkit locomotion providers",
+          "Large virtual environment (outdoor or open building) for testing traversal",
+          "Quest headset with guardian boundaries configured",
+          "Comfort settings UI prefab with slider and toggle controls"
+        ],
+        "review": [
+          {
+            "key": "Vignetting",
+            "value": "Dynamically reducing peripheral field of view during artificial locomotion by fading screen edges to black. Reduces nausea because peripheral vision is most sensitive to optic flow mismatch. Typical implementations scale vignette intensity with movement speed."
+          },
+          {
+            "key": "Snap Turn",
+            "value": "Rotating the viewpoint in discrete increments (typically 30-45 degrees) rather than smoothly. Eliminates continuous rotational optic flow, which is the strongest single trigger for VR nausea. Most users tolerate snap turn well even if they are susceptible to motion sickness."
+          },
+          {
+            "key": "Blink Teleport",
+            "value": "The screen fades to black over 100-200ms, the player position changes, then the screen fades back in. The blackout prevents any visual motion during position change. Some implementations show a brief preview of the destination before the blink."
+          },
+          {
+            "key": "Head-Directed vs Hand-Directed",
+            "value": "Head-directed movement moves in the direction the player is looking. Hand-directed moves in the direction the controller points. Head-directed is simpler but means you cannot look sideways while moving forward. Hand-directed provides more freedom."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "VR Comfort and Motion Sickness Mitigation",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Apply a comprehensive framework of comfort techniques to VR experiences",
+        "Design content that minimizes motion sickness triggers while maintaining immersion",
+        "Implement adaptive comfort systems that respond to detected user discomfort",
+        "Conduct structured comfort testing sessions with standardized assessment tools"
+      ],
+      "readings": [
+        "VR Sickness Assessment Methods (survey paper)",
+        "Meta Comfort Rating System Documentation",
+        "IEEE VR 2023: Adaptive Comfort in Virtual Reality",
+        "The VR Book (Jerald) Ch. 12 - Health and Safety"
+      ],
+      "lecture_notes": {
+        "introduction": "Motion sickness is not a flaw in the user -- it is a flaw in the design. If your VR experience makes users sick, the experience is broken. Approximately 40-60% of VR users experience some degree of motion sickness with continuous locomotion, and even among experienced VR users, prolonged exposure to comfort-violating stimuli causes cumulative discomfort. As VR developers, we have an ethical obligation to design experiences that are accessible to the widest possible audience, including users who are highly susceptible to motion sickness. Today we go beyond basic vignetting and snap turn to build a comprehensive comfort framework. We examine every element of a VR scene that affects comfort: camera control (never move the camera without player initiation), velocity profiles (acceleration and deceleration curves that minimize sensory conflict), stable reference frames (cockpits, vehicle interiors, visible noses), altitude management (vertical movement is more nauseating than horizontal), and rest frames (periodic moments of visual stability). We implement an adaptive comfort system that monitors proxy indicators of discomfort (head movement instability, postural sway estimation) and automatically increases comfort measures when signs of discomfort are detected.",
+        "key_concepts": [
+          "Camera control rules: never move the VR camera without player initiation, never override head tracking, never change FOV unexpectedly",
+          "Velocity profiles: gradual acceleration and deceleration reduce sensory conflict compared to instant speed changes",
+          "Stable reference frames: cockpit interiors, vehicle dashboards, visible nose models that provide a stationary visual anchor",
+          "Altitude comfort: vertical movement (elevators, ramps, falling) is more nauseating than horizontal; use teleportation or cuts for height changes",
+          "Rest frames: periodic moments of zero artificial motion (reaching a platform, opening a menu) that let the vestibular system recalibrate",
+          "Comfort rating system: Meta's Comfortable/Moderate/Intense rating framework for categorizing VR content",
+          "Simulator Sickness Questionnaire (SSQ): standardized assessment tool with nausea, oculomotor, and disorientation subscales",
+          "Adaptation period: users become less susceptible to motion sickness with gradual exposure (VR legs), but should never be forced to push through discomfort",
+          "Content design for comfort: ground-level gameplay, stable horizons, limited camera-initiated movement, clear sky/ceiling reference",
+          "Accessibility spectrum: designing for the most susceptible users first, with optional comfort reductions for experienced users"
+        ],
+        "demonstration": "Auditing an existing VR demo for comfort violations: identifying a camera shake effect on impact (violation: camera movement without player initiation), instant-velocity continuous locomotion (violation: no acceleration curve), vertical elevator ride (violation: sustained altitude change with visual motion), and a cutscene that overrides camera rotation (violation: head tracking override). Fixing each issue and conducting a before/after comfort comparison using the SSQ questionnaire.",
+        "setup_requirements": [
+          "Unity XR project with an existing demo containing comfort issues",
+          "Comfort audit checklist document",
+          "SSQ questionnaire forms (printed or digital)",
+          "Test participants for comfort evaluation"
+        ],
+        "review": [
+          {
+            "key": "Never Override Head Tracking",
+            "value": "The single most important comfort rule. If the player's head moves but the virtual camera does not match, extreme nausea results within seconds. Even cutscenes must allow the player to look around freely."
+          },
+          {
+            "key": "Stable Reference Frame",
+            "value": "A visually stationary element at a fixed position in the player's view. A cockpit, vehicle interior, or even a subtle nose model provides the visual system with a reference that matches the vestibular system's 'no motion' signal."
+          },
+          {
+            "key": "SSQ Score",
+            "value": "The Simulator Sickness Questionnaire produces a total severity score and three subscale scores (nausea, oculomotor, disorientation). Scores above 15 indicate noticeable discomfort. Testing should be conducted with 10+ participants for meaningful results."
+          },
+          {
+            "key": "Comfort Rating",
+            "value": "Meta's three-tier system: Comfortable (stationary or teleport-only experiences), Moderate (limited smooth locomotion with comfort options), Intense (sustained artificial locomotion, fast movement, altitude changes). All content should be rated and the rating disclosed to users."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "3D User Interfaces for VR",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Design and implement UI systems that exist in 3D virtual space",
+        "Create diegetic, spatial, and meta UI paradigms appropriate for different contexts",
+        "Handle text rendering, readability, and input in VR environments",
+        "Build accessible VR menus that work with both controllers and hand tracking"
+      ],
+      "readings": [
+        "3D User Interfaces: Theory and Practice Ch. 7-9",
+        "Unity XR UI Input Module Documentation",
+        "Apple Human Interface Guidelines for visionOS - Spatial UI"
+      ],
+      "lecture_notes": {
+        "introduction": "Traditional 2D UI breaks down in VR. There is no screen to overlay UI onto. Menus cannot hover in screen space because there is no screen -- the player's entire visual field is the 3D environment. Text must be readable at varying distances and angles. Buttons must be targetable with imprecise 3D pointing or hand tracking, not pixel-precise mouse clicks. VR UI design has converged on three paradigms: diegetic UI (interfaces embedded in the game world, like a wrist-mounted health display or a physical clipboard), spatial UI (world-space panels floating in the environment, like a settings menu anchored to the player's left hand), and meta UI (elements that exist in the player's peripheral vision and follow head movement, like a subtle compass or notification). Each paradigm has different strengths: diegetic UI maintains immersion, spatial UI is familiar and flexible, and meta UI is always available without cluttering the environment. Text rendering in VR requires special attention because headset resolution limits readability. SDF (Signed Distance Field) fonts provide sharp text at any distance, but minimum font size depends on the headset's pixels-per-degree and the panel's distance from the player. Today we implement all three UI paradigms, build a complete settings menu navigable by both controller ray and hand pinch, and solve the text readability challenge.",
+        "key_concepts": [
+          "Diegetic UI: interfaces embedded in the game world as physical objects (wrist watch, clipboard, in-world screens)",
+          "Spatial UI: world-space panels positioned in 3D space, often anchored to the player's hand or a fixed world position",
+          "Meta UI: heads-up display elements that follow head rotation with lag, existing in peripheral vision (compass, alerts)",
+          "World-space Canvas: Unity UI Canvas set to World Space render mode, positioned and scaled for VR readability",
+          "SDF text rendering: TextMeshPro with Signed Distance Field fonts for sharp text at any distance and angle in VR",
+          "Minimum readable text size: 1 degree of visual angle minimum, approximately 1.5mm per meter of distance from the player",
+          "Curved UI panels: bending UI canvases to follow a cylindrical or spherical surface for comfortable reading across wide panels",
+          "XR UI Input Module: Unity's input module that routes XR ray or poke input to standard UI event system (buttons, sliders, scrollviews)",
+          "Gaze-and-dwell: alternative selection method where looking at a target for a duration (1-2 seconds) selects it, useful for accessibility",
+          "Keyboard input in VR: virtual keyboards rendered in 3D space, typed with finger poke or controller ray, with predictive text"
+        ],
+        "demonstration": "Building a complete VR menu system: a main menu as a spatial panel that appears attached to the left controller when a button is pressed, with settings for locomotion, comfort, audio, and graphics. The menu uses curved UI for comfortable reading, SDF text at readable sizes, and accepts input from both controller ray (trigger to select) and hand pinch. A diegetic wrist menu shows health and inventory, revealed by turning the wrist to look at it. Text sizes are validated at 1m and 2m distances.",
+        "setup_requirements": [
+          "Unity XR project with XR Interaction Toolkit and XR UI Input Module",
+          "TextMeshPro with SDF font assets configured",
+          "Canvas prefabs for spatial and diegetic UI panels",
+          "Hand tracking wrist detection implementation"
+        ],
+        "review": [
+          {
+            "key": "Text Readability in VR",
+            "value": "Text must subtend at least 1 degree of visual angle to be readable. At 1 meter distance, this means ~1.7cm font height minimum. SDF fonts remain sharp regardless of distance; bitmap fonts become blurry. Always test readability on-headset."
+          },
+          {
+            "key": "Diegetic Wrist Menu",
+            "value": "A UI panel attached to the player's wrist that appears when the player looks at their wrist (detected by wrist-to-head angle). Maintains immersion because it exists as a physical object in the game world. Used for frequently accessed information like health, ammo, or inventory."
+          },
+          {
+            "key": "Curved Canvas",
+            "value": "Bending a flat UI panel into a cylindrical surface centered on the player. Ensures all parts of a wide panel are equidistant from the player's eyes, maintaining consistent text sharpness and reducing the need for eye convergence changes."
+          },
+          {
+            "key": "XR UI Input Module",
+            "value": "Bridges XR input (ray interactors, poke interactors) to Unity's standard Event System. Allows existing UI Buttons, Sliders, and ScrollViews to work with VR controllers and hand tracking without rewriting UI code."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Spatial Audio for Immersion",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Implement HRTF-based spatial audio for accurate 3D sound positioning",
+        "Design audio environments that enhance presence and provide navigational cues",
+        "Configure distance attenuation, occlusion, and room acoustics for VR spaces",
+        "Integrate spatial audio SDKs for hardware-accelerated binaural rendering"
+      ],
+      "readings": [
+        "Meta Spatial Audio SDK Documentation",
+        "Resonance Audio Developer Guide",
+        "Game Audio with FMOD Ch. 10-12 - Spatial Audio",
+        "AES Convention Paper: Binaural Audio for VR (overview)"
+      ],
+      "lecture_notes": {
+        "introduction": "In VR, audio is not stereo -- it exists in 3D space just like visual elements. Your ears are as important as your eyes for spatial presence. When a character speaks from your left, you should hear their voice from the left. When they walk behind you, the sound should move behind your head. When they enter another room, the acoustics should change. This requires spatial audio: rendering sound as if it comes from specific 3D positions in the virtual world, using Head-Related Transfer Functions (HRTFs) that model how sound is filtered by the shape of your ears, head, and torso. An HRTF transforms a mono sound source into a binaural (two-ear) signal that your brain interprets as coming from a specific direction and distance. Beyond directionality, VR audio needs distance attenuation (sounds get quieter with distance following an inverse-square law), occlusion (sounds are muffled when a wall is between source and listener), room acoustics (reverb characteristics that match the visual space), and Doppler effect (pitch shift from moving sources). Today we integrate Meta's Spatial Audio SDK and configure a scene with multiple spatially-positioned audio sources, occluding geometry, and room-specific reverb zones. We also discuss the importance of audio-visual congruence: when what you hear matches what you see in position and timing, presence is enhanced; when they mismatch, immersion breaks.",
+        "key_concepts": [
+          "HRTF: Head-Related Transfer Function modeling how ears, head, and torso filter sound from different directions",
+          "Binaural audio: two-channel audio rendered through headphones that creates the perception of 3D sound positioning",
+          "Distance attenuation: volume decrease with distance, typically inverse-square law with a minimum audible distance parameter",
+          "Sound occlusion: filtering and attenuating sound when geometry blocks the direct path between source and listener",
+          "Room acoustics simulation: reverb characteristics (early reflections, late reverb, RT60 decay time) matched to visual room size and materials",
+          "Ambisonic soundfields: spherical harmonic encoding of environmental audio that rotates with head tracking for immersive ambiences",
+          "Audio-visual congruence: matching audio spatial position and timing with visual sources to maintain presence",
+          "Spatialization falloff curves: configuring how spatialization transitions from fully spatialized (nearby) to stereo mix (distant)",
+          "Audio propagation: simulating how sound travels through open doorways and around corners using portal-based routing",
+          "Performance budgeting for audio: spatial audio processing cost scales with source count; limiting simultaneous spatialized sources to 20-30"
+        ],
+        "demonstration": "Building an immersive audio environment in a VR scene: placing spatial audio sources for a ticking clock, a fireplace, and ambient music player at their visual locations. Configuring occlusion so the clock sound is muffled when walking into the next room and re-emerges clearly through the open doorway. Setting up room-specific reverb zones for a small bathroom (short reverb) and a large hall (long reverb). Adding ambisonic environmental audio that rotates correctly with head tracking.",
+        "setup_requirements": [
+          "Unity XR project with Meta Spatial Audio SDK installed",
+          "Multi-room VR environment with doors and walls",
+          "Audio source files: ambient sounds, spatial effects, room tones",
+          "Acoustic material assignments for walls, floors, and furnishings"
+        ],
+        "review": [
+          {
+            "key": "HRTF",
+            "value": "A function describing how sound is filtered by ears, head, and torso before reaching the eardrums. Applying the correct HRTF to a mono source creates binaural audio that the brain perceives as coming from a specific 3D position. Generic HRTFs work for most people; personalized HRTFs improve accuracy."
+          },
+          {
+            "key": "Sound Occlusion",
+            "value": "When geometry blocks the direct path between a sound source and the listener, the sound is filtered (reducing high frequencies) and attenuated (reducing volume). Implemented by raycasting from source to listener and applying a low-pass filter when the ray hits geometry."
+          },
+          {
+            "key": "RT60 Reverb Time",
+            "value": "The time for a sound to decay by 60dB in a room. A small bathroom has RT60 of ~0.3s (short, tight reverb). A cathedral has RT60 of 3-5s (long, spacious reverb). Matching reverb to visual room size is critical for VR presence."
+          },
+          {
+            "key": "Ambisonics",
+            "value": "A spherical harmonic encoding of a sound field that captures audio from all directions. When decoded for headphones with head tracking, the sound field rotates naturally as the listener turns their head, creating immersive environmental audio."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "AR Foundation and Marker Tracking",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Implement AR marker detection and image tracking using AR Foundation",
+        "Build phone-based AR experiences with ARKit and ARCore through Unity",
+        "Track multiple image markers simultaneously and anchor virtual content to them",
+        "Handle marker tracking quality, distance limits, and environmental requirements"
+      ],
+      "readings": [
+        "ARCore Developer Guide - Augmented Images",
+        "ARKit Documentation - Image Detection and Tracking",
+        "Unity AR Foundation Documentation - Image Tracking"
+      ],
+      "lecture_notes": {
+        "introduction": "Augmented reality overlays virtual content onto the real world, and marker tracking is the most reliable method for precisely placing virtual objects at specific real-world locations. A marker is a known image -- a poster, a product label, a business card -- that the AR system can recognize and track in the camera feed. When the system detects a marker, it determines the marker's position and orientation in 3D space relative to the camera, enabling virtual content to be anchored to that physical location. AR Foundation is Unity's cross-platform AR framework that provides a unified API for ARKit (iOS) and ARCore (Android), abstracting the platform-specific implementations behind common interfaces for image tracking, plane detection, raycasting, and more. Today we build an AR image tracking application: creating a reference image library, configuring tracking for multiple markers, spawning 3D content at each detected marker's position, and handling tracking state changes (tracking, limited, none) gracefully. We also discuss the practical limitations of marker tracking: markers must be flat, well-lit, and have sufficient visual complexity; tracking degrades at distance (typically beyond 1.5-2m for small markers); and fast camera movement causes tracking loss.",
+        "key_concepts": [
+          "AR Foundation architecture: AR Session, AR Session Origin, platform-specific providers for ARKit and ARCore",
+          "Reference image library: a database of known images with their physical dimensions, compiled into a trackable asset",
+          "Image tracking lifecycle: Added (first detected), Updated (tracked, position refined), Removed (lost from view)",
+          "Tracking state: Full (confident), Limited (low confidence, intermittent), None (lost entirely), and visual feedback for each",
+          "Marker requirements: high contrast, asymmetric pattern, minimum 15cm for reliable tracking, flat and non-reflective surface",
+          "Multiple simultaneous markers: tracking several images at once, each spawning independent virtual content",
+          "Content anchoring: attaching virtual GameObjects to tracked images so they move with the marker in the real world",
+          "Scale accuracy: providing the correct physical marker size ensures virtual content is at the correct real-world scale",
+          "Lighting estimation: AR Foundation provides estimated environmental lighting for realistic virtual object shading",
+          "Camera permission handling: requesting and responding to camera access permission on both iOS and Android"
+        ],
+        "demonstration": "Building a phone-based AR app that tracks three different printed images: a product poster spawns a 3D animated character, a QR-code-style marker spawns an info panel, and a physical game board spawns interactive game pieces. Each marker's content appears, tracks smoothly as the phone moves, and disappears with a fade when the marker is lost. Lighting estimation adjusts the virtual objects' shading to match the room.",
+        "setup_requirements": [
+          "Unity project with AR Foundation and ARKit/ARCore XR Plugins",
+          "Three printed reference images of different types",
+          "iOS or Android device with AR capability",
+          "3D models and UI prefabs for spawned AR content"
+        ],
+        "review": [
+          {
+            "key": "Reference Image Library",
+            "value": "A compiled database of images the AR system can recognize. Each entry includes the source image and its physical width. The library is processed at build time to extract feature points for efficient real-time matching."
+          },
+          {
+            "key": "Tracking State Transitions",
+            "value": "Markers transition between Added (first seen), Updated (actively tracked with position updates), and Removed (lost). Content should fade in on Added, stay visible during Updated, and fade out on Removed rather than appearing/disappearing instantly."
+          },
+          {
+            "key": "Scale from Physical Size",
+            "value": "The AR system uses the known physical width of the marker to calculate the distance and orientation. If the physical size is wrong, virtual content will be at the wrong scale and distance."
+          },
+          {
+            "key": "Lighting Estimation",
+            "value": "AR Foundation estimates the ambient light intensity and color temperature from the camera feed. Applying this to virtual objects' lights and materials makes them blend convincingly with the real environment."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "Plane Detection and World Anchoring",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Implement plane detection for placing virtual content on real-world surfaces",
+        "Create spatial anchors that persist virtual content across sessions",
+        "Build mixed reality experiences that interact with detected room geometry",
+        "Handle the transition from AR plane detection to VR passthrough mixed reality"
+      ],
+      "readings": [
+        "ARKit Documentation - Plane Detection",
+        "Meta Quest Mixed Reality Developer Guide",
+        "Unity AR Foundation - Plane Manager Documentation",
+        "Apple RealityKit Documentation - Spatial Anchoring"
+      ],
+      "lecture_notes": {
+        "introduction": "While marker tracking anchors content to specific known images, plane detection allows content to be placed on any flat surface in the real world: tables, floors, walls, and ceilings. Combined with spatial anchors that persist content positions across sessions, plane detection enables the full spectrum of augmented reality experiences. The AR system analyzes the camera feed and depth sensors to identify flat surfaces, estimating their position, orientation, and boundary polygon. Your application can then raycast against these detected planes to place content where the user taps. The Quest 3 extends this concept further with its Scene API, which provides a full 3D understanding of the room: walls, floor, ceiling, furniture, and door/window openings. This enables mixed reality experiences where virtual content not only sits on real surfaces but is occluded by real furniture and interacts with the physical room geometry. Today we implement plane detection for phone-based AR content placement, spatial anchors for persistent positioning, and Quest 3 mixed reality with room-scale scene understanding. We also address the UX challenges of AR placement: guiding the user to scan their environment, providing visual feedback during surface detection, and handling the common case where the detected plane extends beyond the physical surface boundary.",
+        "key_concepts": [
+          "Plane detection: identifying horizontal (floors, tables) and vertical (walls) flat surfaces in the camera feed",
+          "Plane boundary: the estimated polygon edge of a detected plane, used for visualizing and constraining content placement",
+          "AR raycast: casting a ray from a screen touch point into the AR scene to find the intersection with a detected plane",
+          "Spatial anchors: persistent references to physical locations that survive app restarts and can be shared between devices",
+          "Cloud anchors: spatial anchors uploaded to a cloud service (Google Cloud Anchors, Azure Spatial Anchors) for multi-user AR",
+          "Scene mesh: real-time 3D reconstruction of the physical environment using depth sensors, available on Quest 3 and LiDAR devices",
+          "Occlusion: rendering virtual objects behind real-world surfaces by writing scene mesh depth to the depth buffer",
+          "Passthrough mixed reality: Quest 3's camera-fed view of the real world with virtual content composited on top",
+          "Scene API: Meta's system providing semantic understanding of room elements (wall, floor, ceiling, table, couch, door, window)",
+          "Content placement UX: scanning animation, surface indicator, tap-to-place, confirm-and-lock workflow for intuitive AR placement"
+        ],
+        "demonstration": "Building two AR placement experiences: (1) Phone-based AR using AR Foundation plane detection to place a virtual pet on a detected table surface, with a tap-to-place raycast and spatial anchor to remember the position across app restarts. (2) Quest 3 mixed reality using Scene API to detect the room layout, place virtual decorations on real walls, and enable the virtual pet to walk on the real floor with occlusion from real furniture.",
+        "setup_requirements": [
+          "Unity project with AR Foundation configured for plane detection",
+          "Meta Quest 3 with Scene API room setup completed",
+          "iOS or Android device with AR capability for phone-based demo",
+          "Virtual pet character with walk animation for placement demo"
+        ],
+        "review": [
+          {
+            "key": "AR Raycast",
+            "value": "A ray from the camera through a screen point that checks for intersections with AR-tracked geometry (planes, meshes, point clouds). The result provides a world-space pose (position + rotation) for placing content aligned to the detected surface."
+          },
+          {
+            "key": "Spatial Anchors",
+            "value": "Persistent coordinate references tied to physical locations using environmental features. The anchor stores the relationship to tracked visual features so virtual content stays in the correct physical position across sessions."
+          },
+          {
+            "key": "Scene Mesh Occlusion",
+            "value": "Rendering the real-time 3D mesh of the physical environment to the depth buffer (but not the color buffer) so virtual objects are hidden when behind real furniture or walls. Creates the illusion that virtual content exists within the physical space."
+          },
+          {
+            "key": "Scene API",
+            "value": "Meta's room understanding system that identifies and labels room elements: walls, floor, ceiling, tables, couches, and door/window openings. Provides anchor-aligned bounding boxes for each element, enabling semantic interaction with the real environment."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "Mixed Reality Concepts",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Design experiences that blend virtual and physical environments on the reality-virtuality continuum",
+        "Implement passthrough-based mixed reality with virtual content composited on the real world",
+        "Create interactions that bridge physical and virtual objects",
+        "Evaluate the design space between fully virtual VR and fully real AR"
+      ],
+      "readings": [
+        "Mixed Reality: Merging Real and Virtual Worlds (Ohta & Tamura) Ch. 1-3",
+        "Meta Mixed Reality Design Guidelines",
+        "Apple visionOS Human Interface Guidelines - Immersion Levels"
+      ],
+      "lecture_notes": {
+        "introduction": "Mixed reality occupies the space between fully virtual VR and fully real AR on the reality-virtuality continuum. Rather than choosing between complete immersion in a virtual world or thin digital overlays on the real world, mixed reality blends both: virtual objects sit on your real desk, virtual characters hide behind your real couch, and virtual portals open in your real walls to reveal fantasy worlds beyond. The Quest 3 and Apple Vision Pro represent two different approaches to mixed reality. Quest 3 uses high-resolution color passthrough cameras to show a video feed of the real world, onto which virtual content is composited. Vision Pro uses a similar approach with higher-fidelity passthrough and eye tracking for natural focus. Both enable experiences where users can see their physical environment while interacting with virtual content that appears to coexist with it. The design space is vast: a mixed reality game could have creatures that hide under your real furniture, a productivity app that places virtual monitors on your real desk, or an educational experience that dissects a virtual frog on your real table. Today we explore the design principles of mixed reality: when to show the real world vs occlude it, how to handle the boundary between real and virtual spaces, how to make virtual objects feel like they belong in the physical environment, and how to design interactions that bridge the physical-virtual divide.",
+        "key_concepts": [
+          "Reality-virtuality continuum: the spectrum from fully real to fully virtual, with AR and MR as intermediate points",
+          "Passthrough rendering: using camera feeds to show the real environment inside the headset, enabling virtual overlay",
+          "Immersion levels: full VR (no real world), mixed reality (real world visible with virtual additions), AR (mostly real with minimal virtual)",
+          "Virtual-physical interaction: virtual objects bouncing off real surfaces, casting virtual shadows on real floors",
+          "Portal effects: openings in the real world that reveal virtual environments, creating dramatic transitions between realities",
+          "Boundary management: defining where the real world ends and virtual content begins, handling edge transitions",
+          "Environmental coherence: matching virtual lighting, shadows, and reflections to the real environment for believable compositing",
+          "User presence awareness: detecting when other people enter the tracked space and adjusting content to avoid conflicts",
+          "Shared mixed reality: multiple users seeing the same virtual content in the same physical space using cloud anchors",
+          "Design patterns for MR: world-locked content (stays in place), body-locked content (moves with user), and space-adaptive content (adjusts to room geometry)"
+        ],
+        "demonstration": "Building a mixed reality experience on Quest 3: a virtual aquarium that uses the real wall as its back surface (portal effect), with fish that swim out through the portal into the real room, navigate around real furniture using scene mesh collision, and return to the aquarium. Virtual water effects spill from the portal onto the real floor. The experience adjusts its content placement based on the room's Scene API data to fit any physical space.",
+        "setup_requirements": [
+          "Meta Quest 3 with passthrough enabled and room scanned",
+          "Unity XR project with Meta Mixed Reality SDK",
+          "Fish character models with swim animations",
+          "Portal shader that renders passthrough inside the portal frame"
+        ],
+        "review": [
+          {
+            "key": "Passthrough Compositing",
+            "value": "The headset renders the camera feed of the real world as the background, then renders virtual content on top. Proper compositing requires matching the virtual camera FOV to the passthrough FOV and handling depth so virtual objects can appear behind real objects."
+          },
+          {
+            "key": "Portal Effect",
+            "value": "A virtual frame placed on a real surface (wall, floor) that renders a different environment behind it, visible only through the frame. Uses stencil buffer or render texture to mask the virtual world to the portal shape."
+          },
+          {
+            "key": "Space-Adaptive Content",
+            "value": "Virtual content that adjusts its layout and scale based on the detected room geometry. A game designed for a 3mx3m room scales its play area to fit a 2mx4m room. Content avoids detected furniture and uses walls and floor as interaction surfaces."
+          },
+          {
+            "key": "Environmental Coherence",
+            "value": "Matching virtual content's lighting to the real environment so it looks like it belongs. Use lighting estimation for intensity and color temperature, cast virtual shadows onto real surfaces, and match reflection intensity to ambient brightness."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Performance for XR (90fps Targets)",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Optimize VR/AR applications to meet strict frame rate requirements for immersive comfort",
+        "Apply foveated rendering and stereo optimization techniques specific to XR",
+        "Implement Application SpaceWarp as a safety net for occasional frame drops",
+        "Profile XR applications using Meta-specific and Unity profiling tools"
       ],
       "readings": [
         "Meta Quest Performance Optimization Guide",
@@ -242,29 +659,215 @@
         "VR Developer Gems Ch. 14-15 - Optimization"
       ],
       "lecture_notes": {
-        "introduction": "VR has the strictest performance requirements of any real-time application. You must render the scene twice at 72-120Hz with under 20ms total frame time, or the user gets sick. There is no acceptable frame drop in VR - every missed frame is a comfort violation.",
+        "introduction": "VR has the strictest performance requirements of any real-time application. At 90Hz on Quest 3, you have 11.1 milliseconds per frame to render the scene twice (once per eye), run physics, execute game logic, and submit to the compositor. Miss that deadline and the compositor will reproject the previous frame, causing visible artifacts. Miss it repeatedly and the user gets sick. There is no 'mostly 90fps' in VR -- you either hit the target consistently or you do not. The optimization techniques for VR build on standard 3D optimization but add XR-specific methods. Single-pass stereo rendering draws both eyes in one pass instead of two, nearly eliminating the CPU overhead of duplicate draw calls. Fixed foveated rendering reduces the resolution in the periphery of each eye, exploiting the fact that human peripheral vision has much lower acuity than central vision. Application SpaceWarp generates intermediate frames using motion vectors when the application cannot maintain the full frame rate, effectively allowing 45fps rendering at 90Hz display. Today we take a VR scene from an unacceptable 45fps to a stable 90fps using a systematic optimization approach: profiling to identify the bottleneck (CPU or GPU), applying the highest-impact VR-specific optimizations first, and measuring the improvement after each change.",
         "key_concepts": [
-          "VR frame budgets: 13.9ms at 72Hz, 11.1ms at 90Hz, 8.3ms at 120Hz per eye",
-          "Fixed foveated rendering: reducing resolution in the peripheral vision of each eye",
-          "Application SpaceWarp: generating intermediate frames using motion vectors",
-          "Single-pass stereo rendering: rendering both eyes in one draw call",
-          "VR-specific profiling: OVR Metrics Tool, GPU-bound vs CPU-bound diagnosis"
+          "VR frame budgets: 13.9ms at 72Hz, 11.1ms at 90Hz, 8.3ms at 120Hz, including both eyes and compositor submission",
+          "Single-pass stereo rendering: drawing both eye views in a single render pass using instanced draw calls with per-eye view matrices",
+          "Fixed foveated rendering (FFR): rendering the center of each eye at full resolution with reduced peripheral resolution in 2-3 concentric zones",
+          "Application SpaceWarp (ASW): runtime-generated intermediate frames using color, depth, and motion vectors when the app renders at half rate",
+          "Multiview rendering: OpenGL ES extension that renders both eyes simultaneously in a single draw call per object",
+          "VR-specific profiling: OVR Metrics Tool for real-time overlay, RenderDoc for GPU frame capture, Unity Profiler for CPU analysis",
+          "GPU-bound vs CPU-bound diagnosis: comparing CPU frame time, GPU frame time, and compositor wait to identify the bottleneck",
+          "Draw call budgets for VR: 150-200 draw calls maximum on Quest standalone, with batching and instancing to consolidate",
+          "Texture memory on standalone VR: Quest 3 has shared 8GB RAM; textures should use ASTC compression aggressively",
+          "Shader complexity for mobile VR: avoid expensive fragment operations, minimize texture samples, prefer half-precision math"
         ],
-        "demonstration": "Taking a VR scene from 45fps to a stable 90fps by enabling single-pass stereo rendering, configuring fixed foveated rendering levels, optimizing draw calls, and using Application SpaceWarp as a safety net for occasional frame drops",
+        "demonstration": "Taking a VR scene from 45fps to 90fps: starting with profiling (OVR Metrics Tool shows GPU-bound at 22ms/frame with 350 draw calls). Step 1: Enable single-pass stereo rendering (saves 4ms by eliminating duplicate draw calls). Step 2: Enable fixed foveated rendering at medium level (saves 3ms by reducing peripheral fragment shading). Step 3: Reduce draw calls from 350 to 120 using static batching and GPU instancing (saves 2ms). Step 4: Compress textures from RGBA to ASTC 6x6 (reduces GPU memory bandwidth, saves 1ms). Result: 12ms GPU frame time, comfortably within 11.1ms budget after headroom.",
         "setup_requirements": [
-          "Quest headset with OVR Metrics Tool overlay enabled",
-          "Unity project with performance-heavy VR scene",
-          "Unity Profiler configured for XR remote profiling",
-          "Oculus Developer Hub for sideloading and monitoring"
+          "Meta Quest headset with OVR Metrics Tool installed",
+          "Unity XR project with a performance-heavy VR scene",
+          "Unity Profiler configured for XR remote profiling over USB",
+          "Oculus Developer Hub for device monitoring and sideloading"
         ],
         "review": [
           {
             "key": "Fixed Foveated Rendering",
-            "value": "Rendering the center of each eye at full resolution while reducing peripheral resolution in 2-3 concentric zones; exploits the fact that human vision has much lower acuity in the periphery; can save 20-40% of GPU fragment shading cost with minimal perceived quality loss"
+            "value": "Rendering the center of each eye at full resolution while reducing the outer zones to 1/2 or 1/4 resolution. Saves 20-40% fragment shading cost. The quality reduction is barely visible because human peripheral vision has low acuity."
           },
           {
             "key": "Application SpaceWarp",
-            "value": "A technique where the application renders at half the display refresh rate and the runtime generates intermediate frames by reprojecting using color and depth data with motion vectors; reduces rendering cost by 50% but introduces artifacts on fast-moving objects and disocclusion edges"
+            "value": "When the app cannot maintain 90fps, ASW lets it render at 45fps while the runtime generates intermediate frames by reprojecting using color, depth, and motion vectors. Artifacts appear on fast-moving objects and disocclusion edges but are acceptable as a fallback."
+          },
+          {
+            "key": "Single-Pass Stereo",
+            "value": "Instead of rendering the scene twice (once per eye) with separate draw calls, single-pass stereo uses GPU instancing to render both eye views in a single pass. Eliminates nearly all the CPU overhead of the second eye and reduces GPU vertex processing."
+          },
+          {
+            "key": "GPU-Bound Diagnosis",
+            "value": "If GPU frame time exceeds CPU frame time and the compositor is not waiting, the scene is GPU-bound. Solutions target GPU workload: foveated rendering, fewer draw calls, simpler shaders, lower resolution, fewer lights, reduced overdraw."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "Accessibility in XR",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Design XR experiences that are accessible to users with diverse abilities",
+        "Implement seated, standing, and room-scale play modes for different physical capabilities",
+        "Address visual, auditory, motor, and cognitive accessibility in VR/AR applications",
+        "Apply inclusive design principles that improve the experience for all users"
+      ],
+      "readings": [
+        "XR Accessibility User Requirements (W3C Working Draft)",
+        "Meta Accessibility Guidelines for VR",
+        "Game Accessibility Guidelines (gameaccessibilityguidelines.com) - XR Section",
+        "AbleGamers Accessible XR Design Guide"
+      ],
+      "lecture_notes": {
+        "introduction": "XR technology has the potential to be profoundly inclusive or profoundly exclusive. A well-designed VR experience can give a wheelchair user the ability to explore environments they cannot access physically. A poorly designed one can exclude anyone who cannot stand for 30 minutes, raise their arms above their head, or see fine detail in low-resolution headset displays. Accessibility in XR is not an afterthought -- it is a design requirement that, when done well, improves the experience for everyone. Seated play mode with adjustable height benefits not only wheelchair users but also people on long flights, in office settings, or simply preferring comfort. Subtitle systems for VR audio help not only deaf users but also people playing in noisy environments. Adjustable text sizes help not only visually impaired users but everyone when headset resolution is limited. Today we implement a comprehensive accessibility system for a VR application: seated and standing modes with adjustable floor offset, one-handed interaction alternatives for motor-impaired users, visual indicators for audio cues (subtitle system, visual sound direction indicators), colorblind-safe UI palettes, adjustable text size and contrast, comfort options as accessibility features, and gaze-and-dwell as an alternative selection method for users who cannot reliably perform pinch or trigger actions.",
+        "key_concepts": [
+          "Seated play mode: adjustable virtual floor height, reachable interactions within seated arm range, no required standing or walking",
+          "One-handed interaction: all core functions accessible with a single controller, remappable controls, auto-grab toggle option",
+          "Visual accessibility: adjustable text size and contrast, colorblind-safe color palettes, high-contrast mode for UI elements",
+          "Audio accessibility: spatial subtitle system showing who is speaking and from what direction, visual sound direction indicators",
+          "Motor accessibility: adjustable interaction distances, sticky grab (toggle instead of hold), reduced precision requirements",
+          "Cognitive accessibility: simplified UI modes, tutorial replay options, adjustable game speed, clear and consistent interaction patterns",
+          "Comfort as accessibility: motion sickness sensitivity varies widely; robust comfort options are accessibility features",
+          "Gaze-and-dwell selection: looking at a target for a configurable duration to select it, alternative to physical button press",
+          "Recenter and reorient: allowing the player to reset their forward direction and seated position at any time",
+          "Inclusive design mindset: designing for the full spectrum of human ability from the start rather than retrofitting accessibility"
+        ],
+        "demonstration": "Adding accessibility features to an existing VR experience: implementing a seated mode toggle that adjusts all interaction heights and locomotion to work from a chair, a one-handed mode that remaps two-controller interactions to a single controller, a subtitle system that displays spatial audio as text with directional indicators, a gaze-and-dwell fallback for the selection interaction, and a high-contrast UI toggle. Testing each feature and demonstrating that the core experience is fully playable with each accessibility option enabled.",
+        "setup_requirements": [
+          "Unity XR project with a playable VR experience from previous weeks",
+          "Subtitle system UI prefab with directional indicators",
+          "Accessibility settings menu with toggle and slider options",
+          "Test scenario that requires locomotion, interaction, and UI navigation"
+        ],
+        "review": [
+          {
+            "key": "Seated Mode",
+            "value": "Adjusts the virtual floor height so the player's seated eye height maps to standing eye height in the virtual world. All interactable objects and UI panels are repositioned to be within seated arm's reach. Locomotion works normally."
+          },
+          {
+            "key": "Gaze-and-Dwell",
+            "value": "The player looks at a target, a radial timer fills over 1-2 seconds, and the selection activates. Useful for users who cannot reliably press buttons. Duration should be configurable to balance speed for able users and reliability for motor-impaired users."
+          },
+          {
+            "key": "Spatial Subtitles",
+            "value": "Text displayed in VR that shows dialogue with a directional indicator (arrow or speaker name) pointing toward the sound source. Positioned in the player's comfortable reading zone, not world-locked (which would require head turning to read)."
+          },
+          {
+            "key": "Inclusive Design Benefit",
+            "value": "Accessibility features often improve the experience for all users. Subtitles help in noisy environments. Seated mode enables playing on an airplane. One-handed mode is useful when the other hand is holding a drink. Comfort options serve VR-newcomers."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "User Testing XR Experiences",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Design and conduct structured user testing sessions for VR/AR applications",
+        "Measure presence, usability, and comfort using validated assessment instruments",
+        "Observe and interpret user behavior in XR without disrupting the immersive experience",
+        "Iterate on design based on user testing feedback with evidence-based prioritization"
+      ],
+      "readings": [
+        "Games User Research Ch. 15 - VR User Testing",
+        "Presence Questionnaire (Witmer & Singer) Overview",
+        "Simulator Sickness Questionnaire Administration Guide",
+        "Meta VR Testing Best Practices"
+      ],
+      "lecture_notes": {
+        "introduction": "User testing XR experiences presents unique challenges that do not exist in traditional game testing. The tester is wearing a headset that isolates them from the outside world, so you cannot see their screen. Traditional screen recording does not capture the spatial experience. The tester may experience physical discomfort (motion sickness, eye strain, neck fatigue) that is not present in flatscreen testing. And the researcher cannot easily communicate with the tester without breaking immersion. Despite these challenges, user testing is even more important in XR than in traditional games because the consequences of poor design are more severe -- discomfort, nausea, and disorientation rather than just frustration. Today we design and conduct a complete XR user testing protocol: pre-test screening (motion sickness susceptibility, VR experience level, physical limitations), task-based testing with think-aloud protocol adapted for VR (speaking aloud while immersed), observation using spectator mode or mirror screen, post-test assessment using the Simulator Sickness Questionnaire (SSQ) for comfort and the System Usability Scale (SUS) for usability, and a semi-structured interview for qualitative insights. We discuss how to interpret the data, prioritize findings, and iterate on design.",
+        "key_concepts": [
+          "Pre-test screening: motion sickness susceptibility (MSSQ), VR experience level, physical limitations, IPD measurement",
+          "XR think-aloud protocol: asking participants to verbalize thoughts while immersed, with neutral prompts if silent for 30+ seconds",
+          "Spectator mode observation: displaying the VR view on an external monitor for the researcher to observe without headset access",
+          "Mixed reality capture: recording the participant's physical movements alongside their VR view for holistic analysis",
+          "Simulator Sickness Questionnaire (SSQ): 16 symptoms rated on a 4-point scale, producing nausea, oculomotor, and disorientation subscores",
+          "System Usability Scale (SUS): 10-item questionnaire producing a 0-100 usability score, applicable to XR with minor wording adaptation",
+          "Presence questionnaire: measuring the degree to which the user felt 'present' in the virtual environment (involvement, sensory fidelity)",
+          "Task completion metrics: success rate, time on task, error count, and help requests for each defined test task",
+          "Physical comfort observation: noting when participants adjust the headset, rub their eyes, shift their weight, or grab furniture for balance",
+          "Iterative testing: test early with paper prototypes and storyboards, test mid-development with greybox builds, test late with polished builds"
+        ],
+        "demonstration": "Conducting a live XR user testing session: administering a pre-test screening questionnaire, briefing the participant (emphasizing we are testing the application, not them), starting the VR experience with spectator mode for observation, taking timestamped notes on interactions, confusion points, and physical comfort indicators, pausing for mid-session SSQ if the session exceeds 15 minutes, completing the full SSQ and SUS post-test, and conducting a 5-minute semi-structured interview. Then analyzing the collected data to produce three prioritized design recommendations.",
+        "setup_requirements": [
+          "VR application build at a testable milestone",
+          "Quest headset with spectator mode configured (Oculus casting or scrcpy)",
+          "Printed SSQ, SUS, and screening questionnaires",
+          "Observation note template with timestamp column",
+          "Video recording setup (optional but recommended)"
+        ],
+        "review": [
+          {
+            "key": "SSQ Administration",
+            "value": "Administer SSQ before testing (baseline) and after testing (post-exposure). The difference reveals symptoms caused by the experience specifically. A total severity score increase above 15 points indicates meaningful discomfort requiring design intervention."
+          },
+          {
+            "key": "SUS Score Interpretation",
+            "value": "SUS produces a score from 0-100. Above 68 is above average usability. Above 80 is good. Above 90 is excellent. Below 50 indicates serious usability problems. VR applications typically score lower than desktop apps due to novel interaction paradigms."
+          },
+          {
+            "key": "Observer Effect in VR",
+            "value": "VR testing partially mitigates observer effect because the participant cannot see the researcher. However, speaking aloud (think-aloud protocol) feels unnatural while immersed. Give participants 2-3 minutes to acclimate before beginning task testing."
+          },
+          {
+            "key": "Prioritizing Findings",
+            "value": "Severity x Frequency matrix: a comfort issue affecting 80% of users is critical, a usability issue affecting 20% is moderate. Comfort issues always take priority over feature issues because discomfort prevents the user from experiencing features at all."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Final XR Experience Presentations",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Present a complete XR experience demonstrating mastery of VR/AR technologies",
+        "Articulate design decisions for interaction, comfort, and accessibility with supporting user test data",
+        "Demonstrate technical proficiency in XR rendering, interaction, and platform deployment",
+        "Reflect on the development process with honest post-mortem analysis"
+      ],
+      "readings": [
+        "XR Project Postmortem Guide",
+        "Peer Review Best Practices for XR Presentations"
+      ],
+      "lecture_notes": {
+        "introduction": "Today each student presents their final XR experience: a complete application that integrates VR interaction, AR/MR elements, spatial audio, accessibility features, and performance optimization. This is the capstone of the course and your opportunity to demonstrate mastery of the full XR development pipeline. Your presentation should include a live headset demonstration (with spectator mode for the audience), a walkthrough of your technical architecture and key implementation decisions, user testing results with SSQ and SUS data from at least 3 participants, performance profiling evidence showing you meet frame budget on target hardware, and accessibility features you implemented and why. The written post-mortem reflects on the full development journey: what design decisions worked well, what you would change with the benefit of hindsight, what technical challenges were hardest to solve, and what you learned about designing for spatial computing that you could not have learned from a textbook. XR development is still a frontier field -- the design patterns are not yet settled, the hardware is evolving rapidly, and the best practices are being discovered by practitioners like you. Your experience building and testing a complete XR application is genuinely valuable and positions you for a career in one of the most exciting areas of interactive technology.",
+        "key_concepts": [
+          "Live headset demonstration: spectator mode or casting for the audience, backup recorded video for technical issues",
+          "Technical architecture presentation: XR interaction system, locomotion implementation, spatial audio configuration, AR tracking setup",
+          "User testing results: SSQ comfort scores, SUS usability scores, task completion rates, and key qualitative findings",
+          "Performance evidence: OVR Metrics Tool screenshots showing frame time at or below target, GPU/CPU utilization breakdown",
+          "Accessibility demonstration: showing the experience in seated mode, one-handed mode, or with comfort options maximized",
+          "Post-mortem analysis: structured reflection on design decisions, technical challenges, user testing surprises, and lessons learned",
+          "Peer evaluation: constructive feedback on immersion quality, comfort, interaction design, and technical execution",
+          "Portfolio preparation: framing the XR project for job applications in spatial computing, VR/AR studios, and enterprise XR",
+          "Future development: features that would improve the experience with more time and resources",
+          "Industry context: positioning the project relative to current XR market trends and opportunities"
+        ],
+        "demonstration": "Each student presents for 10-12 minutes with 3-5 minutes Q&A. The presentation includes a live demo on headset with spectator casting, technical architecture walkthrough, user testing data summary, and post-mortem highlights. Audience members try the experience after the presentation for hands-on evaluation.",
+        "setup_requirements": [
+          "Quest headset with final build installed and spectator casting configured",
+          "Presentation laptop connected to projector for slides and spectator view",
+          "Backup recorded video of the complete experience",
+          "Written post-mortem and user testing report submitted before presentation"
+        ],
+        "review": [
+          {
+            "key": "Spectator Mode",
+            "value": "Casting the VR headset view to an external screen so the audience can see what the presenter sees. Essential for VR presentations because the audience cannot otherwise evaluate the experience. Use Oculus casting to a Chromecast or scrcpy over USB for minimal latency."
+          },
+          {
+            "key": "User Testing Evidence",
+            "value": "Quantitative data (SSQ scores, SUS scores, task completion rates) from at least 3 test participants, plus qualitative findings from observation and interviews. Evidence should show the final version incorporates changes made in response to testing findings."
+          },
+          {
+            "key": "Post-Mortem Honesty",
+            "value": "The most valuable post-mortems acknowledge failures: a comfort approach that did not work, an interaction that confused every tester, a performance optimization that was harder than expected. Honest reflection demonstrates deeper learning than claiming everything went perfectly."
+          },
+          {
+            "key": "XR Portfolio Quality",
+            "value": "An XR project demonstrating interaction design, comfort engineering, spatial audio, accessibility, and performance optimization is highly marketable. Include a video walkthrough, technical documentation, and user testing summary in your portfolio."
           }
         ]
       }
@@ -275,46 +878,58 @@
       {
         "quiz": 1,
         "week": 3,
-        "topic": "VR Hardware, Interaction Design, and Locomotion",
+        "topic": "VR Hardware, Spatial Interaction, and Hand Tracking",
         "duration": "25 minutes",
         "questions": [
           {
-            "question": "A VR developer is building a game that requires the player to explore large outdoor environments. They choose continuous thumbstick locomotion for movement. During playtesting, 60% of testers report moderate nausea within 15 minutes. Describe three specific comfort techniques the developer should implement, explain the physiological reason each one reduces nausea, and discuss any gameplay tradeoffs each introduces.",
+            "question": "A VR developer is building a game that requires the player to explore large outdoor environments. They choose continuous thumbstick locomotion for movement. During playtesting, 60% of testers report moderate nausea within 15 minutes. Describe three specific comfort techniques the developer should implement, explain the physiological reason each one reduces nausea, and discuss the gameplay tradeoff each introduces.",
             "type": "short_answer",
-            "points": 15,
-            "answer": "Three comfort techniques: (1) Dynamic vignetting - darken the peripheral field of view during movement. This works because peripheral vision is most sensitive to optic flow mismatch with the vestibular system. Tradeoff: reduces visual immersion and sense of speed. (2) Snap turning - replace smooth rotation with discrete angular jumps of 30-45 degrees. This eliminates continuous rotational optic flow, which is one of the strongest nausea triggers because the semicircular canals detect no corresponding rotation. Tradeoff: feels less natural and can be disorienting in fast-paced gameplay. (3) Add a stable visual reference frame such as a visible cockpit, nose bridge, or fixed horizon line. This provides the visual system with a stationary reference that matches the vestibular system's report of no movement. Tradeoff: restricts art direction and may not fit all game settings.",
+            "points": 10,
+            "answer": "Three comfort techniques: (1) Dynamic vignetting - darken the peripheral field of view during movement. Physiological reason: peripheral vision is most sensitive to optic flow mismatch with the vestibular system; reducing peripheral visual information reduces the conflict signal. Tradeoff: reduces visual immersion and the player's sense of speed. (2) Snap turning - replace smooth rotation with discrete angular jumps of 30-45 degrees. Physiological reason: continuous rotational optic flow is the strongest nausea trigger because the semicircular canals detect no corresponding rotation. Tradeoff: feels less natural and can be disorienting during fast-paced gameplay. (3) Add a stable visual reference frame such as a visible cockpit or fixed horizon indicator. Physiological reason: provides the visual system with a stationary reference that matches the vestibular report of no motion, reducing the mismatch signal. Tradeoff: restricts art direction and may not fit open-world game settings.",
             "rubric": [
               {
                 "key": "Three distinct comfort techniques described",
-                "value": 5
+                "value": 4
               },
               {
-                "key": "Physiological explanation for each technique",
-                "value": 5
+                "key": "Correct physiological explanation for each technique",
+                "value": 3
               },
               {
-                "key": "Gameplay tradeoffs discussed for each",
-                "value": 5
+                "key": "Gameplay tradeoff identified for each",
+                "value": 3
               }
             ]
           },
           {
-            "question": "Explain the difference between direct manipulation and ray-based interaction in VR hand tracking, and describe a specific scenario where each is the better choice.",
+            "question": "Compare pinch gesture and controller trigger press as selection mechanisms in VR. For each, describe one advantage and one disadvantage, and identify which is more appropriate for a precision-demanding task like threading a needle.",
             "type": "short_answer",
-            "points": 10,
-            "answer": "Direct manipulation means the user physically reaches out and touches or grabs virtual objects with their tracked hands, like picking up a cup. Ray-based interaction projects an invisible or visible ray from the hand to interact with distant objects, like pointing a laser pointer. Direct manipulation is better for near-field tasks like arranging items on a virtual table, assembling parts in a training simulation, or playing a virtual instrument, because it leverages proprioception and feels natural for objects within arm's reach. Ray-based interaction is better for far-field tasks like selecting items on a distant UI menu, pointing at a location on a virtual map across the room, or choosing an object in a large warehouse scene, because the user cannot physically reach distant objects and walking closer breaks workflow.",
+            "points": 8,
+            "answer": "Pinch gesture: Advantage - natural and intuitive, no device to hold, leaves hands free when not interacting. Disadvantage - no haptic feedback on selection (the player feels nothing when the pinch threshold is crossed), 20-30ms additional tracking latency compared to controllers, and tracking can degrade when hands overlap or are in poor lighting. Controller trigger: Advantage - tactile feedback confirms selection (the player feels the trigger click), lower latency tracking, and consistent reliability regardless of lighting. Disadvantage - requires holding a physical device, occupies the hand even when not needed, and limits finger articulation to binary inputs. For precision needle-threading: controller trigger is more appropriate because the task requires precise, stable positioning (lower tracking jitter), clear confirmation of when the action is committed (haptic click), and sustained steady hand position (controller tracking is more stable than hand tracking for small, slow movements).",
             "rubric": [
               {
-                "key": "Clear distinction between the two interaction paradigms",
+                "key": "Correct advantage and disadvantage for each input method",
                 "value": 4
               },
               {
-                "key": "Appropriate scenario for direct manipulation with reasoning",
+                "key": "Correct choice for precision task with reasoning",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "Explain what interaction affordances are in VR and why they are more important than in traditional screen-based games. Give two specific examples.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Interaction affordances are visual cues that communicate how objects can be manipulated. They are more important in VR than screen-based games because VR lacks a cursor or hover state -- there is no universal pointing device that changes appearance over interactive objects. In a screen game, the mouse cursor changes to a hand icon over clickable objects. In VR, the player's hands are always hands regardless of context, and there is no automatic indication of which objects respond to interaction. Example 1: Proximity glow -- objects emit a subtle glow or outline when the player's hand or controller enters their interaction range, communicating 'you can grab this.' Example 2: Socket highlight -- when the player holds a grabbable object near a compatible socket (inventory slot, puzzle piece receptacle), the socket glows and shows an alignment ghost, communicating 'place this here.'",
+            "rubric": [
+              {
+                "key": "Correctly defines affordances and explains VR-specific importance",
                 "value": 3
               },
               {
-                "key": "Appropriate scenario for ray-based interaction with reasoning",
-                "value": 3
+                "key": "Two specific, distinct VR affordance examples",
+                "value": 4
               }
             ]
           }
@@ -324,113 +939,472 @@
       {
         "quiz": 2,
         "week": 5,
-        "topic": "AR Tracking, Mixed Reality, and VR Performance",
+        "topic": "Locomotion, Comfort, and VR UI Design",
         "duration": "25 minutes",
         "questions": [
           {
-            "question": "A mixed reality application places a virtual pet on the user's real-world coffee table. When the user walks around the table, the pet sometimes appears to slide on the surface or float above it. Identify two distinct technical causes for this behavior and describe how to fix each one.",
+            "question": "Compare teleportation, continuous locomotion, and room-scale movement in VR. For each, state the comfort level, the freedom of movement, and one game genre where it is the best fit.",
             "type": "short_answer",
-            "points": 12,
-            "answer": "Cause 1: Inaccurate plane detection boundary. The detected horizontal plane may not precisely match the table surface, causing a height offset. Fix: Use spatial anchors instead of relying solely on the plane's reported position. Place a spatial anchor at the exact point where the user confirms the pet's position, and update the anchor using scene mesh data for higher geometric accuracy. Cause 2: Tracking drift in the headset's SLAM system. As the user moves, accumulated error in visual-inertial odometry shifts the world coordinate frame. Fix: Enable relocalization by ensuring the environment has sufficient visual features (textured surfaces, varied lighting), and implement anchor persistence so the runtime can correct drift when it re-observes previously seen features. Additionally, snapping the pet's Y position to the scene mesh every frame compensates for small drift amounts.",
+            "points": 8,
+            "answer": "Teleportation: Comfort level - high (no continuous visual motion, minimal nausea risk). Freedom of movement - moderate (can reach any visible point but movement is discontinuous). Best genre - puzzle/exploration games (e.g., Myst-like adventures) where continuous movement is unnecessary and immersion is maintained through environmental discovery. Continuous locomotion: Comfort level - low to moderate (causes nausea in 40-60% of users without mitigations, manageable with vignetting and snap turn). Freedom of movement - high (full analog control in any direction at any speed). Best genre - first-person shooter (e.g., Pavlov VR) where tactical movement, strafing, and quick repositioning are core to gameplay. Room-scale movement: Comfort level - very high (perfect visual-vestibular match, no artificial motion). Freedom of movement - low (limited to the physical play space boundary, typically 2m x 2m). Best genre - beat/rhythm games (e.g., Beat Saber) where the player needs precise physical positioning within a fixed area.",
             "rubric": [
               {
-                "key": "Identifies plane detection inaccuracy as a cause with valid fix",
+                "key": "Correct comfort, freedom, and genre for teleportation",
+                "value": 3
+              },
+              {
+                "key": "Correct comfort, freedom, and genre for continuous locomotion",
+                "value": 3
+              },
+              {
+                "key": "Correct comfort, freedom, and genre for room-scale",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A VR settings menu has 8pt text on a panel positioned 2 meters from the player. Users report they cannot read the text. Calculate the minimum text height for readability at this distance and explain the rendering technique used for sharp text at variable distances.",
+            "type": "calculation",
+            "points": 8,
+            "answer": "The minimum readable text size in VR is approximately 1 degree of visual angle. At 2 meters distance, 1 degree of visual angle corresponds to: height = 2m x tan(1 degree) = 2m x 0.01745 = 0.0349m = approximately 3.5cm. The 8pt text at 2m is far below this threshold, which is why users cannot read it. The text should be at least 3.5cm in world-space height, which is roughly equivalent to 100pt+ at 2m distance on a world-space canvas. The rendering technique for sharp text at variable distances is Signed Distance Field (SDF) rendering, implemented by TextMeshPro in Unity. SDF fonts store the distance to the glyph edge rather than pixel coverage, allowing the GPU to reconstruct sharp edges at any resolution and distance through a smoothstep function in the fragment shader. Unlike bitmap fonts that become blurry when scaled, SDF fonts remain crisp.",
+            "rubric": [
+              {
+                "key": "Correct calculation of minimum text height at 2m (~3.5cm)",
+                "value": 3
+              },
+              {
+                "key": "Identifies SDF rendering as the technique for sharp VR text",
+                "value": 3
+              },
+              {
+                "key": "Explains why SDF maintains sharpness at variable distances",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between diegetic and spatial UI in VR, and describe when each is the better choice.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Diegetic UI exists as a physical object within the game world that the character and player can see. Examples: a wrist-mounted health display, a physical map the character holds, a computer terminal in the game. Spatial UI is a floating panel positioned in 3D space but not attached to any in-world object. Examples: a settings menu anchored to the player's hand, a floating tooltip near an object. Diegetic UI is better for frequently accessed gameplay information (health, ammo, inventory) in immersive experiences because it maintains the fiction that the player exists in the virtual world. Looking at a wrist watch feels natural. Spatial UI is better for system-level menus (settings, pause, save/load) that are not part of the game world fiction. A floating settings panel is acceptable because settings are inherently meta-game, and trying to embed them in a diegetic object (like a physical computer in every scene) is contrived.",
+            "rubric": [
+              {
+                "key": "Correctly distinguishes diegetic and spatial UI with examples",
+                "value": 3
+              },
+              {
+                "key": "Appropriate use case for diegetic UI with reasoning",
+                "value": 2
+              },
+              {
+                "key": "Appropriate use case for spatial UI with reasoning",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "Spatial Audio, AR Tracking, and Mixed Reality",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Explain how HRTF-based spatial audio creates the perception of a sound coming from a specific 3D position using only stereo headphones. Include the three physical phenomena the HRTF models.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "HRTF (Head-Related Transfer Function) transforms a mono sound source into a binaural stereo signal that the brain perceives as coming from a specific 3D direction. The three physical phenomena modeled: (1) Interaural Time Difference (ITD): sound arrives at the ear closer to the source slightly before the far ear (up to ~0.7ms difference). The HRTF applies the appropriate delay to each channel. (2) Interaural Level Difference (ILD): the head shadows the far ear, reducing high-frequency content. The HRTF applies frequency-dependent attenuation to the far-ear channel. (3) Pinna filtering: the complex shape of the outer ear (pinna) creates frequency-dependent reflections that vary with the elevation angle of the sound source. The HRTF applies the characteristic spectral coloring for each direction, enabling the brain to distinguish above from below and front from back.",
+            "rubric": [
+              {
+                "key": "Correct explanation of ITD (time difference between ears)",
+                "value": 3
+              },
+              {
+                "key": "Correct explanation of ILD (level difference from head shadow)",
+                "value": 3
+              },
+              {
+                "key": "Correct explanation of pinna filtering (elevation cues)",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A mixed reality app places a virtual pet on the user's real coffee table. When the user walks around the table, the pet sometimes slides on the surface. Identify two distinct technical causes and describe how to fix each one.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Cause 1: Inaccurate plane detection boundary. The detected horizontal plane may not precisely match the table surface geometry, causing the anchor to shift as the plane estimate is refined. Fix: use spatial anchors rather than relying on the continuously-updated plane position. Once the pet is placed, create a spatial anchor at that position. The anchor uses environmental features to maintain its position independently of ongoing plane refinement. Cause 2: Tracking drift from visual-inertial odometry. As the user walks around, accumulated error in the SLAM system shifts the world coordinate frame slightly. Fix: ensure the environment has sufficient visual features for robust tracking (well-lit room with varied textures), enable relocalization so the runtime can correct drift when it re-observes previously seen features, and snap the pet's vertical position to the scene mesh each frame to compensate for small drift amounts.",
+            "rubric": [
+              {
+                "key": "Identifies plane detection inaccuracy with valid anchor-based fix",
                 "value": 4
               },
               {
-                "key": "Identifies tracking drift as a cause with valid fix",
-                "value": 4
-              },
-              {
-                "key": "Technical depth and specificity of solutions",
+                "key": "Identifies tracking drift with valid fix involving relocalization",
                 "value": 4
               }
             ]
           },
           {
-            "question": "A VR game targeting Quest 3 at 90Hz must complete all rendering in 11.1ms per frame. The developer's scene currently takes 16ms. It is GPU-bound with 350 draw calls and no foveated rendering enabled. Describe a prioritized optimization plan, estimating the millisecond savings from each step.",
+            "question": "Describe two ways that scene mesh occlusion improves mixed reality realism, and explain the rendering technique used to implement it.",
             "type": "short_answer",
-            "points": 13,
-            "answer": "Prioritized plan: (1) Enable single-pass stereo rendering. This renders both eyes in one pass instead of two, saving nearly all the CPU overhead of duplicated draw calls and reducing GPU vertex processing by up to 30%. Estimated savings: 3-4ms. (2) Enable fixed foveated rendering at medium level. Reduces fragment shading in peripheral zones by approximately 25-30%. Estimated savings: 2-3ms. (3) Reduce draw calls from 350 to under 150 using static batching for non-moving objects and GPU instancing for repeated meshes. This reduces CPU-side draw call overhead and improves GPU state-change efficiency. Estimated savings: 1-2ms. Combined estimated savings: 6-9ms, bringing the frame time from 16ms to approximately 7-10ms, within the 11.1ms budget with headroom for gameplay logic. If still over budget, enable Application SpaceWarp to halve the rendering rate to 45fps with ASW-generated intermediate frames.",
+            "points": 7,
+            "answer": "Way 1: Virtual objects are hidden when they pass behind real furniture. If a virtual ball rolls behind a real couch, the ball is not visible through the couch, just as a physical ball would be hidden. This prevents the 'X-ray vision' effect where virtual content is always visible regardless of physical obstacles. Way 2: Virtual objects appear to be at the correct depth in the scene. Without occlusion, virtual content always renders on top of the real world, looking like a flat overlay rather than existing in 3D space. With occlusion, the depth relationship between real and virtual objects is correct. Rendering technique: the scene mesh (3D reconstruction of the physical environment) is rendered to the depth buffer but not the color buffer. This means the mesh writes depth values that prevent virtual fragments behind it from passing the depth test, but the mesh itself is invisible because it does not write color. The camera passthrough shows the real surface at those pixels instead.",
             "rubric": [
               {
-                "key": "Prioritizes single-pass stereo as highest-impact change",
+                "key": "Two distinct ways occlusion improves realism",
+                "value": 3
+              },
+              {
+                "key": "Correct depth-buffer rendering technique for invisible occlusion mesh",
                 "value": 4
-              },
-              {
-                "key": "Includes foveated rendering with reasonable savings estimate",
-                "value": 3
-              },
-              {
-                "key": "Addresses draw call reduction with specific techniques",
-                "value": 3
-              },
-              {
-                "key": "Overall plan is realistic and totals to budget compliance",
-                "value": 3
               }
             ]
           }
         ],
-        "total_points": 25
+        "total_points": 23
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "Mixed Reality Design, XR Performance, and Accessibility",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "A VR game targets Quest 3 at 90Hz and must complete all rendering in 11.1ms per frame. The scene currently takes 18ms and is GPU-bound with 320 draw calls and no foveated rendering. Describe a prioritized optimization plan with estimated savings per step.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Prioritized plan: (1) Enable single-pass stereo rendering. Renders both eyes in one pass instead of two, saving CPU draw call overhead and GPU vertex processing. Estimated savings: 4-5ms. (2) Enable fixed foveated rendering at medium level. Reduces fragment shading cost in peripheral zones by 25-35%. Estimated savings: 2-3ms. (3) Reduce draw calls from 320 to under 120 through static batching for non-moving objects and GPU instancing for repeated meshes. Estimated savings: 1-2ms. (4) Compress all textures to ASTC 6x6 to reduce GPU memory bandwidth consumption. Estimated savings: 1ms. Combined estimated savings: 8-11ms, bringing frame time from 18ms to approximately 7-10ms, within the 11.1ms budget. If the result is between 10-11ms with insufficient headroom, additionally enable Application SpaceWarp as a safety net for frame drops during complex moments.",
+            "rubric": [
+              {
+                "key": "Prioritizes single-pass stereo as the highest-impact optimization",
+                "value": 3
+              },
+              {
+                "key": "Includes foveated rendering with reasonable savings estimate",
+                "value": 2
+              },
+              {
+                "key": "Addresses draw call reduction and texture compression",
+                "value": 2
+              },
+              {
+                "key": "Total savings are realistic and bring frame time within budget",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "question": "Describe three accessibility features for VR experiences and explain how each one also benefits users without disabilities.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "(1) Seated play mode with adjustable virtual height: enables wheelchair users and those who cannot stand. Also benefits: travelers on airplanes, office workers during lunch breaks, players who prefer couch comfort, and anyone with temporary injury like a sprained ankle. (2) Spatial subtitle system with directional indicators: enables deaf and hard-of-hearing users to follow dialogue and sound cues. Also benefits: players in noisy environments, non-native language speakers who follow audio better with text support, and players who missed a line of dialogue. (3) Comfort settings with vignetting and snap turn: essential for users with high motion sickness susceptibility. Also benefits: VR newcomers who have not developed tolerance, players returning to VR after a break, and anyone experiencing fatigue during long sessions where sensitivity increases.",
+            "rubric": [
+              {
+                "key": "Three distinct accessibility features correctly described",
+                "value": 3
+              },
+              {
+                "key": "Each feature has a valid primary accessibility use case",
+                "value": 3
+              },
+              {
+                "key": "Each feature has a compelling benefit for non-disabled users",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain what Application SpaceWarp is, how it works technically, and describe one scenario where the visual artifacts it produces are acceptable and one where they are not.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Application SpaceWarp (ASW) allows a VR app to render at half the display refresh rate (e.g., 45fps instead of 90fps) while the runtime generates intermediate frames. Technically: the app renders a frame with color, depth, and motion vectors. The runtime uses these to reproject and synthesize the intermediate frame by warping the color image according to the depth and motion data. This creates the appearance of 90fps from 45fps of actual rendering. Acceptable scenario: a relatively static environment like a museum walkthrough where the user is the primary moving element. The reprojection handles head motion well, and most objects are stationary so motion vector artifacts are minimal. Unacceptable scenario: a fast-paced game with many rapidly moving objects (particles, projectiles, fast-moving characters). ASW produces visible artifacts on these objects: smearing, disocclusion halos (dark edges where previously hidden surfaces become visible), and incorrect motion for objects whose true motion differs from the estimated motion vectors.",
+            "rubric": [
+              {
+                "key": "Correct technical explanation of ASW with motion vector reprojection",
+                "value": 3
+              },
+              {
+                "key": "Valid acceptable scenario with reasoning",
+                "value": 2
+              },
+              {
+                "key": "Valid unacceptable scenario with specific artifact description",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "User Testing, Deployment, and XR Best Practices",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "You are conducting a VR user test and one participant reports feeling 'a little dizzy' after 8 minutes. Describe the correct protocol for handling this situation, including what you should NOT do.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Correct protocol: (1) Immediately offer to pause or end the session. Never pressure a participant to continue through discomfort. (2) If they want to stop, help them remove the headset slowly (sudden removal can cause disorientation). (3) Have them sit down and offer water. (4) Administer the SSQ to record their current symptoms. (5) Note the exact time and activity when symptoms were reported -- this identifies the causal trigger. (6) Allow at least 15-30 minutes of recovery before any further VR exposure. What you should NOT do: (1) Do not tell them to 'push through it' or 'you'll get used to it.' Forcing exposure through discomfort worsens symptoms and can cause lasting VR aversion. (2) Do not invalidate their experience ('the last tester was fine'). (3) Do not let them immediately put the headset back on after a brief pause. (4) Do not record their session as 'normal completion' -- mark it as a comfort-related early termination with the trigger activity noted.",
+            "rubric": [
+              {
+                "key": "Correct immediate response: offer to stop, assist with headset removal",
+                "value": 3
+              },
+              {
+                "key": "Records symptom data and trigger activity",
+                "value": 2
+              },
+              {
+                "key": "Identifies at least two things NOT to do with reasoning",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between the Simulator Sickness Questionnaire (SSQ) and the System Usability Scale (SUS) in the context of VR testing. Describe what each measures and what score ranges indicate problems.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "SSQ measures physical comfort symptoms caused by the VR experience. It has 16 symptoms (general discomfort, fatigue, headache, eye strain, difficulty focusing, nausea, etc.) rated on a 4-point scale (none, slight, moderate, severe). The total severity score and three subscale scores (nausea, oculomotor, disorientation) are calculated. Scores above 15 indicate noticeable discomfort that warrants investigation. Scores above 30 indicate significant discomfort requiring design changes. A score change of 5+ from pre to post-test is meaningful. SUS measures usability -- how easy and satisfying the VR interface is to use. It has 10 statements rated on a 5-point Likert scale. The final score ranges from 0-100. Above 68 is above average. Below 50 indicates serious usability problems. Between 50-68 indicates marginal usability with room for improvement. SSQ and SUS are complementary: an experience can have good usability (high SUS) but cause discomfort (high SSQ), or be comfortable (low SSQ) but confusing to use (low SUS). Both must be acceptable for a successful VR product.",
+            "rubric": [
+              {
+                "key": "Correctly describes SSQ as measuring physical comfort symptoms",
+                "value": 3
+              },
+              {
+                "key": "Correctly describes SUS as measuring usability",
+                "value": 3
+              },
+              {
+                "key": "Provides correct score ranges and their interpretations",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Name three VR comfort rules that should never be violated, and for each explain the physiological consequence of violating it.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "(1) Never override head tracking: if the player moves their head but the virtual camera does not follow, the mismatch between visual and vestibular input is extreme. Consequence: intense nausea and disorientation within seconds, not minutes. This is the single most nauseating thing possible in VR. (2) Never move the camera without player initiation: cutscenes that move the camera, getting pushed by an explosion, or falling without player control create visual motion with no vestibular preparation. Consequence: sudden onset nausea because the vestibular system did not anticipate the motion. The brain interprets this as poisoning (the evolutionary reason for motion sickness). (3) Never change field of view suddenly: abrupt FOV changes (zooming in, transitioning between cameras) create a visual scale shock. Consequence: disorientation and oculomotor discomfort (eye strain, difficulty focusing) as the visual system attempts to recalibrate depth perception and vergence.",
+            "rubric": [
+              {
+                "key": "Three distinct comfort rules correctly stated",
+                "value": 3
+              },
+              {
+                "key": "Physiological consequence explained for each rule",
+                "value": 4
+              }
+            ]
+          }
+        ],
+        "total_points": 23
       }
     ],
     "major_assignments": [
       {
         "assignment": 1,
         "title": "Immersive VR Interaction Experience",
-        "week_assigned": 2,
-        "week_due": 4,
-        "points": 100,
-        "description": "Design and build a VR experience that demonstrates mastery of spatial interaction design, hand tracking, locomotion, and VR UI. The experience must include at least three distinct interaction mechanics (e.g., grab, point, gesture-triggered action), implement two locomotion options with comfort settings, and feature a diegetic UI element. Must run at 72Hz minimum on Quest hardware.",
+        "week_assigned": 3,
+        "week_due": 6,
+        "points": 150,
+        "description": "Design and build a VR experience demonstrating mastery of spatial interaction, hand tracking, locomotion, comfort design, VR UI, and spatial audio. The experience must include at least three distinct interaction mechanics, implement two locomotion options with configurable comfort settings, feature a diegetic UI element, and integrate spatial audio for at least three in-world sound sources. Must run at 72Hz minimum on Quest hardware.",
         "objectives": [
-          "Implement hand tracking with reliable gesture recognition for at least two custom gestures",
-          "Build a locomotion system with both teleport and continuous options and configurable comfort settings",
-          "Design a diegetic UI that conveys information without breaking immersion",
-          "Integrate spatial audio for at least three in-world sound sources"
+          "Implement hand tracking with gesture recognition for at least two custom gestures",
+          "Build a locomotion system with teleport and continuous options and configurable comfort settings",
+          "Design a diegetic UI that conveys gameplay information without breaking immersion",
+          "Integrate HRTF-based spatial audio with occlusion for at least three positioned sound sources"
         ],
         "requirements": {},
         "deliverables": [
-          "Unity project deployable to Meta Quest via sideload",
+          "Unity XR project deployable to Meta Quest via sideload",
           "APK file tested on physical Quest hardware",
-          "Video walkthrough demonstrating all interaction mechanics (3-5 minutes)",
-          "Design document explaining interaction design decisions and comfort rationale (3-4 pages)"
+          "Video walkthrough demonstrating all interaction mechanics and comfort options (5-7 minutes)",
+          "Design document explaining interaction, comfort, and audio decisions (4-5 pages)"
         ],
         "grading_rubric": {
-          "interaction_design": {
+          "technical_implementation": {
+            "points": 55,
+            "criteria": [
+              "Hand tracking gestures are recognized reliably across different hand sizes",
+              "Grab and release mechanics feel natural with proper velocity tracking",
+              "Locomotion providers switch correctly between teleport and continuous modes",
+              "Spatial audio sources are accurately positioned with distance attenuation and occlusion"
+            ]
+          },
+          "visual_quality": {
             "points": 35,
             "criteria": [
-              "Hand tracking gestures are recognized reliably",
-              "Grab and release mechanics feel natural",
-              "Ray-based interaction provides clear visual feedback",
-              "Interaction affordances clearly communicate object interactability"
+              "Interaction affordances clearly communicate object interactability",
+              "Diegetic UI is readable, functional, and immersion-preserving",
+              "Comfort settings UI is accessible and intuitive within VR",
+              "Visual environment supports the interaction narrative coherently"
             ]
           },
-          "locomotion_and_comfort": {
-            "points": 25,
+          "performance_optimization": {
+            "points": 30,
             "criteria": [
-              "Teleportation works with arc visualization and valid-area feedback",
-              "Continuous movement includes configurable vignette and speed options",
-              "Snap and smooth turn options are both available",
-              "Comfort settings are accessible from an in-VR menu"
+              "Maintains 72Hz on Quest standalone hardware (OVR Metrics evidence required)",
+              "No visible tracking glitches or hand jitter during interaction",
+              "Frame time profiling data provided with subsystem breakdown",
+              "No loading hitches or frame drops during locomotion transitions"
             ]
           },
-          "spatial_audio_and_ui": {
-            "points": 25,
+          "documentation": {
+            "points": 30,
             "criteria": [
-              "Audio sources are correctly spatialized in 3D",
-              "Diegetic UI is readable and functional",
-              "UI interaction uses appropriate input method (hand or ray)",
-              "Sound occlusion works when sources are behind objects"
+              "Interaction design rationale explains each mechanic choice with user-centered reasoning",
+              "Comfort design decisions reference physiological principles",
+              "Audio design describes spatialization strategy and its contribution to presence",
+              "Writing is clear, professional, and suitable for a design portfolio"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Polished hand tracking interactions that feel natural and reliable",
+                "Thoughtful locomotion with genuine comfort options backed by physiological reasoning",
+                "Immersive spatial audio that enhances presence",
+                "Stable performance on standalone VR hardware with profiling evidence"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Mixed Reality Application",
+        "week_assigned": 8,
+        "week_due": 11,
+        "points": 150,
+        "description": "Build a mixed reality application that blends virtual content with the physical environment. The application must use AR marker tracking or plane detection to anchor content to real surfaces, implement scene mesh occlusion so virtual objects are hidden behind real furniture, include at least one spatial anchor for persistent content placement, and feature a mixed reality interaction that uses real-world geometry as part of the experience.",
+        "objectives": [
+          "Implement AR tracking (image markers or plane detection) for anchoring virtual content",
+          "Configure scene mesh occlusion for convincing virtual-physical blending",
+          "Create spatial anchors that persist content positions across app restarts",
+          "Design an interaction that meaningfully incorporates real-world geometry"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Unity project targeting Quest 3 mixed reality or phone-based AR",
+          "Build file tested on physical hardware with passthrough or camera AR",
+          "Video demonstrating content placement, occlusion, persistence, and real-world interaction (5-7 minutes)",
+          "Technical document describing tracking approach, occlusion implementation, and design rationale (3-4 pages)"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 55,
+            "criteria": [
+              "Virtual content anchors accurately to real-world surfaces with minimal drift",
+              "Occlusion correctly hides virtual objects behind real geometry",
+              "Spatial anchors persist across app restarts on the same device",
+              "Tracking state changes are handled gracefully (content fades, not pops)"
             ]
           },
-          "performance": {
+          "visual_quality": {
+            "points": 35,
+            "criteria": [
+              "Virtual content appears to belong in the physical environment",
+              "Lighting estimation is applied to match virtual objects to real lighting",
+              "Content placement UX guides the user through scanning and placement",
+              "Transitions between tracked and untracked states are smooth"
+            ]
+          },
+          "performance_optimization": {
+            "points": 30,
+            "criteria": [
+              "Maintains target frame rate with scene mesh processing active",
+              "AR tracking does not introduce frame drops or jitter",
+              "Memory usage is managed with scene mesh and anchor data",
+              "Application handles tracking loss without crashing"
+            ]
+          },
+          "documentation": {
+            "points": 30,
+            "criteria": [
+              "Tracking approach choice is explained with alternatives considered",
+              "Occlusion implementation is documented with technical detail",
+              "Design rationale explains how real-world geometry enhances the experience",
+              "Known limitations (tracking conditions, room requirements) are documented"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Convincing blend of virtual and physical content with proper occlusion",
+                "Reliable tracking and anchoring across different environments",
+                "Meaningful use of real-world geometry in the experience design",
+                "Professional documentation of the mixed reality architecture"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Accessible XR Experience with User Testing",
+        "week_assigned": 12,
+        "week_due": 14,
+        "points": 100,
+        "description": "Add comprehensive accessibility features to a VR/MR experience from a previous assignment and conduct formal user testing. Implement seated mode, one-handed interaction, spatial subtitles, and at least one additional accessibility feature. Conduct user testing with at least 3 participants using SSQ and SUS instruments.",
+        "objectives": [
+          "Implement seated play mode with adjusted interaction ranges and heights",
+          "Create one-handed interaction alternatives for all core functions",
+          "Build a spatial subtitle system for audio content",
+          "Conduct formal user testing with SSQ and SUS assessment instruments"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Updated XR project with accessibility features integrated",
+          "User testing report with SSQ and SUS data from 3+ participants (3-4 pages)",
+          "Video demonstrating the experience in each accessibility mode (3-5 minutes)",
+          "Accessibility audit document listing implemented features and remaining gaps (2 pages)"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 35,
+            "criteria": [
+              "Seated mode functions correctly with appropriate height adjustments",
+              "One-handed mode provides access to all core interactions",
+              "Spatial subtitles display correctly with directional indicators",
+              "Accessibility settings are saved between sessions"
+            ]
+          },
+          "visual_quality": {
+            "points": 20,
+            "criteria": [
+              "Accessibility options UI is clear and easy to navigate",
+              "Subtitles are readable at VR distances with appropriate contrast",
+              "Mode transitions are smooth without jarring visual changes",
+              "High-contrast mode option is available for UI elements"
+            ]
+          },
+          "performance_optimization": {
             "points": 15,
             "criteria": [
-              "Maintains 72Hz on Quest hardware",
-              "No visible tracking glitches or hand jitter",
-              "Frame time profiling data provided",
-              "No loading hitches during gameplay"
+              "Accessibility features do not degrade performance",
+              "Subtitle system does not cause frame time spikes",
+              "All accessibility modes maintain target frame rate",
+              "Memory overhead of accessibility systems is minimal"
+            ]
+          },
+          "documentation": {
+            "points": 30,
+            "criteria": [
+              "User testing protocol is well-designed with clear tasks and instruments",
+              "SSQ and SUS data is presented with analysis and interpretation",
+              "Design changes made in response to testing are documented",
+              "Accessibility audit honestly identifies remaining gaps with rationale"
             ]
           }
         },
@@ -439,10 +1413,10 @@
             "attributes": {
               "points": 100,
               "criteria": [
-                "Polished hand tracking interactions that feel natural and reliable",
-                "Thoughtful locomotion with real comfort options",
-                "Immersive spatial audio and diegetic UI design",
-                "Stable performance on standalone VR hardware"
+                "Comprehensive accessibility features that make the experience genuinely inclusive",
+                "Rigorous user testing with validated instruments and actionable findings",
+                "Evidence that testing feedback was incorporated into the final version",
+                "Honest audit of accessibility coverage with plans for gaps"
               ]
             }
           }
@@ -452,31 +1426,31 @@
   },
   "grading_breakdown": {
     "weekly_quizzes": {
-      "percentage": 15,
-      "description": "Regular assessment of VR/AR theory, hardware knowledge, and interaction design principles"
+      "percentage": 20,
+      "description": "Five quizzes assessing VR/AR hardware knowledge, interaction design, comfort principles, spatial audio, and XR optimization"
     },
     "lab_assignments": {
-      "percentage": 25,
-      "description": "Hands-on exercises in hand tracking, locomotion, spatial audio, and AR tracking"
+      "percentage": 15,
+      "description": "Weekly hands-on exercises in hand tracking, locomotion, spatial audio, AR tracking, and XR performance profiling"
     },
     "major_assignments": {
-      "percentage": 20,
-      "description": "Comprehensive VR interaction experience demonstrating mastery of core immersive technologies"
+      "percentage": 30,
+      "description": "Three major projects: VR interaction experience, mixed reality application, and accessible XR with user testing"
     },
     "midterm_examination": {
       "percentage": 15,
-      "description": "Comprehensive assessment covering VR/AR hardware, interaction design, comfort, and spatial concepts"
+      "description": "Comprehensive assessment of VR/AR hardware, interaction design, comfort engineering, and spatial computing concepts"
     },
     "final_project": {
-      "percentage": 25,
-      "description": "Capstone mixed reality application integrating VR interaction, AR tracking, and spatial computing"
+      "percentage": 20,
+      "description": "Capstone XR experience integrating VR interaction, AR/MR tracking, accessibility, spatial audio, and performance optimization"
     }
   },
   "course_policies": {
-    "attendance": "Attendance is mandatory for all lab sessions involving VR/AR hardware. Headset time is limited and shared; missing a lab session cannot be made up without prior arrangement.",
+    "attendance": "Attendance is mandatory for all lab sessions involving VR/AR hardware. Headset time is limited and shared; missing a lab session cannot be made up without prior arrangement. User testing sessions require advance scheduling with participants.",
     "late_submissions": "Late assignments are penalized 10% per day. No submissions accepted more than 5 days late without prior arrangement. All VR/AR submissions must include a video walkthrough as the instructor may not have immediate headset access for grading.",
-    "collaboration": "Individual assignments must be completed independently. VR headsets may be shared for testing but all code and design work must be original. Peer playtesting is encouraged and should be documented.",
-    "academic_integrity": "All code must be original or properly attributed. Use of XR template projects must be disclosed and substantially modified. Submitting unmodified SDK samples as original work will result in course failure.",
-    "technology_requirements": "The department provides Meta Quest headsets for lab use. Students with personal headsets may use them for at-home development. All submissions must target Meta Quest 3 as the reference platform."
+    "collaboration": "Individual assignments must be completed independently. VR headsets may be shared for testing but all code and design work must be original. Peer playtesting is encouraged and should be documented. User testing participants must not be the student themselves.",
+    "academic_integrity": "All code must be original or properly attributed. Use of XR template projects must be disclosed and substantially modified. Submitting unmodified SDK samples as original work will result in course failure. AI-generated code must be disclosed and fully understood by the student.",
+    "technology_requirements": "The department provides Meta Quest headsets for lab use. Students with personal headsets may use them for at-home development. All VR submissions must target Meta Quest 3 as the reference platform. AR submissions may target Quest 3 MR or iOS/Android AR Foundation."
   }
 }

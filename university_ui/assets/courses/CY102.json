@@ -13,245 +13,858 @@
     {
       "week_number": 1,
       "session_number": 1,
-      "topic": "Network Architecture and the OSI Model",
-      "duration": "50 minutes",
+      "topic": "Networking Concepts and Reference Models",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Describe the seven layers of the OSI model and their functions",
-        "Compare the OSI model with the TCP/IP model",
-        "Identify how data is encapsulated at each layer"
+        "Describe the seven layers of the OSI model and the function of each",
+        "Compare the OSI model with the TCP/IP four-layer model",
+        "Explain data encapsulation and decapsulation across protocol layers",
+        "Identify protocol data units at each layer and common protocols operating at each"
       ],
       "readings": [
-        "Computer Networking: A Top-Down Approach Ch. 1",
-        "TCP/IP Illustrated Vol. 1 Ch. 1-2"
+        "Computer Networking: A Top-Down Approach (Kurose & Ross) Ch. 1",
+        "TCP/IP Illustrated Vol. 1 (Stevens) Ch. 1-2",
+        "RFC 1122: Requirements for Internet Hosts"
       ],
       "lecture_notes": {
-        "introduction": "Understanding network architecture is essential for any cybersecurity professional. We start with the foundational models that describe how networked systems communicate.",
+        "introduction": "Understanding network architecture begins with the reference models that describe how networked systems communicate. The OSI (Open Systems Interconnection) model, developed by the International Organization for Standardization, provides a seven-layer conceptual framework for understanding network protocols and their interactions. While the OSI model is a theoretical reference, the TCP/IP model is the practical implementation that powers the internet. These models are not mere academic constructs; they are the diagnostic framework that every network engineer and security professional uses daily. When troubleshooting a network issue, the first question is always which layer is the problem occurring at. When analyzing a security incident, understanding the layer at which an attack operates determines which tools and techniques are relevant for detection and mitigation. In this opening session we walk through both models layer by layer, examining the encapsulation process where application data is progressively wrapped with protocol headers as it descends through the stack, transformed from an HTTP request into TCP segments, IP packets, Ethernet frames, and finally physical signals on the wire. We will use Wireshark from the very first session to make these abstract concepts concrete and visible.",
         "key_concepts": [
-          "OSI model: Physical, Data Link, Network, Transport, Session, Presentation, Application",
-          "TCP/IP model: Network Access, Internet, Transport, Application",
-          "Data encapsulation and decapsulation",
-          "Protocol Data Units (PDUs) at each layer",
-          "Network topology types: star, mesh, ring, bus"
+          "OSI model layers: Physical (Layer 1), Data Link (Layer 2), Network (Layer 3), Transport (Layer 4), Session (Layer 5), Presentation (Layer 6), Application (Layer 7)",
+          "TCP/IP model layers: Network Access (combines OSI 1-2), Internet (OSI 3), Transport (OSI 4), Application (combines OSI 5-7)",
+          "Data encapsulation: application data becomes segments (Layer 4), packets (Layer 3), frames (Layer 2), and bits (Layer 1)",
+          "Protocol Data Units: data, segments, packets, frames, bits corresponding to each layer",
+          "Common protocols by layer: HTTP/DNS/SMTP (Application), TCP/UDP (Transport), IP/ICMP (Network), Ethernet/Wi-Fi (Data Link)",
+          "Network topology types: star, mesh, ring, bus, hybrid, and their reliability and performance characteristics",
+          "Client-server vs peer-to-peer architecture models and their network implications",
+          "Network types by scope: LAN, WAN, MAN, PAN, WLAN, and their typical technologies",
+          "Bandwidth, throughput, and latency: distinguishing between theoretical capacity and actual performance",
+          "The role of standards bodies: IEEE, IETF, IANA, and their contributions to network interoperability"
         ],
-        "demonstration": "Using Wireshark to observe packet encapsulation and identify OSI layers in captured traffic",
+        "demonstration": "Using Wireshark to capture a simple HTTP request and response, then dissecting the capture to identify each protocol layer from Ethernet frame headers through IP headers, TCP headers, and the HTTP application data, visually mapping each to the OSI model",
         "setup_requirements": [
-          "Wireshark installed",
-          "Lab network with traffic generator",
-          "Protocol reference chart"
+          "Wireshark 4.x installed on all student machines with capture privileges",
+          "Lab network with traffic generator producing diverse protocol traffic",
+          "OSI model and TCP/IP model reference posters",
+          "GNS3 or Packet Tracer installed for network simulation labs"
         ],
         "review": [
           {
-            "key": "OSI Model",
-            "value": "Seven-layer reference model for network communication; each layer provides services to the layer above and receives services from the layer below"
+            "key": "OSI Model Purpose",
+            "value": "A seven-layer reference model for network communication. Each layer provides services to the layer above and receives services from the layer below. Enables modular design where changes at one layer do not require changes at other layers."
           },
           {
-            "key": "Encapsulation",
-            "value": "Process of wrapping data with protocol headers at each layer: Application data becomes segments, packets, frames, and bits"
-          }
-        ]
-      }
-    },
-    {
-      "week_number": 1,
-      "session_number": 2,
-      "topic": "IP Addressing and Subnetting",
-      "duration": "50 minutes",
-      "learning_objectives": [
-        "Calculate subnet addresses, broadcast addresses, and host ranges",
-        "Apply CIDR notation and VLSM concepts",
-        "Design an IP addressing scheme for a small network"
-      ],
-      "readings": [
-        "Computer Networking: A Top-Down Approach Ch. 4",
-        "Subnetting practice worksheet"
-      ],
-      "lecture_notes": {
-        "introduction": "IP addressing is the addressing system of the internet. Mastering subnetting is a non-negotiable skill for network and security professionals.",
-        "key_concepts": [
-          "IPv4 address classes and private ranges",
-          "Subnet masks and CIDR notation",
-          "Variable Length Subnet Masking (VLSM)",
-          "IPv6 addressing and transition mechanisms",
-          "Network Address Translation (NAT) and its security implications"
-        ],
-        "demonstration": "Subnetting a Class C network into multiple subnets and verifying connectivity in GNS3",
-        "setup_requirements": [
-          "GNS3 or Packet Tracer installed",
-          "IP subnet calculator for verification",
-          "Network diagram template"
-        ],
-        "review": [
-          {
-            "key": "CIDR Notation",
-            "value": "Classless Inter-Domain Routing uses slash notation (e.g., /24) to specify the number of network bits, replacing rigid class-based addressing"
+            "key": "Encapsulation Process",
+            "value": "Application data is wrapped with a Transport header (segment), then a Network header (packet), then a Data Link header and trailer (frame), then converted to physical signals (bits). At the destination, decapsulation reverses the process, stripping headers at each layer."
           },
           {
-            "key": "NAT Security",
-            "value": "NAT obscures internal IP addresses from external networks, providing a basic layer of obscurity but not true security"
+            "key": "TCP/IP vs OSI",
+            "value": "OSI is the theoretical model with seven layers. TCP/IP is the practical implementation with four layers that actually runs the internet. The key difference: TCP/IP combines OSI layers 5-7 into a single Application layer and layers 1-2 into a single Network Access layer."
+          },
+          {
+            "key": "Why This Matters for Security",
+            "value": "Attacks operate at specific layers. ARP spoofing is Layer 2. IP spoofing is Layer 3. SYN floods are Layer 4. SQL injection is Layer 7. Identifying the attack layer determines which security tools and techniques are effective for detection and prevention."
+          },
+          {
+            "key": "Wireshark as Diagnostic Tool",
+            "value": "Wireshark captures and decodes every packet on the wire, showing all protocol layers. It is the single most important tool for network analysis, troubleshooting, and security investigation. Mastering Wireshark display and capture filters is essential."
           }
         ]
       }
     },
     {
       "week_number": 2,
-      "session_number": 3,
-      "topic": "TCP/IP Protocol Suite Deep Dive",
-      "duration": "50 minutes",
+      "session_number": 2,
+      "topic": "Physical Layer and Cabling",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Analyze TCP three-way handshake and connection teardown",
-        "Differentiate between TCP and UDP use cases",
-        "Identify common ports and their associated services"
+        "Identify physical layer media types and their specifications",
+        "Compare copper, fiber optic, and wireless transmission characteristics",
+        "Explain signal encoding, attenuation, and interference at the physical layer",
+        "Select appropriate cabling solutions for different network scenarios"
       ],
       "readings": [
-        "TCP/IP Illustrated Vol. 1 Ch. 12-14",
-        "Common ports reference sheet"
+        "Computer Networking: A Top-Down Approach Ch. 1.2 (Physical Media)",
+        "CompTIA Network+ Guide: Physical Layer and Cabling",
+        "TIA-568 Cabling Standards Overview"
       ],
       "lecture_notes": {
-        "introduction": "TCP and UDP are the workhorses of internet communication. Understanding their behavior is critical for analyzing network traffic and identifying anomalies.",
+        "introduction": "The physical layer is where abstract data becomes tangible signals traveling through copper wires, glass fibers, or electromagnetic waves. While cybersecurity professionals often focus on higher layers, understanding the physical layer is essential for several reasons. Physical layer vulnerabilities enable attacks like cable tapping, signal interception, and electromagnetic emanation eavesdropping. Physical layer decisions determine network performance ceilings that no amount of software optimization can overcome. And physical layer problems are among the most common causes of network outages, often masquerading as higher-layer issues. In this session we examine the three primary physical media types used in modern networks: copper cabling (twisted pair and coaxial), fiber optic cabling (single-mode and multi-mode), and wireless radio frequency transmission. For each we examine the physics of signal propagation, the standards that define performance categories, the maximum distances and data rates achievable, and the security implications. We will learn to distinguish between Cat 5e, Cat 6, Cat 6a, and Cat 8 twisted pair cables, understand when single-mode versus multi-mode fiber is appropriate, and appreciate why fiber optic cable is inherently more secure against eavesdropping than copper. We also cover the practical skills of cable termination, testing, and troubleshooting that every network professional needs.",
         "key_concepts": [
-          "TCP three-way handshake: SYN, SYN-ACK, ACK",
-          "TCP connection teardown: FIN, FIN-ACK",
-          "TCP vs UDP: reliability vs speed tradeoffs",
-          "Common ports: 22 (SSH), 80 (HTTP), 443 (HTTPS), 53 (DNS), 25 (SMTP)",
-          "TCP flags and their role in scanning techniques"
+          "Twisted pair cabling: UTP and STP categories (Cat 5e to Cat 8), RJ-45 connectors, T-568A and T-568B wiring standards",
+          "Coaxial cable: RG-6, RG-59, BNC and F-type connectors, used for cable internet and legacy networks",
+          "Fiber optic: single-mode (long distance, small core) versus multi-mode (shorter distance, larger core), SC, LC, and ST connectors",
+          "Fiber optic advantages: immune to electromagnetic interference, higher bandwidth over longer distances, harder to tap without detection",
+          "Signal encoding: how binary data is represented as electrical voltages, light pulses, or radio waves",
+          "Attenuation: signal strength loss over distance, and why maximum cable lengths exist for each media type",
+          "Electromagnetic interference and crosstalk: external noise and inter-pair interference that degrade signal quality",
+          "Cable testing: continuity testers, cable certifiers, OTDR for fiber, and interpreting test results",
+          "Physical layer security: fiber tapping detection, TEMPEST shielding for emanation security, and cable plant physical security",
+          "Power over Ethernet: PoE standards (802.3af, 802.3at, 802.3bt) for powering network devices through data cables"
         ],
-        "demonstration": "Capturing and analyzing a TCP handshake in Wireshark, then comparing with UDP DNS traffic",
+        "demonstration": "Hands-on cable termination exercise: students crimp RJ-45 connectors onto Cat 6 cable using both T-568A and T-568B standards, then test connectivity and wire map with a cable tester, followed by examining fiber optic cable types and connectors under magnification",
         "setup_requirements": [
-          "Wireshark with capture privileges",
-          "Web browser for generating HTTP traffic",
-          "nslookup or dig for DNS queries"
+          "Cable termination kits with RJ-45 connectors and crimping tools",
+          "Cat 5e, Cat 6, and Cat 6a cable samples",
+          "Fiber optic cable samples (single-mode and multi-mode) with various connector types",
+          "Cable testers and certifiers for hands-on testing"
         ],
         "review": [
           {
-            "key": "TCP Handshake",
-            "value": "Three-way handshake establishes a reliable connection: Client sends SYN, Server responds SYN-ACK, Client confirms with ACK"
+            "key": "Cat 6 vs Cat 6a",
+            "value": "Cat 6 supports 10 Gbps up to 55 meters. Cat 6a supports 10 Gbps up to the full 100 meters through improved shielding and tighter twist rates. For new installations supporting 10 Gbps networking, Cat 6a is recommended."
           },
           {
-            "key": "TCP vs UDP",
-            "value": "TCP provides ordered, reliable delivery with flow control; UDP provides fast, connectionless delivery without guarantees"
+            "key": "Single-Mode vs Multi-Mode Fiber",
+            "value": "Single-mode has a 9-micron core, uses laser light, and reaches distances of 10+ km. Multi-mode has a 50 or 62.5-micron core, uses LED or VCSEL light, and is limited to 300-550m at 10 Gbps. Single-mode is for campus and WAN; multi-mode is for within-building connections."
+          },
+          {
+            "key": "Fiber Security Advantage",
+            "value": "Fiber optic cables do not emit electromagnetic radiation, making them immune to EMI eavesdropping. Tapping a fiber requires physical bending or splicing, which causes measurable signal loss (attenuation) detectable by OTDR monitoring."
+          },
+          {
+            "key": "PoE",
+            "value": "Power over Ethernet delivers DC power alongside data on the same Cat 5e or better cable. 802.3af provides 15.4W, 802.3at provides 30W, and 802.3bt provides up to 90W. Used for IP phones, wireless access points, and security cameras."
           }
         ]
       }
     },
     {
       "week_number": 3,
-      "session_number": 5,
-      "topic": "Routing and Switching Fundamentals",
-      "duration": "50 minutes",
+      "session_number": 3,
+      "topic": "Ethernet and Switching",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Explain how routers make forwarding decisions",
-        "Compare static and dynamic routing protocols",
-        "Understand Layer 2 switching and MAC address tables"
+        "Explain Ethernet frame structure and MAC addressing",
+        "Describe how Layer 2 switches learn MAC addresses and make forwarding decisions",
+        "Identify Layer 2 security threats including MAC flooding, ARP spoofing, and VLAN hopping",
+        "Configure basic switch security features including port security and DHCP snooping"
       ],
       "readings": [
-        "Computer Networking: A Top-Down Approach Ch. 5",
-        "Cisco CCNA Routing and Switching Guide Ch. 3-4"
+        "Computer Networking: A Top-Down Approach Ch. 6 (Link Layer)",
+        "TCP/IP Illustrated Vol. 1 Ch. 4 (ARP)",
+        "Cisco CCNA Guide: Ethernet and Switching"
       ],
       "lecture_notes": {
-        "introduction": "Routers and switches are the backbone of network infrastructure. Understanding how they operate is essential for both network design and security analysis.",
+        "introduction": "Ethernet is the dominant local area network technology, and switches are the devices that make modern LANs work. Understanding how Ethernet operates at Layer 2, how switches build their MAC address tables, and how data flows through a switched network is fundamental to both network engineering and network security. In this session we dissect the Ethernet frame format, examining the destination and source MAC addresses, EtherType field, payload, and Frame Check Sequence. We trace how a switch learns which MAC address is reachable on which port by examining the source address of incoming frames, and how it makes forwarding decisions by looking up the destination address in its MAC address table. We then examine the Address Resolution Protocol, which maps IP addresses to MAC addresses, and its fundamental security weakness: ARP has no authentication mechanism, making ARP spoofing one of the most straightforward Layer 2 attacks. We discuss Spanning Tree Protocol and its role in preventing broadcast storms in networks with redundant paths. On the security side, we examine MAC flooding attacks that overwhelm a switch's address table and force it into hub mode, ARP spoofing that enables man-in-the-middle attacks, and VLAN hopping attacks. For each attack we discuss the corresponding defense: port security, Dynamic ARP Inspection, and proper VLAN configuration.",
         "key_concepts": [
-          "Routing tables and forwarding decisions",
-          "Static vs dynamic routing (OSPF, BGP, EIGRP)",
-          "Layer 2 switching and MAC address tables",
-          "ARP protocol and ARP spoofing risks",
-          "Spanning Tree Protocol (STP) and loop prevention"
+          "Ethernet frame format: preamble, destination MAC, source MAC, EtherType, payload (46-1500 bytes), and FCS for error detection",
+          "MAC addresses: 48-bit hardware addresses assigned by manufacturers (OUI plus device identifier), broadcast address FF:FF:FF:FF:FF:FF",
+          "Switch operation: receiving frames, learning source MACs, flooding unknown destinations, forwarding known destinations, filtering same-port traffic",
+          "MAC address table: mapping of MAC addresses to switch ports with aging timer, limited size creating vulnerability to flooding attacks",
+          "ARP: mapping IP addresses to MAC addresses using broadcast request and unicast reply, ARP cache, and gratuitous ARP",
+          "Spanning Tree Protocol: preventing Layer 2 loops by electing a root bridge and blocking redundant paths, convergence behavior",
+          "MAC flooding attack: sending frames with thousands of random source MACs to overflow the MAC table, forcing the switch into hub mode",
+          "ARP spoofing: sending forged ARP replies to associate the attacker's MAC with a legitimate IP, enabling traffic interception",
+          "Port security: limiting the number of MAC addresses per port and defining violation actions (protect, restrict, shutdown)",
+          "Dynamic ARP Inspection: validating ARP packets against the DHCP snooping binding table to prevent ARP spoofing"
         ],
-        "demonstration": "Configuring static routes and OSPF on virtual routers in GNS3, observing routing table convergence",
+        "demonstration": "Using Wireshark to capture ARP request/reply exchanges, then demonstrating an ARP spoofing attack with arpspoof in the isolated lab network to intercept traffic between two hosts, followed by enabling Dynamic ARP Inspection on the lab switch to block the attack",
         "setup_requirements": [
-          "GNS3 with router images",
-          "Multi-router lab topology",
-          "Console access to virtual devices"
+          "Managed switch with VLAN, port security, and DAI support",
+          "Multiple lab workstations connected to the switch",
+          "Wireshark for traffic capture",
+          "arpspoof tool (part of dsniff package) on Kali Linux"
         ],
         "review": [
           {
-            "key": "Dynamic Routing",
-            "value": "Protocols like OSPF use algorithms to automatically discover and maintain optimal paths, adapting to network topology changes"
+            "key": "Switch Learning",
+            "value": "When a frame arrives on port 1 with source MAC AA:BB:CC:DD:EE:FF, the switch records that MAC is reachable via port 1 in its MAC table. When a frame destined for that MAC arrives later, the switch forwards it only to port 1 instead of flooding all ports."
           },
           {
             "key": "ARP Spoofing",
-            "value": "Attacker sends forged ARP replies to associate their MAC address with a legitimate IP, enabling man-in-the-middle attacks"
+            "value": "Attacker sends forged ARP replies saying: the gateway IP is at MY MAC address. Victims update their ARP cache and send all gateway-bound traffic to the attacker, who can inspect it and forward it to the real gateway (man-in-the-middle). Defense: DAI validates ARP against DHCP bindings."
+          },
+          {
+            "key": "MAC Flooding",
+            "value": "The attacker floods the switch with frames containing random source MACs, filling the MAC address table. Once full, the switch cannot learn new entries and floods all traffic to all ports, effectively becoming a hub. The attacker can now sniff all traffic. Defense: port security limits MACs per port."
+          },
+          {
+            "key": "STP",
+            "value": "Spanning Tree Protocol prevents Layer 2 loops by electing a root bridge and calculating the shortest path tree. Redundant links are placed in blocking state. If a primary path fails, a blocked link transitions to forwarding. STP convergence time is 30-50 seconds by default; RSTP reduces this significantly."
           }
         ]
       }
     },
     {
       "week_number": 4,
-      "session_number": 7,
-      "topic": "DNS, DHCP, and Network Services Security",
-      "duration": "50 minutes",
+      "session_number": 4,
+      "topic": "IP Addressing and Subnetting",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Analyze DNS resolution process and identify attack vectors",
-        "Explain DHCP operations and starvation attacks",
-        "Implement DNSSEC concepts for DNS security"
+        "Calculate subnet addresses, broadcast addresses, and usable host ranges",
+        "Apply CIDR notation and Variable Length Subnet Masking to design IP schemes",
+        "Distinguish between public and private IP address ranges and their proper use",
+        "Design an efficient IP addressing plan for a multi-site network"
       ],
       "readings": [
-        "DNS and BIND Ch. 1-4",
-        "NIST SP 800-81 Secure DNS Deployment Guide"
+        "Computer Networking: A Top-Down Approach Ch. 4.3 (IP Addressing)",
+        "Subnetting practice problems workbook",
+        "RFC 1918: Address Allocation for Private Internets"
       ],
       "lecture_notes": {
-        "introduction": "Network services like DNS and DHCP are fundamental to network operations but present significant attack surfaces if not properly secured.",
+        "introduction": "IP addressing is the logical addressing system that enables communication across the internet and within private networks. Every device that communicates on an IP network needs a unique IP address, and subnetting is the technique that divides large address spaces into smaller, manageable segments. Mastering subnetting is a non-negotiable skill for network and security professionals because it directly impacts network design decisions, firewall rule configuration, access control lists, and security zone definition. In this session we begin with the structure of an IPv4 address: four octets of eight bits each, divided into a network portion and a host portion by the subnet mask. We review the legacy class system that originally divided the address space and the CIDR notation that replaced it, enabling flexible allocation. We then dive into subnetting calculations: given a network address and a required number of subnets or hosts, students will learn to calculate the appropriate subnet mask, enumerate all subnets, and identify the network address, broadcast address, first usable host, and last usable host for each subnet. We cover Variable Length Subnet Masking, which allows different subnets within the same network to have different sizes, optimizing address utilization. We discuss private address ranges defined by RFC 1918, Network Address Translation, and the security implications of both public and private addressing.",
         "key_concepts": [
-          "DNS hierarchy: root servers, TLD, authoritative, recursive resolvers",
-          "DNS attacks: cache poisoning, DNS tunneling, amplification",
-          "DNSSEC: signing zones and validating responses",
-          "DHCP operation: DORA process",
-          "DHCP attacks: starvation, rogue servers"
+          "IPv4 address structure: 32 bits divided into network and host portions by the subnet mask, dotted decimal notation",
+          "Subnet mask: defines the boundary between network and host bits, written in dotted decimal or CIDR slash notation",
+          "CIDR notation: replaces classful addressing with flexible prefix lengths, e.g., 192.168.1.0/24 means 24 network bits",
+          "Subnetting calculations: determining subnet addresses, broadcast addresses, first/last usable hosts, and number of usable hosts (2^h - 2)",
+          "Variable Length Subnet Masking: using different subnet sizes within the same address space to optimize address allocation",
+          "Private IP ranges: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 as defined by RFC 1918 for internal use",
+          "Network Address Translation: translating private addresses to public addresses for internet access, types include static, dynamic, and PAT",
+          "NAT security implications: NAT hides internal addressing but is not a security control; port forwarding creates exposure",
+          "Supernetting and route aggregation: combining multiple networks into a single routing entry for efficiency",
+          "IP addressing best practices: consistent subnet sizing, logical addressing schemes that reflect network topology, documentation"
         ],
-        "demonstration": "Setting up a BIND DNS server, performing DNS cache poisoning in the lab, and implementing DNSSEC",
+        "demonstration": "Subnetting a Class C network (192.168.10.0/24) into six subnets with VLSM to accommodate departments of varying sizes, configuring the addresses on virtual routers in GNS3, and verifying end-to-end connectivity across subnets",
         "setup_requirements": [
-          "BIND9 DNS server on Linux VM",
-          "DHCP server configured",
-          "DNS testing tools: dig, nslookup"
+          "GNS3 or Cisco Packet Tracer installed",
+          "IP subnet calculator for verification of manual calculations",
+          "Network diagram template for addressing exercises",
+          "Subnetting practice worksheet with answer key"
         ],
         "review": [
           {
-            "key": "DNS Cache Poisoning",
-            "value": "Attacker injects forged DNS responses into a resolver's cache, redirecting users to malicious sites"
+            "key": "Subnetting Example",
+            "value": "192.168.10.0/26: Subnet mask 255.255.255.192. 2^6 - 2 = 62 usable hosts. Subnets: .0-.63, .64-.127, .128-.191, .192-.255. First subnet: network 192.168.10.0, first host .1, last host .62, broadcast .63."
           },
           {
-            "key": "DHCP Starvation",
-            "value": "Attacker floods the DHCP server with requests using spoofed MAC addresses, exhausting the available IP pool"
+            "key": "VLSM",
+            "value": "Variable Length Subnet Masking allows subnets of different sizes. Assign largest subnets first: 60-host department gets a /26 (62 hosts), 12-host department gets a /28 (14 hosts), point-to-point links get a /30 (2 hosts). This avoids wasting addresses."
+          },
+          {
+            "key": "Private vs Public Addressing",
+            "value": "Private ranges are not routable on the internet. NAT translates private to public. Benefits: conserves public address space, hides internal topology. Security note: NAT is not a firewall. Port forwarding through NAT exposes internal services."
+          },
+          {
+            "key": "Why Subnetting Matters for Security",
+            "value": "Subnetting creates network boundaries where firewalls and ACLs can be applied. A flat /16 network means all 65,000+ hosts can reach each other. Subnetting into /24 segments with inter-subnet filtering contains lateral movement after a breach."
           }
         ]
       }
     },
     {
       "week_number": 5,
-      "session_number": 9,
-      "topic": "Wireless Networking and Security",
-      "duration": "50 minutes",
+      "session_number": 5,
+      "topic": "Routing Fundamentals",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Compare wireless security protocols (WEP, WPA, WPA2, WPA3)",
-        "Identify common wireless attack techniques",
-        "Configure a secure wireless network"
+        "Explain how routers make forwarding decisions using routing tables",
+        "Compare static routing with dynamic routing protocols",
+        "Describe the operation of OSPF as an interior gateway protocol",
+        "Identify routing security threats including route injection and BGP hijacking"
       ],
       "readings": [
-        "CompTIA Security+ Guide Ch. 12",
-        "IEEE 802.11 security overview"
+        "Computer Networking: A Top-Down Approach Ch. 5 (Network Layer: Control Plane)",
+        "Cisco CCNA Routing Guide: Static and Dynamic Routing",
+        "BGP Security Best Practices (NIST SP 800-189)"
       ],
       "lecture_notes": {
-        "introduction": "Wireless networks extend the attack surface beyond physical boundaries. Understanding wireless security is critical in today's mobile-first environment.",
+        "introduction": "Routing is the process by which data finds its path from source to destination across interconnected networks. Routers are the devices that make these forwarding decisions, examining the destination IP address of each packet and consulting a routing table to determine the next hop toward the destination. Understanding routing is essential for cybersecurity because routing determines which path traffic takes through a network, and attackers who can manipulate routing can redirect, intercept, or black-hole traffic without ever compromising the endpoints. In this session we examine the routing table: its structure, how entries are added through static configuration and dynamic routing protocols, and how the router selects the best route when multiple paths exist. We compare static routing, where administrators manually configure routes, with dynamic routing protocols that automatically discover and maintain routes. We focus on OSPF (Open Shortest Path First) as the most widely deployed interior gateway protocol, understanding its link-state database, SPF algorithm, and area-based hierarchy. We also discuss BGP (Border Gateway Protocol), which routes traffic between autonomous systems on the internet, and its alarming security weaknesses that have been exploited in high-profile BGP hijacking incidents. The session bridges into security with a discussion of route filtering, authentication for routing protocols, and emerging standards like RPKI for BGP security.",
         "key_concepts": [
-          "802.11 standards and frequency bands",
-          "WEP vulnerabilities and why it must never be used",
-          "WPA2-Enterprise with RADIUS authentication",
-          "WPA3 and Simultaneous Authentication of Equals (SAE)",
-          "Wireless attacks: evil twin, deauthentication, KRACK"
+          "Routing table: destination network, subnet mask, next hop, interface, metric, and administrative distance for route selection",
+          "Longest prefix match: when multiple routes match a destination, the most specific route (longest subnet mask) is selected",
+          "Static routing: manually configured routes for simple networks, default routes, and specific override routes",
+          "Dynamic routing protocol categories: distance vector (RIP), link-state (OSPF, IS-IS), and path vector (BGP)",
+          "OSPF operation: hello packets for neighbor discovery, LSA flooding for topology sharing, SPF calculation for shortest path tree",
+          "OSPF areas: backbone area 0, stub areas, and how area hierarchy limits LSA flooding for scalability",
+          "BGP: the routing protocol of the internet, exchanging routes between autonomous systems based on path attributes and policy",
+          "BGP hijacking: announcing routes for IP prefixes you do not own, redirecting internet traffic through attacker-controlled networks",
+          "Route poisoning and route injection attacks against dynamic routing protocols without authentication",
+          "Routing security: OSPF MD5 authentication, BGP RPKI (Resource Public Key Infrastructure) for route origin validation"
         ],
-        "demonstration": "Capturing a WPA2 four-way handshake with airodump-ng and demonstrating why strong passphrases matter",
+        "demonstration": "Configuring a multi-router OSPF network in GNS3 with three areas, demonstrating neighbor formation, route propagation, and convergence after a link failure, then showing how an unauthenticated OSPF neighbor can inject false routes, and mitigating with MD5 authentication",
         "setup_requirements": [
-          "Wireless adapter in monitor mode",
-          "aircrack-ng suite installed",
-          "Isolated wireless lab network"
+          "GNS3 with Cisco IOS router images or FRRouting containers",
+          "Multi-router lab topology with at least four routers across three areas",
+          "Console access to all virtual routers",
+          "Wireshark for capturing routing protocol traffic"
+        ],
+        "review": [
+          {
+            "key": "Routing Table Lookup",
+            "value": "Router receives a packet for 10.1.2.100. Routing table has: 10.0.0.0/8 via R1, 10.1.0.0/16 via R2, 10.1.2.0/24 via R3. Longest prefix match selects 10.1.2.0/24 via R3 because /24 is the most specific match."
+          },
+          {
+            "key": "OSPF Convergence",
+            "value": "OSPF routers exchange Hello packets every 10 seconds. If no Hello is received for 40 seconds (Dead interval), the neighbor is declared down. All routers flood updated LSAs, rebuild the link-state database, and run SPF to calculate new routes. Convergence typically takes seconds."
+          },
+          {
+            "key": "BGP Hijacking",
+            "value": "In 2018, attackers announced a more specific route for Amazon DNS servers' IP range, redirecting traffic through their network to steal cryptocurrency. RPKI enables networks to cryptographically verify that a BGP announcement is authorized by the IP address holder."
+          },
+          {
+            "key": "Administrative Distance",
+            "value": "When multiple routing sources provide routes to the same destination, administrative distance determines preference: directly connected (0), static (1), OSPF (110), RIP (120), BGP external (20). Lower values are preferred."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "TCP and UDP Protocols",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Analyze the TCP three-way handshake and connection teardown process",
+        "Differentiate between TCP and UDP use cases based on protocol characteristics",
+        "Identify well-known ports and their associated services for security analysis",
+        "Detect TCP-based attacks including SYN floods and TCP session hijacking"
+      ],
+      "readings": [
+        "TCP/IP Illustrated Vol. 1 Ch. 12-14 (TCP) and Ch. 10 (UDP)",
+        "Common ports reference sheet (IANA Service Name and Port Number Registry)",
+        "NIST SP 800-41: TCP/IP Protocol Characteristics"
+      ],
+      "lecture_notes": {
+        "introduction": "TCP and UDP are the two primary transport layer protocols that carry virtually all application data across IP networks. TCP provides reliable, ordered delivery through connection management, acknowledgments, and retransmission, while UDP provides lightweight, connectionless delivery without these guarantees. For cybersecurity professionals, deep understanding of these protocols is essential because transport layer behavior is central to both attack techniques and detection methods. Port scanning, the most fundamental reconnaissance technique, probes TCP and UDP ports to identify running services. SYN flood attacks exploit the TCP connection establishment mechanism. Session hijacking attacks inject data into established TCP connections. Firewall rules are defined primarily by transport protocol and port number. In this session we dissect the TCP header field by field, examining the three-way handshake that establishes connections, the data transfer mechanisms including sequence numbers and acknowledgments, and the connection teardown process. We examine TCP flags and their role in scanning techniques: SYN scans, FIN scans, and XMAS scans each set different flag combinations to elicit different responses that reveal port status. We contrast TCP with UDP, understanding when each is appropriate and the unique security challenges that connectionless UDP presents. We build a reference table of well-known ports that every security professional must know by heart.",
+        "key_concepts": [
+          "TCP header fields: source and destination ports (16 bits each), sequence and acknowledgment numbers (32 bits each), flags, window size, checksum",
+          "TCP three-way handshake: SYN (client), SYN-ACK (server), ACK (client) establishing initial sequence numbers and connection parameters",
+          "TCP connection teardown: FIN, ACK, FIN, ACK four-way close, or RST for immediate termination",
+          "TCP reliability: sequence numbers for ordering, acknowledgments for delivery confirmation, retransmission timers for lost segments",
+          "TCP flow control: sliding window mechanism where the receiver advertises available buffer space to prevent overwhelming",
+          "UDP characteristics: connectionless, no ordering guarantees, no retransmission, minimal header overhead (8 bytes vs TCP's 20+ bytes)",
+          "Well-known ports: 22 (SSH), 25 (SMTP), 53 (DNS), 80 (HTTP), 110 (POP3), 143 (IMAP), 443 (HTTPS), 445 (SMB), 3389 (RDP)",
+          "TCP scanning techniques: SYN scan (half-open), connect scan (full handshake), FIN/XMAS/NULL scans, and how each determines port status",
+          "SYN flood attack: overwhelming the server with SYN packets, filling the half-open connection table, preventing legitimate connections",
+          "TCP session hijacking: predicting or sniffing sequence numbers to inject data into an established TCP session"
+        ],
+        "demonstration": "Capturing and analyzing a complete TCP connection lifecycle in Wireshark: three-way handshake, data transfer with sequence number tracking, and four-way close, then performing a SYN scan with Nmap and observing the difference between open, closed, and filtered port responses in the packet capture",
+        "setup_requirements": [
+          "Wireshark with capture privileges",
+          "Web browser for generating HTTP traffic on the lab network",
+          "Nmap for port scanning exercises",
+          "Lab target servers with various open and closed ports"
+        ],
+        "review": [
+          {
+            "key": "TCP Three-Way Handshake",
+            "value": "Client sends SYN with initial sequence number (ISN). Server responds with SYN-ACK, acknowledging client's ISN+1 and providing its own ISN. Client sends ACK acknowledging server's ISN+1. Connection is now ESTABLISHED on both sides."
+          },
+          {
+            "key": "SYN Flood",
+            "value": "Attacker sends thousands of SYN packets with spoofed source IPs. Server allocates resources for each half-open connection and sends SYN-ACKs to nonexistent hosts. Connection table fills up; legitimate connections are refused. Defense: SYN cookies encode state in the SYN-ACK ISN, requiring no resource allocation until the ACK is received."
+          },
+          {
+            "key": "TCP vs UDP Selection",
+            "value": "TCP for: web, email, file transfer, SSH, database connections (reliability required). UDP for: DNS queries, VoIP, video streaming, online gaming, SNMP (speed preferred, some loss acceptable). Some protocols use both: DNS uses UDP for queries and TCP for zone transfers."
+          },
+          {
+            "key": "Port Scanning Responses",
+            "value": "SYN scan: SYN-ACK = open (service listening), RST = closed (no service), no response or ICMP unreachable = filtered (firewall blocking). Understanding these responses is fundamental to network reconnaissance and security assessment."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "DNS, DHCP, and NAT",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Trace the complete DNS resolution process from client query to authoritative answer",
+        "Explain DHCP operations and the DORA process for IP address assignment",
+        "Identify DNS and DHCP attack vectors and implement countermeasures",
+        "Configure NAT and understand its impact on network security and troubleshooting"
+      ],
+      "readings": [
+        "DNS and BIND (Albitz & Liu) Ch. 1-4",
+        "NIST SP 800-81: Secure DNS Deployment Guide",
+        "Computer Networking: A Top-Down Approach Ch. 2.4 (DNS)"
+      ],
+      "lecture_notes": {
+        "introduction": "DNS, DHCP, and NAT are three foundational network services that make modern networking practical and usable. DNS translates human-readable domain names into IP addresses, DHCP automatically assigns IP configurations to devices, and NAT enables thousands of devices to share limited public IP addresses. These services are so fundamental that most users never think about them, but their security is critically important. DNS is involved in virtually every network transaction: before your browser connects to any website, before your email client sends a message, before any cloud application loads, a DNS query must succeed. This makes DNS an attractive target for attackers. DNS cache poisoning redirects users to malicious sites. DNS tunneling exfiltrates data through DNS queries. DNS amplification attacks leverage DNS servers to amplify DDoS traffic. DHCP similarly presents attack surfaces: rogue DHCP servers can redirect client traffic, and DHCP starvation can deny service to legitimate devices. In this session we examine each service in depth, understanding normal operation and then exploring the attack vectors and defenses. We implement DNSSEC, which adds cryptographic authentication to DNS responses, and configure DHCP snooping, which validates DHCP messages against a trusted binding table.",
+        "key_concepts": [
+          "DNS hierarchy: root servers, TLD servers (com, org, net), authoritative nameservers, and recursive resolvers",
+          "DNS query types: A (IPv4), AAAA (IPv6), MX (mail), CNAME (alias), NS (nameserver), PTR (reverse), TXT (text/verification)",
+          "DNS resolution process: recursive query from client to resolver, iterative queries from resolver through the hierarchy",
+          "DNS caching: TTL-controlled caching at resolvers and clients that reduces query load but creates cache poisoning window",
+          "DNS attacks: cache poisoning, DNS tunneling for data exfiltration, amplification DDoS, and typosquatting",
+          "DNSSEC: signing DNS zones with digital signatures to authenticate responses, chain of trust from root to authoritative",
+          "DHCP DORA process: Discover (broadcast), Offer (server response), Request (client acceptance), Acknowledge (confirmation)",
+          "DHCP attacks: starvation (exhausting IP pool with spoofed MACs), rogue DHCP server (redirecting client default gateway)",
+          "DHCP snooping: switch-level control that validates DHCP messages and builds a trusted IP-to-MAC binding table",
+          "NAT types: static (one-to-one), dynamic (pool-based), PAT/NAPT (many-to-one with port translation), and their security implications"
+        ],
+        "demonstration": "Setting up a BIND9 DNS server on Linux, performing recursive queries with dig and tracing the resolution path, then demonstrating DNS cache poisoning in the isolated lab environment and implementing DNSSEC zone signing to prevent it",
+        "setup_requirements": [
+          "BIND9 DNS server on Linux VM configured with lab zones",
+          "DHCP server configured on the lab network",
+          "DNS testing tools: dig, nslookup, host",
+          "Managed switch with DHCP snooping capability"
+        ],
+        "review": [
+          {
+            "key": "DNS Resolution",
+            "value": "Client asks resolver for www.example.com. Resolver asks root server (gets .com NS). Resolver asks .com TLD (gets example.com NS). Resolver asks example.com authoritative server (gets the A record IP). Resolver caches and returns to client. All in milliseconds."
+          },
+          {
+            "key": "DNS Cache Poisoning",
+            "value": "Attacker sends forged DNS responses matching the transaction ID and arriving before the legitimate response. The resolver caches the forged record, redirecting all clients. Defense: DNSSEC validates response signatures; source port randomization makes ID guessing exponentially harder."
+          },
+          {
+            "key": "DHCP Starvation",
+            "value": "Attacker sends thousands of DHCP Discover packets with random MAC addresses, exhausting the server's IP pool. Legitimate devices cannot obtain addresses. Defense: port security limits MACs per switch port; DHCP snooping rate-limits DHCP messages from untrusted ports."
+          },
+          {
+            "key": "NAT and Security",
+            "value": "NAT obscures internal topology from external observers. However, NAT is not a security control: it does not inspect traffic content, and port forwarding creates direct paths to internal services. A firewall with NAT is secure; NAT alone is not."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Wireless Networking and 802.11 Security",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Explain 802.11 standards and their characteristics across frequency bands",
+        "Compare wireless security protocols from WEP through WPA3",
+        "Identify common wireless attack techniques and detection methods",
+        "Design a secure wireless network deployment for an enterprise environment"
+      ],
+      "readings": [
+        "CompTIA Security+ Guide Ch. 12: Wireless Security",
+        "IEEE 802.11 Standards Overview and Comparison",
+        "Wi-Fi Alliance WPA3 Specification Summary"
+      ],
+      "lecture_notes": {
+        "introduction": "Wireless networking has become the primary connection method for most devices in modern networks, extending the network beyond the physical boundaries of a building and dramatically expanding the attack surface. Unlike wired networks where an attacker needs physical access to a port, wireless signals propagate through walls and can be intercepted from parking lots, adjacent buildings, or passing vehicles. This physical accessibility makes wireless security critically important and technically challenging. In this session we examine the 802.11 family of standards, understanding the evolution from 802.11b through 802.11ax (Wi-Fi 6) and 802.11be (Wi-Fi 7), the characteristics of the 2.4 GHz and 5 GHz bands, and the newer 6 GHz band opened by Wi-Fi 6E. We then focus on wireless security protocols, tracing the troubled history from WEP (broken in minutes) through WPA (transitional) to WPA2 (the current baseline) and WPA3 (the future standard). For each protocol we examine the cryptographic mechanisms, the known vulnerabilities, and the practical implications. We cover the KRACK attack against WPA2 and how WPA3's Simultaneous Authentication of Equals handshake provides forward secrecy and resistance to offline dictionary attacks. On the attack side, we examine evil twin access points, deauthentication attacks, rogue APs, and wireless reconnaissance, with hands-on exercises using aircrack-ng and Wireshark to understand these attacks from both offensive and defensive perspectives.",
+        "key_concepts": [
+          "802.11 standards: b (11 Mbps, 2.4 GHz), g (54 Mbps, 2.4 GHz), n/Wi-Fi 4 (600 Mbps, dual-band), ac/Wi-Fi 5 (6.9 Gbps, 5 GHz), ax/Wi-Fi 6 (9.6 Gbps, dual-band)",
+          "Frequency bands: 2.4 GHz (3 non-overlapping channels, better range, more interference), 5 GHz (23 channels, faster, shorter range), 6 GHz (Wi-Fi 6E/7)",
+          "WEP vulnerabilities: static IV space causes IV reuse, RC4 key scheduling weakness allows key recovery from captured traffic in minutes",
+          "WPA2-Personal (PSK): pre-shared key derives Pairwise Master Key; four-way handshake establishes session keys; vulnerable to offline dictionary attacks",
+          "WPA2-Enterprise: 802.1X authentication with RADIUS server, per-user credentials, unique session keys, certificate-based mutual authentication",
+          "WPA3-Personal (SAE): Simultaneous Authentication of Equals replaces PSK handshake, providing forward secrecy and eliminating offline dictionary attacks",
+          "WPA3-Enterprise: 192-bit minimum security suite, mandatory Protected Management Frames, CNSA-grade encryption",
+          "Evil twin attack: rogue AP mimicking legitimate SSID and MAC, capturing credentials from connecting victims",
+          "Deauthentication attack: forging deauth frames to disconnect clients from legitimate AP, forcing reconnection through evil twin",
+          "Wireless intrusion detection: monitoring for rogue APs, unusual probe requests, deauth floods, and unauthorized client connections"
+        ],
+        "demonstration": "Capturing a WPA2 four-way handshake using airodump-ng in the isolated wireless lab, demonstrating offline dictionary attack with aircrack-ng to show why strong passphrases matter, then configuring WPA3-SAE on the lab AP and demonstrating that the same attack is no longer possible",
+        "setup_requirements": [
+          "Wireless adapter supporting monitor mode (Alfa AWUS036ACH or similar)",
+          "aircrack-ng suite installed on Kali Linux",
+          "Isolated wireless lab network with dedicated AP supporting WPA2 and WPA3",
+          "RockYou wordlist for dictionary attack demonstration"
         ],
         "review": [
           {
             "key": "WPA2 vs WPA3",
-            "value": "WPA3 replaces PSK with SAE (Dragonfly handshake), providing forward secrecy and resistance to offline dictionary attacks"
+            "value": "WPA2-PSK: shared key, four-way handshake can be captured, offline dictionary attack possible. WPA3-SAE: Dragonfly key exchange requires active interaction per guess, no offline dictionary attacks, forward secrecy means compromising the passphrase later does not decrypt captured sessions."
           },
           {
-            "key": "Evil Twin Attack",
-            "value": "Attacker creates a rogue access point mimicking a legitimate one, intercepting traffic from clients that connect to it"
+            "key": "Evil Twin",
+            "value": "Attacker creates AP with same SSID (and optionally same BSSID) as legitimate network. Clients may auto-connect to the stronger signal. Attacker runs a captive portal to harvest credentials. Defense: WPA2-Enterprise with certificate validation prevents connecting to untrusted APs."
+          },
+          {
+            "key": "802.1X/RADIUS",
+            "value": "Enterprise wireless authentication: client (supplicant) authenticates to RADIUS server through the AP (authenticator). EAP methods like EAP-TLS (certificates) or PEAP (password over TLS tunnel) provide strong authentication. Each user gets unique session keys."
+          },
+          {
+            "key": "Wireless Site Survey",
+            "value": "Before deploying wireless, conduct a site survey to map RF coverage, identify interference sources, plan AP placement for coverage without leakage outside the building, and verify signal strength meets requirements. Post-deployment survey validates the design."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "Network Monitoring and Wireshark Analysis",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Capture and filter network traffic using Wireshark for security analysis",
+        "Interpret NetFlow data to identify traffic patterns and anomalies",
+        "Detect common network attacks through traffic analysis",
+        "Build network baselines and identify deviations indicating security events"
+      ],
+      "readings": [
+        "Practical Packet Analysis (Sanders) Ch. 4-7",
+        "Wireshark User's Guide: Display Filters and Analysis Features",
+        "SANS Network Forensics Cheat Sheet"
+      ],
+      "lecture_notes": {
+        "introduction": "Network monitoring is the eyes and ears of a security operation. Without visibility into what is happening on the network, attacks go undetected, breaches expand unchecked, and incident responders work blind. In this session we focus on practical network monitoring and analysis skills using the tools that security operations centers rely on daily. Wireshark is the gold standard for deep packet inspection, allowing analysts to examine individual packets, reconstruct sessions, and identify malicious activity at the most granular level. NetFlow and its variants (sFlow, IPFIX) provide a higher-level view, recording metadata about network flows without capturing full packet content, enabling analysis of traffic patterns, volume trends, and anomalous connections across an entire network. We will build practical skills in both tools: crafting Wireshark display filters to isolate specific traffic, following TCP streams to reconstruct conversations, extracting files from packet captures, and using conversation and endpoint statistics to identify top talkers and unusual communication patterns. We examine traffic analysis techniques for detecting common attacks: port scans appear as rapid connections to many ports from a single source, data exfiltration appears as unusually large outbound transfers, and command-and-control beaconing appears as periodic connections at regular intervals.",
+        "key_concepts": [
+          "Wireshark capture filters (BPF syntax): host, port, net, and, or, not for limiting captured traffic to relevant packets",
+          "Wireshark display filters: ip.addr, tcp.port, http.request.method, dns.qry.name, and complex filter expressions for analysis",
+          "TCP stream following: reconstructing complete conversations between two endpoints to analyze application-level data exchange",
+          "NetFlow: records source/destination IP, ports, protocol, byte count, packet count, and timestamps for every network flow",
+          "Traffic baseline establishment: documenting normal patterns (top protocols, bandwidth usage, connection counts) for anomaly comparison",
+          "Port scan detection: identifying rapid SYN packets to sequential or random ports from a single source with mostly RST responses",
+          "Data exfiltration indicators: unusually large outbound transfers, connections to uncommon destinations, encrypted traffic to non-standard ports",
+          "Beaconing detection: identifying periodic outbound connections at regular intervals characteristic of C2 communication",
+          "DNS traffic analysis: detecting DNS tunneling through unusually long query names, high query volume, or queries to suspicious domains",
+          "PCAP forensics: extracting transferred files, credentials sent in cleartext, and evidence of compromise from packet captures"
+        ],
+        "demonstration": "Analyzing a provided PCAP file containing a simulated attack: using Wireshark to identify the initial port scan, the exploitation traffic, the command-and-control beaconing pattern, and the data exfiltration, documenting findings in a structured security analysis report",
+        "setup_requirements": [
+          "Wireshark with provided PCAP files containing simulated attacks",
+          "NetworkMiner or similar tool for PCAP artifact extraction",
+          "NetFlow generator and collector for flow analysis exercises",
+          "Baseline traffic statistics from the lab network"
+        ],
+        "review": [
+          {
+            "key": "Wireshark Display Filters",
+            "value": "ip.addr == 10.0.0.5 && tcp.port == 443 shows all HTTPS traffic to/from 10.0.0.5. http.request.method == POST shows all HTTP POST requests. dns.qry.name contains evil shows DNS queries for domains containing 'evil'. Mastering filters is essential for efficient analysis."
+          },
+          {
+            "key": "Beaconing Detection",
+            "value": "C2 beacons connect at regular intervals (e.g., every 60 seconds). Plot outbound connections over time; regular spacing indicates beaconing. Calculate inter-arrival time standard deviation; low deviation compared to mean indicates periodic behavior. Jitter may be added to evade detection."
+          },
+          {
+            "key": "DNS Tunneling",
+            "value": "Data is encoded in DNS query names: base64data.evil.com. The DNS response carries return data. Detection: query names exceeding 50 characters, high volume of TXT record queries, queries to domains with high entropy in subdomain labels."
+          },
+          {
+            "key": "NetFlow Analysis",
+            "value": "NetFlow does not capture packet content but records flow metadata. Advantages: much less storage than full PCAP, can monitor entire network from router level. Use cases: identifying top talkers, detecting port scans, finding unauthorized services, and tracking connection patterns over time."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "VLANs and Network Segmentation",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Configure VLANs and understand their role in network segmentation",
+        "Explain 802.1Q trunking and inter-VLAN routing",
+        "Identify VLAN security threats including VLAN hopping and implement countermeasures",
+        "Design a segmented network architecture using VLANs for security zone isolation"
+      ],
+      "readings": [
+        "Cisco CCNA Guide: VLANs and Trunking",
+        "NIST SP 800-125B: Secure Virtual Network Configuration",
+        "CIS Controls: Network Segmentation Best Practices"
+      ],
+      "lecture_notes": {
+        "introduction": "Network segmentation is one of the most effective security controls available to network architects. By dividing a flat network into isolated segments, each with its own broadcast domain and access controls, organizations can contain the lateral movement of attackers, limit the blast radius of breaches, enforce compliance boundaries, and implement the principle of least privilege at the network level. VLANs (Virtual Local Area Networks) are the primary technology for implementing logical network segmentation on switched networks, allowing a single physical switch infrastructure to support multiple isolated network segments. In this session we examine VLAN configuration, 802.1Q trunk links that carry traffic for multiple VLANs between switches, and inter-VLAN routing that enables controlled communication between VLANs through a router or Layer 3 switch. We discuss the security benefits and limitations of VLANs: they provide strong broadcast isolation and traffic separation, but they are not a replacement for firewalls because inter-VLAN routing still requires explicit access control lists. We examine VLAN hopping attacks, where an attacker escapes their assigned VLAN to access traffic on other VLANs, through both switch spoofing and double tagging techniques. For each attack we configure the corresponding defense. The session concludes with designing a VLAN architecture for a realistic enterprise scenario, assigning security zones to VLANs and defining the access control policies between them.",
+        "key_concepts": [
+          "VLAN fundamentals: logical broadcast domain defined by switch port membership, isolated from other VLANs at Layer 2",
+          "802.1Q trunking: tagging frames with VLAN IDs on inter-switch links, native VLAN for untagged traffic",
+          "Access ports vs trunk ports: access ports belong to one VLAN, trunk ports carry tagged traffic for multiple VLANs",
+          "Inter-VLAN routing: router-on-a-stick (sub-interfaces on a single link) or Layer 3 switch with SVIs (Switch Virtual Interfaces)",
+          "VLAN hopping via switch spoofing: attacker negotiates a trunk with the switch using DTP, gaining access to all VLANs",
+          "VLAN hopping via double tagging: attacker sends frames with two 802.1Q tags, exploiting native VLAN stripping behavior",
+          "VLAN security best practices: disable DTP on all ports, use a non-default native VLAN, explicitly tag native VLAN traffic",
+          "Private VLANs: isolating ports within the same VLAN to prevent lateral communication between devices in the same segment",
+          "Network segmentation design: separating management, user, server, guest, and IoT traffic into dedicated VLANs with firewall rules between",
+          "Micro-segmentation: extending VLAN concepts to per-workload isolation in virtualized and cloud environments"
+        ],
+        "demonstration": "Configuring three VLANs (Users, Servers, Management) on managed lab switches with 802.1Q trunking, setting up inter-VLAN routing with access control lists restricting User VLAN access to only web services on the Server VLAN, then demonstrating and blocking a VLAN hopping attack",
+        "setup_requirements": [
+          "Managed switches with VLAN, trunk, and ACL support",
+          "Lab workstations assigned to different VLANs",
+          "Layer 3 switch or router for inter-VLAN routing",
+          "Yersinia or custom scripts for VLAN hopping demonstration"
+        ],
+        "review": [
+          {
+            "key": "VLAN Benefits",
+            "value": "Broadcast containment: broadcasts stay within the VLAN. Security: devices in different VLANs cannot communicate without going through a router/firewall where ACLs can be applied. Compliance: PCI-DSS cardholder data can be isolated in its own VLAN with strict access controls."
+          },
+          {
+            "key": "VLAN Hopping Prevention",
+            "value": "Disable DTP on all access ports (switchport mode access, switchport nonegotiate). Change native VLAN to an unused VLAN (not VLAN 1). Explicitly tag native VLAN on trunk ports. These three configurations block both switch spoofing and double tagging attacks."
+          },
+          {
+            "key": "Inter-VLAN Routing Security",
+            "value": "Simply enabling inter-VLAN routing negates VLAN isolation. ACLs on the routing device must explicitly permit only required traffic between VLANs. Default should be deny-all between VLANs, with specific permits for documented business requirements."
+          },
+          {
+            "key": "Segmentation Design",
+            "value": "Typical enterprise: User VLAN (workstations), Server VLAN (internal servers), DMZ VLAN (public-facing servers), Management VLAN (network device management interfaces), Guest VLAN (visitor Wi-Fi, internet-only), IoT VLAN (cameras, sensors, restricted access)."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "Firewalls and Access Control Lists",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Configure firewall rules and access control lists for network security",
+        "Differentiate between packet filtering, stateful inspection, and next-generation firewalls",
+        "Design a firewall rule set for a multi-zone network architecture",
+        "Troubleshoot firewall rule ordering and identify common misconfigurations"
+      ],
+      "readings": [
+        "NIST SP 800-41: Guidelines on Firewalls and Firewall Policy",
+        "Cisco CCNA Security Guide: ACLs and Firewall Configuration",
+        "CIS Controls: Secure Configuration for Network Devices"
+      ],
+      "lecture_notes": {
+        "introduction": "Firewalls are the sentinels of network security, controlling traffic flow between network segments based on defined policies. They are the most fundamental and widely deployed network security technology, present in every organization from small businesses to global enterprises. Yet firewalls are frequently misconfigured, with overly permissive rules that negate their protective value, or overly restrictive rules that break legitimate business functions. In this session we examine firewall technology from packet filtering through stateful inspection to next-generation firewalls with deep packet inspection and application awareness. We focus on the practical skill of writing and organizing firewall rules, understanding that rule order matters because firewalls process rules top-down and apply the first match. We discuss the principle of implicit deny: if traffic does not match any explicit permit rule, it is dropped. We practice designing rule sets for realistic scenarios, starting with a deny-all baseline and adding specific permits for documented requirements. We examine common firewall misconfigurations that create security gaps: any-any permit rules left from troubleshooting, rules permitting traffic to sensitive ports from untrusted zones, and shadowed rules that never match because a broader rule above already handles the traffic. The session includes extensive hands-on practice with iptables on Linux and ACL configuration on network devices.",
+        "key_concepts": [
+          "Packet filtering firewall: examines individual packets against rules based on source/destination IP, port, and protocol without connection state",
+          "Stateful inspection firewall: tracks active connections in a state table, allowing return traffic for established connections automatically",
+          "Next-generation firewall: adds application awareness, user identity, deep packet inspection, IPS, and threat intelligence to stateful inspection",
+          "Access Control List rule structure: action (permit/deny), protocol (TCP/UDP/ICMP/any), source, destination, port, and direction",
+          "Rule ordering: first-match processing means more specific rules must precede more general rules; implicit deny-all at the end",
+          "Firewall zones: defining trust levels for network segments (external=untrusted, DMZ=semi-trusted, internal=trusted, management=restricted)",
+          "Zone-based policy: defining traffic rules based on source and destination zone pairs rather than individual interfaces",
+          "Firewall logging: logging denied traffic for security monitoring and permitted traffic for audit trails, log analysis for threat detection",
+          "Common misconfigurations: any-any permits, permit rules below a deny-all, shadowed rules, missing egress filtering",
+          "Firewall rule lifecycle: request, review, approve, implement, test, document, and periodic review for rule cleanup"
+        ],
+        "demonstration": "Building a complete iptables firewall configuration for a three-zone network: blocking all traffic by default, then adding rules to permit web traffic from external to DMZ, application traffic from DMZ to internal, and SSH management from the management VLAN only, then testing each rule and verifying logging",
+        "setup_requirements": [
+          "Linux VM with iptables for hands-on firewall configuration",
+          "Multi-zone lab network with separate internal, DMZ, and external segments",
+          "Traffic generation tools for testing firewall rules",
+          "Firewall rule documentation template"
+        ],
+        "review": [
+          {
+            "key": "Rule Ordering Example",
+            "value": "Rule 1: Deny TCP from 10.0.0.50 to any port 22 (block SSH from a specific host). Rule 2: Permit TCP from 10.0.0.0/24 to any port 22 (allow SSH from the subnet). If reversed, Rule 2 would match first, and the specific deny for .50 would never trigger."
+          },
+          {
+            "key": "Stateful Advantage",
+            "value": "Without state: you must permit both outbound SYN and inbound SYN-ACK/ACK explicitly, creating openings for spoofed packets. With state: permit the initial outbound connection; the firewall automatically permits return traffic for established connections and blocks unsolicited inbound packets."
+          },
+          {
+            "key": "Egress Filtering",
+            "value": "Most organizations focus on ingress (inbound) filtering and neglect egress (outbound). Egress filtering prevents compromised internal hosts from communicating with C2 servers, exfiltrating data, or participating in DDoS attacks. Block all outbound traffic by default, permit only required services."
+          },
+          {
+            "key": "NGFW Capabilities",
+            "value": "A next-generation firewall can identify and control applications regardless of port (block BitTorrent even on port 80), integrate with directory services for user-based policies, inspect encrypted traffic with TLS decryption, and block known malicious files inline."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "VPN Technologies",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Explain IPSec tunnel and transport modes and their protocol components",
+        "Compare SSL/TLS VPNs with IPSec VPNs for different deployment scenarios",
+        "Configure a WireGuard VPN tunnel and understand its cryptographic design",
+        "Evaluate VPN deployment options for remote access and site-to-site scenarios"
+      ],
+      "readings": [
+        "CompTIA Security+ Guide: VPN and Tunneling",
+        "WireGuard Whitepaper",
+        "NIST SP 800-77: Guide to IPSec VPNs"
+      ],
+      "lecture_notes": {
+        "introduction": "Virtual Private Networks create encrypted tunnels across untrusted networks, enabling secure remote access and site-to-site connectivity. In an era where remote work is standard and cloud services are ubiquitous, VPN technology is more important than ever for maintaining confidentiality and integrity of data in transit. In this session we examine the three major VPN technologies in use today: IPSec, SSL/TLS VPNs, and WireGuard. IPSec operates at the network layer and provides either tunnel mode (encrypting the entire IP packet including headers, used for site-to-site connections) or transport mode (encrypting only the payload, used for end-to-end connections). Its two sub-protocols, Authentication Header and Encapsulating Security Payload, provide integrity and confidentiality respectively. Internet Key Exchange negotiates security parameters and establishes shared keys. SSL/TLS VPNs operate at the transport layer and are typically accessed through a web browser or lightweight client, making them well-suited for remote access scenarios where full IPSec client installation is impractical. WireGuard represents the modern approach: a dramatically simpler protocol with a smaller codebase, faster performance through the use of modern cryptographic primitives, and easier configuration than either IPSec or OpenVPN. We discuss the strengths and appropriate use cases for each technology, split tunneling versus full tunneling tradeoffs, and VPN integration with multi-factor authentication and zero-trust architectures.",
+        "key_concepts": [
+          "IPSec components: Authentication Header (integrity only), Encapsulating Security Payload (integrity and confidentiality), and Internet Key Exchange (key negotiation)",
+          "IPSec tunnel mode: encrypts the entire original IP packet and encapsulates it in a new IP packet, used for site-to-site VPNs",
+          "IPSec transport mode: encrypts only the IP payload while preserving the original header, used for host-to-host connections",
+          "IKE phases: Phase 1 establishes a secure channel between peers, Phase 2 negotiates IPSec SAs for data protection",
+          "SSL/TLS VPN: clientless (browser-based portal for web applications) or full-tunnel (client software providing network-level access)",
+          "WireGuard: modern VPN using Noise Protocol Framework, Curve25519 for key exchange, ChaCha20-Poly1305 for encryption, minimal codebase",
+          "Split tunneling: only VPN-destined traffic goes through the tunnel; all other traffic uses the local internet connection directly",
+          "Full tunneling: all traffic is routed through the VPN tunnel regardless of destination, providing maximum security but increasing latency",
+          "VPN with MFA: requiring multi-factor authentication before establishing VPN tunnel to prevent credential-based attacks",
+          "Always-on VPN: automatic VPN connection whenever the device is outside the corporate network, enforced by device management policy"
+        ],
+        "demonstration": "Configuring a WireGuard VPN between two lab machines: generating key pairs, exchanging public keys, configuring the tunnel interface and peer settings, verifying encrypted connectivity with ping and Wireshark showing the encrypted tunnel traffic, then comparing configuration complexity with an equivalent IPSec setup",
+        "setup_requirements": [
+          "Two Linux VMs with WireGuard installed",
+          "WireGuard configuration template",
+          "Wireshark for verifying tunnel encryption",
+          "IPSec configuration reference for comparison"
+        ],
+        "review": [
+          {
+            "key": "IPSec vs SSL VPN",
+            "value": "IPSec: network layer, full network access, requires client installation, complex configuration. SSL/TLS: transport layer, can be clientless (browser), easier to deploy for remote users, more granular access control. WireGuard: network layer, modern crypto, extremely simple configuration, highest performance."
+          },
+          {
+            "key": "Split vs Full Tunnel",
+            "value": "Split tunnel: faster internet browsing for remote users, reduces VPN server load. Risk: user's local network traffic is not inspected. Full tunnel: all traffic is inspected and protected. Risk: higher latency, VPN server becomes a bottleneck. Decision depends on security posture and user experience requirements."
+          },
+          {
+            "key": "WireGuard Advantages",
+            "value": "Approximately 4,000 lines of code versus 100,000+ for OpenVPN. Uses modern cryptography exclusively (no cipher negotiation reduces attack surface). Stateless connection handling for seamless roaming between networks. Typically 2-4x faster than OpenVPN."
+          },
+          {
+            "key": "VPN Security Considerations",
+            "value": "VPN protects data in transit but does not secure the endpoint. A compromised device with VPN access gives the attacker encrypted access to the corporate network. This is why VPN should be combined with endpoint security verification (posture checking) before granting access."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "IPv6 Fundamentals",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Explain IPv6 address format, types, and autoconfiguration mechanisms",
+        "Compare IPv6 with IPv4 and understand the transition technologies",
+        "Identify IPv6-specific security considerations and attack vectors",
+        "Configure basic IPv6 networking with SLAAC and DHCPv6"
+      ],
+      "readings": [
+        "Computer Networking: A Top-Down Approach: IPv6 section",
+        "RFC 8200: Internet Protocol Version 6 Specification",
+        "NIST SP 800-119: Guidelines for Secure Deployment of IPv6"
+      ],
+      "lecture_notes": {
+        "introduction": "IPv6 is the successor to IPv4, designed to solve the address exhaustion problem and introduce improvements in areas including simplified headers, built-in support for IPSec, and automatic address configuration. While IPv4 address space is fundamentally limited to approximately 4.3 billion addresses, IPv6 provides 340 undecillion addresses, a number so large that every grain of sand on Earth could have trillions of addresses. Adoption of IPv6 has been slower than anticipated, but it now accounts for a significant and growing percentage of internet traffic, and most modern operating systems enable IPv6 by default. For security professionals, IPv6 creates a dual concern: you must understand IPv6 to secure networks that use it, and you must also secure networks against IPv6-based attacks even when the organization has not intentionally deployed IPv6, because devices auto-configure IPv6 addresses and can create unmonitored IPv6 communication channels. In this session we cover IPv6 addressing, including the 128-bit hexadecimal format, address types (unicast, multicast, anycast), and special addresses. We examine Stateless Address Autoconfiguration, which allows hosts to generate their own addresses without a DHCP server, and Neighbor Discovery Protocol, which replaces ARP. We discuss IPv6-specific security concerns including rogue Router Advertisements, NDP spoofing, and IPv6 tunnel exploitation.",
+        "key_concepts": [
+          "IPv6 address format: 128 bits in eight groups of four hexadecimal digits separated by colons, with compression rules for consecutive zeros",
+          "IPv6 address types: global unicast (2000::/3), link-local (fe80::/10), unique local (fc00::/7), multicast (ff00::/8), loopback (::1)",
+          "SLAAC: Stateless Address Autoconfiguration using Router Advertisements and EUI-64 or random interface identifier generation",
+          "DHCPv6: stateful address assignment providing managed addressing, DNS server information, and other configuration parameters",
+          "Neighbor Discovery Protocol: replaces ARP with Router Solicitation/Advertisement and Neighbor Solicitation/Advertisement using ICMPv6",
+          "IPv6 header simplification: fixed 40-byte header without checksum, optional extension headers for fragmentation, routing, and security",
+          "Dual stack: running IPv4 and IPv6 simultaneously on the same interfaces, the recommended transition approach",
+          "Transition tunneling: 6to4, Teredo, and ISATAP for carrying IPv6 traffic over IPv4 networks, creating potential security blind spots",
+          "IPv6 security threats: rogue Router Advertisements, NDP spoofing, IPv6 address scanning challenges, and tunnel exploitation",
+          "RA Guard and SEND: security mechanisms to protect against rogue RAs and NDP spoofing attacks"
+        ],
+        "demonstration": "Configuring IPv6 on lab machines using SLAAC, verifying address assignment and neighbor discovery with packet captures, then demonstrating a rogue Router Advertisement attack that redirects traffic and implementing RA Guard on the switch to block it",
+        "setup_requirements": [
+          "Lab network with IPv6-capable switches and routers",
+          "Linux VMs configured for dual-stack IPv4/IPv6",
+          "THC-IPV6 toolkit for IPv6 security testing",
+          "Wireshark with IPv6 capture filters configured"
+        ],
+        "review": [
+          {
+            "key": "IPv6 Address Example",
+            "value": "Full: 2001:0db8:0000:0000:0000:0000:0000:0001. Compressed: 2001:db8::1 (leading zeros in each group dropped, one run of consecutive all-zero groups replaced with ::). Link-local always starts with fe80:: and is auto-assigned on every interface."
+          },
+          {
+            "key": "SLAAC Process",
+            "value": "Host sends Router Solicitation. Router responds with Router Advertisement containing network prefix. Host generates interface identifier (random or EUI-64 from MAC) and combines with prefix. Host performs Duplicate Address Detection using Neighbor Solicitation before using the address."
+          },
+          {
+            "key": "IPv6 Security Blind Spot",
+            "value": "Most firewalls and IDS are configured for IPv4. If IPv6 is enabled on hosts (default on modern OS) but not monitored, attackers can use IPv6 for communication that bypasses IPv4-only security controls. Mitigation: explicitly configure IPv6 security policies or disable IPv6 where not needed."
+          },
+          {
+            "key": "NDP vs ARP",
+            "value": "NDP uses ICMPv6 multicast instead of ARP broadcast. NDP includes Secure Neighbor Discovery (SEND) which uses cryptographic addresses to authenticate NDP messages, a security improvement over ARP which has no authentication. However, SEND deployment remains limited."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "Network Troubleshooting Methodology",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Apply a structured troubleshooting methodology to network problems",
+        "Use command-line diagnostic tools to isolate network issues at each layer",
+        "Differentiate between performance issues, connectivity issues, and security events",
+        "Document troubleshooting procedures and create network baseline documentation"
+      ],
+      "readings": [
+        "CompTIA Network+ Guide: Network Troubleshooting",
+        "TCP/IP Illustrated Vol. 1: Diagnostic Tools",
+        "SANS Network Troubleshooting Cheat Sheet"
+      ],
+      "lecture_notes": {
+        "introduction": "Troubleshooting is where theoretical knowledge meets practical reality. A network administrator or security analyst who cannot systematically diagnose and resolve network problems will struggle in any operational role. In this session we present a structured troubleshooting methodology based on the OSI model, working from the bottom up: verify physical connectivity, check Layer 2 operation, confirm IP addressing and routing, test transport layer connectivity, and validate application layer function. This systematic approach prevents the common mistake of jumping to conclusions or making changes without understanding the problem. We build a toolkit of command-line diagnostic utilities: ping for basic reachability, traceroute for path analysis, nslookup and dig for DNS verification, netstat and ss for connection state inspection, arp for Layer 2 mapping, and tcpdump for quick packet captures when Wireshark is not available. For each tool we examine the output, understand what it tells us and what it cannot tell us, and practice interpreting results in troubleshooting scenarios. Importantly, we discuss the overlap between network problems and security events: a sudden increase in dropped packets might be a failing cable or a DDoS attack; DNS resolution failures might be a server crash or a DNS hijack. The ability to distinguish between operational issues and security incidents is a critical skill that requires both networking knowledge and security awareness.",
+        "key_concepts": [
+          "Structured troubleshooting methodology: identify the problem, establish a theory, test the theory, implement a solution, verify, document",
+          "Bottom-up OSI approach: start at physical layer and work up, ruling out each layer before moving to the next",
+          "ping: ICMP echo request/reply for basic reachability testing, TTL analysis, and response time measurement",
+          "traceroute/tracert: identifying the path packets take and where they stop, TTL-based hop discovery, identifying routing issues",
+          "nslookup and dig: testing DNS resolution, querying specific DNS servers, checking record types, verifying DNS configuration",
+          "netstat/ss: displaying active connections, listening ports, connection states, and identifying unexpected services or connections",
+          "arp/ip neigh: examining the ARP/neighbor cache to verify Layer 2 address resolution is functioning correctly",
+          "tcpdump: command-line packet capture for quick analysis when GUI tools are not available, essential for server-side troubleshooting",
+          "MTR (My TraceRoute): combines ping and traceroute for continuous path monitoring, identifying intermittent issues",
+          "Distinguishing operational vs security issues: same symptoms may indicate hardware failure or attack, context and additional investigation determines which"
+        ],
+        "demonstration": "Series of troubleshooting scenarios in the lab: students are presented with broken network connectivity between hosts and must use diagnostic tools to identify the root cause, which may be a disconnected cable, a misconfigured IP address, a missing route, a firewall rule, or a DNS configuration error",
+        "setup_requirements": [
+          "Lab network with intentionally introduced faults",
+          "Access to diagnostic tools: ping, traceroute, dig, netstat, tcpdump",
+          "Troubleshooting documentation template",
+          "Network baseline documentation for the lab environment"
+        ],
+        "review": [
+          {
+            "key": "Bottom-Up Approach",
+            "value": "Layer 1: Is the cable connected? Link light on? Layer 2: Does the ARP table show the MAC? Layer 3: Can you ping the gateway? Correct IP and mask? Layer 4: Is the port open (netstat)? Firewall blocking? Layer 7: Is the service running? DNS resolving? Correct URL?"
+          },
+          {
+            "key": "traceroute Interpretation",
+            "value": "Each hop shows the router and round-trip time. * * * means the router does not respond to ICMP (not necessarily down). Increasing latency at a specific hop suggests congestion. All hops beyond a point failing suggests a routing issue at that point."
+          },
+          {
+            "key": "When Network Problem Might Be Security",
+            "value": "Sudden packet loss: could be DDoS or cable issue. DNS failures: could be server crash or DNS hijack. Slow performance: could be bandwidth saturation from data exfiltration. Unexpected listening ports: could be misconfigured service or backdoor. Always consider both possibilities."
+          },
+          {
+            "key": "Documentation",
+            "value": "Every troubleshooting effort should be documented: problem description, diagnostic steps taken, findings at each step, root cause identified, solution implemented, and verification that the solution resolved the issue. This builds organizational knowledge and demonstrates due diligence."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Lab Practical and Course Review",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Demonstrate practical networking skills across all course modules",
+        "Configure, troubleshoot, and secure a multi-segment network from scratch",
+        "Apply security principles to network design and configuration decisions",
+        "Synthesize networking knowledge for readiness in advanced courses"
+      ],
+      "readings": [
+        "Review all course materials and lab exercises",
+        "Course summary and final practical preparation guide",
+        "CompTIA Network+ practice exam materials"
+      ],
+      "lecture_notes": {
+        "introduction": "This final session serves as both a comprehensive review of the course and preparation for the lab practical examination. Over fourteen weeks, you have built a thorough understanding of networking from physical cabling through application-layer protocols, with security considerations woven into every topic. This session ties together all the concepts by walking through a complete network build scenario: starting from bare switches and routers, configuring IP addressing, VLANs, routing, DNS, DHCP, firewalls, VPN, and wireless, and verifying the entire infrastructure with the diagnostic tools and Wireshark analysis skills you have developed. The lab practical will test your ability to perform these tasks under time pressure, troubleshoot the problems that inevitably arise during configuration, and document your work with the professionalism expected of a network and security professional. We also discuss how the networking fundamentals from this course form the foundation for everything that follows in the cybersecurity program. CY103 Operating Systems Security builds on the networking knowledge by focusing on how operating systems implement and secure network services. Advanced courses in penetration testing, threat hunting, and security architecture all assume the networking fluency you have developed here. The ability to read a packet capture, trace a route, configure a firewall rule, and troubleshoot a connectivity issue are skills you will use every day in your cybersecurity career.",
+        "key_concepts": [
+          "Integration of all networking layers: physical through application working together to deliver network services",
+          "Security at every layer: physical security of cabling, port security and DAI at Layer 2, ACLs and routing security at Layer 3, firewall rules at Layer 4, application security above",
+          "Network design principles: redundancy for availability, segmentation for security, documentation for manageability",
+          "Configuration verification: using show commands, ping, traceroute, and Wireshark to confirm correct operation",
+          "Troubleshooting methodology: systematic bottom-up approach when problems arise during configuration or operation",
+          "Network documentation: topology diagrams, IP addressing schemes, VLAN assignments, firewall rules, and configuration backups",
+          "Practical exam preparation: time management, systematic approach, and documentation during hands-on testing",
+          "Course concepts that feed into advanced courses: packet analysis for threat hunting, network architecture for security design, protocol knowledge for penetration testing",
+          "Continuing education: Cisco certifications (CCNA), CompTIA Network+, and hands-on lab practice for skill maintenance",
+          "The networking professional's toolkit: Wireshark, Nmap, GNS3, and command-line utilities as career-long tools"
+        ],
+        "demonstration": "Instructor-led walk through a complete network build in the lab: configuring switches with VLANs and trunking, configuring routers with OSPF, setting up a firewall with zone-based policies, enabling a WireGuard VPN, deploying DNS and DHCP services, and verifying end-to-end connectivity and security with Wireshark",
+        "setup_requirements": [
+          "Full lab environment with switches, routers, and servers",
+          "Complete network build checklist",
+          "Lab practical preparation guide with practice scenarios",
+          "Self-assessment checklist covering all course learning objectives"
+        ],
+        "review": [
+          {
+            "key": "Course Integration",
+            "value": "Networking is not a collection of separate technologies; it is an integrated system where each layer depends on the layers below and serves the layers above. A misconfigured VLAN breaks routing. A DNS failure breaks all application access. Understanding these dependencies is the mark of a real network professional."
+          },
+          {
+            "key": "Security Thread",
+            "value": "Every networking decision has security implications. IP addressing design determines firewall granularity. VLAN configuration determines lateral movement containment. Routing protocol choice determines route hijacking risk. Always ask: what is the security impact of this configuration choice?"
+          },
+          {
+            "key": "Lab Practical Approach",
+            "value": "Read the entire requirement before starting. Plan your IP addressing and VLAN scheme before configuring anything. Work bottom-up: physical, then Layer 2, then Layer 3, then services. Test each layer before moving up. Document as you go, not after the fact."
+          },
+          {
+            "key": "Next Steps",
+            "value": "CY103 Operating Systems Security uses networking knowledge for service hardening and host-based firewall configuration. CS110 Programming for Security uses socket programming to build network tools. Advanced courses in penetration testing and SOC operations build directly on packet analysis and protocol knowledge."
           }
         ]
       }
@@ -261,171 +874,615 @@
     "quizzes": [
       {
         "quiz": 1,
-        "week": 2,
-        "topic": "OSI Model, IP Addressing, and TCP/IP",
-        "duration": "20 minutes",
+        "week": 3,
+        "topic": "OSI Model, Ethernet, and Layer 2 Security",
+        "duration": "30 minutes",
         "questions": [
           {
-            "question": "Given the IP address 192.168.10.0/26, calculate: (a) the number of usable host addresses per subnet, (b) the subnet mask in dotted decimal, and (c) the broadcast address of the first subnet.",
+            "question": "Given the IP address 192.168.10.0/26, calculate: (a) the number of usable host addresses per subnet, (b) the subnet mask in dotted decimal, (c) the broadcast address of the first subnet, and (d) the first usable host address of the third subnet.",
             "type": "calculation",
-            "points": 10,
-            "answer": "(a) 62 usable hosts (2^6 - 2 = 62). (b) 255.255.255.192. (c) 192.168.10.63 (network 192.168.10.0, broadcast is the last address before the next subnet at 192.168.10.64).",
+            "points": 8,
+            "answer": "(a) 2^6 - 2 = 62 usable hosts per subnet. (b) 255.255.255.192 (/26 means 26 network bits, leaving 6 host bits; the last octet has the first 2 bits set: 128+64=192). (c) First subnet is 192.168.10.0/26; broadcast is 192.168.10.63 (last address before the second subnet at .64). (d) Third subnet starts at 192.168.10.128/26 (0, 64, 128); first usable host is 192.168.10.129.",
             "rubric": [
               {
-                "key": "Correct host count with calculation shown",
-                "value": 4
+                "key": "Correct host count with formula shown",
+                "value": 2
               },
               {
-                "key": "Correct subnet mask",
-                "value": 3
+                "key": "Correct subnet mask with derivation",
+                "value": 2
               },
               {
                 "key": "Correct broadcast address",
+                "value": 2
+              },
+              {
+                "key": "Correct third subnet first usable host",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "An attacker on VLAN 10 wants to sniff traffic on VLAN 20 without the switch administrator's knowledge. Describe two different VLAN hopping techniques, explain the specific switch misconfiguration that enables each, and describe the switch configuration that prevents each attack.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Technique 1 - Switch Spoofing: The attacker configures their NIC to send DTP (Dynamic Trunking Protocol) frames, negotiating a trunk link with the switch. Once trunked, all VLANs including VLAN 20 are accessible. Enabled by: switch port left in dynamic desirable or dynamic auto mode (default on many switches). Prevention: configure all access ports as static access mode (switchport mode access) and disable DTP (switchport nonegotiate). Technique 2 - Double Tagging: The attacker sends frames with two 802.1Q tags. The outer tag matches the native VLAN and is stripped by the first switch. The inner tag (VLAN 20) causes the frame to be forwarded on VLAN 20 by the second switch. Enabled by: native VLAN is the same as the attacker's VLAN (typically VLAN 1), and trunk ports strip native VLAN tags. Prevention: change native VLAN to an unused VLAN number, never assign user ports to the native VLAN, and tag all VLANs on trunks (vlan dot1q tag native).",
+            "rubric": [
+              {
+                "key": "Correct description of switch spoofing with DTP",
+                "value": 2
+              },
+              {
+                "key": "Correct description of double tagging mechanism",
+                "value": 2
+              },
+              {
+                "key": "Correct switch misconfiguration for each",
+                "value": 2
+              },
+              {
+                "key": "Correct prevention for each",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain how a MAC flooding attack works, what happens to the switch when the attack succeeds, and why this is a security concern. Include the defense mechanism.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "The attacker sends thousands of Ethernet frames with random, spoofed source MAC addresses to a switch port. The switch attempts to learn each new MAC, filling its Content Addressable Memory (CAM) table. Once the CAM table reaches capacity (typically 8,000-128,000 entries depending on switch model), the switch can no longer learn new legitimate entries. For any destination MAC not in the table, the switch floods the frame to all ports on the VLAN, effectively operating like a hub. The security concern: the attacker can now sniff all traffic on the VLAN, including traffic between other hosts that the switch would normally isolate to specific ports. Defense: port security configured to limit the number of MAC addresses per port. For example, limiting a user port to 2-3 MAC addresses prevents a single port from flooding the table. Violation action can be set to shutdown (disable the port), restrict (drop and log), or protect (silently drop).",
+            "rubric": [
+              {
+                "key": "Correct CAM table overflow mechanism",
+                "value": 2
+              },
+              {
+                "key": "Explains switch behavior after overflow",
+                "value": 2
+              },
+              {
+                "key": "Correct defense with port security details",
                 "value": 3
               }
             ]
           },
           {
-            "question": "During a TCP three-way handshake, explain what happens if the server receives a SYN packet but the client never sends the final ACK. What type of attack exploits this, and how is it mitigated?",
+            "question": "A Wireshark capture shows an ARP reply from 10.0.0.1 (the default gateway) with MAC address AA:BB:CC:DD:EE:FF, but the network documentation shows the gateway's real MAC is 00:11:22:33:44:55. What attack is occurring, what is the immediate impact on the network, and what Layer 2 switch feature would prevent this?",
             "type": "short_answer",
-            "points": 10,
-            "answer": "The server allocates resources for a half-open connection and waits for the ACK. This is a SYN flood attack, where an attacker sends many SYN packets without completing the handshake, exhausting the server's connection table. Mitigation includes SYN cookies (server encodes connection state in the SYN-ACK sequence number, avoiding resource allocation until ACK is received), rate limiting, and firewall-based SYN proxy.",
+            "points": 7,
+            "answer": "This is an ARP spoofing (ARP cache poisoning) attack. An attacker has sent a forged ARP reply claiming that IP 10.0.0.1 is at MAC AA:BB:CC:DD:EE:FF. Hosts that receive this reply update their ARP cache, associating the gateway IP with the attacker's MAC. Immediate impact: all traffic destined for the default gateway (i.e., all traffic leaving the subnet) is sent to the attacker instead. The attacker can inspect all traffic (man-in-the-middle), modify traffic in transit, or drop it (denial of service). The attacker typically forwards traffic to the real gateway after inspection to avoid detection. Prevention: Dynamic ARP Inspection (DAI) on the switch. DAI intercepts all ARP packets on untrusted ports and validates them against the DHCP snooping binding table (which maps IP addresses to MACs and switch ports based on legitimate DHCP assignments). ARP replies not matching the binding table are dropped.",
             "rubric": [
               {
-                "key": "Describes half-open connection state",
-                "value": 3
+                "key": "Correctly identifies ARP spoofing attack",
+                "value": 2
               },
               {
-                "key": "Identifies SYN flood attack",
-                "value": 3
+                "key": "Explains man-in-the-middle impact clearly",
+                "value": 2
               },
               {
-                "key": "Explains SYN cookies or other valid mitigation",
-                "value": 4
+                "key": "Describes DAI with DHCP snooping dependency",
+                "value": 3
               }
             ]
           }
         ],
-        "total_points": 20
+        "total_points": 30
       },
       {
         "quiz": 2,
-        "week": 4,
-        "topic": "Routing, Network Services, and Wireless Security",
-        "duration": "20 minutes",
+        "week": 5,
+        "topic": "IP Addressing, Routing, and TCP/UDP",
+        "duration": "30 minutes",
         "questions": [
           {
-            "question": "Explain how a DNS cache poisoning attack works at the protocol level and describe two specific defenses against it.",
+            "question": "During a TCP three-way handshake, explain what happens if the server receives a SYN packet but the client never sends the final ACK. What type of attack exploits this, what are two mitigation techniques, and how does each mitigation work at the protocol level?",
             "type": "short_answer",
-            "points": 10,
-            "answer": "The attacker sends forged DNS responses to a recursive resolver, matching the transaction ID and arriving before the legitimate response. The resolver caches the forged record, redirecting future queries to a malicious IP. Defenses: (1) DNSSEC validates responses using digital signatures chained to a trust anchor, ensuring authenticity and integrity. (2) Source port randomization makes it exponentially harder for attackers to guess the correct transaction ID and port combination.",
+            "points": 8,
+            "answer": "The server allocates resources for a half-open connection (Transmission Control Block) and sends a SYN-ACK. It then waits for the ACK, retransmitting the SYN-ACK several times before timing out (typically 75 seconds). This is exploited in a SYN flood attack where the attacker sends thousands of SYN packets with spoofed source IPs, filling the server's half-open connection backlog and preventing legitimate connections. Mitigation 1: SYN cookies. Instead of allocating resources for the half-open connection, the server encodes the connection parameters (ISN, MSS, timestamp) into the SYN-ACK sequence number itself. Only when a valid ACK returns does the server create the TCB. No resources are consumed until the handshake completes. Mitigation 2: SYN proxy (firewall-based). The firewall intercepts SYN packets, completes the three-way handshake with the client on behalf of the server, and only forwards the connection to the server once the handshake is verified legitimate. The server never sees half-open connections from spoofed sources.",
             "rubric": [
               {
-                "key": "Correct protocol-level attack description",
+                "key": "Explains half-open connection and resource allocation",
+                "value": 2
+              },
+              {
+                "key": "Correctly describes SYN flood attack",
+                "value": 2
+              },
+              {
+                "key": "Two valid mitigations with protocol-level detail",
                 "value": 4
+              }
+            ]
+          },
+          {
+            "question": "A company has two offices connected by OSPF routing. The routing table on Router A shows a route to 10.5.0.0/16 via 192.168.1.1 with metric 20. An attacker connects a rogue router advertising 10.5.0.0/16 with metric 5. What happens to the traffic, and how would OSPF authentication prevent this?",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "OSPF selects routes based on lowest cost metric. The rogue router's metric of 5 is lower than the legitimate metric of 20, so Router A installs the rogue route, redirecting all traffic destined for 10.5.0.0/16 through the attacker's router. The attacker can then inspect, modify, or drop the traffic (man-in-the-middle or black hole). OSPF authentication prevents this by requiring all routers to authenticate their OSPF messages before accepting them. With MD5 authentication (or the newer SHA-HMAC in OSPFv3), each OSPF packet includes a cryptographic hash computed with a shared secret key. The rogue router does not know the key, so its LSAs are rejected by all legitimate routers. Configuration: under the OSPF interface, set ip ospf authentication message-digest and ip ospf message-digest-key 1 md5 <shared-secret> on all interfaces. All OSPF neighbors must use the same key.",
+            "rubric": [
+              {
+                "key": "Explains metric-based route selection and traffic redirection",
+                "value": 2
               },
               {
-                "key": "First valid defense with explanation",
-                "value": 3
+                "key": "Describes the security impact correctly",
+                "value": 2
               },
               {
-                "key": "Second valid defense with explanation",
+                "key": "Explains OSPF authentication mechanism with configuration detail",
                 "value": 3
               }
             ]
           },
           {
-            "question": "A company's WPA2-PSK wireless network was compromised. The attacker captured the four-way handshake and performed an offline dictionary attack. What specific weakness in WPA2-PSK enabled this, and how would migrating to WPA3-SAE prevent it?",
-            "type": "short_answer",
-            "points": 10,
-            "answer": "WPA2-PSK derives the Pairwise Master Key directly from the passphrase and SSID, so capturing the four-way handshake allows offline brute-force attempts against the passphrase without further network interaction. WPA3-SAE uses the Dragonfly key exchange (a Password-Authenticated Key Exchange protocol), where each handshake attempt requires an active interaction with the access point. This eliminates offline dictionary attacks and provides forward secrecy, so even if the passphrase is later compromised, previously captured sessions remain encrypted.",
+            "question": "Design a VLSM IP addressing scheme for a small company using the 172.16.0.0/22 address space. The company needs: Engineering department (100 hosts), Sales department (50 hosts), Management (10 hosts), and two point-to-point WAN links. Show subnet allocation with network address, broadcast address, and usable range for each.",
+            "type": "calculation",
+            "points": 8,
+            "answer": "Total available: 172.16.0.0/22 = 1022 usable hosts. Allocate largest subnets first. Engineering (100 hosts): needs /25 (126 usable). 172.16.0.0/25. Network: 172.16.0.0, Broadcast: 172.16.0.127, Usable: 172.16.0.1 - 172.16.0.126. Sales (50 hosts): needs /26 (62 usable). 172.16.0.128/26. Network: 172.16.0.128, Broadcast: 172.16.0.191, Usable: 172.16.0.129 - 172.16.0.190. Management (10 hosts): needs /28 (14 usable). 172.16.0.192/28. Network: 172.16.0.192, Broadcast: 172.16.0.207, Usable: 172.16.0.193 - 172.16.0.206. WAN Link 1: needs /30 (2 usable). 172.16.0.208/30. Network: 172.16.0.208, Broadcast: 172.16.0.211, Usable: 172.16.0.209 - 172.16.0.210. WAN Link 2: needs /30 (2 usable). 172.16.0.212/30. Network: 172.16.0.212, Broadcast: 172.16.0.215, Usable: 172.16.0.213 - 172.16.0.214. Remaining: 172.16.0.216/29 through 172.16.3.255 available for future growth.",
             "rubric": [
               {
-                "key": "Identifies PSK key derivation weakness",
+                "key": "Correct VLSM allocation with largest first",
+                "value": 2
+              },
+              {
+                "key": "All five subnet details correct (network, broadcast, range)",
+                "value": 4
+              },
+              {
+                "key": "No overlapping addresses and efficient use of space",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A security analyst sees the following Nmap output: PORT STATE SERVICE. 22/tcp open ssh. 80/tcp open http. 443/tcp open https. 445/tcp filtered microsoft-ds. 3389/tcp closed ms-wrd-page. Explain what each port state means at the TCP protocol level and what security conclusions can be drawn.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Open (22, 80, 443): Nmap sent a SYN and received a SYN-ACK, indicating a service is listening and accepting connections. Security: SSH, HTTP, and HTTPS services are running. HTTP on port 80 should redirect to HTTPS (443). SSH should use key-based authentication and be restricted to management IPs. Filtered (445/SMB): Nmap sent a SYN but received no response (or received an ICMP unreachable). A firewall is blocking access to this port. Security: good that SMB is firewalled (common ransomware vector), but SMB may still be accessible from internal networks. Verify internal firewall rules. Closed (3389/RDP): Nmap sent a SYN and received a RST, indicating no service is listening on this port but the host is reachable. Security: RDP is not running, which is good (reduces attack surface). However, the closed response reveals the host exists and the port is not firewalled. Consider dropping rather than rejecting to reduce information disclosure. Overall: the server's external exposure is reasonable if HTTP redirects to HTTPS and SSH is access-controlled. Recommend scanning for additional ports and checking for vulnerable service versions.",
+            "rubric": [
+              {
+                "key": "Correct TCP-level explanation for each state",
+                "value": 3
+              },
+              {
+                "key": "Appropriate security conclusions for each port",
+                "value": 2
+              },
+              {
+                "key": "Overall security assessment with recommendations",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "DNS/DHCP, Wireless Security, and Network Monitoring",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Explain how a DNS cache poisoning attack works at the protocol level. Include the specific fields the attacker must match, why the attack is probabilistic, and describe two defenses with their mechanisms.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "When a recursive resolver sends a query to an authoritative server, the attacker races to send a forged response before the legitimate answer arrives. The attacker must match: (1) the transaction ID (16-bit field in DNS header), (2) the source port the resolver used for the query, (3) the queried domain name, and (4) the response must arrive before the legitimate one. The attack is probabilistic because the transaction ID is random (65,536 possibilities) and the source port adds additional entropy. The Kaminsky attack improved odds by querying random non-existent subdomains, forcing fresh queries that the attacker can target. Defense 1: DNSSEC - signs DNS records with digital signatures using a chain of trust from the root zone. The resolver validates the signature before accepting the response. Forged responses lack valid signatures and are rejected. Defense 2: Source port randomization - the resolver uses a random ephemeral port for each query instead of a fixed port. Combined with the random transaction ID, the attacker must guess both: 65,536 x 65,536 = approximately 4.3 billion combinations, making the race condition practically impossible.",
+            "rubric": [
+              {
+                "key": "Correct protocol-level attack description with matching fields",
+                "value": 3
+              },
+              {
+                "key": "Explains probabilistic nature and Kaminsky improvement",
+                "value": 2
+              },
+              {
+                "key": "Two defenses with mechanism explanation",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "A company's WPA2-PSK wireless network was compromised. The attacker captured the four-way handshake and performed an offline dictionary attack. Explain the specific cryptographic weakness that enabled this attack and how WPA3-SAE prevents it.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "WPA2-PSK weakness: the Pairwise Master Key (PMK) is derived directly from the passphrase and SSID using PBKDF2-SHA1 with 4096 iterations. Since the SSID is public and the derivation is deterministic, anyone who captures the four-way handshake can attempt offline dictionary attacks by computing PMK candidates and comparing against the handshake. Modern GPUs can test hundreds of thousands of passphrases per second. WPA3-SAE prevention: SAE (Simultaneous Authentication of Equals) uses the Dragonfly key exchange, a zero-knowledge proof protocol. Each authentication attempt requires a real-time interaction with the access point. The key derivation incorporates random values from both sides, so even if the same passphrase is used, each session produces a different PMK. This makes offline dictionary attacks impossible because there is no captured material that can be tested without interacting with the AP. Additionally, SAE provides forward secrecy: each session uses unique ephemeral keys, so compromising the passphrase later cannot decrypt previously captured sessions.",
+            "rubric": [
+              {
+                "key": "Explains PMK derivation weakness and offline attack feasibility",
                 "value": 3
               },
               {
                 "key": "Explains SAE/Dragonfly active exchange requirement",
-                "value": 4
+                "value": 2
               },
               {
                 "key": "Mentions forward secrecy benefit",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "You are analyzing a Wireshark capture and notice that one internal host (10.0.0.50) makes an HTTPS connection to an external IP every exactly 300 seconds, each time sending approximately 500 bytes and receiving approximately 200 bytes. What type of malicious activity does this pattern suggest, and how would you investigate further?",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "This pattern strongly suggests command-and-control (C2) beaconing. The regular 300-second interval, consistent small payload sizes, and outbound-initiated HTTPS connections are characteristic of malware checking in with a C2 server for commands. The small outbound payload likely contains a heartbeat or status report, and the smaller response likely contains instructions (or a no-op command). Investigation steps: (1) Query threat intelligence for the external IP: check VirusTotal, AbuseIPDB, and threat intel feeds. (2) Check if the IP resolves to a known CDN or legitimate service. (3) Examine the TLS certificate of the external server: self-signed or recently issued certificates are suspicious. (4) Analyze host 10.0.0.50: check running processes, recent file modifications, scheduled tasks, and registry changes. (5) Capture memory dump for forensic analysis. (6) Check SIEM for other hosts communicating with the same IP. (7) If confirmed malicious: isolate the host, block the IP at the firewall, and initiate incident response. Caveat: some legitimate software also beacons regularly (update checks), so investigation must confirm malicious intent before taking disruptive action.",
+            "rubric": [
+              {
+                "key": "Correctly identifies C2 beaconing with pattern explanation",
                 "value": 3
+              },
+              {
+                "key": "Comprehensive investigation steps in logical order",
+                "value": 2
+              },
+              {
+                "key": "Notes legitimate beaconing possibility and need for confirmation",
+                "value": 2
               }
             ]
           }
         ],
-        "total_points": 20
+        "total_points": 22
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "VLANs, Firewalls, and VPNs",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Design a firewall rule set for a server in a DMZ that hosts a public website (HTTPS) and receives email (SMTP). The server must be accessible from the internet for web and email, must be able to query an internal DNS server (10.1.0.53), and administrators on the management VLAN (10.10.0.0/24) must have SSH access. All other traffic should be denied. Write the rules in order with action, protocol, source, destination, and port.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Rule 1: PERMIT TCP any -> DMZ_server:443 (HTTPS from internet). Rule 2: PERMIT TCP any -> DMZ_server:25 (SMTP from internet). Rule 3: PERMIT UDP DMZ_server -> 10.1.0.53:53 (DNS queries to internal DNS). Rule 4: PERMIT TCP DMZ_server -> 10.1.0.53:53 (DNS TCP for large responses/zone transfers). Rule 5: PERMIT TCP 10.10.0.0/24 -> DMZ_server:22 (SSH from management VLAN). Rule 6: PERMIT TCP DMZ_server:443 -> any (return traffic for established HTTPS connections, if stateless). Rule 7: DENY any any -> any any (implicit deny-all). Note: if using a stateful firewall, Rule 6 is unnecessary because return traffic for established connections is automatically permitted. Rules are ordered with most specific first. The DNS rules restrict the DMZ server to querying only the specific internal DNS server, not the entire internal network.",
+            "rubric": [
+              {
+                "key": "All required permit rules with correct source, destination, and port",
+                "value": 3
+              },
+              {
+                "key": "Correct rule ordering and implicit deny",
+                "value": 2
+              },
+              {
+                "key": "Addresses stateful vs stateless consideration",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Compare IPSec tunnel mode with WireGuard for a site-to-site VPN connecting two offices. Discuss cryptographic approach, configuration complexity, performance, and identify a scenario where each would be preferred.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "IPSec tunnel mode: uses IKE for key negotiation with configurable cipher suites (AES-256, SHA-256, DH groups). Encapsulates entire original packet in new IP header with ESP encryption. Configuration is complex: IKE phase 1 and 2 parameters, transform sets, crypto maps, and ACLs defining interesting traffic. Performance is good but overhead from double IP header and cipher negotiation. Preferred for: enterprise environments with compliance requirements mandating specific cipher suites, integration with existing Cisco/Juniper infrastructure, and organizations requiring certification (FIPS 140-2 validated implementations available). WireGuard: uses fixed modern cryptography: Curve25519 for key exchange, ChaCha20-Poly1305 for encryption, BLAKE2s for hashing. Configuration is minimal: generate key pair, exchange public keys, configure allowed IPs and endpoint. Performance is typically 2-4x faster than IPSec due to efficient kernel implementation and modern crypto. Preferred for: organizations prioritizing simplicity and performance, Linux-based infrastructure, situations where minimal attack surface (4,000 lines of code) is valued, and where cipher agility is not required. Trade-off: WireGuard's fixed cryptography is a strength (no weak cipher negotiation) and a weakness (cannot swap algorithms if one is broken without updating the protocol).",
+            "rubric": [
+              {
+                "key": "Accurate comparison across all four dimensions",
+                "value": 3
+              },
+              {
+                "key": "Appropriate scenario for each with clear justification",
+                "value": 2
+              },
+              {
+                "key": "Identifies meaningful trade-offs",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "An organization has a flat network where all 500 workstations, 20 servers, and 50 printers share the same subnet. A ransomware infection on one workstation has spread to all servers via SMB. Propose a VLAN redesign that would have contained this attack, including specific VLANs, inter-VLAN firewall rules, and the principle behind each decision.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Proposed VLAN design: VLAN 10 - Workstations (500 hosts, /22 subnet). VLAN 20 - Servers (20 hosts, /27 subnet). VLAN 30 - Printers (50 hosts, /26 subnet). VLAN 40 - Management (network device management, /28). VLAN 50 - Guest Wi-Fi (internet only, /24). Inter-VLAN firewall rules: Workstations->Servers: PERMIT TCP to specific application ports only (443, 8080, 1433). DENY SMB (445), RDP (3389). Principle: least privilege, users access only needed services. Workstations->Workstations: DENY all inter-workstation traffic. Principle: workstations have no legitimate reason to communicate directly; this blocks lateral movement. Workstations->Printers: PERMIT TCP 9100 (printing), DENY all else. Principle: minimum required access for business function. Management->All: PERMIT SSH/RDP for administration. Principle: management access from dedicated VLAN only. Guest->Internet: PERMIT HTTP/HTTPS only. DENY all internal access. Principle: complete isolation of untrusted devices. How this contains ransomware: even if a workstation is infected, SMB is blocked between workstations and between workstations and servers. The ransomware cannot reach servers to encrypt file shares.",
+            "rubric": [
+              {
+                "key": "Appropriate VLAN design with justified segmentation",
+                "value": 2
+              },
+              {
+                "key": "Specific firewall rules between VLANs that block the attack path",
+                "value": 3
+              },
+              {
+                "key": "Security principles cited for each decision",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 22
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "IPv6, Network Troubleshooting, and Comprehensive Review",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "An IPv6 host on your network has auto-configured the address 2001:db8:1:1:a1b2:c3d4:e5f6:7890/64. It can ping its default gateway (fe80::1) but cannot reach the internet host 2001:db8:ff::1. Describe a systematic troubleshooting approach, listing each step, the tool you would use, and what you expect to find at each step.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Step 1: Verify local connectivity. Tool: ping6 fe80::1. Expected: success (already confirmed). This validates Layer 1-3 to the gateway. Step 2: Check routing. Tool: ip -6 route show. Expected: default route via fe80::1 should exist. If missing, the Router Advertisement may not include the default route flag. Step 3: Trace the path. Tool: traceroute6 2001:db8:ff::1. Expected: shows each hop until the path fails. If the trace stops at a specific router, that router may lack a route to the destination. Step 4: Verify DNS (if using hostname). Tool: dig AAAA hostname @dns_server. Expected: correct AAAA record resolution. Step 5: Check firewall. Tool: ip6tables -L on local host and intermediate firewalls. Expected: ICMPv6 and the required protocol should be permitted. Common issue: firewalls blocking ICMPv6 breaks NDP and PMTU discovery. Step 6: Verify the destination. Tool: ping6 2001:db8:ff::1 from the gateway router. Expected: if the gateway can reach it but the host cannot, the issue is between host and gateway (unlikely given step 1 passes). If the gateway cannot reach it, the issue is upstream routing. Most likely cause: an intermediate router lacks an IPv6 route to 2001:db8:ff::/48, or a firewall is blocking IPv6 traffic.",
+            "rubric": [
+              {
+                "key": "Systematic approach working through layers",
+                "value": 2
+              },
+              {
+                "key": "Correct tools and expected results at each step",
+                "value": 3
+              },
+              {
+                "key": "Identifies likely root causes",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain why enabling IPv6 on a corporate network that uses only IPv4 can create security vulnerabilities, even if no IPv6 addresses are intentionally configured. Describe two specific attacks that exploit this situation.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Modern operating systems (Windows, macOS, Linux) enable IPv6 by default and auto-configure link-local addresses (fe80::) on every interface. If the organization's firewalls, IDS, and monitoring tools are configured only for IPv4, the IPv6 traffic exists in a blind spot. Attack 1: Rogue Router Advertisement. An attacker sends IPv6 Router Advertisements on the LAN. Hosts auto-configure global IPv6 addresses and set the attacker as their default gateway. All traffic from these hosts now flows through the attacker (man-in-the-middle). Since the organization monitors only IPv4, this goes undetected. The attacker can then NAT64 the traffic to reach IPv4 destinations. Attack 2: IPv6 tunnel exploitation (Teredo/6to4). An attacker establishes an IPv6 tunnel (e.g., Teredo, which uses UDP port 3544) that encapsulates IPv6 traffic within IPv4 UDP packets. This tunnel bypasses IPv4 firewalls because it appears as legitimate UDP traffic. The attacker can use this tunnel for C2 communication or data exfiltration over IPv6, invisible to IPv4-only security monitoring. Mitigation: either properly configure IPv6 security controls (RA Guard, IPv6 firewall rules, IPv6-aware IDS) or disable IPv6 entirely on hosts via Group Policy if the organization does not use it.",
+            "rubric": [
+              {
+                "key": "Explains auto-configuration creating blind spot",
+                "value": 2
+              },
+              {
+                "key": "Rogue RA attack with man-in-the-middle scenario",
+                "value": 2
+              },
+              {
+                "key": "Tunnel exploitation attack with firewall bypass",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "A user reports they cannot access the internal web application at app.company.local. You can ping the server by IP (10.1.2.50) but not by hostname. Describe your troubleshooting steps and the most likely root cause.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Step 1: Verify DNS resolution. Run nslookup app.company.local or dig app.company.local. If it fails, the problem is DNS, not the web application. Step 2: Check DNS server configuration. Run nslookup app.company.local 10.1.0.53 (specifying the DNS server explicitly). If this works but the default fails, the client's DNS settings are wrong. Check ipconfig /all or cat /etc/resolv.conf. Step 3: If DNS server query fails too, check the DNS server. Is the A record for app.company.local present? Is the DNS service running? Can the DNS server be reached (ping the DNS server IP)? Step 4: Check for DNS server issues. Run dig @10.1.0.53 app.company.local to test the specific server. Look for NXDOMAIN (record does not exist), SERVFAIL (server error), or REFUSED (server rejects query). Most likely root cause: the DNS A record for app.company.local either does not exist (was never created, was accidentally deleted, or the zone file has an error) or the client is configured to use the wrong DNS server. Since the server responds to ping by IP, the server itself is operational, and the issue is purely name resolution. Fix: verify and add/correct the DNS A record, or fix the client DNS configuration.",
+            "rubric": [
+              {
+                "key": "Isolates DNS as the problem with correct diagnostic",
+                "value": 3
+              },
+              {
+                "key": "Systematic investigation of DNS chain",
+                "value": 2
+              },
+              {
+                "key": "Identifies likely root cause with fix",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 22
       }
     ],
     "major_assignments": [
       {
         "assignment": 1,
-        "title": "Network Analysis and Security Audit",
-        "week_assigned": 3,
-        "week_due": 5,
-        "points": 100,
-        "description": "Capture, analyze, and document network traffic from a provided lab environment. Identify all active hosts, services, protocols, and potential security issues. Produce a comprehensive network audit report.",
+        "title": "Network Traffic Analysis and Security Audit",
+        "week_assigned": 4,
+        "week_due": 7,
+        "points": 150,
+        "description": "Capture, analyze, and document network traffic from the provided lab environment over a 48-hour period. Identify all active hosts, services, protocols, and potential security issues. Produce a comprehensive network audit report including traffic pattern analysis, protocol identification, and security findings with remediation recommendations.",
         "objectives": [
-          "Demonstrate proficiency with packet capture and analysis tools",
-          "Identify network protocols and their security implications",
-          "Map network topology from captured traffic",
-          "Produce a professional network audit report"
+          "Demonstrate proficiency with Wireshark and packet analysis techniques",
+          "Identify and classify all network protocols and their security implications",
+          "Map complete network topology from captured traffic",
+          "Produce a professional network audit report suitable for management review"
         ],
         "requirements": {},
         "deliverables": [
-          "Packet capture files (.pcap) with annotations",
-          "Network topology diagram with all discovered hosts and services",
-          "Protocol analysis report documenting all identified traffic patterns",
-          "Security findings with risk ratings and remediation steps"
+          "Annotated packet capture files (.pcap) with key findings bookmarked",
+          "Complete network topology diagram with all discovered hosts, services, and interconnections",
+          "Protocol analysis report documenting all identified traffic patterns and anomalies",
+          "Security findings report with risk ratings, evidence, and detailed remediation steps",
+          "Executive summary highlighting the top five security concerns"
         ],
         "grading_rubric": {
-          "traffic_analysis": {
+          "technical_implementation": {
+            "points": 45,
+            "criteria": [
+              "All significant traffic patterns identified with Wireshark evidence",
+              "Correct protocol identification at each OSI layer with justification",
+              "Accurate session reconstruction and flow analysis for key conversations",
+              "Proper use of display filters, coloring rules, and Wireshark statistics features"
+            ]
+          },
+          "visual_quality": {
             "points": 35,
             "criteria": [
-              "All significant traffic patterns identified",
-              "Correct protocol identification at each OSI layer",
-              "Accurate flow analysis and session reconstruction",
-              "Proper use of display and capture filters"
+              "Complete host discovery with IP addresses, MAC addresses, and operating system fingerprints",
+              "All running services identified with port numbers and version information where possible",
+              "Accurate topology diagram using proper network diagram notation",
+              "VLAN, subnet, and gateway identification"
             ]
           },
-          "network_mapping": {
-            "points": 25,
+          "performance_optimization": {
+            "points": 40,
             "criteria": [
-              "Complete host discovery with IP and MAC addresses",
-              "All running services identified with port numbers",
-              "Accurate topology diagram with correct interconnections",
-              "VLAN and subnet identification"
-            ]
-          },
-          "security_assessment": {
-            "points": 25,
-            "criteria": [
-              "Unencrypted traffic identified and flagged",
-              "Protocol vulnerabilities documented",
-              "Anomalous traffic patterns detected",
-              "Actionable remediation recommendations"
+              "Unencrypted credentials or sensitive data identified and flagged",
+              "Protocol vulnerabilities documented with CVE references where applicable",
+              "Anomalous traffic patterns detected and analyzed",
+              "Actionable remediation recommendations prioritized by risk"
             ]
           },
           "documentation": {
-            "points": 15,
+            "points": 30,
             "criteria": [
-              "Professional report formatting",
-              "Clear technical writing",
-              "Screenshots and evidence properly labeled",
-              "Methodology section included"
+              "Professional report formatting with clear section organization",
+              "Technical writing appropriate for both technical and management audiences",
+              "Screenshots and packet captures properly annotated and referenced",
+              "Methodology section describing tools, techniques, and capture parameters"
             ]
           }
         },
         "rubric": [
           {
             "attributes": {
-              "points": 100,
+              "points": 150,
               "criteria": [
-                "Thorough and accurate traffic analysis with all protocols identified",
-                "Complete network map with all hosts, services, and interconnections",
+                "Thorough and accurate traffic analysis with all significant protocols identified",
+                "Complete network map with all hosts, services, and interconnections documented",
                 "Insightful security findings with practical remediation plan",
-                "Professional documentation suitable for a real audit engagement"
+                "Professional documentation suitable for a real network audit engagement"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Secure Network Architecture Design",
+        "week_assigned": 8,
+        "week_due": 11,
+        "points": 150,
+        "description": "Design a complete network architecture for a fictional company with 300 employees across two sites connected by WAN. The design must include IP addressing (VLSM), VLAN segmentation, routing, firewall rules, wireless security, VPN for remote access and site-to-site, and DNS/DHCP services. All security controls must be justified with reference to specific threats they mitigate.",
+        "objectives": [
+          "Apply all course networking concepts to design a production-quality network",
+          "Implement defense-in-depth through network segmentation, firewalls, and monitoring",
+          "Demonstrate mastery of IP addressing and VLSM for efficient address allocation",
+          "Justify every design decision with security rationale"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Complete network topology diagram with all devices, connections, and labels",
+          "IP addressing plan with VLSM allocation table showing all subnets, ranges, and assignments",
+          "VLAN design document with segmentation rationale and inter-VLAN access policies",
+          "Firewall rule sets for all security zones with justification for each rule",
+          "Wireless deployment plan with security configuration",
+          "VPN configuration for site-to-site and remote access"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 50,
+            "criteria": [
+              "Complete and correct VLSM addressing plan with no overlaps or waste",
+              "Proper VLAN segmentation with security zones clearly defined",
+              "Routing design using OSPF with appropriate area hierarchy",
+              "Complete firewall rule sets following least-privilege and deny-by-default principles"
+            ]
+          },
+          "visual_quality": {
+            "points": 30,
+            "criteria": [
+              "Professional topology diagram using standard network diagram notation",
+              "All devices, connections, IP addresses, and VLAN assignments clearly labeled",
+              "Logical and physical diagrams provided where they differ",
+              "Clean, readable documentation layout"
+            ]
+          },
+          "performance_optimization": {
+            "points": 40,
+            "criteria": [
+              "Every security control justified with specific threat it mitigates",
+              "Defense-in-depth demonstrated with multiple layers of protection",
+              "Wireless design addresses all Wi-Fi security concerns from course material",
+              "VPN design appropriate for both site-to-site and remote access requirements"
+            ]
+          },
+          "documentation": {
+            "points": 30,
+            "criteria": [
+              "Design rationale document explaining all decisions",
+              "Implementation plan with phased deployment schedule",
+              "Assumptions clearly stated and reasonable",
+              "Scalability considerations for future growth"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Technically sound network design demonstrating mastery of all course concepts",
+                "Comprehensive security architecture with defense-in-depth",
+                "Professional documentation suitable for real-world implementation",
+                "Clear justification for every design and security decision"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Network Penetration Testing and Hardening Report",
+        "week_assigned": 12,
+        "week_due": 15,
+        "points": 200,
+        "description": "Conduct a comprehensive network security assessment of the lab environment using the techniques learned throughout the course. Perform network reconnaissance, identify vulnerabilities, demonstrate exploitation of selected vulnerabilities, and produce a professional penetration testing report. Then implement hardening measures to remediate the findings and verify the fixes.",
+        "objectives": [
+          "Apply network security knowledge to identify and exploit vulnerabilities",
+          "Demonstrate proficiency with network security assessment tools",
+          "Produce a professional penetration testing report following industry standards",
+          "Implement and verify network hardening measures"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Reconnaissance report: host discovery, port scanning, service enumeration results",
+          "Vulnerability assessment: identified vulnerabilities with CVSS scores and evidence",
+          "Exploitation documentation: step-by-step walkthrough of three successful exploits",
+          "Hardening implementation: configuration changes made to remediate all findings",
+          "Verification report: re-assessment confirming vulnerabilities are resolved",
+          "Executive summary: risk overview suitable for non-technical stakeholders"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 70,
+            "criteria": [
+              "Thorough network reconnaissance with complete host and service discovery",
+              "All significant vulnerabilities identified with proper CVSS scoring",
+              "Three exploits successfully demonstrated with clear documentation",
+              "Hardening measures correctly implemented and verified through re-assessment"
+            ]
+          },
+          "visual_quality": {
+            "points": 40,
+            "criteria": [
+              "Attack paths clearly documented with network diagrams",
+              "Evidence screenshots properly annotated and labeled",
+              "Exploitation steps reproducible from documentation alone",
+              "Before and after comparison clearly showing remediation"
+            ]
+          },
+          "performance_optimization": {
+            "points": 50,
+            "criteria": [
+              "Vulnerability risk ratings accurately justified",
+              "Hardening recommendations address root causes not just symptoms",
+              "Remediation prioritized by risk and implementation effort",
+              "Comprehensive coverage across multiple network layers"
+            ]
+          },
+          "documentation": {
+            "points": 40,
+            "criteria": [
+              "Report follows penetration testing report standards",
+              "Executive summary accurately represents findings for non-technical audience",
+              "Methodology section details tools, scope, and rules of engagement",
+              "Professional quality suitable for delivery to a real client"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 200,
+              "criteria": [
+                "Thorough security assessment demonstrating mastery of network security concepts",
+                "Successful exploitation demonstrating understanding of vulnerability mechanics",
+                "Effective hardening that resolves identified vulnerabilities",
+                "Professional documentation meeting industry penetration testing standards"
               ]
             }
           }
@@ -435,31 +1492,31 @@
   },
   "grading_breakdown": {
     "weekly_quizzes": {
-      "percentage": 15,
-      "description": "Regular assessment of networking concepts and protocol knowledge"
+      "percentage": 20,
+      "description": "Five quizzes assessing networking concepts, protocol knowledge, subnetting skills, and network security analysis"
     },
     "lab_assignments": {
-      "percentage": 25,
-      "description": "Hands-on exercises with Wireshark, GNS3, and network configuration tools"
+      "percentage": 15,
+      "description": "Hands-on lab exercises with Wireshark, GNS3, switch configuration, firewall rules, and VPN setup"
     },
     "major_assignments": {
-      "percentage": 25,
-      "description": "Comprehensive network analysis and security audit project"
+      "percentage": 30,
+      "description": "Three comprehensive projects: network traffic analysis, secure architecture design, and penetration testing with hardening"
     },
     "midterm_examination": {
       "percentage": 15,
-      "description": "Assessment covering OSI model, TCP/IP, routing, and subnetting"
+      "description": "Assessment covering OSI model, TCP/IP, subnetting, routing, switching, and network services"
     },
-    "final_examination": {
+    "final_project": {
       "percentage": 20,
-      "description": "Cumulative exam covering all networking and network security topics"
+      "description": "Hands-on lab practical requiring configuration, troubleshooting, and security analysis of a multi-segment network"
     }
   },
   "course_policies": {
-    "attendance": "Attendance is mandatory for all lab sessions. More than 2 unexcused absences may result in a grade reduction.",
-    "late_submissions": "Late assignments are penalized 10% per day. No submissions accepted more than 5 days late without prior arrangement.",
-    "collaboration": "Lab exercises may be completed in pairs. Packet capture analysis and reports must be individual work.",
-    "academic_integrity": "All submitted captures must be from the designated lab environment. Fabricating or modifying pcap files is considered academic dishonesty.",
-    "lab_safety": "Network scanning and traffic capture must only be performed within the isolated lab environment. Unauthorized scanning of production networks will result in course failure."
+    "attendance": "Attendance is mandatory for all lab sessions. More than 2 unexcused absences may result in a grade reduction of one letter grade. Lab sessions cannot be made up due to shared equipment requirements.",
+    "late_submissions": "Late assignments are penalized 10% per day for up to 5 days. No submissions accepted more than 5 days late without prior written arrangement. Packet capture files must be submitted by the deadline as lab environments are reconfigured weekly.",
+    "collaboration": "Lab exercises may be completed in pairs. Packet capture analysis, reports, and exam work must be individual. Network diagrams and IP addressing schemes must be independently designed.",
+    "academic_integrity": "All submitted captures must be from the designated lab environment. Fabricating or modifying pcap files is considered academic dishonesty. Using automated vulnerability scanners against non-lab systems is prohibited.",
+    "technology_requirements": "Students must have a laptop capable of running GNS3 and Wireshark with at least 16GB RAM. Wireless lab exercises require a compatible USB wireless adapter supporting monitor mode. Lab equipment including managed switches and wireless APs is provided."
   }
 }

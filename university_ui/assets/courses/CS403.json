@@ -13,241 +13,834 @@
     {
       "week_number": 1,
       "session_number": 1,
-      "topic": "Supervised Learning: Linear Regression and Gradient Descent",
-      "duration": "50 minutes",
+      "topic": "The Machine Learning Pipeline and Data Preprocessing",
+      "duration": "80 minutes",
       "learning_objectives": [
-        "Derive the ordinary least squares solution for linear regression",
-        "Implement gradient descent optimization from scratch",
-        "Understand the relationship between loss functions and model fitting"
+        "Describe the end-to-end ML pipeline from raw data to deployed model",
+        "Apply data cleaning techniques: handling missing values, outlier detection, and data type conversion",
+        "Implement feature scaling (normalization, standardization) and encoding (one-hot, label, ordinal)",
+        "Identify and prevent data leakage in train/validation/test splits"
       ],
       "readings": [
-        "Bishop, Pattern Recognition and Machine Learning, Ch. 3",
-        "Andrew Ng, Machine Learning Yearning, Ch. 1-5"
+        "Geron, Hands-On Machine Learning with Scikit-Learn, Keras & TensorFlow, 3rd Ed., Ch. 1-2",
+        "Andrew Ng, Machine Learning Yearning, Ch. 1-10",
+        "scikit-learn Documentation: Preprocessing and Pipelines"
       ],
       "lecture_notes": {
-        "introduction": "Machine Learning Applications builds on the AI fundamentals course to give you hands-on experience implementing, training, and evaluating ML models for real-world problems. We start with the simplest model that illustrates all the key concepts.",
+        "introduction": "Machine Learning Applications builds on the AI fundamentals course to give you hands-on experience implementing, training, and evaluating ML models for real-world problems. The dirty secret of ML is that 80% of the work is data preparation, not model building. A sophisticated model trained on poorly prepared data will be outperformed by a simple model on clean, well-engineered features every time. This course begins where theory ends -- with messy real-world data that has missing values, inconsistent formats, outliers, and hidden biases. You will learn to build robust, reproducible ML pipelines that handle data preprocessing, feature engineering, model training, evaluation, and deployment as a single cohesive workflow. The pipeline approach ensures that every transformation applied to training data is identically applied to test data and production data, preventing the subtle bugs that cause models to work in development but fail in production. We will use Python with scikit-learn, pandas, and PyTorch throughout the course, and every technique will be demonstrated on real datasets, not toy examples.",
         "key_concepts": [
-          "Linear regression: y = wX + b, minimizing mean squared error",
-          "Loss functions: MSE, MAE, and their gradients",
-          "Gradient descent: iteratively updating weights in the direction of steepest descent",
-          "Learning rate: too large diverges, too small is slow",
-          "Feature scaling: normalization and standardization for stable training"
+          "The ML pipeline: data collection, cleaning, feature engineering, model selection, training, evaluation, deployment, and monitoring -- each stage introduces opportunities for error that the pipeline framework prevents",
+          "Missing data strategies: deletion (listwise, pairwise), imputation (mean, median, mode, KNN imputation, iterative imputation), and indicator variables that flag missing values as potentially informative features",
+          "Outlier detection: statistical methods (z-score, IQR), isolation forests, and domain-specific rules; the decision to remove, cap, or keep outliers depends on whether they are errors or genuine extreme values",
+          "Feature scaling: min-max normalization (scales to [0,1]), standardization (zero mean, unit variance); essential for distance-based algorithms (KNN, SVM) and gradient descent; tree-based methods are scale-invariant",
+          "Encoding categorical features: one-hot encoding for nominal categories (color: red/blue/green), ordinal encoding for ordered categories (education: high school < bachelor < master < PhD), target encoding for high-cardinality categories",
+          "Data leakage: when information from outside the training set contaminates the model; common sources include scaling before splitting, using future data to predict past events, and including features derived from the target variable",
+          "Train/validation/test splits: training set for fitting, validation set for hyperparameter tuning, test set for final evaluation -- the test set must be touched ONLY ONCE to provide an honest estimate of generalization",
+          "scikit-learn Pipelines: chain preprocessing steps and model training into a single object that can be fit on training data and applied identically to new data; prevents leakage and ensures reproducibility",
+          "Exploratory data analysis (EDA): distribution plots, correlation matrices, pair plots, and missing value patterns -- understand your data before modeling to catch issues early and inform feature engineering decisions"
         ],
-        "demonstration": "Implement linear regression with gradient descent from scratch in NumPy on a housing price dataset, visualizing the loss curve and decision boundary at each iteration",
+        "demonstration": "Load a real-world housing price dataset with missing values (15% of entries), mixed data types (numerical and categorical), outliers (mansion prices 10x the median), and inconsistent formats (dates in multiple formats). Build a scikit-learn Pipeline that: (1) imputes missing numerical values with median and categorical with mode, (2) standardizes numerical features, (3) one-hot encodes categorical features, (4) trains a linear regression model. Show that fitting the pipeline on training data and transforming test data separately prevents leakage. Compare the pipeline approach with a naive approach that scales before splitting to illustrate data leakage.",
         "setup_requirements": [
-          "Python 3.12+ with NumPy, pandas, matplotlib, scikit-learn",
+          "Python 3.12+ with NumPy, pandas, scikit-learn, matplotlib, seaborn",
           "Jupyter Notebook configured",
-          "Sample datasets downloaded"
+          "Real-world datasets: housing prices, credit applications, customer churn"
         ],
         "review": [
           {
-            "key": "Gradient Descent Intuition",
-            "value": "The gradient points in the direction of steepest increase; subtracting it moves downhill. The learning rate controls step size. Convergence occurs when the gradient is approximately zero"
+            "key": "Data Leakage Example",
+            "value": "If you standardize the entire dataset before splitting into train/test, the training set's mean and standard deviation include information from the test set. This makes test-set performance appear better than it truly is. Always fit the scaler on training data only, then transform both training and test data with those learned parameters."
           },
           {
-            "key": "Feature Scaling",
-            "value": "Features on different scales cause elongated contours in the loss landscape, making gradient descent oscillate. Scaling all features to similar ranges creates circular contours for faster convergence"
+            "key": "Missing Data Is Information",
+            "value": "Sometimes the fact that a value is missing is predictive. For example, in a medical dataset, missing lab results may indicate the doctor did not order the test because the patient appeared healthy. Adding a binary indicator column (1 = value was missing) before imputation captures this signal."
+          },
+          {
+            "key": "Pipeline Benefits",
+            "value": "A scikit-learn Pipeline ensures: (1) preprocessing is identical for training and inference, (2) no data leakage from fitting on test data, (3) the entire workflow can be serialized and deployed as a single artifact, (4) cross-validation properly refits preprocessing at each fold."
+          },
+          {
+            "key": "When Not to Scale",
+            "value": "Tree-based models (decision trees, random forests, gradient boosting) are invariant to monotonic transformations of features because they only use feature ordering for splits. Scaling adds unnecessary complexity for these models. However, regularized linear models, KNN, SVM, and neural networks all require scaling."
           }
         ]
       }
     },
     {
       "week_number": 2,
-      "session_number": 3,
-      "topic": "Classification: Logistic Regression and Neural Networks",
-      "duration": "50 minutes",
+      "session_number": 2,
+      "topic": "Linear Regression and Gradient Descent",
+      "duration": "80 minutes",
       "learning_objectives": [
-        "Implement logistic regression for binary classification",
-        "Build a simple feedforward neural network from scratch",
-        "Understand backpropagation as an application of the chain rule"
+        "Derive the ordinary least squares (OLS) closed-form solution for linear regression",
+        "Implement batch, stochastic, and mini-batch gradient descent from scratch",
+        "Analyze the effects of learning rate, batch size, and convergence criteria on optimization",
+        "Apply polynomial features and regularization to control model complexity"
       ],
       "readings": [
-        "Goodfellow, Deep Learning, Ch. 6 - Deep Feedforward Networks",
-        "3Blue1Brown, Neural Networks video series"
+        "Bishop, Pattern Recognition and Machine Learning, Ch. 3 -- Linear Models for Regression",
+        "Geron, Ch. 4 -- Training Models",
+        "Hastie, Tibshirani, Friedman, Elements of Statistical Learning, Ch. 3"
       ],
       "lecture_notes": {
-        "introduction": "Logistic regression extends linear regression to classification by passing the output through a sigmoid function. Neural networks generalize this by stacking multiple layers of nonlinear transformations, enabling learning of complex decision boundaries.",
+        "introduction": "Linear regression is the simplest supervised learning model, yet it illustrates nearly every fundamental ML concept: loss functions, optimization, regularization, and the bias-variance trade-off. The model predicts a continuous target as a weighted sum of input features plus a bias term. Training means finding the weights that minimize the prediction error, measured by mean squared error. There are two approaches: the closed-form normal equation (when the problem is small enough) and gradient descent (which scales to millions of features and training examples). Gradient descent is the optimization engine that powers all of modern machine learning, from linear regression to deep neural networks. Understanding its mechanics -- how the learning rate controls convergence, how batch size affects gradient estimates, and how momentum and adaptive learning rates accelerate training -- is essential for every ML practitioner. This session also introduces regularization: adding a penalty on weight magnitude to the loss function to prevent overfitting. Ridge regression (L2 penalty) shrinks weights toward zero; Lasso (L1 penalty) drives some weights exactly to zero, performing automatic feature selection.",
         "key_concepts": [
-          "Logistic regression: sigmoid activation, binary cross-entropy loss",
-          "Decision boundaries: linear (logistic regression) vs nonlinear (neural networks)",
-          "Neural network architecture: layers, weights, biases, activation functions",
-          "Backpropagation: computing gradients through the chain rule",
-          "Activation functions: ReLU, sigmoid, tanh and their properties"
+          "Linear regression model: y = w^T x + b, where w is the weight vector, x is the feature vector, and b is the bias; the model assumes a linear relationship between features and target",
+          "Mean squared error loss: L = (1/n) * sum((y_i - y_hat_i)^2); measures average squared difference between predictions and actual values; differentiable and convex for linear models",
+          "Normal equation: w = (X^T X)^(-1) X^T y; the closed-form OLS solution; requires O(n*d^2 + d^3) computation and fails when X^T X is singular (more features than samples or collinear features)",
+          "Gradient descent: w_new = w - lr * (dL/dw); iteratively updates weights in the direction of steepest descent; converges to the global minimum for convex losses",
+          "Batch gradient descent: computes the gradient over the entire training set per update; accurate gradients but slow for large datasets; one epoch = one update",
+          "Stochastic gradient descent (SGD): computes the gradient on a single random example per update; noisy but fast; the noise can help escape shallow local minima in non-convex problems",
+          "Mini-batch gradient descent: computes the gradient on a random subset (batch) of examples; balances the accuracy of batch GD with the speed of SGD; standard batch sizes: 32, 64, 128, 256",
+          "Learning rate schedules: start with a larger learning rate for fast initial progress, decay over time for precise convergence; common schedules include step decay, exponential decay, and cosine annealing",
+          "Ridge regression (L2): L = MSE + lambda * sum(w_i^2); shrinks weights toward zero, reducing overfitting; large lambda = more regularization = simpler model = higher bias",
+          "Lasso regression (L1): L = MSE + lambda * sum(|w_i|); drives some weights exactly to zero, performing feature selection; useful when you suspect only a few features are relevant"
         ],
-        "demonstration": "Build a 2-layer neural network from scratch in NumPy that learns XOR (which logistic regression cannot solve), visualizing the hidden layer representations",
+        "demonstration": "Implement linear regression with gradient descent from scratch in NumPy on a housing price dataset. (1) Plot the loss surface for a 2-feature model as a 3D contour plot. (2) Animate the gradient descent trajectory on this surface for three learning rates: too small (0.0001, slow convergence), good (0.01, smooth convergence), and too large (1.0, divergence). (3) Compare batch GD, SGD, and mini-batch GD convergence curves over 100 epochs. (4) Add polynomial features (degree 2 and degree 10), show overfitting with degree 10, and demonstrate how Ridge regularization recovers good generalization.",
         "setup_requirements": [
-          "Python with NumPy and matplotlib",
-          "Jupyter Notebook"
+          "Python with NumPy, pandas, matplotlib, scikit-learn",
+          "Jupyter Notebook",
+          "Housing price dataset with multiple features"
         ],
         "review": [
           {
-            "key": "Universal Approximation Theorem",
-            "value": "A neural network with a single hidden layer of sufficient width can approximate any continuous function to arbitrary precision; depth (more layers) achieves the same with exponentially fewer neurons"
+            "key": "Gradient Descent Convergence",
+            "value": "For convex problems, gradient descent converges to the global optimum at a rate of O(1/t) for a fixed learning rate and O(1/t^2) with optimal step sizes (Nesterov momentum). For non-convex problems (neural networks), convergence is only to a local minimum, but in practice good local minima often generalize well."
           },
           {
-            "key": "Vanishing Gradient Problem",
-            "value": "Sigmoid and tanh squash gradients to near-zero for large inputs, causing early layers to learn very slowly; ReLU avoids this by having a constant gradient for positive inputs"
+            "key": "Feature Scaling for Gradient Descent",
+            "value": "Features on different scales create elongated elliptical contours in the loss landscape, causing gradient descent to oscillate perpendicular to the optimal direction. Standardizing features creates circular contours, allowing gradient descent to move directly toward the minimum. This can reduce training time by 10-100x."
+          },
+          {
+            "key": "Regularization Intuition",
+            "value": "Without regularization, the model is free to use large weights to memorize training noise. Regularization penalizes large weights, forcing the model to find simpler explanations of the data. L2 (Ridge) distributes weight across all features; L1 (Lasso) concentrates weight on the most important features and zeroes out the rest."
+          },
+          {
+            "key": "Batch Size Trade-off",
+            "value": "Larger batches give more accurate gradient estimates (less noise) but more computation per update. Smaller batches are noisier but provide a regularization effect. The optimal batch size depends on the dataset size, model complexity, and available GPU memory."
           }
         ]
       }
     },
     {
       "week_number": 3,
-      "session_number": 5,
-      "topic": "Model Evaluation and Regularization",
-      "duration": "50 minutes",
+      "session_number": 3,
+      "topic": "Logistic Regression and Classification Metrics",
+      "duration": "80 minutes",
       "learning_objectives": [
-        "Evaluate classifiers using precision, recall, F1-score, and ROC curves",
-        "Apply regularization techniques to prevent overfitting",
-        "Implement cross-validation for reliable model comparison"
+        "Implement logistic regression for binary and multi-class classification",
+        "Derive the binary cross-entropy loss and compute its gradient",
+        "Evaluate classifiers using confusion matrices, precision, recall, F1-score, ROC curves, and AUC",
+        "Handle class imbalance using resampling, class weights, and threshold tuning"
       ],
       "readings": [
-        "Hastie, Elements of Statistical Learning, Ch. 7",
-        "scikit-learn Documentation: Model Evaluation"
+        "Bishop, Ch. 4 -- Linear Models for Classification",
+        "Geron, Ch. 3 -- Classification",
+        "scikit-learn Documentation: Classification Metrics"
       ],
       "lecture_notes": {
-        "introduction": "A model is only as good as its evaluation. Accuracy alone is misleading for imbalanced datasets. This session covers the metrics and techniques that let you honestly assess and improve model performance.",
+        "introduction": "Classification is the task of assigning discrete labels to inputs: spam or not spam, malignant or benign, cat or dog or bird. Logistic regression extends linear regression to classification by passing the linear output through a sigmoid function that squashes it to a probability between 0 and 1. Despite its name, logistic regression is a classification algorithm and one of the most widely used in practice because it is fast, interpretable, and well-calibrated. Understanding classification metrics is equally important. Accuracy is misleading when classes are imbalanced -- a spam detector that labels everything as not-spam achieves 99% accuracy on a dataset with 1% spam, yet catches zero spam. Precision, recall, F1-score, and ROC curves provide a nuanced view of classifier performance that guides real-world deployment decisions. This session also addresses class imbalance, which is the norm rather than the exception in practical applications: fraud detection, disease diagnosis, defect detection, and rare event prediction all involve heavily skewed class distributions.",
         "key_concepts": [
-          "Confusion matrix: TP, TN, FP, FN",
-          "Precision (positive predictive value), recall (sensitivity), F1-score",
-          "ROC curve and AUC: threshold-independent evaluation",
-          "L1 (Lasso) and L2 (Ridge) regularization: penalizing model complexity",
-          "k-fold cross-validation: reducing evaluation variance"
+          "Logistic regression: P(y=1|x) = sigmoid(w^T x + b) = 1 / (1 + exp(-(w^T x + b))); outputs a probability that is thresholded at 0.5 by default for classification",
+          "Binary cross-entropy loss: L = -(1/n) * sum(y_i * log(p_i) + (1 - y_i) * log(1 - p_i)); penalizes confident wrong predictions heavily",
+          "Gradient of BCE: dL/dw = (1/n) * X^T * (p - y); the gradient is the prediction error weighted by the features; same form as MSE gradient for linear regression",
+          "Multi-class extension: softmax regression uses softmax(z_k) = exp(z_k) / sum(exp(z_j)) to produce class probabilities; trained with categorical cross-entropy loss",
+          "Confusion matrix: TP (correctly predicted positive), TN (correctly predicted negative), FP (false alarm), FN (missed detection)",
+          "Precision: TP / (TP + FP) -- of all predicted positives, how many are actually positive? Critical when false positive cost is high",
+          "Recall: TP / (TP + FN) -- of all actual positives, how many did we catch? Critical when false negative cost is high",
+          "F1-score: harmonic mean of precision and recall = 2 * P * R / (P + R); a single metric that balances both",
+          "ROC curve and AUC: ROC plots true positive rate vs false positive rate at all thresholds; AUC summarizes overall discriminative ability; AUC = 0.5 is random, AUC = 1.0 is perfect",
+          "Class imbalance strategies: oversampling the minority class (SMOTE), undersampling the majority class, adjusting class weights in the loss function, and threshold tuning"
         ],
-        "demonstration": "Train a classifier on an imbalanced credit fraud dataset, show that accuracy is 99% but recall is 10%, then apply class weighting, threshold tuning, and regularization to improve the useful metrics",
+        "demonstration": "Train a logistic regression classifier on a credit card fraud dataset (0.17% fraud rate). Show that: (1) accuracy is 99.83% but recall is 0% -- the model labels everything as legitimate. (2) Apply class weighting and retrain -- recall jumps to 85% while precision drops to 10%. (3) Plot the ROC curve and precision-recall curve to find the optimal threshold. (4) Apply SMOTE oversampling and compare. (5) Display the confusion matrix at the chosen threshold and compute all metrics.",
         "setup_requirements": [
-          "Python with scikit-learn",
-          "Imbalanced dataset prepared"
+          "Python with scikit-learn, imbalanced-learn (SMOTE), matplotlib",
+          "Credit card fraud dataset (Kaggle)",
+          "Jupyter Notebook"
         ],
         "review": [
           {
             "key": "Precision-Recall Trade-off",
-            "value": "Lowering the classification threshold increases recall (catches more positives) but decreases precision (more false positives). The right trade-off depends on the cost of each error type"
+            "value": "Lowering the classification threshold catches more positives (higher recall) but also more false positives (lower precision). The optimal threshold depends on the relative costs of false positives vs false negatives."
           },
           {
-            "key": "L2 Regularization",
-            "value": "Adds lambda * sum(w^2) to the loss, penalizing large weights; this discourages the model from relying heavily on any single feature, reducing overfitting by smoothing the decision boundary"
+            "key": "Why Not Accuracy",
+            "value": "With 99.83% legitimate transactions, a model that always predicts legitimate has 99.83% accuracy but catches zero fraud. Accuracy hides this failure. Always use precision, recall, and F1 for imbalanced problems."
+          },
+          {
+            "key": "SMOTE Mechanism",
+            "value": "SMOTE creates new synthetic minority examples by interpolating between existing minority examples and their nearest neighbors. This is better than naive duplication because it creates novel points in the feature space, reducing overfitting."
+          },
+          {
+            "key": "Logistic Regression Interpretability",
+            "value": "Each weight w_i represents the change in log-odds of the positive class for a one-unit increase in feature x_i. exp(w_i) is the odds ratio. This interpretability makes logistic regression the standard baseline in medicine and social science."
           }
         ]
       }
     },
     {
       "week_number": 4,
-      "session_number": 7,
-      "topic": "Tree-Based Methods and Ensemble Learning",
-      "duration": "50 minutes",
+      "session_number": 4,
+      "topic": "Decision Trees and Random Forests",
+      "duration": "80 minutes",
       "learning_objectives": [
-        "Implement decision trees and understand information gain splitting",
-        "Build random forests and gradient boosting ensembles",
-        "Compare ensemble methods with single models on real datasets"
+        "Implement a decision tree classifier using information gain and Gini impurity splitting criteria",
+        "Understand overfitting in trees and apply pruning techniques",
+        "Build random forests using bagging and random feature selection",
+        "Interpret feature importance scores and partial dependence plots"
       ],
       "readings": [
-        "Hastie, Ch. 9 - Additive Models and Trees",
-        "Friedman, 'Greedy Function Approximation: A Gradient Boosting Machine' (2001)"
+        "Hastie, Elements of Statistical Learning, Ch. 9 -- Additive Models, Trees, and Related Methods",
+        "Breiman, 'Random Forests' (2001)",
+        "Geron, Ch. 6-7 -- Decision Trees and Ensemble Learning"
       ],
       "lecture_notes": {
-        "introduction": "Ensemble methods combine multiple weak models into a strong one. Random forests and gradient boosting are the most consistently effective ML algorithms for structured data, winning the majority of Kaggle competitions that do not involve images or text.",
+        "introduction": "Decision trees are the most interpretable machine learning model: they make decisions through a series of yes/no questions about feature values, producing a flowchart that anyone can follow. A fully-grown tree perfectly classifies the training data by creating a leaf for every distinct example -- but this memorizes noise and generalizes poorly. A far more powerful approach is the random forest: train hundreds of trees, each on a random subset of the data with a random subset of features, and combine their predictions by majority vote. This ensemble approach reduces variance dramatically while maintaining the low bias of deep trees. Random forests are consistently among the top-performing models for tabular data, require minimal hyperparameter tuning, provide built-in feature importance scores, and are robust to outliers and missing values. They are the default first choice for most structured data problems in industry.",
         "key_concepts": [
-          "Decision tree splitting criteria: information gain, Gini impurity",
-          "Bagging: training on random subsets with replacement (reduces variance)",
-          "Random forests: bagging + random feature subsets at each split",
-          "Gradient boosting: sequentially fitting trees to residual errors",
-          "XGBoost and LightGBM: optimized gradient boosting implementations"
+          "Decision tree splitting: at each node, evaluate all features and all thresholds; choose the split that maximizes information gain or minimizes Gini impurity",
+          "Information gain: IG(Y, X) = H(Y) - H(Y|X); the reduction in entropy of the target Y when we know the value of feature X",
+          "Gini impurity: G = 1 - sum(p_k^2) for class proportions p_k; measures the probability that two randomly chosen examples from the node have different labels",
+          "Tree overfitting: a fully-grown tree creates a separate leaf for every training example, achieving 100% training accuracy but poor test accuracy",
+          "Pruning techniques: pre-pruning (limit max depth, min samples per leaf) and post-pruning (grow the full tree, then remove branches that do not improve validation accuracy)",
+          "Bagging (Bootstrap Aggregating): train multiple models on random subsets of the data sampled with replacement; averaging predictions reduces variance",
+          "Random forests: bagging plus random feature subsets at each split; if there are d features, each split considers sqrt(d) random features; this decorrelates the trees",
+          "Out-of-bag (OOB) evaluation: each tree is trained on approximately 63% of the data; the remaining 37% can be used to evaluate that tree, providing a free validation estimate",
+          "Feature importance: measure each feature's total reduction in impurity across all splits in all trees; provides a reliable ranking of which features are most predictive",
+          "Partial dependence plots: show the marginal effect of one or two features on the predicted outcome, averaging over all other features"
         ],
-        "demonstration": "Compare a single decision tree, random forest, and XGBoost on a real tabular dataset, showing how ensemble size and tree depth affect accuracy and overfitting",
+        "demonstration": "Compare a single decision tree, a random forest, and the effect of key hyperparameters on a real tabular dataset. (1) Train a depth-unlimited tree and show it achieves 100% training accuracy but only 82% test accuracy. (2) Plot accuracy vs max_depth to find the optimal depth. (3) Train a random forest with 100 trees and show 86% test accuracy with no tuning. (4) Plot test accuracy vs number of trees to show convergence. (5) Display feature importance scores and partial dependence plots for the top 3 features.",
         "setup_requirements": [
-          "Python with scikit-learn, xgboost, lightgbm",
-          "Tabular dataset for comparison"
+          "Python with scikit-learn, matplotlib, seaborn",
+          "Adult income dataset or similar tabular classification dataset",
+          "Jupyter Notebook"
         ],
         "review": [
           {
-            "key": "Bagging vs Boosting",
-            "value": "Bagging trains models independently in parallel, reducing variance (random forests). Boosting trains models sequentially, each correcting the previous one's errors, reducing bias (gradient boosting). Boosting often achieves higher accuracy but is more prone to overfitting"
+            "key": "Bagging Reduces Variance",
+            "value": "If individual trees have variance sigma^2 and correlation rho, the ensemble variance is rho*sigma^2 + (1-rho)*sigma^2/n. Bagging and random feature selection minimize rho, making ensemble variance much smaller than individual tree variance."
           },
           {
-            "key": "Feature Importance",
-            "value": "Tree-based models naturally provide feature importance scores based on how much each feature reduces impurity across all splits; this makes them interpretable and useful for feature selection"
+            "key": "Information Gain vs Gini",
+            "value": "In practice, information gain and Gini impurity produce nearly identical trees. The choice almost never affects final model performance, so scikit-learn defaults to Gini."
+          },
+          {
+            "key": "Why Random Forests Need No Scaling",
+            "value": "Trees split by comparing feature values to thresholds -- they only use the ordering of values, not their magnitude. Scaling features does not change their ordering, so it has no effect on tree splits."
+          },
+          {
+            "key": "When Decision Trees Excel",
+            "value": "Trees naturally handle mixed feature types, missing values, feature interactions, and non-linear relationships. They are the best choice when interpretability is required and when the data has complex feature interactions."
           }
         ]
       }
     },
     {
       "week_number": 5,
-      "session_number": 9,
-      "topic": "Unsupervised Learning: Clustering and Dimensionality Reduction",
-      "duration": "50 minutes",
+      "session_number": 5,
+      "topic": "Support Vector Machines",
+      "duration": "80 minutes",
       "learning_objectives": [
-        "Implement k-means clustering and evaluate with silhouette scores",
-        "Apply PCA for dimensionality reduction and visualization",
-        "Understand when to use unsupervised vs supervised approaches"
+        "Understand the maximum margin principle and its geometric interpretation",
+        "Implement soft-margin SVM classification with the C hyperparameter",
+        "Apply the kernel trick for non-linear classification without explicitly computing high-dimensional features",
+        "Compare SVM with logistic regression and decision trees on real datasets"
       ],
       "readings": [
-        "Bishop, Ch. 9 - Mixture Models and EM",
-        "Hastie, Ch. 14 - Unsupervised Learning"
+        "Bishop, Ch. 7 -- Sparse Kernel Machines",
+        "Hastie, Ch. 12 -- Support Vector Machines and Flexible Discriminants",
+        "Geron, Ch. 5 -- Support Vector Machines"
       ],
       "lecture_notes": {
-        "introduction": "Unsupervised learning finds structure in data without labels. Clustering groups similar items together; dimensionality reduction compresses high-dimensional data while preserving structure. Both are essential for exploratory data analysis and preprocessing.",
+        "introduction": "Support vector machines find the decision boundary that maximizes the margin -- the distance between the boundary and the nearest training points (support vectors). For data that is not linearly separable, the kernel trick implicitly maps data to a higher-dimensional space where a linear separator exists, without ever computing the high-dimensional features explicitly. SVMs were the dominant ML method before deep learning and remain the best choice for many problems with small to medium datasets, especially in domains like text classification and bioinformatics where the feature space is high-dimensional relative to the number of training examples. Understanding SVMs also introduces key concepts -- convex optimization, duality, and kernel methods -- that appear throughout modern ML.",
         "key_concepts": [
-          "k-means: iterative centroid assignment and update, O(nkd) per iteration",
-          "Choosing k: elbow method, silhouette score, domain knowledge",
-          "DBSCAN: density-based clustering, handles arbitrary shapes",
-          "PCA: projecting data onto directions of maximum variance",
-          "t-SNE: nonlinear dimensionality reduction for visualization"
+          "Maximum margin classifier: find the hyperplane that separates the classes with the largest gap; maximizing the margin minimizes ||w||, which is equivalent to regularization",
+          "Support vectors: the training points closest to the decision boundary; they alone determine the boundary",
+          "Soft margin SVM: allows some misclassifications using slack variables; the C hyperparameter controls the trade-off between margin and misclassifications",
+          "The kernel trick: compute dot products in a high-dimensional feature space without explicitly transforming the data",
+          "Linear kernel: K(x,y) = x^T y; use when features are already high-dimensional or data is linearly separable",
+          "Polynomial kernel: K(x,y) = (x^T y + c)^d; captures feature interactions without explicit feature engineering",
+          "RBF (Gaussian) kernel: K(x,y) = exp(-gamma * ||x-y||^2); maps to infinite-dimensional space; gamma controls the radius of influence",
+          "Hyperparameter tuning: C and kernel parameters are critical; use grid search with cross-validation",
+          "SVM vs logistic regression: SVM maximizes margin, logistic regression maximizes likelihood; SVM uses only support vectors, providing better generalization for small datasets"
         ],
-        "demonstration": "Apply k-means and DBSCAN to customer segmentation data, use PCA to reduce 20 features to 2 for visualization, and compare the cluster structures found by each method",
+        "demonstration": "Classify a 2D synthetic dataset that is not linearly separable (concentric rings). (1) Show that a linear SVM fails. (2) Apply the polynomial kernel -- works but not smooth. (3) Apply the RBF kernel -- smooth, accurate boundary. (4) Visualize the decision boundary and support vectors. (5) Plot a heatmap of cross-validation accuracy over a grid of C and gamma values.",
         "setup_requirements": [
           "Python with scikit-learn and matplotlib",
-          "Customer dataset with multiple features"
+          "Synthetic and real datasets for comparison",
+          "Jupyter Notebook"
         ],
         "review": [
           {
-            "key": "k-Means Limitations",
-            "value": "k-means assumes spherical clusters of similar size, requires specifying k in advance, and is sensitive to initialization; running with multiple random initializations (k-means++) and comparing inertia mitigates the initialization issue"
+            "key": "Why Maximize Margin",
+            "value": "A larger margin means the decision boundary is further from all training points, so small perturbations in new data are less likely to cause misclassification. Statistical learning theory proves that larger margins give tighter generalization bounds."
           },
           {
-            "key": "PCA Interpretation",
-            "value": "Each principal component is a linear combination of original features; the first PC captures the most variance. Examining the component loadings reveals which original features drive each component"
+            "key": "C Parameter Intuition",
+            "value": "Small C: wide margin, tolerates misclassifications, underfits if too small. Large C: narrow margin, penalizes every misclassification, overfits if too large. The optimal C is found by cross-validation."
+          },
+          {
+            "key": "RBF Gamma Intuition",
+            "value": "Small gamma: each support vector influences a large area, smooth boundary (high bias). Large gamma: each support vector influences only nearby points, wiggly boundary (high variance)."
+          },
+          {
+            "key": "When to Use SVM",
+            "value": "SVM excels when: (1) dataset is small to medium, (2) feature space is high-dimensional, (3) a clear margin of separation exists. For large datasets or when interpretability is needed, prefer logistic regression or random forests."
           }
         ]
       }
     },
     {
-      "week_number": 5,
-      "session_number": 10,
-      "topic": "Deep Learning: CNNs and Transfer Learning",
-      "duration": "50 minutes",
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Ensemble Methods: Boosting and Stacking",
+      "duration": "80 minutes",
       "learning_objectives": [
-        "Understand convolutional neural network architecture for image classification",
-        "Apply transfer learning using pre-trained models",
-        "Fine-tune models for domain-specific tasks"
+        "Implement gradient boosting from the perspective of sequentially fitting residual errors",
+        "Compare AdaBoost, gradient boosting (XGBoost/LightGBM), and random forests on real datasets",
+        "Understand stacking as a meta-learning approach that combines diverse models",
+        "Tune gradient boosting hyperparameters: learning rate, number of estimators, max depth, and subsampling"
       ],
       "readings": [
-        "Goodfellow, Deep Learning, Ch. 9 - Convolutional Networks",
+        "Friedman, 'Greedy Function Approximation: A Gradient Boosting Machine' (2001)",
+        "Chen and Guestrin, 'XGBoost: A Scalable Tree Boosting System' (2016)",
+        "Geron, Ch. 7 -- Ensemble Learning and Random Forests"
+      ],
+      "lecture_notes": {
+        "introduction": "Ensemble methods combine multiple models to achieve better performance than any individual model. Boosting builds models sequentially, with each new model focusing on the examples the previous models got wrong. Gradient boosting, and its optimized implementations XGBoost and LightGBM, are the most consistently winning algorithms on Kaggle competitions for tabular data. Stacking takes a different approach: train diverse base models, then train a meta-model that learns how to best combine their predictions. Understanding these ensemble techniques and when to use each is one of the most valuable practical skills in applied ML.",
+        "key_concepts": [
+          "Boosting intuition: combine many weak learners into a strong learner by focusing each successive learner on the examples the ensemble currently gets wrong",
+          "AdaBoost: increase the weight of misclassified examples after each round; the next weak learner pays more attention to hard examples",
+          "Gradient boosting: interpret boosting as gradient descent in function space; each new tree fits the negative gradient of the loss function",
+          "XGBoost optimizations: regularized objective, second-order Taylor approximation, column subsampling, handling of missing values, parallel tree construction",
+          "LightGBM optimizations: histogram-based splitting, leaf-wise tree growth, gradient-based one-side sampling (GOSS)",
+          "Gradient boosting hyperparameters: n_estimators, learning_rate (shrinkage), max_depth, subsample",
+          "Early stopping: monitor validation loss and stop adding trees when it stops improving; prevents overfitting without needing to set n_estimators",
+          "Stacking (stacked generalization): train diverse base models; use their predictions as features for a meta-model; the meta-model learns which base model to trust for which input patterns",
+          "Bagging vs boosting vs stacking: bagging reduces variance, boosting reduces bias, stacking combines diverse models"
+        ],
+        "demonstration": "Build a gradient boosting pipeline for a Kaggle-style tabular prediction task. (1) Train XGBoost and LightGBM side by side. (2) Plot training vs validation loss showing overfitting and demonstrate early stopping. (3) Show learning rate / n_estimators trade-off. (4) Build a stacking ensemble combining random forest, XGBoost, and logistic regression. (5) Compare: single tree < random forest < XGBoost < stacked ensemble.",
+        "setup_requirements": [
+          "Python with scikit-learn, xgboost, lightgbm",
+          "Kaggle tabular dataset",
+          "Jupyter Notebook"
+        ],
+        "review": [
+          {
+            "key": "Gradient Boosting as Gradient Descent",
+            "value": "In gradient descent, we update parameters: w -= lr * dL/dw. In gradient boosting, we update the function: F(x) -= lr * dL/dF(x). Each new tree approximates the negative gradient of the loss. For MSE loss, the negative gradient is simply the residual (y - F(x))."
+          },
+          {
+            "key": "Learning Rate Regularization",
+            "value": "A small learning rate (0.01-0.1) means each tree contributes only a small correction, requiring many trees but generalizing better. Large learning rates converge faster but overfit more easily."
+          },
+          {
+            "key": "XGBoost vs LightGBM",
+            "value": "XGBoost uses level-wise tree growth and exact split finding. LightGBM uses leaf-wise growth and histogram-based approximate splits. LightGBM is typically 10-20x faster for large datasets with comparable accuracy."
+          },
+          {
+            "key": "Stacking Best Practices",
+            "value": "Base models must be diverse for stacking to work. Always use cross-validated predictions for the meta-learner training data to prevent leakage. Keep the meta-learner simple."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Neural Networks and Backpropagation",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Build a multi-layer neural network using PyTorch for classification and regression",
+        "Implement and compare optimization algorithms: SGD, SGD with momentum, RMSProp, and Adam",
+        "Apply regularization techniques: dropout, weight decay, and batch normalization",
+        "Understand practical considerations: initialization, learning rate scheduling, and convergence monitoring"
+      ],
+      "readings": [
+        "Goodfellow, Bengio, Courville, Deep Learning, Ch. 6-8",
+        "Kingma and Ba, 'Adam: A Method for Stochastic Optimization' (2014)",
+        "Ioffe and Szegedy, 'Batch Normalization: Accelerating Deep Network Training' (2015)"
+      ],
+      "lecture_notes": {
+        "introduction": "The AI Fundamentals course introduced neural networks from scratch in NumPy. Now we move to building practical neural networks with PyTorch, the industry-standard deep learning framework. This session covers the practical techniques that separate a working neural network from a great one: modern optimization algorithms that adapt the learning rate per-parameter (Adam), regularization methods that prevent overfitting without sacrificing capacity (dropout, batch normalization), and initialization strategies that ensure stable training from the start. These techniques are not optional extras -- they are essential for training neural networks that work reliably. A neural network with SGD, no dropout, and random initialization will often fail to train at all, while the same architecture with Adam, dropout, batch normalization, and proper initialization achieves state-of-the-art results.",
+        "key_concepts": [
+          "PyTorch fundamentals: tensors with GPU support, autograd for automatic differentiation, nn.Module for defining layers, and DataLoader for efficient batched data loading",
+          "SGD with momentum: accumulates velocity in the gradient direction, damping oscillations and accelerating convergence through narrow valleys",
+          "RMSProp: adapts the learning rate per-parameter by dividing by the running average of squared gradients",
+          "Adam optimizer: combines momentum with RMSProp plus bias correction; the default optimizer for most deep learning tasks",
+          "Xavier (Glorot) initialization: variance 2 / (fan_in + fan_out); maintains variance of activations and gradients across layers",
+          "He initialization: variance 2 / fan_in; designed specifically for ReLU activations",
+          "Dropout: randomly set a fraction p of neuron activations to zero during training; forces the network to learn redundant representations",
+          "Batch normalization: normalize each layer's inputs to zero mean and unit variance; stabilizes training and enables higher learning rates",
+          "Learning rate scheduling: step decay, cosine annealing, and one-cycle policy for convergence",
+          "Training monitoring: track training and validation loss per epoch; training loss decreasing while validation loss increases indicates overfitting"
+        ],
+        "demonstration": "Build a 4-layer neural network for MNIST digit classification in PyTorch. (1) Train with plain SGD, no regularization -- converges slowly, 95% accuracy. (2) Add He initialization and Adam -- 5x faster, 97% accuracy. (3) Add dropout and batch normalization -- 98.5% accuracy with smoother training curves. (4) Plot training and validation loss curves for each configuration. (5) Show gradient norm histograms with and without batch normalization.",
+        "setup_requirements": [
+          "Python with PyTorch and torchvision",
+          "GPU access recommended (Google Colab available)",
+          "MNIST dataset",
+          "Jupyter Notebook"
+        ],
+        "review": [
+          {
+            "key": "Adam vs SGD",
+            "value": "Adam converges faster in most cases. However, SGD with momentum and a well-tuned schedule often achieves slightly better final generalization. Use Adam for fast experimentation and SGD with momentum for squeezing out the last percentage on important problems."
+          },
+          {
+            "key": "Dropout Intuition",
+            "value": "Dropout trains an implicit ensemble of 2^n sub-networks that share parameters. Each training step trains a different sub-network. At test time, the full network approximates the average prediction of all sub-networks."
+          },
+          {
+            "key": "Batch Normalization Why",
+            "value": "Without batch norm, each layer's input distribution shifts as earlier layers update (internal covariate shift). Batch norm normalizes inputs, stabilizing learning and enabling higher learning rates."
+          },
+          {
+            "key": "Debugging Training Failures",
+            "value": "Loss not decreasing: learning rate too large or bad initialization. Loss decreasing but validation increasing: overfitting. Loss NaN: gradient explosion -- reduce learning rate or add gradient clipping."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Convolutional Neural Networks",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Understand the convolutional layer: filters, stride, padding, and feature maps",
+        "Calculate output dimensions for convolutional and pooling layers",
+        "Implement CNN architectures (LeNet, VGG-style, ResNet) for image classification",
+        "Apply transfer learning with pre-trained models to achieve high accuracy on small datasets"
+      ],
+      "readings": [
+        "Goodfellow, Deep Learning, Ch. 9 -- Convolutional Networks",
+        "He et al., 'Deep Residual Learning for Image Recognition' (2015)",
         "PyTorch Transfer Learning Tutorial"
       ],
       "lecture_notes": {
-        "introduction": "Convolutional neural networks revolutionized computer vision. Transfer learning lets you leverage models trained on millions of images and adapt them to your specific task with minimal data, making deep learning practical for real-world applications.",
+        "introduction": "Convolutional neural networks are specialized architectures designed for grid-like data such as images. The key innovation is the convolutional layer, which applies small learnable filters across the spatial dimensions of the input, detecting local patterns like edges, textures, and shapes. By stacking multiple convolutional layers with pooling layers, a CNN builds a hierarchy of increasingly abstract features. The ImageNet breakthrough in 2012 demonstrated that deep CNNs dramatically outperform classical methods, launching the modern deep learning revolution. Transfer learning -- reusing features learned on large datasets like ImageNet -- makes CNNs practical even when you have very limited training data. This session covers both classical techniques and modern deep learning approaches, giving you the foundation to build vision applications.",
         "key_concepts": [
-          "Convolution operation: local receptive fields, weight sharing, feature maps",
-          "CNN architecture: convolutional layers, pooling, fully connected head",
-          "Pre-trained models: ResNet, VGG, EfficientNet trained on ImageNet",
-          "Transfer learning: freeze base layers, train new classification head",
-          "Fine-tuning: unfreeze some layers and train with small learning rate"
+          "Convolutional layer: applies K learnable filters of size F x F x C_in, sliding across the spatial dimensions; output size = (W - F + 2P) / S + 1",
+          "Weight sharing: the same filter weights are applied at every spatial position, reducing parameters and encoding translation invariance",
+          "Pooling layers: max pooling or average pooling; reduces spatial dimensions and provides invariance to small translations",
+          "CNN architecture pattern: [Conv -> ReLU -> Conv -> ReLU -> Pool] repeated with increasing filter counts -> Flatten -> FC -> Softmax",
+          "LeNet (1998): the original CNN for handwritten digits; proved learned features outperform hand-crafted features",
+          "VGG (2014): very deep with only 3x3 filters; showed that depth matters and small filters capture large receptive fields through stacking",
+          "ResNet (2015): skip connections (y = F(x) + x) enabling 100+ layer networks; the standard backbone architecture",
+          "Transfer learning workflow: take pre-trained model, replace classification head, freeze base layers, train new head, optionally fine-tune top layers",
+          "Data augmentation: random flips, rotations, crops, color jittering; critical for preventing overfitting on small datasets"
         ],
-        "demonstration": "Use a pre-trained ResNet50 to classify a custom dataset of 500 images across 10 classes, comparing training from scratch (poor) vs transfer learning (excellent) with the same data",
+        "demonstration": "Build an image classifier for a custom 10-class dataset with only 100 images per class. (1) CNN from scratch -- only 45% accuracy. (2) Pre-trained ResNet18 as feature extractor -- 78%. (3) Fine-tune last two blocks -- 88%. (4) Add data augmentation -- 91%. Visualize first-layer filters and class activation maps (Grad-CAM).",
         "setup_requirements": [
           "Python with PyTorch and torchvision",
-          "GPU access recommended (Google Colab)",
-          "Custom image dataset prepared"
+          "GPU access required (Google Colab with GPU runtime)",
+          "Custom 10-class image dataset or CIFAR-10 subset",
+          "Grad-CAM visualization library"
         ],
         "review": [
           {
-            "key": "Transfer Learning Rationale",
-            "value": "Early CNN layers learn universal features (edges, textures, shapes) that transfer across tasks; only the final classification layers need task-specific training. This dramatically reduces the data and compute required"
+            "key": "Receptive Field",
+            "value": "The region of the input image affecting a neuron's value. Two stacked 3x3 conv layers have a 5x5 receptive field with fewer parameters than one 5x5 layer. Deep networks with small filters can have very large receptive fields."
           },
           {
-            "key": "When to Fine-Tune",
-            "value": "If your dataset is small and similar to ImageNet, freeze all base layers. If your dataset is large or very different from ImageNet, unfreeze later layers and fine-tune with a small learning rate to adapt features"
+            "key": "Output Size Formula",
+            "value": "For conv layer with input W, filter F, padding P, stride S: output = floor((W - F + 2P) / S) + 1. Same padding (P = F/2, S=1) preserves spatial dimensions."
+          },
+          {
+            "key": "Transfer Learning When to Freeze",
+            "value": "Small dataset similar to ImageNet: freeze all but the head. Small dataset different from ImageNet: freeze early layers, fine-tune later. Large dataset: fine-tune everything."
+          },
+          {
+            "key": "Why CNNs Beat Fully Connected Networks",
+            "value": "A fully connected layer on a 224x224x3 image with 256 neurons has 38.5M parameters. A conv layer with 256 3x3 filters has only 6,912 parameters, naturally encodes locality and translation invariance."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "Recurrent Neural Networks and LSTMs",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Understand the recurrent neural network architecture for processing sequential data",
+        "Implement LSTM and GRU cells that solve the vanishing gradient problem for long sequences",
+        "Apply RNNs to time series prediction and text classification tasks",
+        "Compare RNN-based approaches with transformer-based approaches for sequence modeling"
+      ],
+      "readings": [
+        "Goodfellow, Deep Learning, Ch. 10 -- Sequence Modeling: Recurrent and Recursive Nets",
+        "Hochreiter and Schmidhuber, 'Long Short-Term Memory' (1997)",
+        "Cho et al., 'Learning Phrase Representations using RNN Encoder-Decoder' (2014)"
+      ],
+      "lecture_notes": {
+        "introduction": "Many real-world data types are sequential: time series, natural language, audio, and genomic data. Recurrent neural networks process sequences by maintaining a hidden state updated at each time step, giving the network memory of what it has seen. The vanilla RNN suffers from the vanishing gradient problem, making it unable to learn dependencies spanning more than 10-20 steps. LSTM and GRU architectures solve this with gating mechanisms that control information flow, enabling learning of dependencies spanning hundreds of time steps. While transformers have surpassed RNNs for many NLP tasks, RNNs remain important for time series prediction and streaming data processing. Understanding RNNs is also essential background for understanding attention mechanisms and transformers.",
+        "key_concepts": [
+          "RNN architecture: at each time step t, h_t = activation(W_hh * h_{t-1} + W_xh * x_t + b); same weight matrices shared across all time steps",
+          "Backpropagation through time (BPTT): unroll the RNN and apply backpropagation; gradients shrink or grow exponentially through time steps",
+          "Vanishing gradient problem: for a 100-step sequence, gradients multiplied by the recurrent weight matrix 100 times; if largest eigenvalue < 1, gradients vanish",
+          "LSTM cell: maintains cell state (long-term memory) and hidden state (short-term memory); three gates: forget (what to discard), input (what to add), output (what to emit)",
+          "LSTM gate equations: forget gate f_t = sigmoid(W_f * [h_{t-1}, x_t]); input gate i_t; cell update c_t = f_t * c_{t-1} + i_t * tanh(W_c); output gate o_t; h_t = o_t * tanh(c_t)",
+          "GRU: simplified LSTM with two gates (reset and update); fewer parameters, often comparable performance",
+          "Bidirectional RNNs: process the sequence forward and backward; essential when context from both directions matters",
+          "Sequence-to-sequence: encoder RNN reads input into a context vector; decoder RNN generates output from context",
+          "Teacher forcing: during training, feed the true previous output as input; speeds training but can cause exposure bias"
+        ],
+        "demonstration": "Build two applications: (1) Time series prediction -- train an LSTM on stock prices, compare vanilla RNN (fails on long dependencies), LSTM (captures trends), and a simple baseline. (2) Sentiment classification -- train a bidirectional LSTM on IMDB reviews; show hidden state evolution and compare with TF-IDF + logistic regression baseline.",
+        "setup_requirements": [
+          "Python with PyTorch",
+          "Stock price dataset and IMDB sentiment dataset",
+          "Jupyter Notebook"
+        ],
+        "review": [
+          {
+            "key": "LSTM Forget Gate",
+            "value": "The forget gate decides what to discard from the cell state. For a language model reading a long sentence with a relative clause, the forget gate keeps the subject through the clause so the model predicts the correct verb agreement."
+          },
+          {
+            "key": "LSTM vs GRU",
+            "value": "LSTM has 3 gates and separate cell/hidden states (4x parameters per layer). GRU has 2 gates and a single state (3x parameters). GRU trains faster and often matches LSTM for short sequences. For very long sequences, LSTM's separate cell state provides an advantage."
+          },
+          {
+            "key": "Why RNNs Still Matter",
+            "value": "Transformers have O(n^2) attention complexity. RNNs have O(n) complexity and constant memory per step, suitable for streaming data and very long sequences. Newer architectures like Mamba combine RNN efficiency with transformer performance."
+          },
+          {
+            "key": "Sequence Padding",
+            "value": "Real sequences have variable lengths. Pad shorter sequences to the batch maximum with a PAD token and use a mask to ignore padded positions in the loss. pack_padded_sequence in PyTorch avoids wasting computation on padding."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "Unsupervised Learning: Clustering and Dimensionality Reduction",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Implement k-means clustering and evaluate cluster quality with silhouette scores and the elbow method",
+        "Apply DBSCAN for density-based clustering that handles arbitrary cluster shapes",
+        "Implement PCA for dimensionality reduction and data visualization",
+        "Apply t-SNE and UMAP for nonlinear visualization of high-dimensional data"
+      ],
+      "readings": [
+        "Bishop, Ch. 9 -- Mixture Models and EM",
+        "Hastie, Ch. 14 -- Unsupervised Learning",
+        "van der Maaten and Hinton, 'Visualizing Data using t-SNE' (2008)"
+      ],
+      "lecture_notes": {
+        "introduction": "Unsupervised learning finds structure in data without labels. Clustering groups similar items together -- customer segmentation, document topic discovery, gene expression analysis, and anomaly detection all use clustering. Dimensionality reduction compresses high-dimensional data to fewer dimensions while preserving important structure -- essential for visualization, denoising, and computational efficiency. These techniques are not just standalone tools; they are essential pipeline components. PCA preprocessing reduces noise before supervised models. Clustering provides pseudo-labels for semi-supervised learning. Every ML practitioner uses unsupervised methods daily, often as preprocessing or diagnostic tools rather than as the final model.",
+        "key_concepts": [
+          "k-means algorithm: randomly initialize centroids, assign points to nearest centroid, recompute centroids, repeat until convergence",
+          "Choosing k: elbow method, silhouette score, domain knowledge",
+          "k-means limitations: assumes spherical clusters, requires k in advance, sensitive to initialization (k-means++ addresses this), sensitive to outliers",
+          "DBSCAN: density-based clustering; core points have >= min_samples neighbors within epsilon; finds arbitrary-shaped clusters without specifying k",
+          "PCA: finds orthogonal directions of maximum variance; projects data onto top k components",
+          "PCA interpretation: each component is a linear combination of original features; loadings reveal which features drive each component",
+          "t-SNE: nonlinear dimensionality reduction preserving local neighborhood structure; minimizes KL divergence between high-d and low-d similarities",
+          "UMAP: similar to t-SNE but preserves more global structure, runs faster, and supports out-of-sample embedding",
+          "Anomaly detection with clustering: points far from cluster centers or noise points in DBSCAN are potential anomalies"
+        ],
+        "demonstration": "Apply unsupervised methods to a customer transaction dataset with 20 features. (1) PCA to 2D for visualization with cumulative variance plot. (2) k-means with k=2 to k=10, plot elbow and silhouette to select k=4. (3) DBSCAN finding the same 4 clusters plus outliers. (4) t-SNE and UMAP visualizations side by side. (5) Interpret clusters: examine mean feature values to create customer personas.",
+        "setup_requirements": [
+          "Python with scikit-learn, matplotlib, seaborn, umap-learn",
+          "Customer transaction dataset",
+          "Jupyter Notebook"
+        ],
+        "review": [
+          {
+            "key": "k-means++ Initialization",
+            "value": "Selects first centroid randomly, then each subsequent centroid with probability proportional to squared distance from nearest existing centroid. Spreads initial centroids across the data, dramatically reducing poor local minima."
+          },
+          {
+            "key": "PCA vs t-SNE vs UMAP",
+            "value": "PCA is linear, fast, preserves global structure. t-SNE is nonlinear, excellent at revealing local clusters but distorts global distances and is slow. UMAP is nonlinear, preserves both local and global structure, and runs much faster than t-SNE."
+          },
+          {
+            "key": "DBSCAN Parameter Selection",
+            "value": "Use a k-distance plot: compute the distance to each point's kth nearest neighbor, sort, and look for an elbow -- that distance is a good epsilon. min_samples >= dimensionality + 1 is a good starting point."
+          },
+          {
+            "key": "PCA for Preprocessing",
+            "value": "Applying PCA before a supervised model removes noise dimensions, eliminates collinearity, and reduces computation. Typically keep enough components to explain 95% of variance."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "Dimensionality Reduction and Feature Engineering",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Apply advanced dimensionality reduction: kernel PCA, autoencoders, and feature hashing",
+        "Engineer features from domain knowledge: interaction terms, binning, polynomial features, and temporal features",
+        "Implement automated feature selection: filter methods, wrapper methods, and embedded methods",
+        "Understand the curse of dimensionality and its practical implications"
+      ],
+      "readings": [
+        "Geron, Ch. 8 -- Dimensionality Reduction",
+        "Zheng and Casari, 'Feature Engineering for Machine Learning', Ch. 1-5",
+        "Guyon and Elisseeff, 'An Introduction to Variable and Feature Selection' (2003)"
+      ],
+      "lecture_notes": {
+        "introduction": "The features you give a model matter more than the model you choose. Feature engineering -- the art of creating informative input representations from raw data -- is the most impactful and least automatable part of the ML pipeline. A well-engineered feature can turn a failing model into a successful one. This session covers both dimensionality reduction (removing uninformative dimensions) and feature engineering (creating informative new dimensions). The curse of dimensionality motivates dimensionality reduction: as features grow, data becomes sparse, distances become meaningless, and models need exponentially more data. The best ML practitioners are not those who try the most models, but those who engineer the best features.",
+        "key_concepts": [
+          "Curse of dimensionality: in high dimensions, data becomes sparse, distances become nearly equal, and models need exponentially more training data",
+          "Kernel PCA: applies the kernel trick to PCA for nonlinear dimensionality reduction; useful when data lies on a nonlinear manifold",
+          "Autoencoders: neural networks that learn to compress data through a bottleneck layer and reconstruct it; the bottleneck is a nonlinear dimensionality reduction",
+          "Feature hashing: map high-cardinality categorical features to a fixed-size vector using hash functions; enables handling millions of categories with bounded memory",
+          "Interaction features: create new features by combining existing ones (price * quantity = revenue); captures relationships linear models cannot learn alone",
+          "Polynomial features: generate all combinations up to degree d; increases expressiveness but also dimensionality",
+          "Temporal feature engineering: extract day-of-week, hour, month, is-holiday, rolling averages, and lag features from timestamps",
+          "Filter methods: score features independently (mutual information, correlation); fast but ignores interactions",
+          "Wrapper methods (RFE): recursively train, remove least important feature, repeat; captures interactions but expensive",
+          "Embedded methods: L1 regularization drives irrelevant weights to zero; tree-based importance measures feature contributions during training"
+        ],
+        "demonstration": "Engineer features for a real estate price prediction task. (1) Start with raw features. (2) Engineer: age, price_per_sqft_neighborhood (target encoding with cross-validation), bath_to_bed_ratio, total_rooms. (3) Apply mutual information to rank features. (4) Compare: raw (R^2=0.72), engineered (R^2=0.86), PCA (R^2=0.80), L1 selection (R^2=0.85). (5) Show that one engineered feature contributes more than 5 raw features combined.",
+        "setup_requirements": [
+          "Python with scikit-learn, pandas, category_encoders",
+          "Real estate dataset with diverse feature types",
+          "Jupyter Notebook"
+        ],
+        "review": [
+          {
+            "key": "Curse of Dimensionality Illustration",
+            "value": "In a unit hypercube with d=100 dimensions, 87% of the volume is within distance 0.01 of any face. Points are concentrated near edges, not uniformly distributed, making density estimation and distance-based methods unreliable."
+          },
+          {
+            "key": "Feature Engineering vs Deep Learning",
+            "value": "Deep learning automatically learns features for unstructured data (images, text, audio). For tabular data, hand-crafted domain features consistently outperform automated feature learning."
+          },
+          {
+            "key": "Target Encoding Leakage",
+            "value": "Naive target encoding causes leakage. Prevent with: smoothing, leave-one-out encoding, or computing encodings within cross-validation folds."
+          },
+          {
+            "key": "When to Reduce Dimensions",
+            "value": "Reduce when: many features are noisy, visualization is needed, the model is expensive, or you have more features than examples. Do not reduce when features are carefully engineered and you have abundant data."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Model Evaluation, Validation, and Selection",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Implement proper cross-validation strategies including stratified, grouped, and time series splits",
+        "Apply statistical tests to determine whether performance differences between models are significant",
+        "Perform error analysis to diagnose model failures and guide improvement",
+        "Understand calibration: when predicted probabilities match actual probabilities"
+      ],
+      "readings": [
+        "Hastie, Ch. 7 -- Model Assessment and Selection",
+        "Raschka, 'Model Evaluation, Model Selection, and Algorithm Selection in Machine Learning' (2018)",
+        "Niculescu-Mizil and Caruana, 'Predicting Good Probabilities with Supervised Learning' (2005)"
+      ],
+      "lecture_notes": {
+        "introduction": "Rigorous model evaluation requires understanding the variance of your performance estimates, using appropriate cross-validation strategies for your data structure, applying statistical tests to compare models, and performing error analysis to understand not just how often your model is wrong but why. In industry, a model that reports accuracy without confidence intervals, without a baseline comparison, and without failure mode analysis is not trustworthy. This session covers the evaluation methodology that separates amateur ML work from professional ML work, including calibration -- whether the model's predicted probabilities match actual outcomes.",
+        "key_concepts": [
+          "Holdout evaluation: simple but high variance; only reliable for large datasets",
+          "k-fold cross-validation: partition into k folds, train on k-1, test on held-out fold, rotate k times; k=5 or k=10 is standard",
+          "Stratified k-fold: ensures each fold has the same class distribution; essential for imbalanced classes",
+          "Grouped k-fold: ensures all samples from the same group are in the same fold; prevents leakage from correlated samples",
+          "Time series split: training before validation chronologically; prevents using future data to predict past",
+          "Nested cross-validation: outer loop for evaluation, inner loop for hyperparameter tuning; gives unbiased estimate",
+          "Statistical comparison: paired t-test on fold scores tests whether mean difference is significant; McNemar's test compares two classifiers on the same test set",
+          "Confidence intervals: accuracy as mean +/- 1.96 * std / sqrt(k) for 95% interval; overlapping intervals means difference may not be significant",
+          "Error analysis: examine misclassified examples for systematic patterns; guide targeted improvements",
+          "Calibration: Platt scaling and isotonic regression post-process probabilities to match actual frequencies"
+        ],
+        "demonstration": "Evaluate 4 models on a medical diagnosis dataset. (1) Show holdout gives different winners on different splits. (2) Apply 10-fold stratified CV. (3) Paired t-test shows XGBoost vs random forest is significant (p=0.03), XGBoost vs neural network is not (p=0.41). (4) Error analysis on XGBoost: most errors on borderline cases. (5) Check calibration and apply Platt scaling. (6) Deploy calibrated XGBoost justified by rigorous evaluation.",
+        "setup_requirements": [
+          "Python with scikit-learn, scipy, matplotlib",
+          "Medical diagnosis or similar structured dataset",
+          "Jupyter Notebook"
+        ],
+        "review": [
+          {
+            "key": "Why Nested Cross-Validation",
+            "value": "Tuning hyperparameters on the same folds used for evaluation gives optimistically biased estimates. Nested CV uses an outer loop for evaluation and inner loop for tuning, ensuring unbiased estimates."
+          },
+          {
+            "key": "Calibration Importance",
+            "value": "A cancer model predicting 90% should be malignant 90% of the time. Poor calibration causes either unnecessary procedures (over-confident) or missed cancers (under-confident). Platt scaling fixes this."
+          },
+          {
+            "key": "Error Analysis Methodology",
+            "value": "For each misclassified example: examine features and true label, check model confidence, look for patterns across errors. Use patterns to collect targeted data, engineer missing features, or adjust thresholds."
+          },
+          {
+            "key": "Data Leakage in Cross-Validation",
+            "value": "Fit scalers, encoders, and feature selectors on the training fold ONLY. scikit-learn Pipelines within cross_val_score handle this automatically."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "Hyperparameter Tuning and AutoML",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Implement grid search, random search, and Bayesian optimization for hyperparameter tuning",
+        "Understand the practical advantages of random search over grid search",
+        "Apply Bayesian optimization using surrogate models",
+        "Evaluate AutoML frameworks and their role in the ML workflow"
+      ],
+      "readings": [
+        "Bergstra and Bengio, 'Random Search for Hyper-Parameter Optimization' (2012)",
+        "Snoek, Larochelle, Adams, 'Practical Bayesian Optimization of Machine Learning Algorithms' (2012)",
+        "Feurer et al., 'Auto-sklearn: Efficient and Robust Automated Machine Learning' (2015)"
+      ],
+      "lecture_notes": {
+        "introduction": "Every machine learning model has hyperparameters that must be set before training. The wrong hyperparameters can make the difference between 70% and 95% accuracy. Grid search exhaustively tries every combination; random search samples randomly from distributions. Bergstra and Bengio proved that random search is dramatically more efficient when only a few hyperparameters matter. Bayesian optimization uses a probabilistic surrogate model to predict which configurations will perform well. AutoML frameworks automate the entire pipeline. Understanding these tools is essential for efficient ML development -- the hours spent manually tuning are better spent on feature engineering and error analysis.",
+        "key_concepts": [
+          "Hyperparameters vs parameters: parameters are learned from data; hyperparameters control the learning process",
+          "Grid search: evaluate every combination on a predefined grid; exhaustive but scales exponentially",
+          "Random search: sample values randomly from distributions; more efficient because important hyperparameters are explored more densely",
+          "Why random search beats grid search: with 10 hyperparameters but only 2-3 that matter, random search explores unique values of each important parameter at every trial",
+          "Bayesian optimization: build a surrogate model of the objective; use an acquisition function (expected improvement) to balance exploration and exploitation",
+          "Gaussian Process surrogate: models the objective with mean prediction and uncertainty; explores uncertain regions and exploits promising ones",
+          "Tree-structured Parzen Estimators (TPE): used by Optuna and Hyperopt; models P(hyperparameters | good scores) and P(hyperparameters | bad scores) separately",
+          "Early stopping for search: terminate configurations that are clearly worse than the best; Hyperband and successive halving implement this",
+          "AutoML frameworks: Auto-sklearn, FLAML, AutoGluon; search over preprocessing, model types, and hyperparameters simultaneously"
+        ],
+        "demonstration": "Tune an XGBoost model. (1) Grid search: 625 evaluations, 20 minutes, 86.7% accuracy. (2) Random search: 100 evaluations, 3 minutes, 86.9%. (3) Bayesian optimization (Optuna): 50 evaluations, 2 minutes, 87.2%. (4) Plot optimization trajectory showing Bayesian convergence. (5) AutoGluon: automatic model selection and stacking, 87.8% in 10 minutes with zero configuration.",
+        "setup_requirements": [
+          "Python with scikit-learn, optuna, xgboost",
+          "Optional: AutoGluon or FLAML",
+          "Tabular dataset",
+          "Jupyter Notebook"
+        ],
+        "review": [
+          {
+            "key": "Random Search Efficiency",
+            "value": "If only 2 of 10 hyperparameters matter, 60 random trials have 95% chance of finding a top-5% configuration for the important ones. Grid search with 60 trials barely explores those dimensions."
+          },
+          {
+            "key": "Bayesian Optimization Acquisition Function",
+            "value": "Expected Improvement: the expected amount the next evaluation will exceed the best seen. High EI in unexplored regions (exploration) and near current best (exploitation)."
+          },
+          {
+            "key": "Hyperparameter Sensitivity",
+            "value": "For XGBoost: learning_rate and max_depth matter most; n_estimators can be set high with early stopping; other parameters have moderate to small impact."
+          },
+          {
+            "key": "AutoML Limitations",
+            "value": "AutoML cannot define the right problem, handle domain-specific preprocessing, guarantee interpretability, or replace human judgment. Use as a strong baseline, not a replacement for ML expertise."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "ML Deployment and MLOps",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Export trained models for production deployment using serialization and ONNX",
+        "Build a prediction API using FastAPI with proper input validation",
+        "Implement model monitoring: tracking prediction distributions, detecting data drift, and alerting on degradation",
+        "Understand the MLOps lifecycle: experiment tracking, model versioning, CI/CD for ML, and A/B testing"
+      ],
+      "readings": [
+        "Huyen, 'Designing Machine Learning Systems', Ch. 7-9",
+        "Sculley et al., 'Hidden Technical Debt in Machine Learning Systems' (2015)",
+        "MLflow Documentation: Model Registry and Experiment Tracking"
+      ],
+      "lecture_notes": {
+        "introduction": "A model in a Jupyter Notebook is not a product. The gap between a working prototype and a reliable production system is enormous. MLOps applies DevOps practices to machine learning: experiment tracking records every run for reproducibility, model versioning enables rollback, CI/CD pipelines automate deployment, and model monitoring detects when the world changes and the model degrades. This session covers the practical skills that bridge the gap from notebook to production. These skills are essential for any ML engineer -- most positions spend more time on deployment and monitoring than on model development.",
+        "key_concepts": [
+          "Model serialization: save trained models to files (joblib for scikit-learn, torch.save for PyTorch); the serialized model includes parameters and preprocessing steps",
+          "ONNX: a standardized model format enabling framework interoperability and optimized inference runtimes",
+          "Prediction API: wrap the model in a FastAPI service accepting JSON input, validating it, running inference, and returning predictions with proper error handling",
+          "Input validation: check data types, ranges, missing values at the API boundary; use Pydantic schemas for automatic validation",
+          "Batch vs real-time inference: batch for precomputing predictions, real-time for on-demand serving; batch is simpler, real-time is needed for interactive applications",
+          "Data drift: input feature distributions change over time; a model trained on old data may perform poorly on new data",
+          "Concept drift: the relationship between features and target changes; requires periodic retraining",
+          "Model monitoring: track prediction distributions, compare with training data, alert when drift exceeds threshold; also monitor latency and error rates",
+          "Experiment tracking: log hyperparameters, dataset versions, and metrics for every run; MLflow, Weights and Biases provide this",
+          "A/B testing: deploy new model alongside existing one, route traffic percentage to each, compare real-world metrics"
+        ],
+        "demonstration": "Deploy a model end-to-end. (1) Serialize the scikit-learn pipeline with joblib. (2) Build a FastAPI endpoint with Pydantic validation. (3) Add monitoring: log predictions, compute daily distribution statistics, implement KS test drift detector. (4) Simulate data drift and show monitoring detecting it. (5) Set up MLflow experiment tracking and model registry.",
+        "setup_requirements": [
+          "Python with FastAPI, uvicorn, joblib, scikit-learn, mlflow",
+          "Docker (optional for containerized deployment)",
+          "Jupyter Notebook and terminal for API testing"
+        ],
+        "review": [
+          {
+            "key": "Serialization Security",
+            "value": "Serialized model files can execute arbitrary code when loaded. Never load model files from untrusted sources. For production, use standardized formats like ONNX or container-based serving that isolates the model."
+          },
+          {
+            "key": "Data Drift Detection",
+            "value": "The Kolmogorov-Smirnov test compares distributions. Run KS tests on each feature comparing recent inputs with training distributions. Trigger retraining when multiple features show significant drift."
+          },
+          {
+            "key": "Shadow Deployment",
+            "value": "Before switching to a new model, deploy it in shadow mode: it receives real traffic and makes predictions, but predictions are only logged. Compare with production model predictions before switching."
+          },
+          {
+            "key": "ML Technical Debt",
+            "value": "The ML model code is a tiny fraction of a real system. The bulk is data pipelines, feature extraction, validation, training infrastructure, serving, monitoring, and configuration. Neglecting infrastructure is technical debt that compounds."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Capstone Project Presentations and Course Synthesis",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Present a complete ML solution demonstrating end-to-end pipeline skills",
+        "Critically evaluate peer ML projects for methodological rigor and practical impact",
+        "Synthesize the connections between all ML techniques covered in the course",
+        "Identify the appropriate ML approach for a given problem based on data characteristics and requirements"
+      ],
+      "readings": [
+        "Review all course materials",
+        "Domingos, 'A Few Useful Things to Know about Machine Learning' (2012)",
+        "Ng, 'Machine Learning Yearning' -- complete"
+      ],
+      "lecture_notes": {
+        "introduction": "This final session has two parts. First, students present capstone projects -- end-to-end ML solutions to real-world problems of their choosing. Second, we synthesize the entire course into a coherent decision framework for applied ML. Given a new problem, how do you choose between logistic regression and a neural network? When do you need feature engineering vs deep learning? The goal is to develop the engineering judgment that comes from understanding the principles behind each technique. The best ML practitioners are not those who know the most algorithms but those who can diagnose the bottleneck and apply the right technique to address it.",
+        "key_concepts": [
+          "Algorithm selection heuristic: start with the simplest model, establish a baseline, then increase complexity only if the baseline is insufficient and error analysis reveals the need for more capacity",
+          "Data size guide: <1K use regularized linear models; 1K-100K use tree ensembles or SVMs; 100K-1M use gradient boosting or shallow neural networks; >1M use deep neural networks",
+          "Structured vs unstructured data: for tabular data, tree-based ensembles outperform neural networks; for images, CNNs; for text, transformers; for sequences, RNNs or transformers",
+          "Interpretability requirements: logistic regression and decision trees are inherently interpretable; tree ensembles provide feature importance; neural networks require post-hoc explanations",
+          "The ML flywheel: deploy, collect feedback, identify failures, engineer features, retrain, deploy improved model; continuous improvement cycle",
+          "Common failure modes: data leakage, label noise, selection bias, distribution shift, metric gaming",
+          "Responsible ML deployment: fairness audits, privacy compliance, model cards documenting intended use and limitations",
+          "Career guidance: the most valuable ML skills are problem formulation, data engineering, and domain expertise -- not the latest architecture",
+          "Course synthesis: preprocessing -> supervised learning -> deep learning -> unsupervised learning -> evaluation -> tuning -> deployment; each component is necessary for production ML"
+        ],
+        "demonstration": "Interactive exercise: present 5 real-world ML problems and have students propose complete pipelines. Discuss: (1) Customer churn (50K tabular) -- XGBoost with SHAP. (2) Robot object detection (camera stream) -- YOLO with fine-tuning. (3) Product review sentiment (1M text) -- DistilBERT. (4) Sensor anomaly detection (streaming, no labels) -- Isolation Forest. (5) Drug discovery (500 molecules, 200 features) -- random forest with careful feature engineering.",
+        "setup_requirements": [
+          "Student capstone project presentations",
+          "Projector and presentation setup",
+          "Peer evaluation forms"
+        ],
+        "review": [
+          {
+            "key": "Start Simple",
+            "value": "Always establish a baseline with the simplest reasonable model. If logistic regression achieves 90% and your deep network achieves 91%, the extra complexity is probably not worth the maintenance burden."
+          },
+          {
+            "key": "The 80/20 Rule of ML",
+            "value": "80% of the value comes from clean data, sensible features, a reasonable model, and proper evaluation. The remaining 20% comes from advanced architectures and tuning. Invest your time accordingly."
+          },
+          {
+            "key": "Model Cards",
+            "value": "A model card documents: intended use, training data, evaluation metrics, ethical considerations, and limitations. Every deployed model should have one."
+          },
+          {
+            "key": "Continuous Learning",
+            "value": "The techniques from this course are foundational and will remain relevant. Build on them by reading papers, doing Kaggle competitions, contributing to open-source, and building end-to-end systems."
           }
         ]
       }
@@ -257,171 +850,650 @@
     "quizzes": [
       {
         "quiz": 1,
-        "week": 2,
-        "topic": "Regression, Classification, and Neural Networks",
-        "duration": "20 minutes",
+        "week": 3,
+        "topic": "Regression, Classification, and Evaluation Metrics",
+        "duration": "30 minutes",
         "questions": [
           {
-            "question": "Derive the gradient of the binary cross-entropy loss L = -[y*log(p) + (1-y)*log(1-p)] with respect to the predicted probability p. Explain why this loss is preferred over MSE for classification.",
+            "question": "Derive the gradient of the binary cross-entropy loss for a single example and explain why BCE is preferred over MSE for classification.",
             "type": "calculation",
             "points": 10,
-            "answer": "dL/dp = -y/p + (1-y)/(1-p) = (p-y) / (p*(1-p)).\n\nBinary cross-entropy is preferred over MSE for classification because: (1) its gradient is proportional to the error (p-y), giving strong gradients when the prediction is confidently wrong (p near 0 when y=1), while MSE with sigmoid has small gradients at the extremes due to sigmoid saturation. (2) Cross-entropy directly measures the information-theoretic divergence between predicted and true distributions. (3) The loss landscape for cross-entropy + sigmoid is convex in the logit space, enabling reliable optimization.",
+            "answer": "For a single example: L = -(y*log(p) + (1-y)*log(1-p))\ndL/dp = -y/p + (1-y)/(1-p) = (p - y) / (p(1-p))\n\nBCE is preferred because: (1) its gradient provides strong signal when the model is confidently wrong, while MSE with sigmoid has near-zero gradients at extremes due to saturation. (2) Cross-entropy directly measures information-theoretic divergence. (3) The loss is convex in logit space, enabling reliable optimization.",
             "rubric": [
               {
                 "key": "Correct derivative calculation",
-                "value": 5
+                "value": 4
               },
               {
-                "key": "Explains gradient advantage over MSE with sigmoid",
+                "key": "Explains gradient advantage over MSE",
                 "value": 3
               },
               {
-                "key": "Mentions information-theoretic justification",
-                "value": 2
+                "key": "Mentions information-theoretic or convexity justification",
+                "value": 3
               }
             ]
           },
           {
-            "question": "A neural network has 2 input neurons, a hidden layer of 4 neurons with ReLU activation, and 1 output neuron with sigmoid activation. How many learnable parameters does this network have?",
+            "question": "A spam classifier has TP=180, FP=20, FN=30, TN=770. Calculate precision, recall, F1-score, and accuracy. Which metric is most important for this application and why?",
             "type": "calculation",
             "points": 10,
-            "answer": "Layer 1 (input to hidden): 2 inputs * 4 neurons = 8 weights + 4 biases = 12 parameters. Layer 2 (hidden to output): 4 inputs * 1 neuron = 4 weights + 1 bias = 5 parameters. Total: 12 + 5 = 17 learnable parameters.",
-            "rubric": [
-              {
-                "key": "Correct weight count for each layer",
-                "value": 4
-              },
-              {
-                "key": "Includes biases for each layer",
-                "value": 4
-              },
-              {
-                "key": "Correct total of 17",
-                "value": 2
-              }
-            ]
-          }
-        ],
-        "total_points": 20
-      },
-      {
-        "quiz": 2,
-        "week": 4,
-        "topic": "Evaluation, Ensemble Methods, and Unsupervised Learning",
-        "duration": "25 minutes",
-        "questions": [
-          {
-            "question": "A spam classifier has the following confusion matrix: TP=180, FP=20, FN=30, TN=770. Calculate precision, recall, F1-score, and accuracy. Which metric is most important for this application and why?",
-            "type": "calculation",
-            "points": 15,
-            "answer": "Precision = TP/(TP+FP) = 180/200 = 0.90. Recall = TP/(TP+FN) = 180/210 = 0.857. F1 = 2*P*R/(P+R) = 2*0.90*0.857/(0.90+0.857) = 0.878. Accuracy = (TP+TN)/(TP+FP+FN+TN) = 950/1000 = 0.95.\n\nFor spam classification, precision is most important because false positives (legitimate emails marked as spam) are more costly than false negatives (spam reaching the inbox). A missed spam is annoying; a lost important email could be catastrophic.",
+            "answer": "Precision = 180/200 = 0.90. Recall = 180/210 = 0.857. F1 = 2*0.90*0.857/(0.90+0.857) = 0.878. Accuracy = 950/1000 = 0.95.\n\nPrecision is most important because false positives (legitimate emails marked as spam) are more costly than false negatives. A missed spam is annoying; a lost important email could be catastrophic.",
             "rubric": [
               {
                 "key": "All four metrics calculated correctly",
-                "value": 8
+                "value": 5
               },
               {
                 "key": "Identifies precision as most important",
                 "value": 3
               },
               {
-                "key": "Explains why FP is costlier than FN for spam",
-                "value": 4
+                "key": "Explains cost asymmetry between FP and FN",
+                "value": 2
               }
             ]
           },
           {
-            "question": "Explain why random forests are less prone to overfitting than a single deep decision tree, even though they use many trees.",
+            "question": "Training accuracy is 98% but validation accuracy is 82%. List four techniques to reduce overfitting, in order of effort, and explain why each works.",
             "type": "short_answer",
             "points": 10,
-            "answer": "A single deep decision tree overfits by memorizing training data noise. Random forests mitigate overfitting through two mechanisms: (1) Bagging: each tree is trained on a different bootstrap sample, so individual tree errors are uncorrelated and average out across the ensemble. (2) Random feature selection: at each split, only a random subset of features is considered, further decorrelating the trees. The averaging of many uncorrelated, individually overfit trees reduces variance without increasing bias, following the law of large numbers.",
+            "answer": "1. Increase regularization (L2): penalizes large weights, forcing simpler hypotheses. 2. Reduce model complexity: fewer features or simpler model has less capacity to memorize noise. 3. More training data or augmentation: more diverse examples clarify the true distribution. 4. Dropout or ensembles: prevent co-adaptation and average out individual model noise.",
             "rubric": [
               {
-                "key": "Explains bagging reduces variance through averaging",
+                "key": "Lists four valid techniques",
                 "value": 4
               },
               {
-                "key": "Explains random feature selection decorrelates trees",
+                "key": "Correct explanation for each",
+                "value": 4
+              },
+              {
+                "key": "Reasonable ordering with justification",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      },
+      {
+        "quiz": 2,
+        "week": 5,
+        "topic": "Tree-Based Methods, SVMs, and Ensemble Learning",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Explain why random forests are less prone to overfitting than a single deep decision tree. Include the mathematical intuition for variance reduction through averaging.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "A single deep tree overfits by memorizing noise. Random forests mitigate this through: (1) Bagging -- each tree on a different bootstrap sample, making errors uncorrelated. (2) Random feature selection further decorrelates trees. Mathematical: ensemble variance = rho*sigma^2 + (1-rho)*sigma^2/n. Bagging minimizes rho, and as n grows the second term vanishes.",
+            "rubric": [
+              {
+                "key": "Explains bagging reduces variance",
                 "value": 3
               },
               {
-                "key": "Contrasts with single tree overfitting",
+                "key": "Explains random features decorrelate trees",
+                "value": 3
+              },
+              {
+                "key": "Includes variance reduction formula or intuition",
+                "value": 2
+              },
+              {
+                "key": "Contrasts with single tree",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "An SVM with RBF kernel has C=1 and gamma=0.001 at 85% test accuracy. Explain what happens when you: (a) increase C to 1000, (b) increase gamma to 100, (c) both.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "(a) Large C strongly penalizes every training error, narrowing the margin and fitting training data more closely -- may overfit. (b) Large gamma makes each support vector influence only nearby points, creating a highly localized boundary -- severe overfitting. (c) Both combined is worst case: the model memorizes each training point's neighborhood with tiny islands around each point. Test accuracy drops significantly.",
+            "rubric": [
+              {
+                "key": "Correct C effect on margin and overfitting",
+                "value": 3
+              },
+              {
+                "key": "Correct gamma effect on decision boundary",
+                "value": 4
+              },
+              {
+                "key": "Correct combined worst case prediction",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Compare gradient boosting with random forests: how each combines models, which error source each reduces, and the main hyperparameter for controlling overfitting.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Random forests: parallel training on bootstrap samples, majority vote; reduces variance; n_estimators (more always reduces variance). Gradient boosting: sequential training where each tree fits residuals; reduces bias; learning_rate (smaller values need more trees but generalize better). Key difference: RF uses many complex deep trees, GB uses many simple shallow trees.",
+            "rubric": [
+              {
+                "key": "Correct parallel vs sequential description",
+                "value": 3
+              },
+              {
+                "key": "Correctly identifies variance vs bias reduction",
+                "value": 4
+              },
+              {
+                "key": "Correct main hyperparameters",
                 "value": 3
               }
             ]
           }
         ],
-        "total_points": 25
+        "total_points": 30
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "Neural Networks, CNNs, and Deep Learning",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "A CNN has: Input(32x32x3) -> Conv(16, 3x3, s1, p1) -> ReLU -> MaxPool(2x2) -> Conv(32, 3x3, s1, p1) -> ReLU -> MaxPool(2x2) -> Flatten -> FC(128) -> FC(10). Calculate (a) output dimensions after each layer and (b) total learnable parameters.",
+            "type": "calculation",
+            "points": 12,
+            "answer": "(a) Input: 32x32x3, Conv1: 32x32x16, Pool1: 16x16x16, Conv2: 16x16x32, Pool2: 8x8x32, Flatten: 2048, FC1: 128, FC2: 10.\n(b) Conv1: 16*(3*3*3+1)=448. Conv2: 32*(3*3*16+1)=4640. FC1: 2048*128+128=262272. FC2: 128*10+10=1290. Total: 268,650.",
+            "rubric": [
+              {
+                "key": "Correct dimensions at each layer",
+                "value": 4
+              },
+              {
+                "key": "Correct conv layer parameter counts",
+                "value": 4
+              },
+              {
+                "key": "Correct FC layer parameter counts",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "Explain the vanishing gradient problem. Why does it occur with sigmoid? How do ReLU, residual connections, and batch normalization each address it?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Gradients multiply through layers via chain rule. Sigmoid max gradient is 0.25; through L layers: 0.25^L vanishes. ReLU: gradient 1 for positive inputs, no shrinking. Residual connections: y = F(x) + x ensures gradient flows through skip with factor 1. Batch norm: normalizes inputs preventing saturation regions where gradients are near zero.",
+            "rubric": [
+              {
+                "key": "Correct mechanism (chain rule multiplication)",
+                "value": 3
+              },
+              {
+                "key": "Correct sigmoid analysis",
+                "value": 2
+              },
+              {
+                "key": "Correct ReLU solution",
+                "value": 2
+              },
+              {
+                "key": "Correct residual and batch norm solutions",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "You have 500 chest X-ray images (250 normal, 250 pneumonia). Describe a complete transfer learning strategy: model choice, freeze/fine-tune plan, data augmentation, and expected performance vs training from scratch.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Model: ResNet18 pre-trained on ImageNet. Phase 1: freeze all layers, replace head with FC(512)->ReLU->Dropout(0.5)->FC(2), train head 10 epochs lr=0.001. Phase 2: unfreeze last 2 residual blocks, fine-tune with lr=0.0001 for 20 epochs. Augmentation: horizontal flips, rotations up to 15 degrees, brightness changes (no vertical flips -- X-rays have defined orientation). Expected: from scratch ~65-70%, feature extraction ~85-88%, fine-tuned ~90-93%.",
+            "rubric": [
+              {
+                "key": "Appropriate model and justification",
+                "value": 2
+              },
+              {
+                "key": "Correct freeze/fine-tune with learning rate adjustment",
+                "value": 3
+              },
+              {
+                "key": "Appropriate augmentations for medical images",
+                "value": 2
+              },
+              {
+                "key": "Reasonable performance estimates",
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "RNNs, Unsupervised Learning, and Feature Engineering",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Explain the LSTM cell's three gates using the analogy of reading a book. For each gate, give the equation and functional purpose.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Forget gate f_t = sigmoid(W_f*[h_{t-1},x_t]): what to discard from mental summary (e.g., forget politics details when topic shifts to sports). Input gate i_t with c_tilde: what new information to add (e.g., add key character details). c_t = f_t*c_{t-1} + i_t*c_tilde. Output gate o_t: what from summary is relevant now (e.g., output character info when asked about characters). h_t = o_t*tanh(c_t). The cell state provides a long-term memory highway solving vanishing gradients.",
+            "rubric": [
+              {
+                "key": "Correct equations for all three gates",
+                "value": 4
+              },
+              {
+                "key": "Clear functional explanation of each",
+                "value": 4
+              },
+              {
+                "key": "Explains how cell state solves vanishing gradient",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "k-means with k=5 gives silhouette scores [0.71, 0.65, 0.23, 0.68, 0.12]. What do these tell you and what action would you take?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Clusters 1,2,4 (0.71, 0.65, 0.68): well-defined. Cluster 3 (0.23): poorly defined, near boundary. Cluster 5 (0.12): essentially noise. Actions: try k=4 (merge weak clusters), try k=6-7 (split ambiguous clusters), examine clusters 3 and 5 via t-SNE, try DBSCAN which would identify them as noise rather than forced clusters.",
+            "rubric": [
+              {
+                "key": "Correct interpretation of scores",
+                "value": 3
+              },
+              {
+                "key": "Identifies clusters 3 and 5 as problematic",
+                "value": 3
+              },
+              {
+                "key": "Proposes appropriate actions",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "Given features [square_feet, bedrooms, bathrooms, year_built, zip_code, lot_size] for house price prediction, engineer three new features and explain the domain insight each captures.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "1. age = 2026 - year_built: newer homes command premiums due to modern amenities; captures depreciation. 2. bath_per_bedroom = bathrooms/bedrooms: luxury indicator; ratio above 1.0 means en-suite bathrooms. 3. price_per_sqft_zip (target encoding with CV): location is the strongest price determinant; captures neighborhood desirability in a single feature.",
+            "rubric": [
+              {
+                "key": "Three valid features with formulas",
+                "value": 4
+              },
+              {
+                "key": "Clear domain insight for each",
+                "value": 4
+              },
+              {
+                "key": "Awareness of leakage prevention",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "Model Evaluation, Deployment, and MLOps",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Explain data drift vs concept drift. For each, provide a real-world example and describe detection in a deployed ML system.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Data drift: input distributions change while the true relationship stays the same. Example: loan model sees younger applicants in 2024. Detection: KS tests on feature distributions weekly.\n\nConcept drift: the relationship between features and target changes. Example: spam patterns evolve with AI-generated phishing. Detection: monitor model accuracy on labeled samples, track prediction confidence.\n\nBoth require retraining; concept drift demands new labeled data reflecting the changed relationship.",
+            "rubric": [
+              {
+                "key": "Correct definitions distinguishing both types",
+                "value": 4
+              },
+              {
+                "key": "Valid example for each",
+                "value": 3
+              },
+              {
+                "key": "Practical detection strategies",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Three models have 5-fold CV accuracies: 84.2%(+/-1.8), 86.7%(+/-2.3), 87.1%(+/-1.5). A stakeholder says deploy the best. What concerns would you raise?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "1. Statistical significance: confidence intervals overlap (RF 84.4-89.0, XGB 85.6-88.6), so difference may not be significant -- need paired t-test. 2. Accuracy alone is insufficient; check precision, recall, AUC. 3. Complexity cost: XGBoost harder to maintain; if logistic regression meets requirements, its simplicity wins. 4. Need error analysis, calibration check, and latency benchmarks. 5. Map accuracy improvement to business value.",
+            "rubric": [
+              {
+                "key": "Raises statistical significance concern",
+                "value": 3
+              },
+              {
+                "key": "Mentions metrics beyond accuracy",
+                "value": 2
+              },
+              {
+                "key": "Discusses complexity and deployment concerns",
+                "value": 3
+              },
+              {
+                "key": "Proposes specific additional analyses",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Describe three types of data leakage in an ML pipeline. For each, explain how it inflates metrics and how to prevent it.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "1. Preprocessing leakage: fitting scalers on entire dataset before splitting. Prevention: fit on training only, use Pipelines. 2. Temporal leakage: using future info to predict past. Prevention: time-based splits, verify all features available at prediction time. 3. Target leakage: features derived from the target. Prevention: ask 'would this be available before the target is known?' for each feature. Check for suspiciously high correlations.",
+            "rubric": [
+              {
+                "key": "Three distinct leakage types described",
+                "value": 3
+              },
+              {
+                "key": "Correct explanation of metric inflation",
+                "value": 4
+              },
+              {
+                "key": "Effective prevention strategies",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 30
       }
     ],
     "major_assignments": [
       {
         "assignment": 1,
-        "title": "End-to-End ML Pipeline for Real-World Data",
-        "week_assigned": 3,
+        "title": "End-to-End ML Pipeline for Tabular Prediction",
+        "week_assigned": 2,
         "week_due": 5,
-        "points": 100,
-        "description": "Build a complete machine learning pipeline for a real-world prediction task: data exploration, feature engineering, model selection, hyperparameter tuning, evaluation, and deployment-ready model export. Compare at least three different model families.",
+        "points": 150,
+        "description": "Build a complete machine learning pipeline for a real-world tabular prediction task. Start with raw, messy data and progress through exploratory analysis, feature engineering, model selection, hyperparameter tuning, and evaluation. Compare at least four model families with rigorous cross-validated evaluation.",
         "objectives": [
-          "Perform exploratory data analysis and feature engineering on a messy real-world dataset",
-          "Train and compare at least three model families (linear, tree-based, neural)",
-          "Tune hyperparameters using cross-validation and grid/random search",
-          "Evaluate models using appropriate metrics and produce a deployment-ready model"
+          "Perform thorough EDA on a real-world dataset with missing values, outliers, and mixed types",
+          "Engineer at least 5 informative features using domain knowledge",
+          "Train and compare at least four model families with cross-validated tuning",
+          "Produce a deployment-ready scikit-learn Pipeline"
         ],
         "requirements": {},
         "deliverables": [
-          "Jupyter Notebook with complete pipeline and analysis",
-          "Trained model files exported for deployment",
-          "Analysis report (3-4 pages) comparing models and justifying the final choice",
-          "Presentation slides summarizing approach and results"
+          "Jupyter Notebook with complete pipeline, EDA, and analysis",
+          "Serialized scikit-learn Pipeline ready for deployment",
+          "Analysis report (5-6 pages) covering data analysis, feature engineering, model comparison, and justification",
+          "Presentation slides (10 slides max)"
         ],
         "grading_rubric": {
-          "data_analysis": {
-            "points": 25,
+          "technical_implementation": {
+            "points": 40,
             "criteria": [
-              "Thorough EDA with meaningful visualizations",
-              "Missing data and outliers handled with justification",
-              "Feature engineering creates informative new features",
-              "Data leakage is identified and prevented"
+              "Preprocessing handles missing values, outliers, and mixed types appropriately",
+              "Feature engineering creates at least 5 features with domain justification",
+              "Pipeline prevents data leakage and ensures reproducibility",
+              "Code is clean and well-documented"
             ]
           },
           "modeling": {
-            "points": 35,
+            "points": 40,
             "criteria": [
-              "At least three model families trained and compared",
-              "Hyperparameter tuning uses cross-validation properly",
-              "Model comparison uses appropriate metrics for the task",
-              "Final model selection is justified with evidence"
+              "At least four model families trained and compared",
+              "Hyperparameter tuning uses proper cross-validation",
+              "Comparison uses appropriate metrics with confidence intervals",
+              "Final selection justified with statistical tests"
             ]
           },
           "evaluation": {
-            "points": 20,
+            "points": 35,
             "criteria": [
-              "Proper train/validation/test split with no data leakage",
-              "Multiple evaluation metrics reported and interpreted",
-              "Error analysis identifies model failure modes",
-              "Confidence intervals or variance reported for key metrics"
+              "Proper cross-validation matching data structure",
+              "Error analysis identifies systematic failure modes",
+              "Feature importance analysis using multiple methods",
+              "No data leakage in any pipeline stage"
             ]
           },
-          "presentation": {
-            "points": 20,
+          "documentation": {
+            "points": 35,
             "criteria": [
-              "Analysis report is clear and well-structured",
-              "Visualizations effectively communicate results",
-              "Limitations and future improvements are discussed",
-              "Notebook is reproducible and well-documented"
+              "EDA tells a clear story about the data",
+              "Report is well-structured and technically accurate",
+              "Limitations and assumptions honestly discussed",
+              "All experiments reproducible from the notebook"
             ]
           }
         },
         "rubric": [
           {
             "attributes": {
-              "points": 100,
+              "points": 150,
               "criteria": [
-                "Complete ML pipeline from raw data to deployment-ready model",
-                "Rigorous model comparison with cross-validated hyperparameter tuning",
+                "Complete leakage-free pipeline from raw data to deployment-ready model",
+                "Rigorous multi-model comparison with cross-validated tuning",
                 "Thorough evaluation with error analysis and honest limitations",
-                "Professional documentation and presentation"
+                "Professional documentation with clear narrative"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Deep Learning for Image or Text Classification",
+        "week_assigned": 7,
+        "week_due": 10,
+        "points": 150,
+        "description": "Build a deep learning system for classification on either images (CNNs with transfer learning) or text (RNNs/transformers). Implement in PyTorch, apply appropriate augmentation or preprocessing, conduct systematic architecture experiments, and analyze model behavior using visualization techniques.",
+        "objectives": [
+          "Implement a complete PyTorch training pipeline with data loading, augmentation, and evaluation",
+          "Apply transfer learning and compare with training from scratch",
+          "Conduct systematic architecture experiments with proper evaluation",
+          "Visualize and interpret model behavior using explainability techniques"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "PyTorch source code with training, evaluation, and visualization scripts",
+          "Trained model checkpoints",
+          "Experiment log: all architectures, hyperparameters, and results",
+          "Analysis report (5-6 pages)"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 45,
+            "criteria": [
+              "PyTorch pipeline with proper DataLoader, augmentation, and evaluation",
+              "Transfer learning correctly implemented with frozen/fine-tuned layers",
+              "Appropriate optimizer, learning rate schedule, and early stopping",
+              "Code handles checkpointing, reproducibility, and GPU/CPU compatibility"
+            ]
+          },
+          "experimentation": {
+            "points": 40,
+            "criteria": [
+              "At least 6 architecture variants systematically compared",
+              "Training from scratch vs transfer learning comparison",
+              "Data augmentation impact measured experimentally",
+              "Results in clear tables with training curves"
+            ]
+          },
+          "interpretation": {
+            "points": 35,
+            "criteria": [
+              "Predictions explained using Grad-CAM, attention, or SHAP",
+              "Failure cases analyzed with examples and hypotheses",
+              "Confusion matrix analyzed for systematic confusions",
+              "Representation quality assessed via t-SNE of penultimate layer"
+            ]
+          },
+          "documentation": {
+            "points": 30,
+            "criteria": [
+              "Architecture decisions motivated and explained",
+              "Experiment log complete and reproducible",
+              "Report well-written with figures and tables",
+              "Limitations and future improvements discussed"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Professional PyTorch pipeline with transfer learning",
+                "Systematic architecture experimentation with ablation",
+                "Meaningful model interpretation with visualization",
+                "Comprehensive documentation with reproducible experiments"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Unsupervised Learning and Feature Engineering Challenge",
+        "week_assigned": 10,
+        "week_due": 13,
+        "points": 120,
+        "description": "Apply unsupervised learning and feature engineering to discover hidden structure and improve supervised model performance. Perform customer segmentation using multiple clustering methods, dimensionality reduction for visualization, and demonstrate that unsupervised insights improve a downstream supervised task.",
+        "objectives": [
+          "Apply k-means, DBSCAN, and hierarchical clustering to segment a real dataset",
+          "Use PCA, t-SNE, and UMAP for dimensionality reduction and visualization",
+          "Engineer features informed by clustering and dimensionality reduction insights",
+          "Demonstrate measurable supervised model improvement using unsupervised insights"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Jupyter Notebook with complete unsupervised analysis and supervised integration",
+          "Cluster profile report with detailed segment descriptions",
+          "Feature engineering documentation with derivation and impact",
+          "Analysis report (4-5 pages)"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 35,
+            "criteria": [
+              "Multiple clustering algorithms with proper parameter selection",
+              "Dimensionality reduction applied for visualization and analysis",
+              "Cluster quality evaluated with multiple metrics",
+              "Code is clean and well-organized"
+            ]
+          },
+          "analysis_quality": {
+            "points": 35,
+            "criteria": [
+              "Clusters interpreted with domain meaning",
+              "Visualization reveals data structure",
+              "Feature engineering motivated by unsupervised insights",
+              "Statistical rigor in comparisons"
+            ]
+          },
+          "supervised_integration": {
+            "points": 30,
+            "criteria": [
+              "Supervised model with and without unsupervised features compared",
+              "Improvement measured with cross-validation and confidence intervals",
+              "Feature importance shows which unsupervised features matter",
+              "Pipeline is reproducible"
+            ]
+          },
+          "documentation": {
+            "points": 20,
+            "criteria": [
+              "Cluster profiles are business-actionable",
+              "Visualizations clear, labeled, and informative",
+              "Report well-structured",
+              "Limitations discussed"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 120,
+              "criteria": [
+                "Comprehensive unsupervised analysis with multiple methods",
+                "Interpretable cluster profiles with domain meaning",
+                "Demonstrable supervised improvement from unsupervised features",
+                "Professional documentation with honest limitations"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 4,
+        "title": "ML Capstone: End-to-End Production System",
+        "week_assigned": 13,
+        "week_due": 15,
+        "points": 180,
+        "description": "Build and deploy a complete ML system for a real-world problem of your choice. The system must include data preprocessing, model training with experiment tracking, a prediction API, monitoring for data drift, and comprehensive evaluation. This capstone demonstrates your ability to build production-quality ML systems.",
+        "objectives": [
+          "Define a real-world prediction problem and curate an appropriate dataset",
+          "Build a reproducible training pipeline with experiment tracking",
+          "Deploy the model as a prediction API with input validation and error handling",
+          "Implement monitoring for data drift and performance degradation"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Complete source code: training pipeline, API server, monitoring scripts",
+          "MLflow experiment log with all runs and metrics",
+          "System documentation: architecture diagram, API spec, monitoring alerts",
+          "Final report (8-10 pages) and 15-minute presentation with live demo"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 55,
+            "criteria": [
+              "Reproducible training pipeline with experiment tracking",
+              "Competitive model performance with proper evaluation",
+              "API serves predictions with low latency, validation, and error handling",
+              "Monitoring detects simulated drift and triggers alerts"
+            ]
+          },
+          "system_design": {
+            "points": 40,
+            "criteria": [
+              "Architecture diagram shows data flow clearly",
+              "Design decisions justified",
+              "Graceful failure handling",
+              "Well-organized code with separation of concerns"
+            ]
+          },
+          "evaluation": {
+            "points": 40,
+            "criteria": [
+              "Appropriate metrics with cross-validation and confidence intervals",
+              "Comparison with at least two baselines",
+              "Error analysis with examples",
+              "End-to-end system tested with realistic inputs"
+            ]
+          },
+          "documentation": {
+            "points": 45,
+            "criteria": [
+              "Comprehensive final report",
+              "API documentation enables other developers to use the system",
+              "Presentation communicates problem, solution, and results clearly",
+              "Limitations and future work discussed honestly"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 180,
+              "criteria": [
+                "Complete ML system from data to deployment with monitoring",
+                "Professional engineering quality: reproducible, documented, tested",
+                "Rigorous evaluation with baselines and error analysis",
+                "Comprehensive documentation and clear presentation"
               ]
             }
           }
@@ -431,31 +1503,31 @@
   },
   "grading_breakdown": {
     "weekly_quizzes": {
-      "percentage": 10,
-      "description": "Regular assessment of ML concepts and math"
+      "percentage": 20,
+      "description": "Five quizzes (weeks 3, 5, 8, 11, 14) covering regression/classification, trees/SVMs/ensembles, deep learning, unsupervised/feature engineering, and deployment/evaluation."
     },
     "lab_assignments": {
-      "percentage": 20,
-      "description": "Weekly implementation labs for each algorithm"
+      "percentage": 15,
+      "description": "Weekly hands-on labs implementing ML algorithms and pipeline components: preprocessing, training, evaluation, and visualization."
     },
     "major_assignments": {
-      "percentage": 35,
-      "description": "End-to-end ML pipeline projects"
+      "percentage": 30,
+      "description": "Four major projects: Tabular ML Pipeline, Deep Learning System, Unsupervised Learning Challenge, and Production ML Capstone."
     },
     "midterm_examination": {
       "percentage": 15,
-      "description": "Written exam covering supervised learning and evaluation"
+      "description": "Written exam covering supervised learning, evaluation metrics, and regularization (weeks 1-7)."
     },
-    "final_examination": {
+    "final_project": {
       "percentage": 20,
-      "description": "Comprehensive exam covering all ML topics"
+      "description": "End-to-end production ML system with training pipeline, prediction API, monitoring, and documentation."
     }
   },
   "course_policies": {
     "attendance": "Attendance is expected for lectures and mandatory for lab sessions. More than 3 unexcused absences may reduce participation grade.",
-    "late_submissions": "Late assignments lose 10% per day. No submissions accepted more than 5 days late.",
-    "collaboration": "Discussion of ML concepts is encouraged. All code, analysis, and reports must be individual work.",
-    "academic_integrity": "All submitted work must be your own. Copying code from Kaggle kernels, online tutorials, or other students without attribution is plagiarism.",
-    "technology_requirements": "Students need Python 3.12+ with NumPy, pandas, scikit-learn, PyTorch, matplotlib, and Jupyter. GPU access via Google Colab is sufficient."
+    "late_submissions": "Late assignments lose 10% per day up to 5 days. After 5 days, zero credit. One 48-hour extension per student per semester without penalty.",
+    "collaboration": "Discussion of ML concepts is encouraged. All code, analysis, and reports must be individual work. Do not share code, notebooks, or trained models.",
+    "academic_integrity": "All submitted work must be your own. Copying from Kaggle kernels, tutorials, or AI tools without attribution is plagiarism. AutoML tools permitted only when explicitly allowed.",
+    "technology_requirements": "Python 3.12+ with NumPy, pandas, scikit-learn, PyTorch, matplotlib, seaborn, Jupyter. GPU via Google Colab sufficient. MLflow needed for final project."
   }
 }
