@@ -14,245 +14,839 @@
     {
       "week_number": 1,
       "session_number": 1,
-      "topic": "Historical Cryptography and Mathematical Foundations",
-      "duration": "50 minutes",
+      "topic": "Cryptography History and Mathematical Foundations",
+      "duration": "80 minutes",
       "learning_objectives": [
-        "Trace the evolution of cryptography from classical to modern",
-        "Understand modular arithmetic and its role in cryptographic algorithms",
-        "Identify the properties of secure cryptographic systems"
+        "Trace the evolution of cryptography from classical ciphers to modern algorithms",
+        "Perform modular arithmetic operations underlying cryptographic algorithms",
+        "Identify the properties required for a cryptographic system to be considered secure",
+        "Apply Shannon's confusion and diffusion principles to evaluate cipher design"
       ],
       "readings": [
-        "Understanding Cryptography Ch. 1",
-        "Applied Cryptography Ch. 1-2"
+        "Paar & Pelzl, Understanding Cryptography, Ch. 1",
+        "Schneier, Applied Cryptography, Ch. 1-2",
+        "Singh, The Code Book, Ch. 1-3 (historical context)"
       ],
       "lecture_notes": {
-        "introduction": "Cryptography is the science of securing information through mathematical transformation. We begin with its history and the mathematics that make modern cryptography possible.",
+        "introduction": "Cryptography is the science of securing information through mathematical transformation. For millennia, humans have needed to communicate secretly: from Caesar's shifted alphabet used to coordinate Roman legions, to the Enigma machine that shaped World War II, to the RSA algorithm that secures trillions of dollars in online commerce today. What changed is the mathematical rigor. Modern cryptography rests on computational hardness assumptions: problems that are easy to compute in one direction but infeasible to reverse without a secret key. Before diving into algorithms, we must build the mathematical toolkit. Modular arithmetic, prime numbers, finite fields, and group theory are the language of cryptography. Shannon's 1949 paper established that a secure cipher must exhibit both confusion (obscuring the relationship between key and ciphertext) and diffusion (spreading plaintext statistics across the ciphertext). Kerckhoffs' principle -- that a system should be secure even if everything except the key is public -- remains the foundation of all modern cryptographic design. This course will take you from these foundations through every major cryptographic primitive used in modern security systems.",
         "key_concepts": [
-          "Classical ciphers: Caesar, Vigenere, Enigma",
-          "Kerckhoffs' principle: security through key secrecy, not algorithm secrecy",
-          "Modular arithmetic, prime numbers, and finite fields",
-          "Shannon's concepts: confusion and diffusion",
-          "Computational hardness assumptions"
+          "Classical ciphers: Caesar (shift), Vigenere (polyalphabetic), Enigma (rotor machine), and why each was broken",
+          "Kerckhoffs' principle: security must depend on the secrecy of the key, not the secrecy of the algorithm",
+          "Modular arithmetic: addition, multiplication, and exponentiation in Z_n, computing inverses with the Extended Euclidean Algorithm",
+          "Prime numbers: primality testing (Miller-Rabin), prime generation for key creation",
+          "Finite fields GF(2^8): the mathematical structure underlying AES byte operations",
+          "Shannon's confusion and diffusion: confusion hides key-ciphertext relationship, diffusion spreads plaintext influence",
+          "Computational security: an algorithm is secure if breaking it requires more computation than any adversary can perform",
+          "One-time pad: provably secure (information-theoretic security) but impractical due to key length requirement equal to message length",
+          "Frequency analysis: counting letter frequencies to break substitution ciphers, the first cryptanalytic technique"
         ],
-        "demonstration": "Breaking a substitution cipher using frequency analysis, then showing why this approach fails against modern ciphers",
+        "demonstration": "Break a monoalphabetic substitution cipher using frequency analysis in Python. Count character frequencies in the ciphertext, map them to English letter frequencies, and iteratively refine the mapping. Then encrypt the same plaintext with a one-time pad and show that frequency analysis reveals nothing. Finally, demonstrate modular exponentiation efficiency: compute 7^256 mod 13 using repeated squaring in milliseconds versus naive exponentiation that would take longer than the age of the universe.",
         "setup_requirements": [
-          "Python 3 with PyCryptodome library",
-          "CyberChef for encoding/decoding exercises",
-          "Mathematical notation reference sheet"
+          "Python 3 with PyCryptodome library installed (pip install pycryptodome)",
+          "CyberChef web tool for encoding/decoding exercises",
+          "Mathematical notation reference sheet for modular arithmetic",
+          "Jupyter notebook environment for interactive demonstrations"
         ],
         "review": [
           {
             "key": "Kerckhoffs' Principle",
-            "value": "A cryptosystem should be secure even if everything about the system, except the key, is public knowledge"
+            "value": "A cryptosystem should be secure even if everything about the system except the key is public knowledge. This is why modern algorithms (AES, RSA) are fully published and studied by thousands of cryptographers, yet remain secure. Security through obscurity is not security."
           },
           {
             "key": "Confusion and Diffusion",
-            "value": "Confusion obscures the relationship between key and ciphertext. Diffusion spreads plaintext statistics across the ciphertext. Both are essential for strong ciphers."
-          }
-        ]
-      }
-    },
-    {
-      "week_number": 1,
-      "session_number": 2,
-      "topic": "Symmetric Encryption: Block Ciphers",
-      "duration": "50 minutes",
-      "learning_objectives": [
-        "Explain AES algorithm structure and key schedule",
-        "Compare block cipher modes of operation (ECB, CBC, CTR, GCM)",
-        "Identify weaknesses in improper mode selection"
-      ],
-      "readings": [
-        "Understanding Cryptography Ch. 3-4",
-        "NIST SP 800-38A Block Cipher Modes"
-      ],
-      "lecture_notes": {
-        "introduction": "Symmetric encryption is the workhorse of data confidentiality. Understanding how block ciphers work and how mode selection affects security is fundamental.",
-        "key_concepts": [
-          "AES: SubBytes, ShiftRows, MixColumns, AddRoundKey",
-          "Key sizes: AES-128, AES-192, AES-256",
-          "ECB mode vulnerability to pattern analysis",
-          "CBC mode: IV requirements and padding oracle attacks",
-          "CTR and GCM modes: authenticated encryption"
-        ],
-        "demonstration": "Encrypting an image with ECB mode to reveal pattern leakage, then comparing with CBC and GCM modes",
-        "setup_requirements": [
-          "Python with PyCryptodome",
-          "Image files for ECB demonstration",
-          "OpenSSL command line tools"
-        ],
-        "review": [
-          {
-            "key": "ECB Weakness",
-            "value": "ECB encrypts identical plaintext blocks to identical ciphertext blocks, revealing patterns in the data. Never use for multi-block data."
+            "value": "Confusion obscures the relationship between key and ciphertext, typically achieved through substitution (S-boxes). Diffusion spreads plaintext statistics across the ciphertext, typically achieved through permutation and mixing operations. AES achieves both in every round."
           },
           {
-            "key": "GCM Mode",
-            "value": "Galois/Counter Mode provides both confidentiality and authenticity (AEAD). Used in TLS 1.3 and IPsec. Requires a unique nonce per encryption."
+            "key": "One-Time Pad",
+            "value": "The only cipher with proven perfect secrecy. Key must be truly random, at least as long as the message, used only once, and kept secret. Any violation of these conditions destroys its security. Used in practice only for the most sensitive communications."
+          },
+          {
+            "key": "Computational vs Information-Theoretic Security",
+            "value": "Information-theoretic security (one-time pad) holds regardless of computational power. Computational security (AES, RSA) assumes the adversary has bounded computing resources. All practical modern cryptography relies on computational security."
           }
         ]
       }
     },
     {
       "week_number": 2,
-      "session_number": 3,
-      "topic": "Asymmetric Encryption and Key Exchange",
-      "duration": "50 minutes",
+      "session_number": 2,
+      "topic": "Symmetric Encryption: DES, 3DES, and AES",
+      "duration": "80 minutes",
       "learning_objectives": [
-        "Explain RSA key generation, encryption, and signing",
-        "Understand Diffie-Hellman key exchange and its vulnerabilities",
-        "Compare RSA with Elliptic Curve Cryptography"
+        "Explain the internal structure and round operations of DES and AES",
+        "Understand why DES is insecure and how 3DES extends its life",
+        "Trace a single round of AES: SubBytes, ShiftRows, MixColumns, AddRoundKey",
+        "Select appropriate key sizes for different security requirements"
       ],
       "readings": [
-        "Understanding Cryptography Ch. 6-7",
-        "NIST SP 800-56A Key Establishment"
+        "Understanding Cryptography, Ch. 3-4 (DES and AES)",
+        "NIST FIPS 197: Advanced Encryption Standard specification",
+        "Daemen & Rijmen, The Design of Rijndael, Ch. 1-3"
       ],
       "lecture_notes": {
-        "introduction": "Asymmetric cryptography solves the key distribution problem that plagued symmetric cryptography for centuries. It enables secure communication between parties who have never shared a secret.",
+        "introduction": "Symmetric encryption is the workhorse of data confidentiality. The same key encrypts and decrypts, making it fast and efficient for bulk data. DES (Data Encryption Standard), published in 1977, dominated for two decades with its 56-bit key and 16-round Feistel network. But its short key length became its downfall: in 1998, the EFF's Deep Crack machine brute-forced a DES key in 56 hours for $250,000, and today it takes seconds on a GPU cluster. Triple DES (3DES) applies DES three times with different keys (encrypt-decrypt-encrypt), providing 112-bit effective security but at triple the computational cost. AES (Advanced Encryption Standard), selected through a public competition won by Rijndael in 2001, replaced DES as the standard. AES operates on 128-bit blocks using a substitution-permutation network rather than a Feistel structure. Its four round operations -- SubBytes (non-linear substitution via S-box), ShiftRows (byte permutation), MixColumns (column mixing in GF(2^8)), and AddRoundKey (XOR with round key) -- achieve excellent confusion and diffusion. Understanding AES internals is essential because it appears everywhere: TLS, disk encryption, Wi-Fi security, VPNs, and database encryption.",
         "key_concepts": [
-          "RSA: key generation from large primes, e, d, n",
-          "RSA encryption vs RSA signing",
-          "Diffie-Hellman key exchange and man-in-the-middle vulnerability",
-          "Elliptic Curve Cryptography: smaller keys, equivalent security",
-          "Key encapsulation and hybrid encryption schemes"
+          "DES: 64-bit block, 56-bit key, 16-round Feistel network, S-boxes for non-linearity, broken by brute force due to small key space",
+          "3DES: EDE (Encrypt-Decrypt-Encrypt) with 2 or 3 keys, 112-bit or 168-bit effective security, 3x slower than DES",
+          "AES block size: 128 bits (16 bytes arranged as 4x4 byte matrix)",
+          "AES key sizes: AES-128 (10 rounds), AES-192 (12 rounds), AES-256 (14 rounds)",
+          "SubBytes: non-linear byte substitution using a 16x16 S-box derived from multiplicative inverse in GF(2^8)",
+          "ShiftRows: cyclic left shift of each row by 0, 1, 2, 3 positions, provides diffusion across columns",
+          "MixColumns: matrix multiplication over GF(2^8), mixes bytes within each column for diffusion",
+          "AddRoundKey: XOR the state with the round key derived from the key schedule",
+          "Key schedule: derives round keys from the master key using RotWord, SubWord, and XOR with round constants"
         ],
-        "demonstration": "Implementing RSA key generation in Python, performing encryption/decryption, and demonstrating a Diffie-Hellman key exchange",
+        "demonstration": "Implement AES-128 encryption of a single block step by step in Python, printing the state matrix after each operation in every round. Visualize how SubBytes provides confusion (small input change causes large output change) and how ShiftRows + MixColumns provide diffusion (one byte change propagates to all 16 bytes within 2 rounds). Compare encryption speed of DES, 3DES, and AES on 1GB of data.",
         "setup_requirements": [
-          "Python with cryptography library",
-          "OpenSSL for key operations",
-          "Large prime number generator"
+          "Python 3 with PyCryptodome for comparison benchmarks",
+          "Custom AES implementation script for step-by-step visualization",
+          "AES S-box lookup table printout",
+          "GF(2^8) multiplication reference"
         ],
         "review": [
           {
-            "key": "RSA Security",
-            "value": "RSA security relies on the difficulty of factoring the product of two large primes. RSA-2048 is considered secure through 2030; RSA-3072+ for longer term."
+            "key": "DES Brute Force",
+            "value": "DES has 2^56 = 72 quadrillion possible keys. EFF's Deep Crack (1998) tested 90 billion keys/second. Modern GPUs can test trillions per second. A DES key can be brute-forced in under an hour with specialized hardware."
           },
           {
-            "key": "ECC Advantage",
-            "value": "A 256-bit ECC key provides equivalent security to a 3072-bit RSA key. Smaller keys mean faster operations and lower bandwidth requirements."
+            "key": "AES Security Margin",
+            "value": "The best known attack on AES-128 is a biclique attack requiring 2^126.1 operations -- essentially no practical improvement over brute force. AES-256 provides even larger margin for long-term security requirements."
+          },
+          {
+            "key": "Why Not AES-256 Everywhere",
+            "value": "AES-256 is ~40% slower than AES-128 due to 4 extra rounds. AES-128 provides 128 bits of security, which is considered secure until approximately 2060. AES-256 is recommended for classified data and post-quantum preparedness."
+          },
+          {
+            "key": "Feistel vs SPN",
+            "value": "DES uses a Feistel network (split block, process half, swap). AES uses a Substitution-Permutation Network (process entire block). SPNs allow parallelization of both encryption and decryption, making AES faster on modern CPUs with AES-NI instructions."
           }
         ]
       }
     },
     {
       "week_number": 3,
-      "session_number": 5,
-      "topic": "Hashing, MACs, and Digital Signatures",
-      "duration": "50 minutes",
+      "session_number": 3,
+      "topic": "Block Cipher Modes: ECB, CBC, CTR, and GCM",
+      "duration": "80 minutes",
       "learning_objectives": [
-        "Analyze the properties of cryptographic hash functions",
-        "Implement HMAC for message authentication",
-        "Verify digital signatures using PKI"
+        "Explain why raw block cipher encryption (ECB) is insufficient for most applications",
+        "Compare block cipher modes: ECB, CBC, CTR, GCM for different use cases",
+        "Identify the security requirements for IVs and nonces in each mode",
+        "Implement authenticated encryption with AES-GCM"
       ],
       "readings": [
-        "Understanding Cryptography Ch. 11-12",
-        "NIST FIPS 180-4 Secure Hash Standard"
+        "Understanding Cryptography, Ch. 5 (Modes of Operation)",
+        "NIST SP 800-38A: Recommendation for Block Cipher Modes of Operation",
+        "NIST SP 800-38D: Recommendation for GCM Mode"
       ],
       "lecture_notes": {
-        "introduction": "Hashing and digital signatures provide integrity and authentication, the other pillars of information security alongside confidentiality.",
+        "introduction": "A block cipher like AES encrypts exactly one 128-bit block at a time. Real messages are longer than 128 bits, so we need modes of operation that extend block ciphers to arbitrary-length messages. The simplest mode, ECB (Electronic Codebook), encrypts each block independently with the same key. This is catastrophically insecure for structured data because identical plaintext blocks produce identical ciphertext blocks, revealing patterns. The famous ECB penguin image demonstrates this visually: encrypting a bitmap image with ECB preserves the outline of the image in the ciphertext. CBC (Cipher Block Chaining) solves this by XORing each plaintext block with the previous ciphertext block before encryption, but it is sequential (cannot parallelize encryption) and vulnerable to padding oracle attacks if error messages reveal padding validity. CTR (Counter) mode turns the block cipher into a stream cipher by encrypting sequential counter values and XORing with plaintext, enabling full parallelization. GCM (Galois/Counter Mode) adds authentication to CTR mode, providing Authenticated Encryption with Associated Data (AEAD). GCM is the gold standard for modern applications and is mandatory in TLS 1.3.",
         "key_concepts": [
-          "Hash function properties: pre-image resistance, second pre-image resistance, collision resistance",
-          "SHA-2 family: SHA-256, SHA-384, SHA-512",
-          "SHA-3 (Keccak) and its sponge construction",
-          "HMAC construction and its security proof",
-          "Digital signatures: RSA-PSS, ECDSA, EdDSA"
+          "ECB mode: each block encrypted independently, deterministic, reveals patterns in structured data -- never use for multi-block data",
+          "CBC mode: C_i = E_K(P_i XOR C_{i-1}), requires random unpredictable IV, sequential encryption but parallel decryption",
+          "CBC padding: PKCS#7 padding adds bytes equal to the number of padding bytes needed, padding oracle attacks exploit error messages",
+          "CTR mode: C_i = P_i XOR E_K(nonce || counter_i), fully parallelizable encryption and decryption, nonce must never repeat with same key",
+          "GCM mode: CTR encryption plus GHASH polynomial authentication over GF(2^128), provides confidentiality + integrity + authenticity",
+          "AEAD (Authenticated Encryption with Associated Data): encrypts plaintext and authenticates both ciphertext and unencrypted header data",
+          "IV/Nonce requirements: CBC needs random unpredictable IV (128 bits), GCM needs unique nonce (96 bits), CTR needs unique nonce",
+          "Nonce reuse catastrophe: reusing a nonce in GCM reveals the authentication key and allows plaintext recovery via XOR of ciphertext streams",
+          "Mode selection guidance: use AES-GCM for most applications, AES-CBC only with HMAC (encrypt-then-MAC), never use ECB"
         ],
-        "demonstration": "Computing SHA-256 hashes, demonstrating the avalanche effect, creating and verifying HMAC and ECDSA digital signatures",
+        "demonstration": "Encrypt a bitmap image with AES-ECB and AES-CBC to visually demonstrate pattern leakage. Then implement AES-GCM encryption in Python: show that the same plaintext with different nonces produces completely different ciphertext, and that tampering with either the ciphertext or the associated data causes authentication failure. Finally, demonstrate the catastrophic effect of nonce reuse in GCM by encrypting two messages with the same nonce and recovering both plaintexts.",
         "setup_requirements": [
-          "Python with hashlib and cryptography libraries",
-          "OpenSSL for signature operations",
-          "Certificate chain for verification exercise"
+          "Python with PyCryptodome (AES, modes)",
+          "Bitmap image files for ECB pattern demonstration",
+          "OpenSSL command-line tools for comparison",
+          "Hex editor for examining ciphertext structures"
         ],
         "review": [
           {
-            "key": "HMAC",
-            "value": "Hash-based Message Authentication Code: HMAC(K, M) = H((K xor opad) || H((K xor ipad) || M)). Provides integrity and authentication using a shared secret key."
+            "key": "ECB Penguin",
+            "value": "Encrypting a bitmap image with ECB preserves the outline because identical pixel blocks produce identical ciphertext blocks. This is the most intuitive demonstration of why ECB leaks information about plaintext structure."
           },
           {
-            "key": "Digital Signatures",
-            "value": "Signer hashes the message and encrypts the hash with their private key. Verifier decrypts with public key and compares hashes. Provides non-repudiation."
+            "key": "GCM Nonce Reuse",
+            "value": "If the same nonce is used twice with the same key in GCM, XORing the two ciphertexts cancels the keystream, revealing XOR of the plaintexts. The GHASH authentication key is also recoverable, allowing forgery of arbitrary messages. This is why nonce management is critical."
+          },
+          {
+            "key": "Padding Oracle Attack",
+            "value": "In CBC mode, if a server reveals whether decrypted padding is valid (different error for bad padding vs bad data), an attacker can decrypt any ciphertext one byte at a time by manipulating the previous ciphertext block. TLS had this vulnerability (POODLE attack)."
+          },
+          {
+            "key": "Encrypt-then-MAC",
+            "value": "When using CBC without built-in authentication, always apply MAC after encryption (encrypt-then-MAC). MAC-then-encrypt leaks information through padding errors. Encrypt-and-MAC leaks information through MAC comparisons. GCM avoids this issue entirely by combining encryption and authentication."
           }
         ]
       }
     },
     {
       "week_number": 4,
-      "session_number": 7,
-      "topic": "Public Key Infrastructure and TLS",
-      "duration": "50 minutes",
+      "session_number": 4,
+      "topic": "Stream Ciphers",
+      "duration": "80 minutes",
       "learning_objectives": [
-        "Describe the PKI hierarchy: root CAs, intermediate CAs, end-entity certificates",
-        "Analyze the TLS 1.3 handshake at the protocol level",
-        "Identify common TLS misconfigurations and attacks"
+        "Explain the design principles of stream ciphers versus block ciphers",
+        "Analyze the ChaCha20 stream cipher and its security properties",
+        "Understand the dangers of keystream reuse in stream ciphers",
+        "Compare stream cipher applications: WPA2 (RC4 weakness), TLS 1.3 (ChaCha20-Poly1305)"
       ],
       "readings": [
-        "Bulletproof TLS and PKI Ch. 1-4",
-        "RFC 8446 TLS 1.3 specification overview"
+        "Understanding Cryptography, Ch. 2 (Stream Ciphers)",
+        "Bernstein, The Salsa20 Family of Stream Ciphers",
+        "RFC 8439: ChaCha20 and Poly1305 for IETF Protocols"
       ],
       "lecture_notes": {
-        "introduction": "PKI and TLS are the cryptographic infrastructure that secures the internet. Understanding how they work and how they can fail is essential.",
+        "introduction": "Stream ciphers encrypt data one byte (or bit) at a time by XORing plaintext with a pseudorandom keystream generated from a key and nonce. Unlike block ciphers that process fixed-size blocks, stream ciphers handle arbitrary-length data naturally without padding. The critical security requirement is that the keystream must never repeat: if the same keystream is used to encrypt two messages, XORing the ciphertexts cancels the keystream and reveals the XOR of the plaintexts, which can be separated using statistical techniques. RC4 was the dominant stream cipher for decades, used in WPA (Wi-Fi) and early TLS, but multiple biases in its output led to practical attacks. ChaCha20, designed by Daniel Bernstein, replaced RC4 as the modern standard. It uses a 256-bit key and 96-bit nonce, operates on 512-bit blocks using add-rotate-XOR operations, and is resistant to timing attacks because it avoids data-dependent branches and table lookups. Paired with the Poly1305 authenticator, ChaCha20-Poly1305 provides AEAD and is mandatory in TLS 1.3 alongside AES-GCM. It is preferred on platforms without AES hardware acceleration (mobile devices, embedded systems) because its software implementation is faster than software AES.",
         "key_concepts": [
-          "X.509 certificate structure and extensions",
-          "Certificate chain validation process",
-          "TLS 1.3 handshake: 1-RTT and 0-RTT",
-          "Certificate Transparency logs",
-          "TLS attacks: BEAST, POODLE, Heartbleed, ROBOT"
+          "Stream cipher model: C = P XOR KeyStream(K, Nonce), decryption is identical: P = C XOR KeyStream(K, Nonce)",
+          "Keystream reuse vulnerability: if C1 = P1 XOR KS and C2 = P2 XOR KS, then C1 XOR C2 = P1 XOR P2, leaking both plaintexts",
+          "RC4: PRGA generates keystream from a permutation of 256 bytes, known biases in early output bytes and long-term correlations",
+          "RC4 attacks: WPA-TKIP attack recovers plaintext from ~2^24 packets, TLS NOMORE attack recovers cookies from HTTPS traffic",
+          "ChaCha20: quarter-round function applies add, XOR, and rotate to 4 words, 20 rounds (10 column rounds + 10 diagonal rounds)",
+          "ChaCha20 state: 4x4 matrix of 32-bit words initialized from constant, key (256 bits), counter (32 bits), nonce (96 bits)",
+          "Poly1305: one-time authenticator using polynomial evaluation over GF(2^130-5), produces 128-bit authentication tag",
+          "ChaCha20-Poly1305 AEAD: encrypt with ChaCha20, authenticate ciphertext and AAD with Poly1305 using a derived one-time key",
+          "Performance comparison: ChaCha20 is 3-5x faster than AES in software on ARM processors without AES-NI extensions"
         ],
-        "demonstration": "Analyzing a TLS 1.3 handshake in Wireshark, inspecting certificates, and testing a server's TLS configuration with testssl.sh",
+        "demonstration": "Implement a simplified stream cipher XOR encryption, then demonstrate keystream reuse by encrypting two English messages with the same key and nonce, XORing the ciphertexts, and using crib dragging to recover both plaintexts. Then benchmark ChaCha20-Poly1305 vs AES-256-GCM on a mobile ARM processor and a desktop x86 processor with AES-NI to show the performance crossover.",
         "setup_requirements": [
-          "Wireshark with TLS key log",
-          "testssl.sh or sslyze installed",
-          "Lab web server with configurable TLS"
+          "Python with PyCryptodome for ChaCha20 and AES benchmarks",
+          "Crib dragging tool or script for keystream reuse demonstration",
+          "OpenSSL speed command for cross-platform benchmarking",
+          "Access to ARM-based system or emulator for performance comparison"
         ],
         "review": [
           {
-            "key": "TLS 1.3 Improvements",
-            "value": "Removed insecure algorithms (RC4, SHA-1, RSA key exchange), reduced handshake to 1-RTT, mandatory forward secrecy with ephemeral DH/ECDH"
+            "key": "Keystream Reuse",
+            "value": "This is the cardinal sin of stream cipher usage. A nonce must never be reused with the same key. For ChaCha20 with a 96-bit random nonce, the birthday bound gives a collision probability of 50% after 2^48 messages -- safe for most applications but dangerous for very high-volume systems."
           },
           {
-            "key": "Certificate Transparency",
-            "value": "Public append-only logs of all issued certificates, enabling domain owners to detect unauthorized certificate issuance"
+            "key": "RC4 Deprecation",
+            "value": "RFC 7465 (2015) prohibited RC4 in all TLS versions. The biases in RC4 output allowed recovery of encrypted cookies and passwords from HTTPS sessions. This is a cautionary tale about using ciphers with known theoretical weaknesses in production."
+          },
+          {
+            "key": "ChaCha20 Design Philosophy",
+            "value": "Uses only add, rotate, and XOR operations (ARX design). No S-boxes or table lookups means no cache-timing side channels. Constant-time by design. This makes it inherently resistant to timing attacks that plagued AES software implementations."
+          },
+          {
+            "key": "AEAD Everywhere",
+            "value": "Modern cryptographic best practice requires all encryption to be authenticated. Using encryption without authentication (plain AES-CBC, raw ChaCha20) allows bit-flipping attacks where an attacker modifies ciphertext to predictably alter plaintext. AEAD modes detect all tampering."
           }
         ]
       }
     },
     {
       "week_number": 5,
-      "session_number": 9,
-      "topic": "Data Protection and Post-Quantum Cryptography",
-      "duration": "50 minutes",
+      "session_number": 5,
+      "topic": "Hash Functions: MD5, SHA-2, and SHA-3",
+      "duration": "80 minutes",
       "learning_objectives": [
-        "Implement data-at-rest and data-in-transit encryption strategies",
-        "Understand the quantum computing threat to current cryptography",
-        "Evaluate post-quantum cryptographic algorithms"
+        "Explain the three security properties of cryptographic hash functions",
+        "Compare the internal structure of MD5, SHA-256, and SHA-3 (Keccak)",
+        "Demonstrate why MD5 and SHA-1 are broken for collision resistance",
+        "Apply hash functions for integrity verification, password storage, and digital fingerprinting"
       ],
       "readings": [
-        "NIST SP 800-111 Storage Encryption",
-        "NIST Post-Quantum Cryptography Standardization overview"
+        "Understanding Cryptography, Ch. 11 (Hash Functions)",
+        "NIST FIPS 180-4: Secure Hash Standard (SHA-2)",
+        "NIST FIPS 202: SHA-3 Standard",
+        "Stevens et al., The First Collision for Full SHA-1 (SHAttered, 2017)"
       ],
       "lecture_notes": {
-        "introduction": "Data protection extends cryptography into practical deployment. Post-quantum cryptography prepares us for the next generation of threats.",
+        "introduction": "Cryptographic hash functions are one-way compression functions that map arbitrary-length input to a fixed-length output (digest). They are fundamental to almost every cryptographic protocol: digital signatures hash the message before signing, password storage hashes passwords before storing, file integrity verification compares hashes, blockchain proof-of-work requires finding hash preimages. Three properties define a secure hash function. Pre-image resistance: given a hash h, it is computationally infeasible to find any message m such that H(m) = h. Second pre-image resistance: given a message m1, it is infeasible to find a different m2 with H(m1) = H(m2). Collision resistance: it is infeasible to find any two different messages m1 and m2 with H(m1) = H(m2). MD5 (128-bit output) and SHA-1 (160-bit output) are broken for collision resistance -- practical collisions have been demonstrated. SHA-2 (SHA-256, SHA-384, SHA-512) remains secure and is the current standard. SHA-3 (Keccak), based on a completely different sponge construction rather than the Merkle-Damgard construction used by MD5/SHA-1/SHA-2, provides an alternative if SHA-2 is ever weakened.",
         "key_concepts": [
-          "Full disk encryption: LUKS, BitLocker, FileVault",
-          "Database encryption: TDE, column-level, application-level",
-          "Key management: HSMs, key rotation, key escrow",
-          "Shor's algorithm threat to RSA and ECC",
-          "NIST PQC standards: CRYSTALS-Kyber (ML-KEM), CRYSTALS-Dilithium (ML-DSA)"
+          "Pre-image resistance: given h, cannot find m such that H(m) = h (one-wayness)",
+          "Second pre-image resistance: given m1, cannot find m2 != m1 such that H(m1) = H(m2)",
+          "Collision resistance: cannot find any m1 != m2 such that H(m1) = H(m2) -- hardest property to maintain",
+          "Birthday attack: collision search requires approximately 2^(n/2) hash evaluations for an n-bit hash (birthday paradox)",
+          "MD5: 128-bit output, Merkle-Damgard construction, 64 rounds, BROKEN -- collisions found in seconds on a laptop (2004)",
+          "SHA-1: 160-bit output, broken in 2017 (SHAttered) with 2^63 operations, practical collision with two different PDF files producing same hash",
+          "SHA-256: 256-bit output, 64 rounds of compression using message schedule, constants from cube roots of primes, no known practical attacks",
+          "SHA-3 (Keccak): sponge construction with 1600-bit state, absorb phase (XOR input blocks) and squeeze phase (output hash blocks)",
+          "Hash function applications: password hashing (use bcrypt/argon2, not raw SHA), file integrity (SHA-256 checksums), commit signing (Git uses SHA-1, migrating to SHA-256)"
         ],
-        "demonstration": "Setting up LUKS encryption on a Linux partition, configuring key management, and testing lattice-based key encapsulation with liboqs",
+        "demonstration": "Compute SHA-256 hashes of similar inputs to demonstrate the avalanche effect (changing one bit of input changes approximately 50% of output bits). Generate an MD5 collision using the fastcoll tool, producing two different files with the same MD5 hash. Show the SHAttered PDF collision for SHA-1. Then benchmark SHA-256 vs SHA-3-256 vs BLAKE3 for throughput and discuss selection criteria.",
         "setup_requirements": [
-          "Linux VM with unencrypted partition",
-          "cryptsetup and LUKS tools",
-          "liboqs (Open Quantum Safe) library"
+          "Python with hashlib for hash computation",
+          "fastcoll tool for MD5 collision generation",
+          "SHAttered collision PDF files (downloaded from shattered.io)",
+          "openssl dgst for command-line hashing and benchmarking"
         ],
         "review": [
           {
-            "key": "Shor's Algorithm",
-            "value": "Quantum algorithm that can factor large numbers and compute discrete logarithms in polynomial time, breaking RSA and ECC. Requires a sufficiently large quantum computer."
+            "key": "Avalanche Effect",
+            "value": "A good hash function exhibits the strict avalanche criterion: changing one bit of input changes each output bit with 50% probability. SHA-256 achieves this after 2-3 rounds. This ensures that similar inputs produce completely uncorrelated outputs."
           },
           {
-            "key": "ML-KEM (Kyber)",
-            "value": "Lattice-based key encapsulation mechanism selected by NIST as the primary post-quantum standard. Based on the hardness of the Module Learning With Errors problem."
+            "key": "MD5 Collision Severity",
+            "value": "MD5 collisions can be generated in seconds. This has been exploited to create rogue CA certificates (Flame malware, 2012) and forge digital signatures. MD5 should never be used for any security purpose. It remains acceptable only as a non-cryptographic checksum for data integrity against accidental corruption."
+          },
+          {
+            "key": "Sponge Construction Advantage",
+            "value": "SHA-3's sponge construction is fundamentally different from Merkle-Damgard (used by MD5, SHA-1, SHA-2). If a Merkle-Damgard weakness is discovered that affects SHA-2, SHA-3 would remain unaffected. This diversity is the primary reason NIST standardized SHA-3."
+          },
+          {
+            "key": "Password Hashing",
+            "value": "Never store passwords as raw SHA-256 hashes. SHA-256 is fast by design (billions per second on GPU). Use bcrypt, scrypt, or Argon2 which are deliberately slow (hundreds of milliseconds per hash) and include salt. Argon2id is the current recommendation."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "MACs and HMAC",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Explain the purpose and security model of Message Authentication Codes",
+        "Derive the HMAC construction and understand its security proof",
+        "Compare HMAC with CMAC and Poly1305 for different applications",
+        "Identify common MAC misuse patterns and their consequences"
+      ],
+      "readings": [
+        "Understanding Cryptography, Ch. 12 (MACs)",
+        "RFC 2104: HMAC - Keyed-Hashing for Message Authentication",
+        "Bellare et al., Keying Hash Functions for Message Authentication (1996)"
+      ],
+      "lecture_notes": {
+        "introduction": "A Message Authentication Code (MAC) provides integrity and authentication for messages using a shared secret key. Unlike a hash function which anyone can compute, a MAC requires knowledge of the key, so a valid MAC proves the message was created (or approved) by someone who knows the key and has not been modified in transit. HMAC (Hash-based MAC) is the most widely used MAC construction, combining a hash function with a secret key in a way that is provably secure under reasonable assumptions about the underlying hash function. The construction is: HMAC(K, M) = H((K XOR opad) || H((K XOR ipad) || M)), where ipad and opad are fixed padding constants. This nested hashing structure prevents length-extension attacks that would compromise a naive H(K || M) construction. CMAC (Cipher-based MAC) uses a block cipher (typically AES) instead of a hash function. Poly1305 is a one-time MAC designed for high performance when paired with ChaCha20 or AES. Understanding when to use each and how to use them correctly is essential for building secure protocols.",
+        "key_concepts": [
+          "MAC security model: given many (message, MAC) pairs, an attacker cannot forge a valid MAC for any new message",
+          "HMAC construction: HMAC(K, M) = H((K XOR opad) || H((K XOR ipad) || M)), where ipad = 0x36 repeated and opad = 0x5C repeated",
+          "Length extension attack: for Merkle-Damgard hashes, knowing H(M) allows computing H(M || padding || extension) without knowing M, breaking naive H(K || M) MAC",
+          "HMAC security proof: HMAC is secure if the underlying hash function's compression function is a PRF",
+          "CMAC (NIST SP 800-38B): AES-based MAC using CBC-MAC with corrections for variable-length messages",
+          "Poly1305: polynomial evaluation MAC over GF(2^130-5), one-time key per message, extremely fast",
+          "MAC verification: always use constant-time comparison to prevent timing side-channel attacks",
+          "Encrypt-then-MAC vs MAC-then-Encrypt: encrypt-then-MAC is provably secure; MAC-then-encrypt has caused vulnerabilities (TLS padding oracle)"
+        ],
+        "demonstration": "Implement HMAC-SHA256 from scratch in Python (using only the SHA-256 hash function) and verify it matches the library implementation. Demonstrate a length extension attack against a naive H(key || message) MAC using the hash_extender tool. Then show constant-time vs early-exit MAC comparison and measure the timing difference that enables a side-channel attack.",
+        "setup_requirements": [
+          "Python with hashlib and hmac libraries",
+          "hash_extender tool for length extension attack demonstration",
+          "Timing measurement script for side-channel demonstration",
+          "Wireshark for observing HMAC in TLS handshake"
+        ],
+        "review": [
+          {
+            "key": "Length Extension Attack",
+            "value": "For Merkle-Damgard hashes (MD5, SHA-1, SHA-256), knowing H(M) and the length of M allows computing H(M || padding || extension) without knowing M. This breaks H(key || message) as a MAC because an attacker can append data and compute a valid tag. HMAC's nested structure prevents this."
+          },
+          {
+            "key": "Timing Attack on MAC Verification",
+            "value": "If MAC comparison returns false at the first differing byte, an attacker can determine the correct MAC one byte at a time by measuring response latency. Always use constant-time comparison: compare all bytes and return the result only at the end."
+          },
+          {
+            "key": "MAC vs Digital Signature",
+            "value": "MACs use shared secret keys: both parties can create and verify. Digital signatures use asymmetric keys: only the signer can create, anyone with the public key can verify. MACs provide authentication but not non-repudiation (either party could have created the MAC)."
+          },
+          {
+            "key": "Authenticate Associated Data",
+            "value": "In many protocols, some data must be authenticated but not encrypted (headers, metadata). AEAD modes (GCM, ChaCha20-Poly1305) authenticate both encrypted data and plaintext associated data in a single operation, preventing header manipulation attacks."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Public-Key Cryptography: RSA Mathematics",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Derive RSA key generation from Euler's theorem and the Chinese Remainder Theorem",
+        "Perform RSA encryption and decryption on small numbers by hand",
+        "Understand RSA-OAEP padding and why textbook RSA is insecure",
+        "Analyze RSA key size recommendations relative to computational advances"
+      ],
+      "readings": [
+        "Understanding Cryptography, Ch. 6-7 (RSA)",
+        "Boneh, Twenty Years of Attacks on the RSA Cryptosystem (survey)",
+        "NIST SP 800-56B: Recommendations for Pair-Wise Key Establishment Using Integer Factorization Cryptography"
+      ],
+      "lecture_notes": {
+        "introduction": "RSA, published in 1977 by Rivest, Shamir, and Adleman, was the first practical public-key cryptosystem and remains the most widely deployed. Its security rests on the difficulty of factoring the product of two large prime numbers. Key generation selects two large primes p and q, computes n = p*q and phi(n) = (p-1)(q-1), chooses a public exponent e (commonly 65537), and computes the private exponent d = e^(-1) mod phi(n) using the Extended Euclidean Algorithm. Encryption is C = M^e mod n; decryption is M = C^d mod n. The mathematical beauty is that computing d from (n, e) requires factoring n into p and q, which is believed to be computationally hard for sufficiently large n. However, textbook RSA (direct modular exponentiation) is deterministic and malleable, making it insecure for real use. OAEP (Optimal Asymmetric Encryption Padding) adds randomness before encryption, making RSA-OAEP provably secure under the RSA assumption. RSA is too slow for bulk encryption (1000x slower than AES), so in practice it encrypts only symmetric keys (hybrid encryption) or creates digital signatures by signing hash digests.",
+        "key_concepts": [
+          "RSA key generation: select primes p, q; compute n = p*q; compute phi(n) = (p-1)(q-1); choose e coprime to phi(n); compute d = e^(-1) mod phi(n)",
+          "RSA encryption: C = M^e mod n (fast with small e=65537, only 17 multiplications using square-and-multiply)",
+          "RSA decryption: M = C^d mod n (slower because d is large, accelerated with CRT: compute mod p and mod q separately, combine)",
+          "Textbook RSA weaknesses: deterministic (same plaintext always produces same ciphertext), malleable (E(m1) * E(m2) = E(m1*m2))",
+          "RSA-OAEP: pad plaintext with random value and hash before encryption, makes RSA semantically secure",
+          "Key size recommendations: RSA-2048 minimum (112-bit security), RSA-3072 for 128-bit security, RSA-4096 for long-term",
+          "Factoring records: RSA-829 (250 digits) factored in 2020 using 2700 CPU-years, RSA-2048 estimated to require 10^20 operations",
+          "Chinese Remainder Theorem optimization: private key operations mod p and mod q are 4x faster than mod n",
+          "RSA signature: Sign(m) = H(m)^d mod n, Verify(m, s) = check s^e mod n == H(m)"
+        ],
+        "demonstration": "Perform RSA key generation by hand with small primes (p=61, q=53): compute n=3233, phi=3120, e=17, d=2753. Encrypt M=65 to get C=65^17 mod 3233 = 2790. Decrypt C=2790^2753 mod 3233 = 65. Then demonstrate textbook RSA malleability: show that multiplying two ciphertexts gives the ciphertext of the product. Finally, use OpenSSL to generate a real RSA-2048 key pair and examine its structure.",
+        "setup_requirements": [
+          "Python for modular arithmetic computations",
+          "OpenSSL for RSA key generation and inspection",
+          "Calculator or Python for hand-computation verification",
+          "RSA-OAEP implementation example"
+        ],
+        "review": [
+          {
+            "key": "RSA Security Foundation",
+            "value": "RSA security relies on the difficulty of factoring n = p * q when p and q are each ~1024 bits. The best classical algorithm (General Number Field Sieve) has sub-exponential complexity L_n[1/3, 1.923]. Doubling the key size more than squares the factoring effort."
+          },
+          {
+            "key": "e = 65537",
+            "value": "The public exponent e = 65537 = 2^16 + 1 is standard because: (1) it has only two 1-bits, making modular exponentiation fast (17 squarings, 1 multiplication), (2) it is large enough to prevent small-exponent attacks, (3) it is prime, simplifying the coprimality requirement."
+          },
+          {
+            "key": "RSA Padding is Critical",
+            "value": "Textbook RSA is a trap that appears in many insecure implementations. Without OAEP padding, RSA is deterministic (reveals repeated messages), malleable (attackers can manipulate ciphertext meaningfully), and vulnerable to chosen-ciphertext attacks."
+          },
+          {
+            "key": "Hybrid Encryption",
+            "value": "RSA encrypts at most (key_size - padding_overhead) bytes. For RSA-2048 with OAEP, maximum plaintext is 190 bytes. To encrypt larger data, generate a random AES key, encrypt data with AES-GCM, encrypt the AES key with RSA-OAEP. This combines RSA's key distribution advantage with AES's speed."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Diffie-Hellman Key Exchange and Elliptic Curves",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Derive the Diffie-Hellman key exchange protocol from the discrete logarithm problem",
+        "Explain the man-in-the-middle attack on unauthenticated DH and how to prevent it",
+        "Understand elliptic curve mathematics and why ECC provides equivalent security with smaller keys",
+        "Compare ECDH with classical DH for modern key agreement"
+      ],
+      "readings": [
+        "Understanding Cryptography, Ch. 8 (Diffie-Hellman and Discrete Logarithm)",
+        "Understanding Cryptography, Ch. 9 (Elliptic Curves)",
+        "RFC 7748: Elliptic Curves for Security (X25519, X448)"
+      ],
+      "lecture_notes": {
+        "introduction": "The Diffie-Hellman key exchange, published in 1976, was the breakthrough that launched public-key cryptography. It allows two parties who have never communicated before to establish a shared secret over a public channel. Alice and Bob agree on a large prime p and a generator g. Alice picks a random secret a and sends g^a mod p to Bob. Bob picks a random secret b and sends g^b mod p to Alice. Both compute the shared secret s = g^(ab) mod p: Alice computes (g^b)^a and Bob computes (g^a)^b. An eavesdropper who sees g^a and g^b cannot compute g^(ab) without solving the discrete logarithm problem, which is believed to be computationally hard. However, DH is vulnerable to a man-in-the-middle attack: an attacker can perform separate key exchanges with Alice and Bob, relaying modified messages. Authentication (digital signatures, certificates) is required to prevent this. Elliptic Curve Diffie-Hellman (ECDH) replaces the multiplicative group mod p with the group of points on an elliptic curve, achieving equivalent security with much smaller keys. X25519, a Diffie-Hellman function on Curve25519, is the standard for modern key agreement in TLS 1.3, Signal, and WireGuard.",
+        "key_concepts": [
+          "Discrete logarithm problem: given g, p, and g^a mod p, finding a is computationally hard",
+          "DH protocol: Alice sends A = g^a mod p, Bob sends B = g^b mod p, shared secret K = A^b = B^a = g^(ab) mod p",
+          "Man-in-the-middle attack: attacker performs separate DH exchanges with each party, must be prevented with authentication",
+          "Forward secrecy: using ephemeral DH keys ensures that compromise of long-term keys does not reveal past session keys",
+          "Elliptic curve group: points on y^2 = x^3 + ax + b over a finite field, with point addition as the group operation",
+          "ECDH: replace g^a with scalar multiplication aG (a times the generator point G), shared secret is abG",
+          "Key size comparison: 256-bit ECC provides security equivalent to 3072-bit RSA or 3072-bit DH",
+          "Curve25519/X25519: Montgomery curve designed for secure, constant-time implementation, standard in TLS 1.3",
+          "Static vs ephemeral DH: static DH reuses keys and provides no forward secrecy; ephemeral DH (DHE/ECDHE) generates new keys per session"
+        ],
+        "demonstration": "Implement a simplified Diffie-Hellman key exchange in Python: Alice and Bob agree on p and g, generate random private keys, exchange public values, and compute the shared secret. Then demonstrate the man-in-the-middle attack by inserting Mallory between them. Finally, compare the speed and key sizes of DH-3072 vs ECDH-X25519 using OpenSSL benchmarks.",
+        "setup_requirements": [
+          "Python with the cryptography library for ECDH",
+          "OpenSSL for DH and ECDH key generation and benchmarking",
+          "Network simulation for MitM demonstration",
+          "Wireshark for observing ECDHE in a TLS handshake"
+        ],
+        "review": [
+          {
+            "key": "Forward Secrecy",
+            "value": "If a server's RSA private key is compromised, all past TLS sessions using RSA key exchange can be decrypted from recorded traffic. With ephemeral DH (DHE/ECDHE), each session uses a new DH key pair that is discarded after the session, so past sessions cannot be decrypted even if the long-term key is compromised."
+          },
+          {
+            "key": "ECC Advantage",
+            "value": "A 256-bit ECC key provides equivalent security to a 3072-bit RSA key. This means faster key generation (milliseconds vs seconds), faster key exchange, smaller certificates, and lower bandwidth. ECC dominates modern cryptographic deployments."
+          },
+          {
+            "key": "Curve25519 Design",
+            "value": "Designed by Daniel Bernstein for security and implementation simplicity. Montgomery ladder ensures constant-time scalar multiplication (no timing side channels). Cofactor 8 prevents small-subgroup attacks. Widely adopted: TLS 1.3, Signal, WireGuard, SSH."
+          },
+          {
+            "key": "Authenticated Key Exchange",
+            "value": "Raw DH provides no authentication. In TLS 1.3, the server signs its ephemeral DH public key with its RSA or ECDSA private key (from the certificate). The client verifies the signature, preventing MitM. This combination provides both authentication and forward secrecy."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "Digital Signatures: DSA, ECDSA, and EdDSA",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Explain the security model and applications of digital signatures",
+        "Compare DSA, ECDSA, and EdDSA in terms of security and performance",
+        "Understand the critical importance of randomness in DSA/ECDSA signing",
+        "Implement signature generation and verification using OpenSSL and Python"
+      ],
+      "readings": [
+        "Understanding Cryptography, Ch. 10 (Digital Signatures)",
+        "NIST FIPS 186-5: Digital Signature Standard",
+        "RFC 8032: Edwards-Curve Digital Signature Algorithm (EdDSA)"
+      ],
+      "lecture_notes": {
+        "introduction": "Digital signatures provide authentication, integrity, and non-repudiation for digital messages and documents. Unlike MACs which use shared keys, digital signatures use asymmetric cryptography: the signer uses their private key to create the signature, and anyone with the corresponding public key can verify it. Non-repudiation means the signer cannot deny having signed the message, since only they possess the private key. DSA (Digital Signature Algorithm), published by NIST in 1991, uses the discrete logarithm problem in a subgroup of Z_p. ECDSA applies the same algorithm over elliptic curve groups for smaller keys and faster operations. Both DSA and ECDSA have a critical vulnerability: they require a unique random nonce k for each signature. If k is ever reused, the private key can be recovered from two signatures. This is not a theoretical concern -- Sony's PlayStation 3 code signing was broken because they used a constant k. EdDSA (Edwards-curve Digital Signature Algorithm), standardized as Ed25519, eliminates this vulnerability by deriving the nonce deterministically from the private key and message, making it impossible to reuse a nonce by accident.",
+        "key_concepts": [
+          "Digital signature properties: authentication (verifier knows who signed), integrity (message not modified), non-repudiation (signer cannot deny)",
+          "Sign-then-verify: Signer computes sigma = Sign(sk, H(m)), Verifier checks Verify(pk, m, sigma) = true/false",
+          "DSA: based on discrete logarithm in subgroup of Z_p, requires random nonce k per signature",
+          "ECDSA: DSA over elliptic curves, 256-bit key provides 128-bit security, used in Bitcoin and TLS",
+          "Nonce reuse catastrophe: if k is reused in two ECDSA signatures (s1, s2 with same r), the private key d = (s1*H(m2) - s2*H(m1)) / (s1 - s2) mod n",
+          "PlayStation 3 hack: Sony used the same k for all signatures, allowing recovery of their private signing key from any two signatures",
+          "EdDSA (Ed25519): deterministic nonce k = H(secret_key_half || message), 128-bit security, constant-time, batch-verifiable",
+          "EdDSA advantages: deterministic (no random nonce needed), fast (single scalar multiplication for signing), resistant to side-channel attacks",
+          "Signature applications: code signing, certificate signing, document signing, blockchain transactions, software updates"
+        ],
+        "demonstration": "Generate ECDSA and Ed25519 key pairs using OpenSSL and Python. Sign a message with both and verify. Then demonstrate the ECDSA nonce reuse attack: sign two different messages with the same k value and recover the private key from the two signatures. Finally, implement an Ed25519 signature and show that its deterministic nonce makes this attack impossible.",
+        "setup_requirements": [
+          "Python with cryptography library for EdDSA and ECDSA",
+          "OpenSSL for key generation and signing operations",
+          "ECDSA nonce reuse exploit script (provided)",
+          "Wireshark for observing signature verification in TLS"
+        ],
+        "review": [
+          {
+            "key": "ECDSA Nonce Reuse Math",
+            "value": "If two signatures (r, s1) and (r, s2) share the same r (which happens when k is the same), then s1 - s2 = k^(-1)(H(m1) - H(m2)), so k = (H(m1) - H(m2)) / (s1 - s2). Then d = (s1*k - H(m1)) / r. The private key is completely exposed."
+          },
+          {
+            "key": "Ed25519 Performance",
+            "value": "Ed25519 can perform ~71,000 signature verifications per second on a modern CPU. Signing is even faster. Batch verification of n signatures is faster than n individual verifications. This makes Ed25519 ideal for high-throughput systems."
+          },
+          {
+            "key": "Code Signing Trust Chain",
+            "value": "Operating systems trust code signed by a known developer certificate chain. The developer signs the binary hash with their private key. The OS verifies the signature using the public key in the developer's certificate, which is itself signed by a trusted CA."
+          },
+          {
+            "key": "Post-Quantum Threat to Signatures",
+            "value": "Shor's algorithm breaks DSA, ECDSA, and EdDSA. NIST has standardized ML-DSA (CRYSTALS-Dilithium) as the post-quantum replacement. Unlike Shor-vulnerable schemes, ML-DSA is based on lattice problems believed to be hard for quantum computers."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "PKI and X.509 Certificates",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Describe the PKI hierarchy: root CAs, intermediate CAs, and end-entity certificates",
+        "Inspect and validate X.509 certificate chains using OpenSSL",
+        "Identify certificate misuse: expired certificates, domain mismatches, revoked certificates",
+        "Understand Certificate Transparency and its role in detecting misissued certificates"
+      ],
+      "readings": [
+        "Bulletproof TLS and PKI, Ch. 1-4",
+        "RFC 5280: Internet X.509 PKI Certificate and CRL Profile",
+        "RFC 6962: Certificate Transparency"
+      ],
+      "lecture_notes": {
+        "introduction": "Public Key Infrastructure (PKI) solves the key distribution problem: how do you know that a public key actually belongs to the entity it claims to represent? Without PKI, an attacker could substitute their own public key for the legitimate server's, enabling man-in-the-middle attacks against every cryptographic protocol. PKI uses Certificate Authorities (CAs) that are trusted third parties. A CA verifies the identity of a certificate applicant and issues a digitally signed X.509 certificate binding their identity to their public key. Your browser trusts ~150 root CAs whose certificates are pre-installed in the operating system or browser. When a server presents its certificate, the browser validates the signature chain back to a trusted root. This system has significant weaknesses: any trusted CA can issue a certificate for any domain, a compromised CA can enable mass interception, and revocation checking is unreliable. Certificate Transparency (CT) addresses some of these issues by requiring CAs to publicly log all issued certificates, enabling domain owners to detect unauthorized certificate issuance. Understanding PKI is essential because it is the trust foundation for all secure internet communication.",
+        "key_concepts": [
+          "X.509 certificate fields: version, serial number, issuer, validity period, subject, public key, extensions, signature",
+          "Subject Alternative Name (SAN): the extension that specifies which domain names the certificate is valid for",
+          "Certificate chain validation: end-entity cert signed by intermediate CA, intermediate signed by root CA, root is self-signed and in the trust store",
+          "Root CA trust store: ~150 pre-installed root certificates in OS/browser, any root can issue a cert for any domain",
+          "Certificate revocation: CRL (Certificate Revocation List) and OCSP (Online Certificate Status Protocol), OCSP stapling for performance",
+          "Certificate Transparency (CT): public append-only logs of all issued certificates, SCTs (Signed Certificate Timestamps) prove logging",
+          "Certificate pinning: application remembers the expected certificate or CA, rejects unexpected changes (deprecated in browsers but used in mobile apps)",
+          "Let's Encrypt: free automated CA using ACME protocol, issues DV (Domain Validation) certificates, responsible for >50% of HTTPS certificates",
+          "CA compromise impact: DigiNotar hack (2011) resulted in fake Google certificates used for MitM in Iran, entire CA was revoked and went bankrupt"
+        ],
+        "demonstration": "Use OpenSSL to inspect a real website's certificate chain: examine the end-entity certificate's SAN, validity period, and signature algorithm. Verify the chain manually by checking each certificate's signature with its issuer's public key. Then use Certificate Transparency logs (crt.sh) to search for all certificates issued for a domain, and demonstrate how a domain owner can detect unauthorized certificates.",
+        "setup_requirements": [
+          "OpenSSL for certificate inspection and chain verification",
+          "Browser developer tools for examining HTTPS certificate details",
+          "crt.sh access for Certificate Transparency log searches",
+          "Lab CA setup for issuing test certificates"
+        ],
+        "review": [
+          {
+            "key": "Chain Validation Steps",
+            "value": "1) Verify end-entity cert signature with intermediate CA public key. 2) Verify intermediate cert signature with root CA public key. 3) Root CA is in trust store. 4) Check validity period. 5) Check SAN matches requested domain. 6) Check revocation via OCSP stapling."
+          },
+          {
+            "key": "Certificate Transparency",
+            "value": "CAs must log every issued certificate to multiple independent CT logs. Browsers require SCTs (proof of logging) in the certificate or TLS handshake. Domain owners monitor CT logs for unexpected certificates. This caught Symantec issuing unauthorized certificates, leading to Symantec's removal as a trusted CA."
+          },
+          {
+            "key": "Let's Encrypt Impact",
+            "value": "Before Let's Encrypt (2016), HTTPS certificates cost $50-300/year and required manual installation. Let's Encrypt automated the process with free 90-day certificates, driving HTTPS adoption from ~40% to >90% of web traffic. The ACME protocol it created is now an IETF standard."
+          },
+          {
+            "key": "CA Compromise Risk",
+            "value": "Any of ~150 trusted root CAs can issue a certificate for any domain. Compromising one CA (DigiNotar, Comodo) enables MitM attacks against the entire internet. Certificate Transparency, DANE/TLSA, and CAA DNS records mitigate but do not eliminate this risk."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "TLS/SSL Deep Dive",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Analyze the TLS 1.3 handshake at the protocol level with all cryptographic operations",
+        "Compare TLS 1.2 and TLS 1.3 in terms of latency, security, and cipher suites",
+        "Identify common TLS misconfigurations and historical attacks",
+        "Configure a secure TLS deployment using best practices"
+      ],
+      "readings": [
+        "Bulletproof TLS and PKI, Ch. 5-8",
+        "RFC 8446: The Transport Layer Security (TLS) Protocol Version 1.3",
+        "Mozilla SSL Configuration Generator documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "TLS (Transport Layer Security) is the protocol that encrypts virtually all internet traffic. Every HTTPS connection, every secure email, every VPN tunnel, and most API calls use TLS. Understanding TLS at the protocol level is essential for anyone working in security or networked systems. TLS 1.3, published in 2018, was a major redesign that removed insecure algorithms, reduced handshake latency from 2-RTT to 1-RTT (and 0-RTT for resumption), and made forward secrecy mandatory. The TLS 1.3 handshake begins with the client sending supported cipher suites and key shares (ECDH public values) in the ClientHello. The server responds with its chosen cipher suite, key share, and certificate in the ServerHello and subsequent messages, all encrypted after the key share exchange. The entire handshake completes in one round trip, compared to two for TLS 1.2. Historical TLS attacks (BEAST, POODLE, Heartbleed, DROWN, ROBOT) exploited weaknesses in older protocol versions and cipher suites that TLS 1.3 eliminated entirely.",
+        "key_concepts": [
+          "TLS 1.3 handshake: ClientHello (supported groups, key shares, cipher suites) -> ServerHello (selected group, key share) -> encrypted extensions, certificate, CertificateVerify, Finished",
+          "1-RTT handshake: client sends key share in ClientHello, server responds with key share and encrypted data in ServerHello, application data flows after one round trip",
+          "0-RTT resumption: client sends encrypted application data with the ClientHello using a pre-shared key from a previous session (replay attack risk)",
+          "TLS 1.3 cipher suites: only 5 allowed (TLS_AES_256_GCM_SHA384, TLS_AES_128_GCM_SHA256, TLS_CHACHA20_POLY1305_SHA256, etc.)",
+          "Removed in TLS 1.3: RSA key exchange (no forward secrecy), CBC cipher suites (padding oracle), RC4, DES/3DES, MD5, SHA-1, static DH",
+          "Forward secrecy: mandatory in TLS 1.3 via ephemeral ECDHE, session keys cannot be recovered from long-term key compromise",
+          "Historical attacks: BEAST (CBC IV prediction), POODLE (CBC padding in SSLv3), Heartbleed (OpenSSL buffer over-read), DROWN (SSLv2 cross-protocol), ROBOT (RSA padding oracle)",
+          "Certificate verification in TLS: server proves identity by signing a transcript hash with its private key (CertificateVerify message)",
+          "Server Name Indication (SNI): client sends the target hostname in plaintext in ClientHello, enabling virtual hosting but leaking destination (Encrypted Client Hello in TLS 1.3 extension addresses this)"
+        ],
+        "demonstration": "Capture a TLS 1.3 handshake with Wireshark using SSLKEYLOGFILE to decrypt the traffic. Examine each message in the handshake: ClientHello key shares, ServerHello response, encrypted extensions, certificate chain, and CertificateVerify signature. Then test a server's TLS configuration with testssl.sh, identifying weak cipher suites, protocol versions, and certificate issues. Finally, configure nginx with the Mozilla SSL Configuration Generator for a modern, secure deployment.",
+        "setup_requirements": [
+          "Wireshark with TLS decryption (SSLKEYLOGFILE set in browser)",
+          "testssl.sh or sslyze for TLS server scanning",
+          "nginx with configurable TLS for secure deployment exercise",
+          "Mozilla SSL Configuration Generator access"
+        ],
+        "review": [
+          {
+            "key": "TLS 1.3 vs 1.2 Security",
+            "value": "TLS 1.3 eliminates entire classes of attacks by removing insecure options: no RSA key exchange (prevents ROBOT), no CBC modes (prevents POODLE/BEAST), no static DH (prevents LogJam), no MD5/SHA-1 (prevents transcript collision). Security by removing footguns."
+          },
+          {
+            "key": "0-RTT Replay Risk",
+            "value": "TLS 1.3 0-RTT data can be replayed by an attacker: if the client sends a payment request in 0-RTT, an attacker can replay it. Servers must implement replay protection (single-use tickets, idempotent handling) or reject 0-RTT for state-changing requests."
+          },
+          {
+            "key": "Heartbleed Impact",
+            "value": "CVE-2014-0160: a missing bounds check in OpenSSL's heartbeat extension allowed remote attackers to read 64KB of server memory per request, potentially exposing private keys, session keys, and user data. Affected ~17% of all HTTPS servers. Demonstrated the danger of memory-unsafe languages in security-critical code."
+          },
+          {
+            "key": "Encrypted Client Hello",
+            "value": "SNI in TLS reveals the destination hostname in plaintext, enabling censorship and surveillance. Encrypted Client Hello (ECH) encrypts the ClientHello using a public key published in DNS (via HTTPS record). When widely deployed, it will prevent SNI-based traffic filtering."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Disk and File Encryption",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Implement full-disk encryption with LUKS on Linux and understand BitLocker on Windows",
+        "Compare encryption granularity: full-disk, partition, file-level, and container",
+        "Analyze key management challenges: key derivation, secure storage, recovery",
+        "Evaluate the security of encrypted-at-rest data against various attack scenarios"
+      ],
+      "readings": [
+        "NIST SP 800-111: Guide to Storage Encryption Technologies",
+        "LUKS2 specification and cryptsetup documentation",
+        "Microsoft BitLocker architecture documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Data-at-rest encryption protects stored data from unauthorized access when physical security is bypassed -- a stolen laptop, a decommissioned hard drive, or unauthorized physical access to a server. Full-disk encryption (FDE) is the most comprehensive approach: every sector on the disk is encrypted, including the operating system, swap space, and temporary files. LUKS (Linux Unified Key Setup) is the standard for Linux, using dm-crypt in the kernel. BitLocker is the Windows equivalent, using AES-XTS and integrating with TPM (Trusted Platform Module) for pre-boot authentication. Key management is the central challenge: the master encryption key must be derived from a user passphrase (using PBKDF2 or Argon2), protected by hardware (TPM), and recoverable in case of forgotten passwords. The choice of encryption mode matters: XTS mode is designed specifically for disk encryption because it handles the unique requirement of encrypting fixed-size sectors independently while preventing certain manipulation attacks. Understanding disk encryption is essential for compliance (HIPAA, GDPR, PCI-DSS all require encryption of sensitive data at rest) and for protecting against the most common data breach vector: lost or stolen devices.",
+        "key_concepts": [
+          "Full-disk encryption (FDE): every sector encrypted, transparent to applications, protects against physical theft and forensic recovery",
+          "LUKS architecture: LUKS header stores key slots (up to 8), each slot encrypts the master key with a different passphrase via PBKDF2/Argon2",
+          "dm-crypt: Linux kernel subsystem that provides transparent encryption below the filesystem layer",
+          "BitLocker: Windows FDE using AES-128-XTS or AES-256-XTS, TPM integration for seamless boot, recovery key for emergencies",
+          "XTS mode: tweakable encryption mode for disk sectors, each sector encrypted with a tweak derived from sector number, prevents ECB-like pattern leakage",
+          "Key derivation: PBKDF2 (older, LUKS1) or Argon2id (recommended, LUKS2) converts passphrase to encryption key with tunable time/memory cost",
+          "TPM (Trusted Platform Module): hardware security module that seals the disk encryption key to the boot configuration, prevents offline attacks",
+          "Cold boot attack: DRAM retains data for seconds after power off; encryption keys can be recovered from memory. Mitigated by memory encryption (AMD SME/SEV)",
+          "File-level encryption: eCryptfs, fscrypt (ext4), EFS (Windows); encrypts individual files, finer granularity but metadata (filenames, sizes, directory structure) may leak"
+        ],
+        "demonstration": "Set up LUKS2 encryption on a USB drive: create the LUKS container with cryptsetup luksFormat using Argon2id key derivation, add a second key slot with a recovery key, create a filesystem inside the encrypted container, mount and unmount it. Then demonstrate the cold boot attack concept by examining memory contents of a running LUKS system. Compare LUKS2 header structure with a BitLocker-encrypted drive image.",
+        "setup_requirements": [
+          "Linux VM with cryptsetup 2.x installed",
+          "Spare USB drive or disk image file for LUKS setup",
+          "BitLocker encrypted drive image for analysis",
+          "TPM simulator or documentation for TPM integration discussion"
+        ],
+        "review": [
+          {
+            "key": "LUKS Key Slots",
+            "value": "LUKS stores the master key encrypted separately under each key slot's passphrase. Changing a passphrase only re-encrypts the master key under the new passphrase -- it does not re-encrypt the entire disk. This is why LUKS supports multiple passphrases and fast passphrase changes."
+          },
+          {
+            "key": "XTS Mode for Disk",
+            "value": "XTS encrypts each 16-byte block with a tweak derived from the sector number and block position. This means identical plaintext at different disk locations produces different ciphertext. It prevents an attacker from detecting moved or copied disk sectors."
+          },
+          {
+            "key": "Evil Maid Attack",
+            "value": "An attacker with physical access modifies the unencrypted bootloader to capture the passphrase on next boot. Defense: Secure Boot verifies bootloader integrity via UEFI signature chain. TPM measured boot detects bootloader tampering and refuses to unseal the encryption key."
+          },
+          {
+            "key": "Compliance Requirements",
+            "value": "HIPAA: encrypted PHI is exempt from breach notification (safe harbor). GDPR: encryption is a recommended technical measure under Article 32. PCI-DSS: requires encryption of stored cardholder data. These regulations drive universal adoption of disk encryption."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "Database Encryption",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Compare database encryption strategies: TDE, column-level, and application-level encryption",
+        "Understand the performance and query implications of each encryption approach",
+        "Design a key management architecture for encrypted databases",
+        "Evaluate database encryption against specific threat models"
+      ],
+      "readings": [
+        "NIST SP 800-111: Guide to Storage Encryption Technologies (database section)",
+        "PostgreSQL pgcrypto documentation",
+        "Microsoft SQL Server Always Encrypted architecture"
+      ],
+      "lecture_notes": {
+        "introduction": "Databases contain an organization's most sensitive data: customer records, financial transactions, health information, and authentication credentials. Database encryption adds a layer of protection beyond access control, ensuring that data remains confidential even if the database server is compromised, backups are stolen, or an administrator goes rogue. Three strategies exist at different layers. Transparent Data Encryption (TDE) encrypts the database files at the storage layer, transparent to applications and queries, protecting against physical theft of database files or backups. Column-level encryption encrypts specific sensitive columns (SSN, credit card numbers) within the database, protecting against database administrator access and SQL injection that reads data. Application-level encryption encrypts data before it reaches the database, providing the strongest protection because even the database server never sees plaintext, but sacrificing the ability to query encrypted data. Each approach has different threat models, performance characteristics, and query limitations. The key management architecture -- where keys are stored, how they are rotated, and who has access -- is often more important than the encryption algorithm itself.",
+        "key_concepts": [
+          "Transparent Data Encryption (TDE): encrypts database files at rest, transparent to queries and applications, protects against physical media theft",
+          "TDE key hierarchy: master key (in HSM or key vault) encrypts database encryption key (DEK), DEK encrypts data files and backups",
+          "Column-level encryption: pgcrypto (PostgreSQL), Always Encrypted (SQL Server), encrypt specific columns, queryable only with key",
+          "Application-level encryption: application encrypts before INSERT, decrypts after SELECT, database never sees plaintext",
+          "Searchable encryption: homomorphic encryption, order-preserving encryption, and deterministic encryption allow limited queries on encrypted data (with trade-offs)",
+          "Key management: Hardware Security Modules (HSMs), AWS KMS / Azure Key Vault / GCP Cloud KMS for key storage and rotation",
+          "Key rotation: TDE supports re-encryption with new key, column-level requires UPDATE of all encrypted values, application-level handles rotation in application code",
+          "Performance impact: TDE ~2-5% overhead (AES-NI acceleration), column-level 5-20% per encrypted column, application-level varies by implementation",
+          "Threat model comparison: TDE protects against disk theft, column-level protects against DBA access, application-level protects against database compromise"
+        ],
+        "demonstration": "Set up column-level encryption in PostgreSQL using pgcrypto: create a table with an encrypted SSN column, insert data with pgp_sym_encrypt(), query with pgp_sym_decrypt(), and show that a direct SELECT without the key returns ciphertext. Then compare query performance on encrypted vs unencrypted columns and discuss the inability to index or search encrypted columns efficiently.",
+        "setup_requirements": [
+          "PostgreSQL with pgcrypto extension enabled",
+          "Sample database with sensitive columns to encrypt",
+          "Performance benchmarking queries",
+          "Key management diagram template"
+        ],
+        "review": [
+          {
+            "key": "TDE Limitations",
+            "value": "TDE protects only against physical theft of database files and backups. It does NOT protect against: SQL injection (data is decrypted for queries), compromised DBA accounts (TDE is transparent to authorized connections), or memory dumps (data is plaintext in memory during query execution)."
+          },
+          {
+            "key": "Always Encrypted Architecture",
+            "value": "SQL Server Always Encrypted keeps the encryption key on the client. The database server processes queries on encrypted data without decrypting. Supports deterministic encryption (allows equality comparisons) and randomized encryption (no query support but stronger security)."
+          },
+          {
+            "key": "Key Management is the Hard Part",
+            "value": "The encryption algorithm is the easy part. Key management -- secure generation, storage, distribution, rotation, revocation, and destruction -- is where most deployments fail. Hardcoded keys, keys in config files, and keys accessible to too many people are the most common vulnerabilities."
+          },
+          {
+            "key": "Envelope Encryption",
+            "value": "Encrypt data with a data encryption key (DEK). Encrypt the DEK with a key encryption key (KEK) stored in an HSM/KMS. Store the encrypted DEK alongside the data. To rotate the KEK, re-encrypt only the DEK (seconds), not all the data (hours/days). AWS KMS, Azure Key Vault, and GCP Cloud KMS all use this pattern."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "Post-Quantum Cryptography",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Explain Shor's algorithm and its threat to RSA, DH, and ECC",
+        "Evaluate NIST post-quantum standards: ML-KEM (CRYSTALS-Kyber) and ML-DSA (CRYSTALS-Dilithium)",
+        "Understand lattice-based cryptography and the Learning With Errors problem",
+        "Plan a post-quantum migration strategy for existing systems"
+      ],
+      "readings": [
+        "NIST Post-Quantum Cryptography Standardization: Final Standards announcement",
+        "NIST FIPS 203: ML-KEM (Module-Lattice-Based Key-Encapsulation Mechanism)",
+        "NIST FIPS 204: ML-DSA (Module-Lattice-Based Digital Signature Algorithm)",
+        "Bernstein & Lange, Post-Quantum Cryptography (introductory survey)"
+      ],
+      "lecture_notes": {
+        "introduction": "Quantum computers exploit quantum mechanical phenomena (superposition and entanglement) to solve certain problems exponentially faster than classical computers. Shor's algorithm, published in 1994, factors large integers and computes discrete logarithms in polynomial time, breaking RSA, Diffie-Hellman, and all elliptic curve cryptography. While no quantum computer yet has enough qubits to threaten current key sizes (breaking RSA-2048 requires approximately 4,000 logical qubits or millions of physical qubits), the threat is real for two reasons: cryptographic systems must protect data for decades, and harvest-now-decrypt-later attacks mean adversaries recording encrypted traffic today could decrypt it once quantum computers become available. NIST completed its Post-Quantum Cryptography standardization in 2024, selecting three algorithms: ML-KEM (CRYSTALS-Kyber) for key encapsulation, ML-DSA (CRYSTALS-Dilithium) for digital signatures, and SLH-DSA (SPHINCS+) as a hash-based signature backup. All three primary schemes are based on lattice problems, specifically the Module Learning With Errors (MLWE) problem, which is believed to be hard for both classical and quantum computers. The transition to post-quantum cryptography is the largest cryptographic migration in history and will take a decade or more.",
+        "key_concepts": [
+          "Shor's algorithm: factors n in O((log n)^3) using quantum Fourier transform, breaks RSA and DH in polynomial time",
+          "Grover's algorithm: searches unsorted database in O(sqrt(N)), halves the effective security of symmetric ciphers (AES-128 -> 64-bit security, AES-256 -> 128-bit security)",
+          "Harvest-now-decrypt-later: adversaries record encrypted traffic now to decrypt when quantum computers become available, making migration urgent for sensitive data",
+          "Lattice-based cryptography: security based on the hardness of finding short vectors in high-dimensional lattices (Shortest Vector Problem, Learning With Errors)",
+          "ML-KEM (CRYSTALS-Kyber): lattice-based key encapsulation, three security levels (ML-KEM-512, 768, 1024), public key ~800-1568 bytes, ciphertext ~768-1568 bytes",
+          "ML-DSA (CRYSTALS-Dilithium): lattice-based digital signatures, three levels, signature ~2420-4627 bytes (larger than ECDSA's ~64 bytes)",
+          "SLH-DSA (SPHINCS+): hash-based signature scheme, no lattice assumptions, slower and larger but based only on hash function security",
+          "Hybrid key exchange: combine classical (ECDH) with post-quantum (ML-KEM) so the connection is secure if either algorithm holds, used in Chrome and Cloudflare's TLS",
+          "Migration challenges: larger key and signature sizes, performance differences, algorithm agility in protocols, updating embedded devices"
+        ],
+        "demonstration": "Use the liboqs (Open Quantum Safe) library to generate ML-KEM-768 key pairs, encapsulate and decapsulate a shared secret, and benchmark against X25519 ECDH. Then generate ML-DSA-65 signatures and compare size and speed with Ed25519. Finally, establish a hybrid TLS connection using OpenSSL with OQS provider, combining X25519 with ML-KEM-768 for key exchange.",
+        "setup_requirements": [
+          "liboqs library installed (Open Quantum Safe)",
+          "Python with oqs-python bindings for PQC algorithm access",
+          "OpenSSL with OQS provider for hybrid TLS testing",
+          "Benchmark comparison scripts for classical vs PQC algorithms"
+        ],
+        "review": [
+          {
+            "key": "Quantum Timeline",
+            "value": "Current quantum computers have ~1,000 physical qubits. Breaking RSA-2048 requires ~4,000 logical qubits, each requiring ~1,000 physical qubits for error correction = ~4 million physical qubits. Most estimates place this at 15-30 years, but harvest-now-decrypt-later means migration should start now."
+          },
+          {
+            "key": "PQC Size Impact",
+            "value": "ML-KEM-768 public key: 1,184 bytes (vs X25519: 32 bytes). ML-DSA-65 signature: 3,309 bytes (vs Ed25519: 64 bytes). This size increase impacts TLS handshake size, certificate chains, and bandwidth-constrained environments."
+          },
+          {
+            "key": "Why Hybrid",
+            "value": "Post-quantum algorithms are newer and less battle-tested than classical algorithms. Hybrid mode combines both: the shared secret is derived from both X25519 and ML-KEM. If ML-KEM is broken by classical cryptanalysis, X25519 still protects. If quantum computers break X25519, ML-KEM still protects."
+          },
+          {
+            "key": "Symmetric Algorithms Survive",
+            "value": "Grover's algorithm only halves the effective security of symmetric ciphers. AES-256 retains 128-bit security against quantum attacks, which is sufficient. No changes needed for AES-256 or SHA-256 (output > 256 bits). The migration is entirely about replacing asymmetric cryptography."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Cryptographic Implementation Lab and Course Integration",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Identify common cryptographic implementation mistakes and their consequences",
+        "Apply defense-in-depth principles to cryptographic system design",
+        "Evaluate real-world cryptographic architectures for correctness and security",
+        "Synthesize all course topics into a comprehensive cryptographic security assessment"
+      ],
+      "readings": [
+        "Review all assigned textbook chapters and NIST publications",
+        "Latacora, Cryptographic Right Answers (2023 edition)",
+        "Class notes and assignments from weeks 1-14"
+      ],
+      "lecture_notes": {
+        "introduction": "This final session brings together every cryptographic concept we have studied by examining how they combine in real-world systems and where implementations commonly go wrong. The most dangerous cryptographic vulnerabilities are not broken algorithms but broken implementations: using ECB mode when CBC or GCM was needed, reusing nonces in GCM or ECDSA, failing to validate certificate chains, using weak key derivation for passwords, or hardcoding encryption keys in source code. We will walk through a comprehensive security audit of a hypothetical secure messaging application, examining each cryptographic decision against the principles learned in this course. The application uses X25519 for key agreement, AES-256-GCM for message encryption, Ed25519 for message signing, Argon2id for password hashing, LUKS for local data encryption, and TLS 1.3 with certificate pinning for transport. For each component, we will evaluate whether the algorithm choice is correct, whether the implementation parameters are appropriate, and what could go wrong. This integration exercise prepares you for the real world where cryptographic decisions have direct security consequences.",
+        "key_concepts": [
+          "Cryptographic right answers 2024: X25519 for key exchange, AES-256-GCM or ChaCha20-Poly1305 for encryption, Ed25519 for signatures, Argon2id for passwords, SHA-256 or BLAKE3 for hashing",
+          "Common implementation mistakes: nonce reuse (GCM/ECDSA), ECB mode, unauthenticated encryption, weak key derivation, timing side channels in comparison",
+          "Key management failures: hardcoded keys, keys in source control, keys accessible to too many services, no key rotation plan",
+          "Certificate validation failures: not checking hostname, not checking expiry, not checking revocation, trusting self-signed certificates in production",
+          "Cryptographic agility: designing systems so algorithms can be replaced without redesigning the entire system (important for PQC migration)",
+          "Defense in depth: TLS for transport + AES-GCM for message + LUKS for storage, so compromise of one layer does not expose all data",
+          "Secure random number generation: always use OS-provided CSPRNG (/dev/urandom, BCryptGenRandom), never use Math.random() or time-based seeds",
+          "Constant-time operations: MAC verification, password comparison, and key comparison must not branch on secret data to prevent timing attacks"
+        ],
+        "demonstration": "Conduct a live cryptographic audit of a provided web application's security architecture. Examine TLS configuration with testssl.sh, inspect password hashing implementation (Argon2id parameters), verify encryption mode usage (check for ECB, check nonce generation), review certificate validation code, and check for timing side channels in authentication. Score each component and produce a remediation report.",
+        "setup_requirements": [
+          "Target web application for security audit (provided)",
+          "testssl.sh and sslyze for TLS assessment",
+          "Source code review tools",
+          "Review notes from all previous sessions"
+        ],
+        "review": [
+          {
+            "key": "Cryptographic Audit Checklist",
+            "value": "1) Is encryption authenticated? (AEAD required) 2) Are nonces unique? (random or counter, never reused) 3) Is key derivation slow? (Argon2id for passwords) 4) Are keys properly stored? (HSM, KMS, or OS keychain) 5) Is TLS 1.3 with forward secrecy? 6) Are certificates validated correctly? 7) Is random generation from CSPRNG?"
+          },
+          {
+            "key": "The Cryptography Stack",
+            "value": "Application layer: Argon2id password hashing, AES-256-GCM message encryption. Transport layer: TLS 1.3 with ECDHE and certificate pinning. Storage layer: LUKS full-disk encryption with TPM. Each layer protects against different threats; together they provide defense in depth."
+          },
+          {
+            "key": "Post-Quantum Preparedness",
+            "value": "Begin collecting cryptographic inventory: identify all uses of RSA, DH, and ECC across the organization. Prioritize migration for long-lived secrets. Deploy hybrid key exchange in TLS. Plan certificate infrastructure upgrade to PQC signatures. This migration will take years."
+          },
+          {
+            "key": "Course Integration",
+            "value": "Symmetric encryption (AES-GCM) for bulk data confidentiality, asymmetric encryption (RSA/ECDH) for key distribution, hash functions (SHA-256) for integrity, MACs (HMAC) for authentication, digital signatures (Ed25519) for non-repudiation, PKI (X.509) for identity, TLS for transport security, disk encryption for data at rest. Every topic in this course is a link in the chain of real-world security."
           }
         ]
       }
@@ -262,159 +856,554 @@
     "quizzes": [
       {
         "quiz": 1,
-        "week": 2,
-        "topic": "Symmetric and Asymmetric Cryptography",
+        "week": 3,
+        "topic": "Symmetric Encryption and Block Cipher Modes",
         "duration": "25 minutes",
         "questions": [
           {
-            "question": "A developer encrypts user data using AES-256-ECB and stores the ciphertext in a database. When two users submit the same SSN, the ciphertext is identical. Explain why this is a vulnerability, what information it leaks, and which mode should be used instead with specific implementation requirements.",
+            "question": "A developer encrypts user data using AES-256-ECB and stores the ciphertext in a database. When two users submit the same Social Security Number, the ciphertext is identical. Explain why this is a vulnerability, what specific information it leaks, and which mode should be used instead with its implementation requirements.",
             "type": "short_answer",
-            "points": 10,
-            "answer": "ECB mode encrypts identical plaintext blocks to identical ciphertext blocks. This leaks equality information: an attacker can determine when two records contain the same value without decryption. This enables frequency analysis and known-plaintext correlation attacks. Use AES-256-GCM instead, which requires a unique 96-bit nonce per encryption operation. GCM provides both confidentiality (the same plaintext produces different ciphertext each time due to the nonce) and authenticity (the authentication tag detects tampering). Store the nonce alongside the ciphertext as it is not secret.",
+            "points": 8,
+            "answer": "ECB mode encrypts identical plaintext blocks to identical ciphertext blocks because it applies the block cipher independently with the same key. This leaks equality information: an attacker can determine when two records contain the same value without decryption. In a database context, this enables frequency analysis (finding the most common SSN by counting duplicate ciphertexts) and known-plaintext correlation attacks. Use AES-256-GCM instead, which requires a unique 96-bit nonce per encryption operation. GCM provides confidentiality (same plaintext produces different ciphertext each time due to the nonce) and authenticity (the authentication tag detects any tampering). Store the nonce alongside the ciphertext as the nonce is not secret, only unique.",
             "rubric": [
               {
                 "key": "Explains ECB deterministic encryption vulnerability",
                 "value": 3
               },
               {
-                "key": "Identifies specific information leaked",
-                "value": 3
+                "key": "Identifies specific information leaked (equality, frequency analysis)",
+                "value": 2
               },
               {
-                "key": "Recommends GCM with correct implementation requirements",
-                "value": 4
+                "key": "Recommends GCM with correct nonce requirements",
+                "value": 3
               }
             ]
           },
           {
-            "question": "Explain why RSA encryption is not used to encrypt large files directly. Describe the hybrid encryption scheme used in practice and how it combines the advantages of both symmetric and asymmetric cryptography.",
+            "question": "You discover that a file encryption application uses AES-256-GCM but generates nonces using a counter starting at 1, incremented for each file. The same key is used for all files encrypted by a user. A colleague argues this is fine because the nonces are unique. Is the colleague correct? What is the maximum number of files that can be safely encrypted this way, and what would you recommend instead?",
             "type": "short_answer",
-            "points": 10,
-            "answer": "RSA encryption is extremely slow compared to symmetric ciphers (roughly 1000x slower) and can only encrypt data smaller than the key size (e.g., 245 bytes for RSA-2048 with OAEP padding). Hybrid encryption generates a random symmetric key (e.g., AES-256), encrypts the data with this key (fast, handles arbitrary size), then encrypts only the symmetric key with RSA (small data, leveraging RSA's key distribution advantage). The recipient decrypts the symmetric key with their RSA private key, then decrypts the data with the recovered symmetric key. This combines RSA's key distribution without a shared secret with AES's speed and efficiency.",
+            "points": 8,
+            "answer": "The colleague is partially correct: counter-based nonces are valid for GCM as long as they never repeat with the same key. With a 96-bit nonce space, a counter allows 2^96 unique nonces, far more than any practical system needs. However, there are risks: if the counter state is lost (application crash, reinstallation) the counter may restart at 1, causing nonce reuse which is catastrophic for GCM (reveals auth key and allows plaintext recovery via XOR). If the application runs on multiple devices with the same key, counters may collide. A safer approach: use a 96-bit random nonce from a CSPRNG. The birthday bound for collision is at 2^48 (~281 trillion) encryptions, which is safe for most applications. For very high-volume systems, partition the nonce space: 32-bit device ID + 64-bit counter per device, ensuring no collisions across devices.",
             "rubric": [
               {
-                "key": "Explains RSA performance and size limitations",
+                "key": "Correctly assesses counter nonces as valid but fragile",
                 "value": 3
               },
               {
-                "key": "Correctly describes hybrid scheme steps",
-                "value": 4
+                "key": "Identifies counter restart and multi-device collision risks",
+                "value": 3
               },
               {
-                "key": "Articulates how advantages of both are combined",
+                "key": "Recommends random nonce with birthday bound analysis or partitioned counter",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between a stream cipher and a block cipher in CTR mode. Are they functionally equivalent? What is one advantage of CTR mode over a dedicated stream cipher like ChaCha20?",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Functionally, they are nearly equivalent: both generate a pseudorandom keystream and XOR it with plaintext. A stream cipher (ChaCha20) is purpose-built for stream generation. CTR mode converts a block cipher (AES) into a stream cipher by encrypting sequential counter values. The key difference is that CTR mode's security relies on the underlying block cipher (AES), which has decades of cryptanalysis. One advantage: CTR mode with AES benefits from AES-NI hardware acceleration available on virtually all modern x86 and ARM processors, achieving 5-10 GB/s throughput. ChaCha20 is faster in software without AES-NI (common on older mobile devices) but slower than hardware-accelerated AES. CTR mode also allows random access: to decrypt byte i, compute which counter block it falls in and decrypt just that block, without processing any preceding blocks.",
+            "rubric": [
+              {
+                "key": "Correctly identifies functional equivalence of keystream XOR approach",
                 "value": 3
+              },
+              {
+                "key": "Explains the hardware acceleration advantage or random access advantage",
+                "value": 2
+              },
+              {
+                "key": "Notes the security foundation difference",
+                "value": 2
               }
             ]
           }
         ],
-        "total_points": 20
+        "total_points": 23
       },
       {
         "quiz": 2,
-        "week": 4,
-        "topic": "Hashing, PKI, and TLS",
+        "week": 5,
+        "topic": "Hash Functions, MACs, and Key Exchange",
         "duration": "25 minutes",
         "questions": [
           {
-            "question": "During a TLS 1.3 handshake, the server sends its certificate chain. Describe the exact steps the client performs to validate this chain, and explain what happens if Certificate Transparency checking is enabled.",
+            "question": "A password database was breached. Passwords were stored as unsalted SHA-256 hashes. Explain the specific attack that makes this dangerous, and describe how Argon2id with a 256MB memory cost, 3 iterations, and per-user 128-bit salt changes the attacker's calculus. Include specific throughput estimates.",
             "type": "short_answer",
-            "points": 10,
-            "answer": "Chain validation: (1) Verify the end-entity certificate's signature using the issuing intermediate CA's public key. (2) Verify the intermediate CA's certificate signature using the root CA's public key. (3) Confirm the root CA is in the client's trust store. (4) Check each certificate's validity period (notBefore/notAfter). (5) Verify the end-entity certificate's Subject Alternative Name matches the requested hostname. (6) Check revocation status via OCSP stapling (included in the TLS handshake) or CRL. With CT enabled, the client also verifies that the certificate includes Signed Certificate Timestamps (SCTs) from multiple independent CT logs, proving the certificate was publicly logged and enabling the domain owner to detect misissued certificates.",
+            "points": 8,
+            "answer": "Without salting, attackers use precomputed rainbow tables to reverse SHA-256 hashes instantly for common passwords. Identical passwords produce identical hashes, enabling batch attacks against all users simultaneously. SHA-256 is designed for speed: a modern GPU computes ~10 billion SHA-256 hashes per second. With Argon2id (256MB memory, 3 iterations, per-user salt): (1) Rainbow tables are useless because each user has a unique salt. (2) Each password must be attacked individually. (3) The 256MB memory requirement prevents GPU parallelism (a GPU with 8GB VRAM can run only ~32 Argon2id instances simultaneously vs millions of SHA-256). (4) Estimated throughput: ~4 Argon2id hashes/second per CPU core, ~100 per high-end GPU (vs 10 billion SHA-256). For a 10-character password with mixed case, digits, and symbols (~60^10 = 6 * 10^17 combinations), brute force would take ~190 million years per user at 100 hashes/second.",
             "rubric": [
               {
-                "key": "Correct chain validation steps",
-                "value": 4
-              },
-              {
-                "key": "Hostname and validity verification",
-                "value": 3
-              },
-              {
-                "key": "CT checking explanation with SCTs",
-                "value": 3
-              }
-            ]
-          },
-          {
-            "question": "A password database was breached. Passwords were stored as unsalted SHA-256 hashes. Explain the specific attack that makes this dangerous, and describe how bcrypt with a work factor of 12 and per-user salt changes the attacker's calculus.",
-            "type": "short_answer",
-            "points": 10,
-            "answer": "Without salting, attackers use precomputed rainbow tables to reverse SHA-256 hashes instantly for common passwords, and identical passwords produce identical hashes enabling batch attacks. SHA-256 is designed for speed; modern GPUs compute billions of SHA-256 hashes per second. With bcrypt (work factor 12): each password has a unique random 128-bit salt, so rainbow tables are useless and each password must be attacked individually. The work factor of 12 means 2^12 = 4096 rounds of the Blowfish-based key derivation, deliberately slowing computation to approximately 250ms per hash on modern hardware. An attacker trying 10 billion SHA-256 hashes per second would be reduced to roughly 4 bcrypt hashes per second per GPU, making brute force of complex passwords computationally infeasible.",
-            "rubric": [
-              {
-                "key": "Identifies rainbow table and speed attacks",
+                "key": "Identifies rainbow table and speed attacks on unsalted SHA-256",
                 "value": 3
               },
               {
                 "key": "Explains per-user salt eliminating batch attacks",
-                "value": 4
+                "value": 2
               },
               {
-                "key": "Quantifies the computational cost difference",
+                "key": "Quantifies the memory-hardness impact on GPU parallelism",
                 "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain why HMAC-SHA256(key, message) is secure but SHA256(key || message) is not. What specific attack does HMAC prevent, and how does its nested construction defeat the attack?",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "SHA-256 uses the Merkle-Damgard construction where the final hash state after processing message M is exposed as the hash output. An attacker who knows SHA256(key || message) and the length of (key || message) can compute SHA256(key || message || padding || extension) by continuing the hash computation from the known final state, without knowing the key. This length extension attack allows forging valid tags for extended messages. HMAC-SHA256 defeats this with its nested construction: HMAC(K,M) = SHA256((K XOR opad) || SHA256((K XOR ipad) || M)). The inner hash SHA256((K XOR ipad) || M) is exposed only to the outer hash, not to the attacker. The outer hash SHA256((K XOR opad) || inner_hash) takes a fixed-length input (512 bits), so there is nothing to extend. Even if an attacker could extend the inner hash, the outer hash would produce a completely different HMAC.",
+            "rubric": [
+              {
+                "key": "Correctly describes length extension attack mechanism",
+                "value": 3
+              },
+              {
+                "key": "Explains how HMAC's nested construction prevents extension",
+                "value": 3
+              },
+              {
+                "key": "Notes that outer hash takes fixed-length input",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "During a Diffie-Hellman key exchange, Alice sends g^a mod p to Bob and Bob sends g^b mod p to Alice. Mallory intercepts both and performs separate exchanges. Write the exact values Mallory sends and receives, and explain why authentication with digital signatures prevents this attack.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Mallory intercepts A = g^a from Alice and B = g^b from Bob. Mallory generates her own secrets m1 and m2. She sends g^m1 to Bob (pretending to be Alice) and g^m2 to Alice (pretending to be Bob). Alice computes K_AM = (g^m2)^a = g^(a*m2). Mallory computes K_AM = (g^a)^m2 = g^(a*m2). Bob computes K_MB = (g^m1)^b = g^(b*m1). Mallory computes K_MB = (g^b)^m1 = g^(b*m1). Mallory now shares K_AM with Alice and K_MB with Bob. She decrypts Alice's messages with K_AM, reads them, re-encrypts with K_MB and sends to Bob (and vice versa). Authentication prevents this: if Alice signs her g^a with her private key, Bob can verify the signature with Alice's public key (from a certificate). Mallory cannot forge Alice's signature because she does not have Alice's private key. Bob will reject g^m1 because Mallory cannot sign it as Alice.",
+            "rubric": [
+              {
+                "key": "Correct MitM protocol with Mallory's values",
+                "value": 3
+              },
+              {
+                "key": "Explains two separate shared secrets and relay capability",
+                "value": 2
+              },
+              {
+                "key": "Explains how digital signatures on DH values prevent the attack",
+                "value": 2
               }
             ]
           }
         ],
-        "total_points": 20
+        "total_points": 23
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "Public-Key Cryptography, Signatures, and Key Exchange",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Perform RSA key generation with p=11, q=13. Find n, phi(n), and compute d for e=7. Then encrypt the message M=9 and decrypt to verify correctness. Show all arithmetic steps.",
+            "type": "calculation",
+            "points": 8,
+            "answer": "Key Generation:\nn = p * q = 11 * 13 = 143\nphi(n) = (p-1)(q-1) = 10 * 12 = 120\ne = 7 (gcd(7, 120) = 1, confirmed coprime)\nCompute d = e^(-1) mod 120 using Extended Euclidean:\n120 = 17*7 + 1, so 1 = 120 - 17*7, so d = -17 mod 120 = 103\nVerify: e*d = 7*103 = 721 = 6*120 + 1, so 721 mod 120 = 1. Correct.\n\nEncryption: C = M^e mod n = 9^7 mod 143\n9^2 = 81\n9^4 = 81^2 = 6561 mod 143 = 6561 - 45*143 = 6561 - 6435 = 126\n9^7 = 9^4 * 9^2 * 9^1 = 126 * 81 * 9 mod 143\n126 * 81 = 10206 mod 143 = 10206 - 71*143 = 10206 - 10153 = 53\n53 * 9 = 477 mod 143 = 477 - 3*143 = 477 - 429 = 48\nC = 48\n\nDecryption: M = C^d mod n = 48^103 mod 143\nUsing repeated squaring and CRT:\n48 mod 11 = 4, 48 mod 13 = 9\n4^103 mod 11 = 4^(103 mod 10) = 4^3 = 64 mod 11 = 9\n9^103 mod 13 = 9^(103 mod 12) = 9^7 mod 13\n9^2=81 mod 13=3, 9^4=3^2=9, 9^7=9^4*9^2*9=9*3*9=243 mod 13=9\nCRT: x = 9 mod 11 and x = 9 mod 13, so x = 9 mod 143\nM = 9. Correct.",
+            "rubric": [
+              {
+                "key": "Correct key generation (n=143, phi=120, d=103)",
+                "value": 3
+              },
+              {
+                "key": "Correct encryption (C=48)",
+                "value": 2
+              },
+              {
+                "key": "Correct decryption back to M=9",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Sony used the same nonce k for all ECDSA signatures on the PlayStation 3. Given two signatures (r, s1) on message m1 and (r, s2) on message m2 with the same r value, derive the formula to recover the private key d. Explain each step.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "ECDSA signature equation: s = k^(-1) * (H(m) + r*d) mod n\n\nFor two signatures with the same k (thus same r):\ns1 = k^(-1) * (H(m1) + r*d) mod n\ns2 = k^(-1) * (H(m2) + r*d) mod n\n\nStep 1: Subtract the equations:\ns1 - s2 = k^(-1) * (H(m1) - H(m2)) mod n\n\nStep 2: Solve for k:\nk = (H(m1) - H(m2)) * (s1 - s2)^(-1) mod n\n\nStep 3: Substitute k back to solve for d:\nFrom s1 = k^(-1) * (H(m1) + r*d):\ns1 * k = H(m1) + r*d\nr*d = s1*k - H(m1)\nd = r^(-1) * (s1*k - H(m1)) mod n\n\nThe entire private key is exposed from just two signatures sharing the same nonce. This is why EdDSA (Ed25519) uses deterministic nonces derived from H(private_key || message), making nonce reuse impossible.",
+            "rubric": [
+              {
+                "key": "Correct derivation of k from two signatures",
+                "value": 3
+              },
+              {
+                "key": "Correct derivation of private key d from k",
+                "value": 3
+              },
+              {
+                "key": "Explains why deterministic nonces prevent this",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Why can't RSA be used to directly encrypt a 1GB file? Describe the hybrid encryption scheme used in practice and explain how it combines the advantages of symmetric and asymmetric cryptography.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "RSA cannot directly encrypt a 1GB file for two reasons: (1) RSA-OAEP can encrypt at most (key_size/8 - 2*hash_size - 2) bytes per operation -- for RSA-2048 with SHA-256, that is 190 bytes. (2) RSA is approximately 1000x slower than AES; encrypting 1GB would take hours instead of seconds. Hybrid encryption solves this: (1) Generate a random 256-bit AES key using a CSPRNG. (2) Encrypt the 1GB file with AES-256-GCM using this key (takes ~1 second at 1GB/s). (3) Encrypt only the 32-byte AES key with RSA-OAEP (takes ~1ms). (4) Transmit the RSA-encrypted AES key followed by the AES-GCM ciphertext and authentication tag. The recipient uses their RSA private key to decrypt the AES key, then uses the AES key to decrypt the data. This combines RSA's key distribution advantage (no shared secret needed) with AES's speed for bulk encryption.",
+            "rubric": [
+              {
+                "key": "Correctly identifies RSA size and performance limitations",
+                "value": 2
+              },
+              {
+                "key": "Correctly describes all hybrid encryption steps",
+                "value": 3
+              },
+              {
+                "key": "Articulates how the combination leverages both advantages",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "PKI, TLS, and Data Protection",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "During a TLS 1.3 handshake, the server sends its certificate chain. Describe the exact steps the client performs to validate this chain. Then explain what Certificate Transparency adds and how it detected Symantec's unauthorized certificate issuance.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Chain validation steps: (1) Verify the end-entity certificate's signature using the issuing intermediate CA's public key (extract the issuer, find the intermediate cert, verify the RSA/ECDSA signature). (2) Verify the intermediate CA's certificate signature using the root CA's public key. (3) Confirm the root CA is in the client's trust store (pre-installed with the OS/browser). (4) Check each certificate's validity period (current time between notBefore and notAfter). (5) Verify the end-entity certificate's Subject Alternative Name (SAN) matches the requested hostname. (6) Check revocation status via OCSP stapling (stapled response in TLS handshake) or CRL. Certificate Transparency: all CAs must log every issued certificate to multiple independent public CT logs. The certificate must include Signed Certificate Timestamps (SCTs) proving it was logged. Domain owners monitor CT logs for their domains. Google's CT monitoring detected Symantec issuing test certificates for google.com domains without authorization. This discovery led to the gradual distrust of all Symantec-issued certificates across Chrome and other browsers, demonstrating CT's effectiveness as an accountability mechanism.",
+            "rubric": [
+              {
+                "key": "Correct chain validation steps (signature, validity, SAN, revocation)",
+                "value": 3
+              },
+              {
+                "key": "Explains CT logging mechanism with SCTs",
+                "value": 3
+              },
+              {
+                "key": "Describes Symantec incident detection via CT monitoring",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Compare TDE (Transparent Data Encryption) with application-level encryption for a healthcare database containing patient records. For each approach, state what threats it protects against and what threats it does NOT protect against.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "TDE (Transparent Data Encryption): Protects against: physical theft of database files, decommissioned disk recovery, backup tape theft, and unauthorized filesystem access. Data is encrypted at the storage layer, transparent to queries. Does NOT protect against: SQL injection (attacker queries return decrypted data), compromised DBA credentials (TDE is transparent to authorized sessions), memory dump attacks (data is plaintext in database memory), and application-layer attacks that authenticate to the database. Application-level encryption: Protects against: all TDE threats plus compromised DBA, SQL injection (attacker gets only ciphertext), database server memory dumps (data is only plaintext in the application), and insider threats at the database layer. Does NOT protect against: compromised application server (has decryption keys), key management failures, and application-layer vulnerabilities. Trade-off: application-level encryption provides stronger protection but loses the ability to query, index, and sort on encrypted columns, and requires significant application changes. For HIPAA compliance, TDE qualifies for the safe harbor provision (encrypted PHI is exempt from breach notification), but application-level encryption provides defense in depth.",
+            "rubric": [
+              {
+                "key": "Correct TDE threat model (protects and does not protect)",
+                "value": 3
+              },
+              {
+                "key": "Correct application-level threat model",
+                "value": 3
+              },
+              {
+                "key": "Mentions compliance impact and query trade-offs",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A system uses AES-256-GCM for disk encryption with a 96-bit nonce derived from the disk sector number. Is this secure? What is one scenario where this design could fail?",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Using the sector number as a nonce is deterministic: the same sector always gets the same nonce. For GCM, this is secure IF the key never encrypts the same (nonce, plaintext) pair. However, this design has a critical weakness: if the same sector is overwritten with the same content using the same key, the ciphertext will be identical, leaking that the content did not change (similar to ECB). More seriously, overwriting a sector produces two ciphertext-plaintext pairs with the same nonce and key, which in GCM allows the authentication key H to be recovered via polynomial GCD. Once H is known, the attacker can forge authentication tags for arbitrary ciphertext. This is why disk encryption uses XTS mode instead of GCM: XTS is designed for the sector-encryption use case where the tweak (sector number + block position) may repeat with different plaintext. XTS does not provide authentication, but it avoids the catastrophic nonce-reuse failure mode of GCM.",
+            "rubric": [
+              {
+                "key": "Correctly identifies the deterministic nonce concern",
+                "value": 3
+              },
+              {
+                "key": "Explains the GCM auth key recovery from sector overwrite",
+                "value": 2
+              },
+              {
+                "key": "Recommends XTS as the correct mode for disk encryption",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "Post-Quantum Cryptography and Course Integration",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Explain why Shor's algorithm breaks RSA but not AES. What is the impact of Grover's algorithm on AES-128 and AES-256? What specific action should organizations take regarding symmetric encryption for post-quantum preparedness?",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Shor's algorithm solves integer factorization and discrete logarithm in polynomial time on a quantum computer. RSA security relies on factoring n = p*q; Shor's would factor RSA-2048 in hours. DH and ECC rely on discrete log; Shor's breaks these too. AES is a symmetric cipher whose security relies on the lack of structure in the key-to-output mapping -- there is no mathematical shortcut like factoring. Shor's algorithm does not apply. Grover's algorithm provides a quadratic speedup for unstructured search: searching 2^n possibilities in 2^(n/2) quantum operations. Applied to AES: AES-128 brute force goes from 2^128 to 2^64 operations (insecure), AES-256 goes from 2^256 to 2^128 (still secure). Organizations should migrate AES-128 to AES-256 where possible. For most systems already using AES-256, no symmetric algorithm changes are needed. SHA-256 outputs 256 bits and retains 128-bit security against Grover's, which is sufficient. The migration effort is entirely focused on asymmetric cryptography: RSA, DH, ECDH, ECDSA must be replaced with ML-KEM and ML-DSA.",
+            "rubric": [
+              {
+                "key": "Correctly explains why Shor's breaks RSA but not AES",
+                "value": 3
+              },
+              {
+                "key": "Correct Grover's impact on AES-128 and AES-256",
+                "value": 3
+              },
+              {
+                "key": "Correct recommendation: AES-256 is sufficient, focus on asymmetric migration",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Design the cryptographic architecture for a secure file sharing service. Specify the exact algorithms for: user authentication, file encryption at rest, file encryption in transit, digital signatures for file integrity, and key management. Justify each choice.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "User authentication: Argon2id (memory: 256MB, iterations: 3, parallelism: 4) for password hashing with per-user 128-bit random salt. Justification: memory-hard, resists GPU and ASIC attacks. File encryption at rest: AES-256-GCM with random 96-bit nonce per file. Key hierarchy: per-file data encryption key (DEK) encrypted with user's key encryption key (KEK) stored in HSM/KMS. Justification: AEAD provides confidentiality + integrity, envelope encryption enables key rotation without re-encrypting files. File encryption in transit: TLS 1.3 with ECDHE (X25519) key exchange and AES-256-GCM or ChaCha20-Poly1305 cipher suite. Justification: forward secrecy via ephemeral ECDHE, authenticated encryption, 1-RTT latency. Digital signatures: Ed25519 for file integrity signatures, allowing recipients to verify the uploader's identity. Justification: fast, deterministic (no nonce reuse risk), small signatures (64 bytes). Key management: AWS KMS or HashiCorp Vault for KEK storage, automatic key rotation every 90 days, audit logging of all key access. Post-quantum preparedness: hybrid TLS with X25519 + ML-KEM-768.",
+            "rubric": [
+              {
+                "key": "Correct algorithm choices for all five categories",
+                "value": 3
+              },
+              {
+                "key": "Sound justifications demonstrating understanding",
+                "value": 3
+              },
+              {
+                "key": "Addresses key management and post-quantum considerations",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "ML-KEM-768 (CRYSTALS-Kyber) public keys are 1,184 bytes compared to X25519's 32 bytes. How does this size difference impact TLS 1.3 handshakes, and what is the hybrid key exchange approach used by Chrome and Cloudflare to address the transition?",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "The TLS 1.3 ClientHello must include key shares for all offered key exchange methods. With hybrid X25519 + ML-KEM-768, the ClientHello grows by ~1,200 bytes (ML-KEM public key) plus ~32 bytes (X25519 key share). The ServerHello grows similarly. This increases: (1) Handshake latency on slow connections (extra RTT if ClientHello exceeds TCP initial congestion window of ~14KB, causing fragmentation). (2) Bandwidth consumption for connection-heavy workloads (millions of TLS handshakes per second at scale). (3) Certificate chain size if PQC signatures are used (ML-DSA-65 signature is ~3.3KB vs ECDSA's ~70 bytes). Chrome and Cloudflare implement hybrid key exchange: the shared secret is KDF(X25519_shared_secret || ML-KEM_shared_secret). If either algorithm is secure, the combined key exchange is secure. This allows gradual deployment: if ML-KEM is later broken by classical cryptanalysis, X25519 still protects. If quantum computers break X25519, ML-KEM still protects. The size overhead is considered acceptable for the security guarantee.",
+            "rubric": [
+              {
+                "key": "Correctly identifies size impact on TLS handshake",
+                "value": 3
+              },
+              {
+                "key": "Explains hybrid key exchange combining both shared secrets",
+                "value": 2
+              },
+              {
+                "key": "Describes the security rationale for hybrid approach",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
       }
     ],
     "major_assignments": [
       {
         "assignment": 1,
-        "title": "Cryptographic Systems Implementation",
-        "week_assigned": 2,
-        "week_due": 5,
-        "points": 100,
-        "description": "Design and implement a secure messaging system that uses hybrid encryption, digital signatures, and proper key management. Demonstrate understanding of cryptographic primitives by building them into a working application.",
+        "title": "Cryptographic Messaging System",
+        "week_assigned": 3,
+        "week_due": 7,
+        "points": 150,
+        "description": "Design and implement a secure messaging system that uses hybrid encryption (RSA-OAEP + AES-256-GCM) for message confidentiality, ECDSA or Ed25519 for message authentication, and proper key management with key generation, storage, and rotation. The system must handle the complete lifecycle: key generation, message encryption, message signing, transmission, verification, and decryption.",
         "objectives": [
-          "Implement hybrid encryption (RSA + AES-GCM) for message confidentiality",
-          "Implement digital signatures (ECDSA) for message authentication",
-          "Design a key management scheme with key generation, distribution, and rotation",
-          "Analyze the security properties of the implementation"
+          "Implement hybrid encryption: RSA-2048-OAEP for key encapsulation and AES-256-GCM for message encryption",
+          "Implement digital signatures (Ed25519 or ECDSA-P256) for message authentication and non-repudiation",
+          "Design a key management scheme with secure key generation, encrypted key storage, and key rotation",
+          "Analyze the security properties and produce a threat model for the implementation"
         ],
         "requirements": {},
         "deliverables": [
-          "Working secure messaging application source code",
-          "Security analysis document explaining cryptographic choices",
-          "Key management design document",
-          "Test cases demonstrating correct encryption, decryption, and signature verification"
+          "Working secure messaging application in Python or Java with CLI interface",
+          "Key generation module using CSPRNG with encrypted key storage (passphrase-protected using Argon2id)",
+          "Message encryption module: hybrid RSA-OAEP + AES-256-GCM with unique nonces",
+          "Message signing module: Ed25519 signature generation and verification",
+          "Security analysis document (4-5 pages) with threat model, algorithm justifications, and known limitations",
+          "Test suite demonstrating correct operation and detecting implementation errors"
         ],
         "grading_rubric": {
           "cryptographic_implementation": {
-            "points": 35,
+            "points": 45,
             "criteria": [
-              "Correct AES-GCM encryption with unique nonces",
-              "Correct RSA key encapsulation for symmetric key",
-              "Proper ECDSA signature generation and verification",
-              "No cryptographic misuse (hardcoded keys, reused nonces, etc.)"
+              "AES-256-GCM encryption with unique random nonces and correct authentication tag handling",
+              "RSA-2048-OAEP key encapsulation with proper padding (no textbook RSA)",
+              "Ed25519 or ECDSA signature generation and verification working correctly",
+              "No cryptographic misuse: no hardcoded keys, no nonce reuse, no unauthenticated encryption"
             ]
           },
           "key_management": {
-            "points": 25,
+            "points": 35,
             "criteria": [
-              "Secure key generation using CSPRNG",
-              "Key storage with appropriate protection",
-              "Key rotation mechanism",
-              "Key distribution scheme documented"
+              "Key generation using OS-provided CSPRNG (os.urandom or SecureRandom)",
+              "Private key storage encrypted with passphrase using Argon2id key derivation",
+              "Key rotation mechanism that re-encrypts stored keys without data loss",
+              "Public key distribution scheme documented"
             ]
           },
           "security_analysis": {
-            "points": 25,
+            "points": 40,
             "criteria": [
-              "Threat model for the messaging system",
-              "Justification for each algorithm and parameter choice",
-              "Analysis of attack resistance",
-              "Identification of limitations and assumptions"
+              "Threat model identifying at least 5 realistic threats with mitigations",
+              "Justification for each algorithm and parameter choice with references",
+              "Analysis of what the system protects against and what it does NOT protect against",
+              "Identification of implementation limitations and assumptions"
             ]
           },
           "code_quality": {
+            "points": 30,
+            "criteria": [
+              "Clean, well-structured code with separation of concerns (crypto, key mgmt, messaging)",
+              "Comprehensive test suite including edge cases and error conditions",
+              "Proper error handling for all cryptographic operations (no silent failures)",
+              "Constant-time comparison for all MAC and signature verification"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Correct hybrid encryption and digital signature implementation (45 pts)",
+                "Robust key management with encrypted storage and rotation (35 pts)",
+                "Thorough security analysis with realistic threat model (40 pts)",
+                "Production-quality code with comprehensive testing (30 pts)"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "TLS Protocol Analyzer and Configuration Auditor",
+        "week_assigned": 9,
+        "week_due": 12,
+        "points": 150,
+        "description": "Build a TLS protocol analyzer that connects to servers, performs the TLS handshake, extracts and validates certificate chains, identifies the negotiated cipher suite, and produces a security assessment report. The tool must detect common misconfigurations, weak cipher suites, expired certificates, and missing security features.",
+        "objectives": [
+          "Parse and validate X.509 certificate chains programmatically",
+          "Identify TLS protocol versions, cipher suites, and key exchange methods offered by a server",
+          "Detect common TLS security issues: weak ciphers, expired certs, missing HSTS, no CT SCTs",
+          "Produce automated security assessment reports with severity ratings and remediation guidance"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "TLS analyzer tool (Python) that connects to a server and extracts TLS configuration",
+          "Certificate chain parser that validates signatures, expiry, SAN, and revocation status",
+          "Security assessment engine that checks for 15+ known misconfigurations and vulnerabilities",
+          "Report generator producing human-readable and machine-readable (JSON) output",
+          "Test suite verifying detection of intentionally misconfigured test servers"
+        ],
+        "grading_rubric": {
+          "tls_analysis": {
+            "points": 40,
+            "criteria": [
+              "Correctly connects and negotiates TLS with servers",
+              "Extracts all TLS parameters: version, cipher suite, key exchange, extensions",
+              "Identifies supported protocol versions by testing TLS 1.0, 1.1, 1.2, and 1.3",
+              "Detects server cipher suite preference and ordering"
+            ]
+          },
+          "certificate_validation": {
+            "points": 35,
+            "criteria": [
+              "Parses X.509 certificate fields: subject, issuer, SAN, validity, key usage",
+              "Validates signature chain from end-entity to root CA",
+              "Checks certificate expiry and warns on upcoming expiration (<30 days)",
+              "Verifies SAN matches the target hostname"
+            ]
+          },
+          "security_assessment": {
+            "points": 45,
+            "criteria": [
+              "Detects at least 15 security issues: SSLv3/TLS1.0/1.1, RC4, DES/3DES, MD5 certs, SHA-1 certs, expired certs, self-signed, missing HSTS, weak DH groups, no forward secrecy, missing CT SCTs, wildcard certs, certificate revocation, key size < 2048, missing OCSP stapling",
+              "Severity ratings (Critical, High, Medium, Low, Info) are appropriate",
+              "Remediation guidance references specific configurations",
+              "No false positives on properly configured servers"
+            ]
+          },
+          "output_quality": {
+            "points": 30,
+            "criteria": [
+              "Human-readable report with clear structure and explanations",
+              "Machine-readable JSON output for automation integration",
+              "Summary with overall security grade (A-F scale)",
+              "Comparison with Mozilla SSL Configuration Generator recommendations"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Accurate TLS parameter extraction and analysis (40 pts)",
+                "Correct certificate chain validation (35 pts)",
+                "Comprehensive security assessment with 15+ checks (45 pts)",
+                "Professional report output in human and machine formats (30 pts)"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Post-Quantum Cryptography Migration Assessment",
+        "week_assigned": 12,
+        "week_due": 15,
+        "points": 100,
+        "description": "Conduct a comprehensive assessment of a provided application's cryptographic architecture, identify all components vulnerable to quantum computing attacks, design a migration plan to post-quantum algorithms, and implement a proof-of-concept hybrid key exchange using both classical (X25519) and post-quantum (ML-KEM-768) algorithms.",
+        "objectives": [
+          "Inventory all cryptographic algorithms used in the provided application",
+          "Classify each algorithm as quantum-safe or quantum-vulnerable with justification",
+          "Design a phased migration plan from vulnerable to post-quantum algorithms",
+          "Implement hybrid key exchange combining X25519 and ML-KEM-768"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Cryptographic inventory spreadsheet listing every algorithm, key size, and usage location",
+          "Risk assessment classifying each algorithm with quantum vulnerability timeline estimate",
+          "Phased migration plan with priorities (harvest-now-decrypt-later data first), timelines, and dependencies",
+          "Hybrid key exchange proof-of-concept using liboqs combining X25519 and ML-KEM-768",
+          "Performance comparison report: classical vs hybrid vs pure PQC for key exchange and signatures"
+        ],
+        "grading_rubric": {
+          "inventory_and_assessment": {
+            "points": 25,
+            "criteria": [
+              "Complete cryptographic inventory covering all algorithms in the application",
+              "Correct classification of quantum-safe vs quantum-vulnerable",
+              "Risk timeline estimates based on current quantum computing progress",
+              "Prioritization based on data sensitivity and harvest-now-decrypt-later risk"
+            ]
+          },
+          "migration_plan": {
+            "points": 30,
+            "criteria": [
+              "Phased approach with clear milestones and dependencies",
+              "Hybrid mode as transitional step before full PQC migration",
+              "Backward compatibility considerations for interoperability",
+              "Testing strategy for validating migrated components"
+            ]
+          },
+          "implementation": {
+            "points": 30,
+            "criteria": [
+              "Working hybrid key exchange combining X25519 and ML-KEM-768",
+              "Shared secret correctly derived from both classical and PQC components",
+              "Performance benchmarks comparing classical, hybrid, and pure PQC",
+              "Error handling for all cryptographic operations"
+            ]
+          },
+          "documentation": {
             "points": 15,
             "criteria": [
-              "Clean, well-documented code",
-              "Comprehensive test suite",
-              "Error handling for cryptographic operations",
-              "No security anti-patterns"
+              "Clear, professional documentation suitable for executive and technical audiences",
+              "References to NIST standards and industry migration guidance",
+              "Realistic timeline and resource estimates",
+              "Risk communication appropriate for non-technical stakeholders"
             ]
           }
         },
@@ -423,10 +1412,10 @@
             "attributes": {
               "points": 100,
               "criteria": [
-                "Correct implementation of hybrid encryption and digital signatures",
-                "Robust key management with no security anti-patterns",
-                "Thorough security analysis demonstrating deep understanding",
-                "Production-quality code with comprehensive testing"
+                "Complete cryptographic inventory and risk assessment (25 pts)",
+                "Realistic phased migration plan (30 pts)",
+                "Working hybrid key exchange implementation (30 pts)",
+                "Professional documentation for mixed audiences (15 pts)"
               ]
             }
           }
@@ -436,31 +1425,31 @@
   },
   "grading_breakdown": {
     "weekly_quizzes": {
-      "percentage": 10,
-      "description": "Assessment of cryptographic concepts and mathematical foundations"
+      "percentage": 20,
+      "description": "Five quizzes (weeks 3, 5, 8, 11, 14) testing cryptographic concepts, algorithms, and application"
     },
     "lab_assignments": {
-      "percentage": 25,
-      "description": "Hands-on implementation of cryptographic algorithms and protocols"
+      "percentage": 15,
+      "description": "Weekly hands-on labs implementing cryptographic primitives and analyzing protocols"
     },
     "major_assignments": {
       "percentage": 30,
-      "description": "Comprehensive cryptographic systems implementation project"
+      "description": "Three projects: secure messaging system, TLS analyzer, and PQC migration assessment"
     },
     "midterm_examination": {
       "percentage": 15,
-      "description": "Assessment covering symmetric, asymmetric, and hashing fundamentals"
+      "description": "Written exam covering symmetric encryption, hashing, MACs, and key exchange (weeks 1-7)"
     },
-    "final_examination": {
+    "final_project": {
       "percentage": 20,
-      "description": "Cumulative exam covering all cryptography and data protection topics"
+      "description": "Comprehensive final covering all cryptography and data protection topics with practical scenarios"
     }
   },
   "course_policies": {
     "attendance": "Attendance is mandatory for all lab sessions and demonstrations. More than 2 unexcused absences may result in a grade reduction.",
-    "late_submissions": "Late assignments are penalized 10% per day. No submissions accepted more than 5 days late without prior arrangement.",
-    "collaboration": "Mathematical exercises may be discussed. All implementation code must be individually written. Using cryptographic library functions is permitted; copying implementation code is not.",
-    "academic_integrity": "All code must be original work. Using third-party cryptographic libraries (PyCryptodome, OpenSSL) is expected, but implementations of core algorithms for learning exercises must be your own.",
-    "lab_safety": "Cryptographic tools and techniques learned in this course must only be used for authorized purposes. Attempting to break encryption on systems you do not own is illegal."
+    "late_submissions": "Late assignments are penalized 10% per day for up to 5 days. No submissions accepted more than 5 days late without prior arrangement. One 48-hour extension per student per semester.",
+    "collaboration": "Mathematical exercises may be discussed in groups. All implementation code must be individually written. Using cryptographic library functions (PyCryptodome, OpenSSL) is expected; copying implementation code from other students or the internet without attribution is plagiarism.",
+    "academic_integrity": "All code must be original work. Implementations of core algorithms for learning exercises must be your own. Using third-party libraries for production-quality operations is expected and encouraged. AI coding assistant use must be disclosed.",
+    "technology_requirements": "Python 3.10+ with PyCryptodome, cryptography, and hashlib libraries. OpenSSL 3.x command-line tools. Wireshark. For Assignment 3: liboqs (Open Quantum Safe). Lab computers are pre-configured; personal machines must be configured by week 2."
   }
 }

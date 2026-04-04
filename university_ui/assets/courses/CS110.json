@@ -16,242 +16,819 @@
       "topic": "Python Fundamentals for Security Professionals",
       "duration": "50 minutes",
       "learning_objectives": [
-        "Write Python scripts for security automation tasks",
-        "Understand data types, control flow, and functions",
-        "Use Python standard library modules relevant to security"
+        "Write Python scripts for security automation tasks using proper data types and control flow",
+        "Distinguish between bytes and strings for binary protocol and network data handling",
+        "Use Python standard library modules relevant to security work"
       ],
       "readings": [
         "Black Hat Python Ch. 1",
-        "Python documentation: standard library overview"
+        "Python documentation: standard library overview",
+        "Violent Python Ch. 1 (Introduction)"
       ],
       "lecture_notes": {
-        "introduction": "Python is the language of cybersecurity. From scripting exploit development to automating incident response, Python proficiency is essential for every security professional.",
+        "introduction": "Python is the lingua franca of cybersecurity. From automating incident response and writing detection rules to developing exploit proof-of-concepts and building forensic analysis tools, Python proficiency is expected of every security professional. Unlike general-purpose programming courses, this course focuses exclusively on security applications from day one. Every example involves a real security task, every exercise builds a tool you would actually use on the job, and every concept is taught through the lens of offensive and defensive security operations. You already understand security concepts from CY101; now you learn to implement them in code. By the end of this course, you will have a personal toolkit of Python security scripts covering network scanning, log analysis, file forensics, web interaction, exploit development, and automated incident response.",
         "key_concepts": [
-          "Python data types: strings, bytes, lists, dictionaries",
-          "Control flow: conditionals, loops, exception handling",
-          "Functions and modular code organization",
-          "Standard library: hashlib, json, pathlib, struct",
-          "Virtual environments and package management with pip"
+          "Python data types for security: strings for text data, bytes for network packets and binary files, integers for port numbers and addresses",
+          "Bytes vs strings: security work operates on raw bytes (network packets, binary executables); str.encode() converts text to bytes, bytes.decode() converts back",
+          "Control flow: if/elif/else for decision logic, for loops for iterating over targets, while loops for retry logic and polling",
+          "Functions: encapsulating security operations as reusable tools; def scan_port(host, port) returns True if open",
+          "Standard library modules: hashlib (cryptographic hashing), json (API responses), pathlib (file system traversal), struct (binary data), re (regex pattern matching)",
+          "Virtual environments: venv isolates project dependencies; critical when tools require specific library versions",
+          "Package management: pip install scapy installs third-party security libraries; requirements.txt documents dependencies",
+          "Command-line arguments: sys.argv for basic argument reading; argparse for professional CLI interfaces",
+          "Exception handling: try/except for graceful handling of network timeouts, permission errors, and malformed data"
         ],
-        "demonstration": "Writing a script that hashes all files in a directory tree with SHA-256 and compares them to a known-good baseline for integrity checking",
+        "demonstration": "Write a script that recursively hashes all files in a directory tree with SHA-256, compares hashes to a known-good baseline file, and reports any files that are new, modified, or deleted since the baseline was created",
         "setup_requirements": [
           "Python 3.10+ installed",
           "VS Code with Python extension",
-          "Lab files for scripting exercises"
+          "Lab VM with target files for integrity checking",
+          "Course lab network access configured"
         ],
         "review": [
           {
             "key": "Bytes vs Strings",
-            "value": "Security work frequently involves raw bytes (network packets, binary files). Python 3 distinguishes between str (text) and bytes (raw data). Use encode()/decode() to convert."
+            "value": "Security work frequently involves raw bytes (network packets, binary files, encryption output). Python 3 strictly distinguishes str (text) from bytes (raw data). Use encode()/decode() to convert. hashlib requires bytes input."
           },
           {
             "key": "hashlib",
-            "value": "Standard library module for cryptographic hashing. hashlib.sha256(data).hexdigest() produces a hex digest. Used for file integrity, password hashing foundations, and IoC comparison."
-          }
-        ]
-      }
-    },
-    {
-      "week_number": 1,
-      "session_number": 2,
-      "topic": "Network Programming with Python",
-      "duration": "50 minutes",
-      "learning_objectives": [
-        "Create TCP and UDP client/server programs",
-        "Parse and construct network packets with Scapy",
-        "Automate network reconnaissance tasks"
-      ],
-      "readings": [
-        "Black Hat Python Ch. 2-3",
-        "Scapy documentation"
-      ],
-      "lecture_notes": {
-        "introduction": "Network programming enables you to build custom security tools for scanning, sniffing, and communicating with network services programmatically.",
-        "key_concepts": [
-          "Socket programming: TCP client, TCP server, UDP communication",
-          "Scapy: packet crafting, sending, and sniffing",
-          "Building a port scanner with socket connections",
-          "Raw packet manipulation for custom protocol analysis",
-          "Asynchronous networking for performance"
-        ],
-        "demonstration": "Building a multi-threaded port scanner and a Scapy-based ARP scanner that discovers all hosts on the local network",
-        "setup_requirements": [
-          "Python with scapy installed",
-          "Lab network with target hosts",
-          "Wireshark for traffic verification"
-        ],
-        "review": [
-          {
-            "key": "Socket Programming",
-            "value": "TCP uses SOCK_STREAM with connect(), send(), recv(). UDP uses SOCK_DGRAM with sendto(), recvfrom(). Always handle timeouts and connection errors."
+            "value": "Standard library module for cryptographic hashing. hashlib.sha256(data).hexdigest() produces a hex string digest. Used for file integrity verification, IoC comparison, password hash generation, and forensic evidence fingerprinting."
           },
           {
-            "key": "Scapy Packet Crafting",
-            "value": "Scapy builds packets layer by layer. sr1() sends and receives one response. Enables custom scanning, fuzzing, and protocol testing."
+            "key": "Virtual Environments",
+            "value": "python -m venv .venv creates an isolated environment. source .venv/bin/activate uses it. Each project gets its own dependencies without conflicts. Essential when different tools require different library versions."
+          },
+          {
+            "key": "argparse",
+            "value": "Standard library module for building professional command-line interfaces: parser.add_argument('--target', required=True) defines options. Generates help text automatically. Every production security tool needs a proper CLI."
           }
         ]
       }
     },
     {
       "week_number": 2,
-      "session_number": 3,
-      "topic": "Web Interaction and API Automation",
+      "session_number": 2,
+      "topic": "Network Programming with Python",
       "duration": "50 minutes",
       "learning_objectives": [
-        "Automate web interactions with the requests library",
-        "Parse HTML and JSON responses for security data extraction",
-        "Build scripts that interact with security tool APIs"
+        "Create TCP and UDP client/server programs for network communication",
+        "Build a multi-threaded port scanner with configurable timeouts",
+        "Parse and construct network packets using Scapy for custom protocol analysis"
       ],
       "readings": [
-        "Python requests library documentation",
-        "REST API fundamentals"
+        "Black Hat Python Ch. 2-3",
+        "Scapy documentation: Getting Started",
+        "Python socket module documentation"
       ],
       "lecture_notes": {
-        "introduction": "Modern security operations rely heavily on APIs. Automating interactions with web applications and security tool APIs is a critical skill for SOC analysts and security engineers.",
+        "introduction": "Network programming is the foundation of every network security tool. Port scanners, packet sniffers, protocol analyzers, and network fuzzers all require the ability to create connections, send and receive data, and manipulate packets at the protocol level. Python's socket library provides low-level network access for building custom tools, while Scapy provides a high-level packet manipulation framework that lets you craft, send, capture, and analyze network traffic with a few lines of code. Understanding these capabilities is essential both for building offensive tools (scanning, exploitation) and defensive tools (traffic analysis, anomaly detection). Today we build working network tools from scratch, understanding every byte that crosses the wire.",
         "key_concepts": [
-          "HTTP requests: GET, POST, PUT, DELETE with the requests library",
-          "Session management and authentication handling",
-          "JSON parsing and response validation",
-          "API interaction: VirusTotal, Shodan, AbuseIPDB",
-          "Rate limiting and error handling for API clients"
+          "Socket programming: socket.socket(AF_INET, SOCK_STREAM) for TCP, SOCK_DGRAM for UDP; connect(), send(), recv() for communication",
+          "TCP client: connect to a service, send data, receive response; the basis of every banner-grabbing and protocol interaction tool",
+          "TCP server: bind(), listen(), accept() for creating honeypots, reverse shells, and data collection endpoints",
+          "Port scanning: connect_ex() returns 0 for open ports; multi-threaded scanning with concurrent.futures.ThreadPoolExecutor",
+          "Scapy packet crafting: IP(dst='target')/TCP(dport=80, flags='S') builds a SYN packet; sr1() sends and receives one response",
+          "ARP scanning: Scapy ARP(pdst='192.168.1.0/24') discovers all hosts on the local network segment",
+          "Packet sniffing: scapy.sniff(filter='tcp port 80', count=10) captures packets matching a BPF filter",
+          "Raw socket limitations: some operations require root/administrator privileges; understand when and why",
+          "Network byte order: struct.pack('!H', port) converts integers to network byte order for protocol compliance"
         ],
-        "demonstration": "Building a script that takes a list of IP addresses, checks each against VirusTotal and AbuseIPDB APIs, and produces a consolidated threat report",
+        "demonstration": "Build a multi-threaded TCP port scanner that scans a target's top 1000 ports with configurable timeout, a Scapy-based ARP scanner that discovers all hosts on the local network, and verify results against Wireshark captures",
         "setup_requirements": [
-          "Python with requests library",
-          "VirusTotal API key (free)",
-          "AbuseIPDB API key (free)"
+          "Python with scapy installed",
+          "Lab network with authorized target hosts",
+          "Wireshark for traffic verification",
+          "Root/sudo access for raw socket operations"
         ],
         "review": [
           {
-            "key": "API Authentication",
-            "value": "Most security APIs use API keys in headers. Some use OAuth2. Never hardcode API keys; use environment variables or config files."
+            "key": "Socket Programming",
+            "value": "TCP: SOCK_STREAM with connect(), send(), recv(). UDP: SOCK_DGRAM with sendto(), recvfrom(). Always set timeouts (socket.settimeout(2)) and handle ConnectionRefusedError, TimeoutError exceptions."
           },
           {
-            "key": "Rate Limiting",
-            "value": "APIs enforce request limits. Implement exponential backoff on 429 responses. Batch requests where possible. Cache results to avoid redundant queries."
+            "key": "Scapy Packet Crafting",
+            "value": "Scapy builds packets layer by layer: IP()/TCP()/Raw(). sr1() sends one packet and receives one response. srp() operates at layer 2 for ARP. Enables custom scanning, fuzzing, and protocol testing impossible with standard sockets."
+          },
+          {
+            "key": "ThreadPoolExecutor",
+            "value": "with ThreadPoolExecutor(max_workers=100) as executor: futures = {executor.submit(scan_port, host, port): port for port in ports}. Scans 1000 ports in seconds instead of minutes. Essential for practical security tools."
+          },
+          {
+            "key": "Banner Grabbing",
+            "value": "Connect to an open port and read the service banner: sock.recv(1024).decode(). Identifies service name and version. Example: 'SSH-2.0-OpenSSH_8.9p1' reveals exact software version for vulnerability matching."
           }
         ]
       }
     },
     {
       "week_number": 3,
-      "session_number": 5,
-      "topic": "File Analysis and Forensic Scripting",
+      "session_number": 3,
+      "topic": "Web Interaction and API Automation",
       "duration": "50 minutes",
       "learning_objectives": [
-        "Parse binary file formats programmatically",
-        "Automate forensic evidence collection tasks",
-        "Build scripts for log analysis and pattern detection"
+        "Automate web interactions and API calls with the requests library for security operations",
+        "Parse HTML and JSON responses to extract security-relevant indicators",
+        "Build scripts that interact with threat intelligence APIs"
       ],
       "readings": [
-        "Python Forensics Ch. 1-4",
-        "struct module documentation"
+        "Python requests library documentation",
+        "REST API fundamentals for security tools",
+        "VirusTotal API documentation"
       ],
       "lecture_notes": {
-        "introduction": "Security analysts frequently need to parse binary files, analyze logs, and extract artifacts programmatically.",
+        "introduction": "Modern security operations depend heavily on APIs. Threat intelligence platforms (VirusTotal, Shodan, AbuseIPDB), SIEM systems, ticketing platforms, and cloud security services all expose APIs for automation. A SOC analyst who can write Python scripts to query these APIs transforms hours of manual lookup into seconds of automated enrichment. Web application security testing also requires programmatic interaction with web services to test authentication, session management, and input handling. Today we build the skills to interact with any web service or API from Python, focusing on the security tools and workflows you will encounter in professional practice.",
         "key_concepts": [
-          "Binary file reading: struct module for unpacking binary data",
-          "PE file parsing with pefile library",
-          "Log file analysis: regex pattern matching, timestamp parsing",
-          "CSV and JSON output for forensic reporting",
-          "Automating evidence collection: file metadata, hash calculation"
+          "HTTP fundamentals: GET retrieves data, POST submits data; headers carry authentication and content type; status codes indicate success or failure",
+          "Python requests library: requests.get(url, headers={'X-Api-Key': key}, params={'ip': target}) makes authenticated API calls",
+          "Session management: requests.Session() persists cookies and headers across requests; essential for authenticated web testing",
+          "JSON parsing: response.json() converts API responses to Python dictionaries for extraction and analysis",
+          "Threat intelligence APIs: VirusTotal (file/URL scanning), Shodan (internet device search), AbuseIPDB (IP reputation), AlienVault OTX (IoC feeds)",
+          "Rate limiting: implement exponential backoff on 429 responses; respect API quotas; cache results to avoid redundant queries",
+          "Error handling: check response.status_code before parsing; handle network timeouts, authentication failures, and malformed responses",
+          "API key management: never hardcode keys in scripts; use environment variables (os.environ['VT_API_KEY']) or config files",
+          "Web scraping basics: BeautifulSoup for parsing HTML when no API exists; respect robots.txt and legal boundaries"
         ],
-        "demonstration": "Building a script that parses PE file headers, extracts import table, calculates entropy per section, and flags suspicious indicators",
+        "demonstration": "Build a threat intelligence enrichment script that takes a list of IP addresses, queries VirusTotal and AbuseIPDB APIs for each, combines the results, scores each IP by threat level, and produces a consolidated HTML threat report",
         "setup_requirements": [
-          "Python with pefile, struct, re modules",
-          "Sample PE files for analysis",
-          "Sample log files for parsing"
+          "Python with requests and beautifulsoup4 libraries",
+          "VirusTotal API key (free tier)",
+          "AbuseIPDB API key (free tier)",
+          "Sample list of suspicious IP addresses"
         ],
         "review": [
           {
-            "key": "struct Module",
-            "value": "Packs and unpacks binary data. struct.unpack('<HH', data) unpacks two little-endian unsigned shorts. Essential for parsing file headers and binary formats."
+            "key": "API Authentication",
+            "value": "Most security APIs use API keys in headers: headers={'X-Api-Key': os.environ['VT_KEY']}. Some use OAuth2. Never hardcode keys; use environment variables or encrypted config files."
           },
           {
-            "key": "PE Analysis Script",
-            "value": "pefile module parses PE executables. Access imports via DIRECTORY_ENTRY_IMPORT. Calculate entropy per section to detect packing."
+            "key": "Rate Limiting",
+            "value": "APIs enforce request limits (e.g., VirusTotal free: 4/minute). Implement time.sleep() between requests. Use exponential backoff on 429 responses. Cache results to avoid redundant queries for the same IoC."
+          },
+          {
+            "key": "Threat Intel Enrichment",
+            "value": "Automating IoC lookups across multiple sources transforms a 30-minute manual process into a 30-second script. The script becomes part of your incident response runbook."
+          },
+          {
+            "key": "Response Validation",
+            "value": "Always check status_code before parsing: if response.status_code != 200: log error and continue. API responses can change format; use .get() with defaults for defensive parsing."
           }
         ]
       }
     },
     {
       "week_number": 4,
-      "session_number": 7,
-      "topic": "Exploit Development Foundations",
+      "session_number": 4,
+      "topic": "Log Analysis and Pattern Detection",
       "duration": "50 minutes",
       "learning_objectives": [
-        "Understand buffer overflow concepts and memory layout",
-        "Write basic exploit payloads in Python",
-        "Use pwntools for exploit development automation"
+        "Parse and analyze security log files from multiple sources using Python",
+        "Build regex patterns to extract security-relevant events from unstructured logs",
+        "Implement automated detection of suspicious patterns in log data"
       ],
       "readings": [
-        "Black Hat Python Ch. 7-8",
-        "pwntools documentation"
+        "Python re module documentation",
+        "Common Log Format and syslog specification",
+        "SANS Log Management Cheat Sheet"
       ],
       "lecture_notes": {
-        "introduction": "Understanding exploit development gives defenders insight into how attacks work. Writing exploits reinforces memory safety concepts and helps evaluate vulnerability severity.",
+        "introduction": "Log analysis is the bread and butter of security operations. Firewall logs, web server access logs, authentication logs, DNS query logs, and syslog messages all contain evidence of attacks, policy violations, and suspicious activity. While SIEMs automate much of this, security analysts frequently need to write custom parsers for log formats the SIEM does not handle, perform ad hoc analysis during incident response, and build detection logic that goes beyond standard SIEM rules. Python's regular expression engine and text processing capabilities make it the ideal tool for custom log analysis. Today we build log parsers that extract structured data from raw logs, detect patterns indicative of attacks, and produce actionable security reports.",
         "key_concepts": [
-          "Memory layout: stack, heap, code, data segments",
-          "Buffer overflow: stack smashing, return address overwrite",
-          "Shellcode basics: NOP sleds, payload delivery",
-          "pwntools: remote(), p32(), p64(), ELF() for exploit scripting",
-          "Mitigations: ASLR, DEP/NX, stack canaries, PIE"
+          "Regular expressions: re.compile(), re.search(), re.findall() for pattern matching in log lines",
+          "Common log patterns: IP addresses (r'\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}'), timestamps, HTTP methods, status codes",
+          "Log parsing pipeline: read file -> split lines -> match pattern -> extract fields -> load into pandas DataFrame for analysis",
+          "Apache/Nginx access log parsing: extracting IP, timestamp, method, URL, status code, user agent from Combined Log Format",
+          "Authentication log analysis: detecting brute force (multiple failed logins from same IP), password spraying (one password against many accounts)",
+          "Timestamp parsing: datetime.strptime() for converting log timestamps to Python datetime objects for time-based analysis",
+          "Aggregation and alerting: grouping by source IP and counting failures; flagging IPs exceeding thresholds",
+          "IOC extraction: automatically extracting IP addresses, domain names, file hashes, and URLs from incident reports and threat feeds",
+          "Performance: processing large log files line by line to avoid loading entire files into memory"
         ],
-        "demonstration": "Exploiting a simple buffer overflow in a lab binary using Python and pwntools, then demonstrating how ASLR and stack canaries prevent the same exploit",
+        "demonstration": "Parse a week of Apache access logs to identify: (1) the top 20 source IPs by request volume, (2) all 4xx and 5xx error patterns, (3) SQL injection attempts in URL parameters, (4) directory traversal attempts, (5) suspicious user agents; produce a security event timeline and summary report",
         "setup_requirements": [
-          "Linux VM with GDB and pwntools",
-          "Vulnerable binaries compiled without protections",
-          "GDB with pwndbg or GEF extension"
+          "Python with re and pandas",
+          "Sample Apache access logs (1 week, with injected attack patterns)",
+          "Sample SSH authentication logs with brute force attempts",
+          "Regex cheat sheet"
         ],
         "review": [
           {
-            "key": "Buffer Overflow",
-            "value": "When input exceeds buffer size on the stack, it overwrites adjacent memory including the return address. Attacker controls the return address to redirect program flow."
+            "key": "Regex for Security",
+            "value": "re.findall(r'(\\d+\\.\\d+\\.\\d+\\.\\d+)', line) extracts all IP addresses from a log line. re.search(r'(union|select|drop|insert).*--', url, re.IGNORECASE) detects SQL injection patterns."
           },
           {
-            "key": "pwntools",
-            "value": "Python library for CTF and exploit development. Provides utilities for connection management, payload construction, and binary analysis."
+            "key": "Brute Force Detection",
+            "value": "Group authentication failures by source IP and time window: if an IP has >10 failures in 5 minutes, flag as brute force. Use pandas groupby and rolling window functions for efficient detection."
+          },
+          {
+            "key": "Line-by-Line Processing",
+            "value": "for line in open('access.log'): processes one line at a time, using minimal memory. Essential for multi-gigabyte log files that cannot fit in RAM."
+          },
+          {
+            "key": "IOC Extraction",
+            "value": "Regex patterns extract indicators of compromise from any text: IPs, domains (r'[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}'), SHA-256 hashes (r'[a-fA-F0-9]{64}'). Automates threat intel harvesting from reports."
           }
         ]
       }
     },
     {
       "week_number": 5,
-      "session_number": 9,
-      "topic": "Security Automation and Tool Development",
+      "session_number": 5,
+      "topic": "File Analysis and Forensic Scripting",
       "duration": "50 minutes",
       "learning_objectives": [
-        "Build complete security automation tools",
-        "Package Python tools for distribution",
-        "Implement logging, configuration, and error handling for production tools"
+        "Parse binary file formats and extract forensic artifacts programmatically",
+        "Automate evidence collection and integrity verification tasks",
+        "Build scripts for malware triage including PE header analysis and entropy calculation"
       ],
       "readings": [
-        "Python packaging documentation",
-        "Argparse and logging module documentation"
+        "Python Forensics Ch. 1-4",
+        "Python struct module documentation",
+        "pefile library documentation"
       ],
       "lecture_notes": {
-        "introduction": "Moving from scripts to tools requires proper engineering: argument parsing, configuration management, logging, error handling, and packaging for distribution.",
+        "introduction": "Digital forensics and malware analysis require the ability to parse binary files, extract metadata, calculate file characteristics, and identify suspicious indicators programmatically. While tools like Autopsy and IDA Pro handle many tasks, custom scripts are essential for automating repetitive forensic workflows, processing large evidence collections, and implementing organization-specific analysis procedures. Python's struct module unpacks binary data into Python values, the pefile library parses Windows PE executables, and general file analysis techniques apply to any binary format. Today we build forensic analysis tools that automate the repetitive parts of evidence processing so analysts can focus on investigation and interpretation.",
         "key_concepts": [
-          "argparse for command-line interface design",
-          "logging module for structured logging",
-          "Configuration files: YAML/JSON for tool configuration",
-          "Packaging: setuptools, entry_points, requirements.txt",
-          "Testing: pytest for security tool testing"
+          "Binary file reading: open('file', 'rb') for raw bytes; struct.unpack('<HH', data) unpacks little-endian unsigned shorts from binary data",
+          "File magic numbers: first bytes identify file type regardless of extension; PDF starts with %PDF, ZIP with PK, PE with MZ",
+          "PE file analysis with pefile: pe.DIRECTORY_ENTRY_IMPORT for import table, pe.sections for section details, pe.FILE_HEADER.Machine for architecture",
+          "Entropy calculation: Shannon entropy measures randomness; high entropy (>7.0) in PE sections suggests packing or encryption",
+          "File metadata extraction: os.stat() for timestamps, hashlib for cryptographic hashes, python-magic for file type identification",
+          "Forensic evidence hashing: calculating MD5, SHA-1, and SHA-256 for every evidence file; documenting in chain of custody",
+          "Automating triage: batch processing a directory of suspicious files to extract key indicators and produce a triage report",
+          "YARA rule basics: using yara-python to scan files against malware signature rules",
+          "Timestamp analysis: extracting and comparing file creation, modification, and access times for timeline reconstruction"
         ],
-        "demonstration": "Packaging the tools built throughout the course into a distributable Python package with proper CLI, logging, and documentation",
+        "demonstration": "Build a malware triage script that processes a directory of suspicious PE files: for each file, extract the PE header information, list imported DLLs and functions, calculate entropy per section, flag sections with anomalous entropy, check for known suspicious imports (VirtualAlloc, CreateRemoteThread), and produce a triage report with risk scores",
         "setup_requirements": [
-          "Python packaging tools",
-          "pytest for testing",
-          "Documentation tools"
+          "Python with pefile, yara-python, struct modules",
+          "Sample PE files (benign and suspicious) for analysis",
+          "Sample binary files in various formats",
+          "YARA rule collection"
         ],
         "review": [
           {
-            "key": "Production Quality",
-            "value": "Scripts that work for you are not tools. Tools have: argument parsing, input validation, error handling, logging, documentation, and tests."
+            "key": "struct Module",
+            "value": "Packs and unpacks binary data. struct.unpack('<I', data[:4])[0] reads a 4-byte little-endian unsigned integer. Essential for parsing file headers, network protocols, and any binary format."
           },
           {
-            "key": "Secure Coding",
-            "value": "Always use subprocess.run with list arguments instead of shell strings. Validate all inputs. Never hardcode secrets. Use parameterized queries for database access."
+            "key": "Entropy Analysis",
+            "value": "Shannon entropy H = -sum(p * log2(p)) for each byte value's frequency. Normal executable text sections: entropy ~5-6. Packed/encrypted sections: entropy >7.0. A useful heuristic for malware triage."
+          },
+          {
+            "key": "PE Import Analysis",
+            "value": "Suspicious imports indicate malicious capabilities: VirtualAlloc + WriteProcessMemory + CreateRemoteThread = process injection. Kernel32 + WinInet = network communication. Automated detection flags these combinations."
+          },
+          {
+            "key": "Forensic Hashing",
+            "value": "Every evidence file gets MD5, SHA-1, and SHA-256 hashes at collection time. Re-hash before analysis to verify integrity. Any hash mismatch indicates evidence tampering or corruption."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Cryptography Implementation in Python",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Implement symmetric and asymmetric encryption using Python cryptography libraries",
+        "Build secure password hashing and verification functions",
+        "Understand the difference between using crypto correctly and insecurely"
+      ],
+      "readings": [
+        "Python cryptography library documentation (Fernet, RSA)",
+        "OWASP Password Storage Cheat Sheet",
+        "Understanding Cryptography Ch. 5-7"
+      ],
+      "lecture_notes": {
+        "introduction": "Security professionals must understand cryptography at an implementation level, not just theoretically. You need to encrypt sensitive data in your tools, verify file integrity, securely store passwords, and recognize when cryptography is being misused by developers. Python's cryptography library provides safe, high-level interfaces for common operations, but it is still possible to use them incorrectly. Incorrect key management, using ECB mode, reusing nonces, or storing passwords with unsalted MD5 are real vulnerabilities found in production code. Today we learn to use cryptographic primitives correctly and to recognize common mistakes in others' code. Every security tool you build from this point forward should handle secrets and credentials properly.",
+        "key_concepts": [
+          "Symmetric encryption: Fernet (AES-128-CBC with HMAC) for encrypting data with a shared secret; Fernet.generate_key(), encrypt(), decrypt()",
+          "Asymmetric encryption: RSA key generation, public key encryption, private key decryption; used for key exchange and digital signatures",
+          "Password hashing: bcrypt.hashpw() with automatic salting; never use MD5 or SHA-256 directly for passwords",
+          "Key derivation: PBKDF2, scrypt for deriving encryption keys from passwords; work factor makes brute force expensive",
+          "Digital signatures: sign data with private key, verify with public key; proves authenticity and integrity",
+          "Secure random number generation: secrets.token_bytes(), secrets.token_hex() for cryptographic randomness; never use random module for security",
+          "Common crypto mistakes: ECB mode (patterns visible), key reuse, nonce reuse, storing keys with encrypted data, insufficient work factor",
+          "Certificate handling: loading PEM certificates, extracting public keys, verifying certificate chains with Python",
+          "Envelope encryption: encrypt data with a random DEK, encrypt DEK with master key; standard pattern for key management"
+        ],
+        "demonstration": "Build a secure credential vault that encrypts stored credentials with Fernet, derives the encryption key from a master password using PBKDF2, stores the salt and encrypted data in a JSON file, and provides encrypt/decrypt/list operations through a CLI",
+        "setup_requirements": [
+          "Python with cryptography and bcrypt libraries",
+          "Key generation and management tools",
+          "Sample data for encryption exercises"
+        ],
+        "review": [
+          {
+            "key": "Fernet",
+            "value": "High-level symmetric encryption: key = Fernet.generate_key(); f = Fernet(key); encrypted = f.encrypt(data); decrypted = f.decrypt(encrypted). Handles IV generation, padding, and HMAC authentication. The safe default choice."
+          },
+          {
+            "key": "Password Hashing",
+            "value": "bcrypt.hashpw(password.encode(), bcrypt.gensalt(rounds=12)) produces a salted, work-factor-adjustable hash. bcrypt.checkpw() verifies. Never hash passwords with MD5, SHA-1, or SHA-256 directly."
+          },
+          {
+            "key": "secrets Module",
+            "value": "secrets.token_hex(32) generates 32 bytes of cryptographically secure random hex. Use instead of random.randint() for any security-sensitive randomness: API keys, session tokens, nonces."
+          },
+          {
+            "key": "Common Mistakes",
+            "value": "ECB mode: identical plaintext blocks produce identical ciphertext blocks (the penguin problem). Nonce reuse in GCM: catastrophic key recovery. Storing encryption key next to encrypted data: defeats the purpose entirely."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Exploit Development Foundations",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Understand buffer overflow mechanics and memory layout from a programming perspective",
+        "Write basic exploit payloads and proof-of-concept scripts in Python",
+        "Use pwntools for exploit development automation and debugging"
+      ],
+      "readings": [
+        "Black Hat Python Ch. 7-8",
+        "pwntools documentation (Getting Started)",
+        "Hacking: The Art of Exploitation Ch. 3"
+      ],
+      "lecture_notes": {
+        "introduction": "Understanding exploit development gives defenders critical insight into how attacks work, how to evaluate vulnerability severity, and why certain mitigations are effective. Writing exploits is the best way to understand memory safety and why languages like C require careful coding. We use Python as our exploit scripting language because pwntools provides utilities that make exploit development efficient and educational. You are not learning to attack production systems; you are learning the attacker's perspective so you can better defend. Every exploit you write in the lab demonstrates a vulnerability class that your future security assessments must detect and your defensive recommendations must mitigate.",
+        "key_concepts": [
+          "Memory layout: stack (local variables, return addresses), heap (dynamic allocation), code/text (instructions), data (globals)",
+          "Buffer overflow: when input exceeds a buffer's allocated size on the stack, it overwrites adjacent data including the saved return address",
+          "Stack frame: function prologue pushes RBP and return address; overflow overwrites these to hijack control flow",
+          "Payload construction: padding bytes + return address + NOP sled + shellcode; each component serves a specific purpose",
+          "pwntools basics: process() for local, remote() for network; p32()/p64() for address packing; ELF() for binary analysis",
+          "Shellcode: machine code that spawns a shell or performs another action; pwntools shellcraft module generates common payloads",
+          "Return-Oriented Programming (ROP): chaining existing code gadgets when DEP/NX prevents executing injected code",
+          "Mitigations: ASLR randomizes addresses, DEP/NX prevents code execution on stack, stack canaries detect overflows, PIE randomizes code base",
+          "Fuzzing concepts: automated input generation to discover crashes that indicate exploitable vulnerabilities"
+        ],
+        "demonstration": "Exploit a simple stack buffer overflow in a lab binary compiled without protections using Python and pwntools, then demonstrate how each mitigation (stack canaries, ASLR, DEP) prevents the same exploit, discussing bypasses for each",
+        "setup_requirements": [
+          "Linux VM with GDB and pwntools installed",
+          "Vulnerable lab binaries compiled without protections",
+          "GDB with pwndbg or GEF extension",
+          "Checksec tool for binary protection analysis"
+        ],
+        "review": [
+          {
+            "key": "Buffer Overflow",
+            "value": "When input exceeds buffer size on the stack, it overwrites adjacent memory including the return address. Attacker controls where execution jumps when the function returns. The classic vulnerability class."
+          },
+          {
+            "key": "pwntools",
+            "value": "Python library for exploit development: p64(address) packs a 64-bit address, shellcraft.sh() generates shell shellcode, ROP(elf) finds gadgets. Makes exploit scripting efficient and portable."
+          },
+          {
+            "key": "ASLR",
+            "value": "Address Space Layout Randomization: randomizes the base addresses of stack, heap, libraries, and (with PIE) the executable. Attacker cannot predict where to jump. Bypassed by information leaks or brute force on 32-bit."
+          },
+          {
+            "key": "DEP/NX",
+            "value": "Data Execution Prevention / No-Execute: marks stack and heap as non-executable. Injected shellcode cannot run. Bypassed by ROP: chain existing executable code gadgets to achieve the same effect."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Web Application Security Scripting",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Build Python scripts that test for common web vulnerabilities (XSS, SQLi, directory traversal)",
+        "Automate web application reconnaissance and vulnerability scanning",
+        "Implement session handling and authentication testing tools"
+      ],
+      "readings": [
+        "OWASP Top 10 2021",
+        "The Web Application Hacker's Handbook Ch. 1-5",
+        "Python requests advanced usage documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Web applications are the most common attack surface in modern organizations. Automated scanning tools like Burp Suite and ZAP cover common vulnerabilities, but custom Python scripts are essential for testing application-specific logic, chaining vulnerabilities, and building proof-of-concept exploits. The ability to write custom web security scripts distinguishes a penetration tester from someone who merely runs tools. Today we build scripts that test for OWASP Top 10 vulnerabilities by interacting with web applications programmatically. Each script demonstrates both the vulnerability and the test methodology, giving you both offensive and defensive understanding.",
+        "key_concepts": [
+          "Directory and file enumeration: brute-forcing common paths (/admin, /backup, /.git) with requests.get() and status code checking",
+          "SQL injection testing: submitting payloads like ' OR '1'='1 through form parameters and analyzing response differences",
+          "XSS testing: injecting script payloads and checking if they appear unescaped in the response body",
+          "Session analysis: examining cookies for security flags (HttpOnly, Secure, SameSite), session ID entropy, and session fixation",
+          "Authentication testing: credential stuffing with rate limiting detection, password policy enumeration, account lockout testing",
+          "Header analysis: checking for security headers (CSP, X-Frame-Options, HSTS) and reporting missing protections",
+          "Form parsing: BeautifulSoup to extract form fields, hidden tokens, and CSRF tokens for automated form submission",
+          "Response comparison: timing differences, content length differences, and error message differences as vulnerability indicators",
+          "Report generation: producing structured vulnerability reports from automated scan results"
+        ],
+        "demonstration": "Build a web application security scanner that takes a target URL and performs: (1) directory enumeration from a wordlist, (2) security header analysis, (3) form discovery and CSRF token detection, (4) basic SQL injection testing on discovered forms, (5) produces a formatted vulnerability report",
+        "setup_requirements": [
+          "Python with requests and beautifulsoup4",
+          "DVWA or OWASP WebGoat running in lab",
+          "Directory wordlists (common.txt)",
+          "Burp Suite for traffic comparison"
+        ],
+        "review": [
+          {
+            "key": "Directory Enumeration",
+            "value": "for path in wordlist: resp = requests.get(f'{target}/{path}'); if resp.status_code == 200: found. Finds backup files, admin panels, and exposed configuration. Respect scope and authorization."
+          },
+          {
+            "key": "SQL Injection Detection",
+            "value": "Submit normal value and injection payload to the same parameter. Compare responses: different error messages, different content lengths, or timing differences indicate SQL injection. Automated testing scales this across all parameters."
+          },
+          {
+            "key": "Security Header Audit",
+            "value": "Check response headers for CSP, X-Frame-Options, HSTS, X-Content-Type-Options. Missing headers indicate configuration weaknesses. Automatable in seconds for every endpoint."
+          },
+          {
+            "key": "Responsible Disclosure",
+            "value": "Only test applications you are authorized to test. Document findings professionally. Report to the organization through established channels. Never publicly disclose before the vendor has had time to patch."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "Incident Response Automation",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Build automated incident response playbooks in Python",
+        "Collect volatile forensic evidence from running systems programmatically",
+        "Automate containment actions and evidence preservation during security incidents"
+      ],
+      "readings": [
+        "Incident Response & Computer Forensics Ch. 5-8",
+        "NIST SP 800-61 Computer Security Incident Handling Guide",
+        "Python subprocess and os module documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "During a security incident, speed matters. Every minute an attacker has access, they can exfiltrate more data, establish more persistence, and move deeper into the network. Automated incident response scripts execute critical containment and evidence collection steps in seconds instead of the minutes or hours that manual processes require. Python scripts can collect volatile data (running processes, network connections, logged-in users), preserve evidence with cryptographic hashes, isolate compromised hosts, and generate initial triage reports while the human analyst focuses on investigation and decision-making. Today we build the automation components of an incident response toolkit that you can deploy in a real security operations environment.",
+        "key_concepts": [
+          "Volatile data collection: running processes (psutil.process_iter()), network connections (psutil.net_connections()), logged-in users, DNS cache",
+          "Order of volatility: collect CPU registers, memory, network state, running processes, disk before anything changes; scripts execute this order automatically",
+          "Evidence preservation: hash every collected artifact immediately; write hash values to a chain of custody log",
+          "System information gathering: hostname, IP addresses, OS version, installed software, scheduled tasks, startup programs",
+          "Network containment: firewall rule insertion, DNS sinkholing, account disabling via API calls to Active Directory or cloud IAM",
+          "Automated triage: scripts that analyze collected evidence for IoCs (known bad IPs, suspicious processes, persistence mechanisms)",
+          "Timeline generation: correlating timestamps from multiple evidence sources into a single chronological view",
+          "SOAR integration: triggering response actions through security orchestration platform APIs",
+          "Playbook structure: decision trees in code; if malware detected: isolate host, collect evidence, notify SOC manager"
+        ],
+        "demonstration": "Build an incident response evidence collection script that: (1) captures running processes with command lines, (2) records all network connections, (3) lists logged-in users and recent login history, (4) captures DNS cache, (5) hashes all outputs for integrity, (6) packages everything into a timestamped evidence archive",
+        "setup_requirements": [
+          "Python with psutil library",
+          "Lab workstation for evidence collection testing",
+          "Sample IR playbook template",
+          "Evidence packaging tools"
+        ],
+        "review": [
+          {
+            "key": "psutil for IR",
+            "value": "psutil.process_iter(['pid', 'name', 'cmdline', 'connections']) captures process details including command-line arguments and network connections. Runs in seconds, capturing volatile data before it disappears."
+          },
+          {
+            "key": "Order of Volatility",
+            "value": "Collect in order from most to least volatile: registers > memory > network state > processes > disk. By the time you image a disk, network connections may be gone. Automate the volatile collection first."
+          },
+          {
+            "key": "Evidence Hashing",
+            "value": "Immediately hash every file and output: hashlib.sha256(open(f, 'rb').read()).hexdigest(). Write hashes to a separate integrity log. If evidence is later questioned, hash verification proves it has not been modified."
+          },
+          {
+            "key": "Containment Automation",
+            "value": "Scripted containment: disable user account via LDAP API, add firewall deny rule via API, isolate host from network. Seconds instead of minutes. Every second of delay is more data exfiltrated."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "SIEM and Security Data Analysis with Python",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Extract and analyze security events from SIEM platforms using Python APIs",
+        "Build custom detection rules and correlation logic in Python",
+        "Create security dashboards and reports from SIEM data"
+      ],
+      "readings": [
+        "Elastic SIEM API documentation",
+        "Sigma detection rule format specification",
+        "Python pandas for security data analysis (tutorial)"
+      ],
+      "lecture_notes": {
+        "introduction": "Security Information and Event Management systems collect billions of events from across the enterprise: firewall logs, endpoint detections, authentication events, email gateway alerts, and cloud audit logs. While SIEMs provide built-in search and alerting, Python extends their capabilities dramatically. Custom Python scripts can implement detection logic too complex for SIEM query languages, correlate events across data sources that the SIEM does not natively join, perform statistical anomaly detection, and generate custom reports for executive audiences. The combination of SIEM for collection and indexing with Python for custom analysis is the foundation of advanced security operations.",
+        "key_concepts": [
+          "SIEM API interaction: querying Elasticsearch/Splunk via REST APIs for security events; pagination for large result sets",
+          "Event correlation: joining events across sources (authentication failure + VPN login + file access = compromised account scenario)",
+          "Detection rule development: translating threat scenarios into code; if failed_logins > 5 and successful_login follows from same IP: alert",
+          "Sigma rules: vendor-agnostic detection rule format; Python tools convert Sigma to SIEM-specific queries",
+          "Statistical baselines: computing normal behavior profiles per user/host; alerting on deviations (z-score > 3)",
+          "Threat hunting queries: Python scripts that sweep SIEM data for IoCs, anomalous patterns, and TTPs from threat intelligence",
+          "Dashboard generation: pandas + matplotlib/plotly for security metrics dashboards: alert volume, MTTR, top threats",
+          "Automation loops: scheduled Python scripts that query SIEM, analyze results, and create tickets for findings",
+          "Data enrichment: augmenting SIEM events with GeoIP, ASN, threat intel, and asset inventory data"
+        ],
+        "demonstration": "Build a threat hunting notebook that: (1) queries an Elasticsearch SIEM for authentication events from the past 24 hours, (2) identifies accounts with anomalous login patterns (unusual hours, new source IPs), (3) correlates with VPN logs and file access events, (4) produces a prioritized list of accounts for investigation with supporting evidence",
+        "setup_requirements": [
+          "Python with elasticsearch and pandas libraries",
+          "Elasticsearch instance with sample security events",
+          "GeoIP database for IP enrichment",
+          "Threat intel IoC list"
+        ],
+        "review": [
+          {
+            "key": "SIEM API",
+            "value": "es.search(index='filebeat-*', body={'query': {'bool': {'must': [{'match': {'event.action': 'logon-failed'}}]}}}) queries Elasticsearch for failed logons. API access enables custom analysis beyond built-in SIEM dashboards."
+          },
+          {
+            "key": "Event Correlation",
+            "value": "Merge DataFrames on common fields: pd.merge(auth_events, vpn_events, on=['user', 'source_ip']). Correlating across sources reveals attack chains invisible in any single log source."
+          },
+          {
+            "key": "Statistical Detection",
+            "value": "Build per-user baselines: mean login hour, typical source IPs, normal data volume. Flag deviations: login at 3 AM from a new country = z-score > 5 = high priority alert."
+          },
+          {
+            "key": "Sigma Rules",
+            "value": "YAML-based detection rules: title: Suspicious Login; detection: selection: EventID: 4625; condition: selection | count() > 10. Python tools (sigmac) convert to Elasticsearch, Splunk, or any SIEM query language."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "Cloud Security Scripting",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Use Python AWS SDK (boto3) to audit and secure cloud infrastructure",
+        "Build scripts that detect common cloud misconfigurations",
+        "Automate cloud security compliance checking against CIS benchmarks"
+      ],
+      "readings": [
+        "boto3 documentation (IAM, S3, EC2 sections)",
+        "CIS AWS Foundations Benchmark",
+        "AWS Security Best Practices whitepaper"
+      ],
+      "lecture_notes": {
+        "introduction": "Cloud infrastructure is configured through APIs, which means it can be audited and secured through APIs. Python's boto3 library provides programmatic access to every AWS service, enabling security teams to build custom auditing tools, compliance checkers, and automated remediation scripts. The same principles apply to Azure (azure-sdk) and GCP (google-cloud-python). Cloud misconfigurations are the leading cause of data breaches today: public S3 buckets, overly permissive IAM policies, unencrypted databases, and missing audit logging are all detectable and fixable through Python scripts. Today we build the cloud security scripts that catch these misconfigurations before attackers do.",
+        "key_concepts": [
+          "boto3 client and resource interfaces: client = boto3.client('s3') for low-level API calls; resource = boto3.resource('s3') for high-level abstractions",
+          "S3 security auditing: checking bucket ACLs, public access blocks, encryption configuration, logging settings, and versioning",
+          "IAM auditing: listing users without MFA, finding overly permissive policies (iam:*), detecting unused access keys and credentials",
+          "Security group analysis: finding groups allowing 0.0.0.0/0 ingress on sensitive ports (22, 3389, 3306, 5432)",
+          "CloudTrail verification: confirming audit logging is enabled in all regions with log file validation",
+          "Automated remediation: scripts that fix misconfigurations (enable encryption, restrict security groups, enable MFA)",
+          "CIS benchmark mapping: each script check corresponds to a specific CIS benchmark control",
+          "Multi-account scanning: AWS Organizations and cross-account role assumption for enterprise-wide auditing",
+          "Reporting: generating compliance reports showing pass/fail status for each security control"
+        ],
+        "demonstration": "Build a cloud security audit script that checks an AWS account for: (1) S3 buckets with public access, (2) IAM users without MFA enabled, (3) security groups with unrestricted SSH access, (4) CloudTrail disabled in any region; produce a CIS-aligned compliance report with pass/fail for each check and remediation guidance",
+        "setup_requirements": [
+          "Python with boto3 library",
+          "AWS lab account with intentional misconfigurations",
+          "CIS AWS Foundations Benchmark reference",
+          "AWS CLI configured with credentials"
+        ],
+        "review": [
+          {
+            "key": "boto3 for Security",
+            "value": "s3_client.get_public_access_block(Bucket=name) checks if a bucket blocks public access. iam_client.list_mfa_devices(UserName=user) checks MFA status. Every AWS security check is an API call away."
+          },
+          {
+            "key": "Public S3 Detection",
+            "value": "Check both bucket ACL (get_bucket_acl) and bucket policy (get_bucket_policy) for public access grants. The PublicAccessBlock configuration should deny all public access. Many breaches start with a misconfigured S3 bucket."
+          },
+          {
+            "key": "Security Group Audit",
+            "value": "for sg in ec2.describe_security_groups()['SecurityGroups']: check each IpPermission for CidrIp '0.0.0.0/0' on ports 22, 3389, 3306. Flag any match as a critical finding."
+          },
+          {
+            "key": "Compliance Reporting",
+            "value": "Structure findings as: control_id, description, status (pass/fail), evidence, remediation steps. Map to CIS benchmark IDs. Export as JSON for automation or HTML for stakeholders."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Malware Analysis Automation",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Build automated malware analysis pipelines that triage suspicious files at scale",
+        "Implement behavioral analysis through sandbox API integration",
+        "Create YARA rules and scan file collections for malware indicators"
+      ],
+      "readings": [
+        "Practical Malware Analysis Ch. 1-3",
+        "YARA documentation and rule writing guide",
+        "VirusTotal API v3 documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Security operations teams encounter thousands of potentially malicious files: email attachments, downloaded executables, files extracted from network traffic, and items flagged by endpoint protection. Manually analyzing each file is impossible. Automated malware analysis pipelines perform static analysis (file properties, strings, imports, entropy), submit samples to sandboxes for dynamic analysis (behavior observation), check against threat intelligence databases, and produce triage reports that prioritize human analyst attention. Python is the standard language for building these automation pipelines because of its libraries for binary analysis, API integration, and report generation.",
+        "key_concepts": [
+          "Static analysis automation: file type identification, string extraction (ASCII and Unicode), PE header analysis, entropy calculation, embedded resource extraction",
+          "String analysis: strings extraction reveals URLs, IP addresses, registry keys, file paths, error messages, and API function names that indicate malware capabilities",
+          "YARA rules: pattern matching language for malware identification; rule malware_dropper { strings: $url = /https?:\\/\\/[^\\s]+\\.exe/ condition: $url }",
+          "Sandbox integration: submitting samples to VirusTotal, Any.Run, or Joe Sandbox via API; retrieving behavioral analysis reports",
+          "Indicator extraction: automatically extracting network IoCs (domains, IPs, URLs) and host IoCs (file paths, registry keys, mutex names) from analysis results",
+          "Classification logic: combining multiple indicators into a threat score; files scoring above threshold get priority human analysis",
+          "Batch processing: processing hundreds of files per hour through the analysis pipeline with logging and error handling",
+          "Reporting: generating analyst-friendly reports with file properties, risk score, matched YARA rules, and recommended actions",
+          "Sample management: organizing analyzed samples by hash, maintaining analysis database, preventing duplicate processing"
+        ],
+        "demonstration": "Build an automated malware triage pipeline that: (1) accepts a directory of suspicious files, (2) identifies file types, (3) extracts strings and checks for IoC patterns, (4) runs YARA rules, (5) calculates PE entropy, (6) queries VirusTotal for known detections, (7) assigns a threat score, (8) produces a prioritized triage report",
+        "setup_requirements": [
+          "Python with pefile, yara-python, requests",
+          "Collection of sample files (benign and suspicious)",
+          "YARA rule library",
+          "VirusTotal API key",
+          "Isolated analysis VM"
+        ],
+        "review": [
+          {
+            "key": "YARA Rules",
+            "value": "Pattern matching for malware detection: define string patterns and byte sequences, then conditions that must be met. YARA scans files against rule collections in milliseconds. The standard for malware signature sharing."
+          },
+          {
+            "key": "Automated Triage",
+            "value": "Score = (entropy_score * 0.2) + (suspicious_imports * 0.3) + (yara_matches * 0.3) + (vt_detections * 0.2). Files above threshold get immediate analyst attention. Below threshold goes to queue."
+          },
+          {
+            "key": "String Analysis",
+            "value": "strings.extract(data) finds readable text in binary files: URLs reveal C2 servers, registry paths reveal persistence mechanisms, API names reveal capabilities. First and cheapest analysis technique."
+          },
+          {
+            "key": "Sandbox API",
+            "value": "vt_client.scan_file(filepath) submits to VirusTotal; wait for analysis; retrieve report with detection ratio and behavioral indicators. Augments static analysis with observed runtime behavior."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "Secure Coding Practices for Security Tools",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Apply secure coding principles when building security tools that handle sensitive data",
+        "Identify and fix common security vulnerabilities in Python code",
+        "Implement secure credential management and input validation in security scripts"
+      ],
+      "readings": [
+        "OWASP Secure Coding Practices Quick Reference Guide",
+        "Bandit Python security linter documentation",
+        "Python security best practices (python.org)"
+      ],
+      "lecture_notes": {
+        "introduction": "Security tools themselves must be secure. A penetration testing tool that leaks credentials, an incident response script that is vulnerable to injection, or a forensic tool that modifies evidence are worse than useless -- they actively harm security. Irony aside, security professionals writing insecure code is embarrassingly common. Command injection through subprocess, hardcoded API keys in git repositories, cleartext credential storage, and insecure deserialization are real vulnerabilities found in security tools. Today we audit our own code for security issues and learn the practices that prevent them. Every tool you build from this point should pass a security review.",
+        "key_concepts": [
+          "Command injection prevention: subprocess.run(['nmap', '-sV', target], shell=False) treats each argument as data, not shell code; never use shell=True with user input",
+          "Input validation: validate all user input against expected formats before processing; IP addresses, port numbers, file paths all have valid patterns",
+          "Credential management: never hardcode secrets; use keyring library, environment variables, or encrypted config; .gitignore secrets files",
+          "Secure file handling: validate file paths to prevent directory traversal; use os.path.realpath() to resolve symlinks; check permissions before reading",
+          "Dependency security: pip audit checks dependencies for known vulnerabilities; pin versions in requirements.txt; review before installing",
+          "Bandit security linter: automated scanning for common Python security issues; integrate into CI/CD pipeline",
+          "Secure temporary files: tempfile.mkstemp() creates temp files with restricted permissions; always clean up with try/finally",
+          "Logging security: never log credentials, API keys, or sensitive data; redact before logging; protect log files with appropriate permissions",
+          "Code review checklist: injection, authentication, authorization, data exposure, error handling, dependency risks"
+        ],
+        "demonstration": "Take three intentionally insecure security scripts (containing command injection, hardcoded credentials, and insecure deserialization), run Bandit to identify the vulnerabilities, fix each one, and demonstrate the difference between exploitable and secure versions",
+        "setup_requirements": [
+          "Python with bandit security linter",
+          "Intentionally vulnerable security scripts",
+          "keyring library for credential management",
+          "Code review checklist"
+        ],
+        "review": [
+          {
+            "key": "Shell Injection",
+            "value": "subprocess.run(f'nmap {user_input}', shell=True) allows '; rm -rf /' injection. Fix: subprocess.run(['nmap', user_input], shell=False). Never interpolate user input into shell commands."
+          },
+          {
+            "key": "Credential Management",
+            "value": "api_key = os.environ.get('VT_API_KEY') reads from environment. keyring.get_password('myapp', 'api_key') reads from OS credential store. Both prevent keys from appearing in source code or git history."
+          },
+          {
+            "key": "Bandit Linter",
+            "value": "bandit -r src/ scans Python code for security issues: subprocess with shell=True, eval(), exec(), hardcoded passwords, insecure hash functions. Integrate into CI to catch issues before merge."
+          },
+          {
+            "key": "Path Traversal Prevention",
+            "value": "User provides filename; os.path.join(base_dir, filename) is unsafe if filename is '../../../etc/passwd'. Fix: resolved = os.path.realpath(os.path.join(base, name)); assert resolved.startswith(os.path.realpath(base))."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "Security Tool Packaging and Distribution",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Package Python security tools for professional distribution with proper CLI and documentation",
+        "Write tests for security tools using pytest including edge cases and security scenarios",
+        "Build CI/CD pipelines that automatically test and lint security tools"
+      ],
+      "readings": [
+        "Python packaging documentation (pyproject.toml)",
+        "pytest documentation (getting started)",
+        "argparse module documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "A script that works on your machine is not a tool. A tool has a proper command-line interface, input validation, error handling, logging, configuration management, documentation, tests, and packaging for distribution. Moving from scripts to tools is the difference between a hobbyist and a professional security engineer. Tools you build should be installable with pip install, runnable with a simple command, configurable through files and environment variables, testable with automated test suites, and documented for users who have not read your code. Today we package the tools we have built throughout the course into professional, distributable Python packages that you can share with your team and add to your professional portfolio.",
+        "key_concepts": [
+          "argparse for CLI design: subcommands (tool scan, tool report), required and optional arguments, help text, type validation",
+          "pyproject.toml: modern Python packaging configuration replacing setup.py; defines entry points, dependencies, and metadata",
+          "Entry points: [project.scripts] tool = 'mypackage.cli:main' makes your tool available as a command after pip install",
+          "Configuration management: YAML/JSON config files with reasonable defaults; override with CLI arguments and environment variables",
+          "Python logging module: logging.getLogger(__name__) with configurable levels (DEBUG, INFO, WARNING, ERROR); file and console handlers",
+          "pytest for security tools: test that scans detect known vulnerabilities, handle unreachable targets, and produce correct reports",
+          "Test fixtures: pytest fixtures for setting up test environments (mock servers, sample files, network mocks)",
+          "Code coverage: pytest-cov measures what percentage of your code is exercised by tests; aim for >80%",
+          "CI/CD: GitHub Actions or GitLab CI that runs pytest, bandit, and flake8 on every commit"
+        ],
+        "demonstration": "Package the network scanner from Week 2 and the web security scanner from Week 8 into a single distributable Python package with subcommands, proper CLI, configuration file support, logging, test suite, and documentation; install it with pip and demonstrate usage",
+        "setup_requirements": [
+          "Python packaging tools (build, twine)",
+          "pytest and pytest-cov installed",
+          "GitHub repository for CI/CD setup",
+          "Documentation template"
+        ],
+        "review": [
+          {
+            "key": "argparse CLI",
+            "value": "parser = argparse.ArgumentParser(description='Security Scanner'); parser.add_argument('--target', required=True); parser.add_argument('--ports', default='1-1000'). Generates usage help automatically. Professional tools need professional interfaces."
+          },
+          {
+            "key": "pytest Testing",
+            "value": "def test_port_scan_open(): assert scan_port('127.0.0.1', 80) == True. def test_port_scan_timeout(): assert scan_port('192.0.2.1', 80) == False. Tests verify your tool works correctly and continues working after changes."
+          },
+          {
+            "key": "Entry Points",
+            "value": "[project.scripts] in pyproject.toml: sectools = 'sectools.cli:main'. After pip install, the user types 'sectools scan --target 10.0.0.1' from any directory. No python script.py needed."
+          },
+          {
+            "key": "Production Quality",
+            "value": "Scripts that work for you are not tools. Tools have: argument parsing, input validation, error handling, logging, configuration, documentation, tests, and packaging. This is the professional standard."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Capstone Project Presentations and Course Integration",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Present a complete security tool demonstrating mastery of all course concepts",
+        "Evaluate peer tools through code review and security assessment",
+        "Synthesize the full security programming toolkit for professional practice"
+      ],
+      "readings": [
+        "Course materials review for final assessment",
+        "Professional security tool presentation guidelines"
+      ],
+      "lecture_notes": {
+        "introduction": "This final session brings together every skill from the semester. You have progressed from basic Python scripting to building professional security tools: network scanners, log analyzers, forensic scripts, web vulnerability testers, incident response automation, cloud security auditors, and malware analysis pipelines. Today you present your capstone security tool projects. Each project must demonstrate technical competence (correct implementation of security functionality), engineering quality (proper CLI, testing, error handling, packaging), security awareness (the tool itself is securely coded), and professional presentation (clear documentation, demo, and discussion of design decisions). Your tools become portfolio pieces that demonstrate your capabilities to future employers.",
+        "key_concepts": [
+          "Project presentation: problem statement, design decisions, implementation architecture, demonstration, testing results, security review",
+          "Code review: peer evaluation focusing on functionality, security, code quality, test coverage, and documentation",
+          "Security assessment: does the tool handle edge cases? Is it vulnerable to injection? Does it manage credentials securely?",
+          "Professional portfolio: your capstone project plus the tools built throughout the semester form a portfolio of security programming capability",
+          "Career applications: SOC automation, penetration testing scripting, security engineering, incident response automation, cloud security",
+          "Continuing development: open-source security projects, CTF competitions, bug bounty programs, security tool development communities",
+          "Skill inventory: networking, web interaction, file analysis, crypto, exploit development, log analysis, IR, cloud, malware analysis, secure coding",
+          "Tool ecosystem: understanding where your custom tools fit alongside commercial tools (Burp, Metasploit, Splunk, CrowdStrike)"
+        ],
+        "demonstration": "Instructor demonstrates the evaluation rubric with a sample tool, showing how technical implementation, security of the tool itself, code quality, test coverage, and presentation are assessed",
+        "setup_requirements": [
+          "Student capstone projects ready for demonstration",
+          "Presentation and demo environment configured",
+          "Peer review evaluation forms",
+          "Course evaluation survey"
+        ],
+        "review": [
+          {
+            "key": "Capstone Expectations",
+            "value": "A complete, packaged security tool: installable via pip, runnable from CLI, configurable, tested (>80% coverage), securely coded (passes bandit), documented, and solving a real security problem."
+          },
+          {
+            "key": "Peer Code Review",
+            "value": "Review for: functionality (does it work?), security (is the tool itself secure?), quality (clean code, proper patterns), tests (adequate coverage), documentation (can someone else use it?)."
+          },
+          {
+            "key": "Professional Value",
+            "value": "Employers hiring junior security engineers look for: scripting ability, tool development experience, security knowledge applied to code, and professional presentation. Your capstone demonstrates all four."
+          },
+          {
+            "key": "Semester Skills",
+            "value": "Python fundamentals, network programming, web interaction, log analysis, file forensics, cryptography, exploit development, web security, incident response, SIEM analysis, cloud security, malware analysis, secure coding, tool packaging."
           }
         ]
       }
@@ -261,171 +838,606 @@
     "quizzes": [
       {
         "quiz": 1,
-        "week": 2,
-        "topic": "Python Fundamentals and Network Programming",
-        "duration": "20 minutes",
+        "week": 3,
+        "topic": "Python Fundamentals, Networking, and Web Automation",
+        "duration": "25 minutes",
         "questions": [
           {
-            "question": "Write a Python function that takes an IP address and a list of port numbers, performs a TCP connect scan on each port with a 2-second timeout, and returns a dictionary mapping port numbers to their status ('open' or 'closed'). Include error handling.",
+            "question": "Write a Python function that takes an IP address string and a list of port numbers, performs a TCP connect scan on each port with a 2-second timeout, and returns a dictionary mapping port numbers to their status ('open' or 'closed'). Include proper error handling for connection failures and timeouts.",
             "type": "code",
-            "points": 10,
-            "answer": "Create a socket with AF_INET and SOCK_STREAM, set timeout to 2 seconds, use connect_ex() which returns 0 for open ports. Wrap in try/finally to ensure socket.close() is always called. Return dict mapping each port to 'open' or 'closed'.",
+            "points": 8,
+            "answer": "import socket\n\ndef tcp_scan(ip, ports):\n    results = {}\n    for port in ports:\n        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n        sock.settimeout(2)\n        try:\n            result = sock.connect_ex((ip, port))\n            results[port] = 'open' if result == 0 else 'closed'\n        except (socket.timeout, OSError):\n            results[port] = 'closed'\n        finally:\n            sock.close()\n    return results",
             "rubric": [
               {
-                "key": "Correct socket creation and connection logic",
-                "value": 4
+                "key": "Correct socket creation with AF_INET and SOCK_STREAM",
+                "value": 2
               },
               {
-                "key": "Proper timeout and error handling",
+                "key": "Proper timeout setting and connect_ex() usage",
                 "value": 3
               },
               {
-                "key": "Socket cleanup in finally block",
-                "value": 3
+                "key": "Error handling with try/except/finally and socket cleanup",
+                "value": 2
+              },
+              {
+                "key": "Correct return format as dictionary",
+                "value": 1
               }
             ]
           },
           {
-            "question": "Explain why constructing shell commands from user input via string formatting is dangerous in a Python security tool. Provide a specific injection example and describe the safe alternative using the subprocess module with list arguments.",
+            "question": "Explain why constructing shell commands from user input via string formatting is dangerous in a Python security tool. Provide a specific injection example and describe the safe alternative using subprocess.run() with list arguments.",
             "type": "short_answer",
-            "points": 10,
-            "answer": "String formatting allows command injection through shell metacharacters. An attacker can append additional commands using semicolons or pipes. Safe alternative: use subprocess.run() with a list of arguments and shell=False (default). Each list element is treated as a separate argument, preventing metacharacter interpretation. Additionally, validate all user input matches expected formats before passing to any system command.",
+            "points": 7,
+            "answer": "String formatting like f'nmap {user_input}' with subprocess.run(cmd, shell=True) allows command injection. If user_input is '10.0.0.1; rm -rf /', the shell interprets the semicolon as a command separator and executes both commands. The safe alternative is subprocess.run(['nmap', user_input], shell=False), where each list element is a separate argument passed directly to the executable without shell interpretation. Metacharacters like ;, |, &&, and backticks are treated as literal characters in the argument, not as shell operators. Additionally, always validate user input matches expected formats (e.g., IP address regex) before passing to any system command.",
             "rubric": [
               {
-                "key": "Correct explanation of the vulnerability",
+                "key": "Correct explanation of the command injection vulnerability",
+                "value": 2
+              },
+              {
+                "key": "Specific injection payload with concrete example",
                 "value": 3
               },
               {
-                "key": "Specific injection example",
-                "value": 4
+                "key": "Correct subprocess.run() list form as the safe alternative",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Write Python code using the requests library that queries the VirusTotal API to check if a file hash is malicious. The function should accept a SHA-256 hash, make the API call with proper authentication (API key from environment variable), handle rate limiting (429 status), and return the detection ratio.",
+            "type": "code",
+            "points": 7,
+            "answer": "import os\nimport time\nimport requests\n\ndef check_vt_hash(sha256):\n    api_key = os.environ.get('VT_API_KEY')\n    if not api_key:\n        raise ValueError('VT_API_KEY environment variable not set')\n    url = f'https://www.virustotal.com/api/v3/files/{sha256}'\n    headers = {'x-apikey': api_key}\n    response = requests.get(url, headers=headers)\n    if response.status_code == 429:\n        time.sleep(60)\n        response = requests.get(url, headers=headers)\n    response.raise_for_status()\n    data = response.json()\n    stats = data['data']['attributes']['last_analysis_stats']\n    return f\"{stats['malicious']}/{stats['malicious'] + stats['undetected']}\"",
+            "rubric": [
+              {
+                "key": "Correct API URL and authentication header",
+                "value": 2
               },
               {
-                "key": "Safe alternative with subprocess list form",
-                "value": 3
+                "key": "API key from environment variable (not hardcoded)",
+                "value": 2
+              },
+              {
+                "key": "Rate limiting handling for 429 status",
+                "value": 2
+              },
+              {
+                "key": "Correct response parsing for detection ratio",
+                "value": 1
               }
             ]
           }
         ],
-        "total_points": 20
+        "total_points": 22
       },
       {
         "quiz": 2,
-        "week": 4,
-        "topic": "File Analysis, Exploit Development, and Automation",
-        "duration": "20 minutes",
+        "week": 5,
+        "topic": "Log Analysis, File Forensics, and Cryptography",
+        "duration": "25 minutes",
         "questions": [
           {
-            "question": "Write a Python function using the struct module that reads the first 64 bytes of a file and determines if it is a PE executable by checking for the MZ signature at offset 0 and the PE signature at the offset specified by the e_lfanew field at offset 0x3C.",
+            "question": "Write a Python function using the struct module that reads the first 64 bytes of a file and determines if it is a PE executable by checking for the MZ signature at offset 0 and the PE signature at the offset specified by the e_lfanew field at offset 0x3C. Return True for PE files, False otherwise.",
             "type": "code",
-            "points": 10,
-            "answer": "Open file in binary mode, read 64 bytes. Check bytes 0-1 for b'MZ'. Read 4-byte unsigned int at offset 0x3C to get e_lfanew. Seek to e_lfanew and read 4 bytes, comparing to b'PE\\x00\\x00'. Handle IOError and struct.error exceptions.",
+            "points": 8,
+            "answer": "import struct\n\ndef is_pe_file(filepath):\n    try:\n        with open(filepath, 'rb') as f:\n            header = f.read(64)\n            if len(header) < 64:\n                return False\n            if header[:2] != b'MZ':\n                return False\n            e_lfanew = struct.unpack('<I', header[0x3C:0x40])[0]\n            f.seek(e_lfanew)\n            pe_sig = f.read(4)\n            return pe_sig == b'PE\\x00\\x00'\n    except (IOError, struct.error):\n        return False",
             "rubric": [
               {
-                "key": "Correct MZ signature check",
+                "key": "Correct MZ signature check at offset 0",
+                "value": 2
+              },
+              {
+                "key": "Correct e_lfanew reading at 0x3C with struct.unpack",
                 "value": 3
               },
               {
-                "key": "Correct e_lfanew offset reading and PE signature check",
-                "value": 4
+                "key": "Correct PE signature check at e_lfanew offset",
+                "value": 2
               },
               {
-                "key": "Proper error handling",
+                "key": "Proper error handling for IOError and struct.error",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "question": "Write a Python function that parses Apache Combined Log Format lines and extracts events matching a brute force pattern: more than 5 requests returning status 401 from the same IP address within a 60-second window. Return a list of offending IP addresses.",
+            "type": "code",
+            "points": 8,
+            "answer": "import re\nfrom datetime import datetime\nfrom collections import defaultdict\n\ndef detect_brute_force(log_lines, threshold=5, window_seconds=60):\n    pattern = r'(\\d+\\.\\d+\\.\\d+\\.\\d+).*\\[(\\d{2}/\\w{3}/\\d{4}:\\d{2}:\\d{2}:\\d{2}).*\"\\s(\\d{3})'\n    failures = defaultdict(list)\n    for line in log_lines:\n        match = re.search(pattern, line)\n        if match and match.group(3) == '401':\n            ip = match.group(1)\n            ts = datetime.strptime(match.group(2), '%d/%b/%Y:%H:%M:%S')\n            failures[ip].append(ts)\n    attackers = []\n    for ip, timestamps in failures.items():\n        timestamps.sort()\n        for i in range(len(timestamps) - threshold + 1):\n            if (timestamps[i + threshold - 1] - timestamps[i]).seconds <= window_seconds:\n                attackers.append(ip)\n                break\n    return attackers",
+            "rubric": [
+              {
+                "key": "Correct regex pattern for Apache log format",
+                "value": 2
+              },
+              {
+                "key": "Correct 401 status filtering",
+                "value": 2
+              },
+              {
+                "key": "Correct sliding window detection logic",
+                "value": 3
+              },
+              {
+                "key": "Returns list of offending IPs",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "question": "A developer stores passwords by computing sha256(password). Explain three specific weaknesses of this approach and describe the correct password storage method with code.",
+            "type": "short_answer",
+            "points": 6,
+            "answer": "Weaknesses: (1) No salt: identical passwords produce identical hashes, enabling rainbow table attacks that precompute hashes for common passwords. (2) SHA-256 is fast: GPUs compute billions of SHA-256 hashes per second, making brute force practical for most passwords. (3) No work factor: the computation cost is fixed and cannot be increased as hardware improves. Correct method: import bcrypt; hashed = bcrypt.hashpw(password.encode(), bcrypt.gensalt(rounds=12)). bcrypt automatically generates a unique salt per password (defeating rainbow tables), is intentionally slow (~250ms per hash, defeating brute force), and has an adjustable work factor (rounds parameter) that can be increased as hardware improves.",
+            "rubric": [
+              {
+                "key": "Identifies three distinct weaknesses",
+                "value": 3
+              },
+              {
+                "key": "Correct bcrypt code with salt and work factor",
+                "value": 2
+              },
+              {
+                "key": "Explains why bcrypt addresses each weakness",
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "total_points": 22
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "Exploit Development, Web Security, and Incident Response",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "A stack buffer overflow vulnerability exists in a C program where a 64-byte buffer is allocated on the stack and user input is copied without bounds checking. On a 64-bit Linux system without ASLR or stack canaries, describe the memory layout and explain how you would construct an exploit payload. Include the offset calculation.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Stack layout (high to low address): return address (8 bytes), saved RBP (8 bytes), 64-byte buffer, other local variables. Offset from buffer start to return address = 64 (buffer) + 8 (saved RBP) = 72 bytes. Exploit payload: 72 bytes of padding (NOPs or any data) followed by the target return address in little-endian 64-bit format. The return address points to either: (a) shellcode placed in the buffer (preceded by a NOP sled to handle slight address variations), or (b) a known libc function address (ret2libc) like system() with '/bin/sh' argument. Without ASLR, addresses are static and predictable from debugging the binary with GDB. With pwntools: payload = b'A' * 72 + p64(target_address).",
+            "rubric": [
+              {
+                "key": "Correct stack layout with sizes for 64-bit system",
+                "value": 3
+              },
+              {
+                "key": "Correct offset calculation (72 bytes)",
+                "value": 2
+              },
+              {
+                "key": "Valid exploit payload structure with address placement",
+                "value": 2
+              },
+              {
+                "key": "Mentions shellcode/NOP sled or ret2libc approach",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "question": "Write Python code that checks a web application's response headers for security misconfigurations. The function should take a URL, make a GET request, and check for the presence and correct values of: Content-Security-Policy, X-Frame-Options, Strict-Transport-Security, X-Content-Type-Options. Return a list of findings with severity ratings.",
+            "type": "code",
+            "points": 8,
+            "answer": "import requests\n\ndef audit_security_headers(url):\n    findings = []\n    response = requests.get(url, timeout=10)\n    headers = response.headers\n    checks = {\n        'Content-Security-Policy': 'HIGH',\n        'X-Frame-Options': 'MEDIUM',\n        'Strict-Transport-Security': 'HIGH',\n        'X-Content-Type-Options': 'LOW'\n    }\n    for header, severity in checks.items():\n        if header not in headers:\n            findings.append({\n                'header': header,\n                'status': 'MISSING',\n                'severity': severity\n            })\n        else:\n            findings.append({\n                'header': header,\n                'status': 'PRESENT',\n                'value': headers[header],\n                'severity': 'INFO'\n            })\n    return findings",
+            "rubric": [
+              {
+                "key": "Correct HTTP request with timeout",
+                "value": 2
+              },
+              {
+                "key": "Checks all four required security headers",
+                "value": 3
+              },
+              {
+                "key": "Returns structured findings with severity",
+                "value": 2
+              },
+              {
+                "key": "Distinguishes missing from present headers",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "question": "During an incident response, you need to collect volatile evidence from a compromised Linux system. List five specific data points you would collect in order of volatility, and for each, provide the Python code or command that collects it.",
+            "type": "short_answer",
+            "points": 6,
+            "answer": "(1) Network connections (most volatile): psutil.net_connections() or subprocess.run(['ss', '-tunap']). (2) Running processes with command lines: [{'pid': p.pid, 'name': p.name(), 'cmdline': p.cmdline()} for p in psutil.process_iter()]. (3) Logged-in users: psutil.users() captures username, terminal, host, login time. (4) DNS cache: subprocess.run(['systemd-resolve', '--statistics']) or read /etc/hosts. (5) File system timestamps: os.stat(path) captures atime, mtime, ctime for key directories. Each output should be immediately hashed: hashlib.sha256(json.dumps(data).encode()).hexdigest() and logged to the evidence chain of custody.",
+            "rubric": [
+              {
+                "key": "Five distinct volatile data points in correct priority order",
+                "value": 2
+              },
+              {
+                "key": "Correct Python code or command for each",
+                "value": 2
+              },
+              {
+                "key": "Mentions evidence hashing and chain of custody",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 22
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "SIEM Analysis, Cloud Security, and Malware Analysis",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Write a Python function using boto3 that checks all S3 buckets in an AWS account and returns a list of buckets that have public access enabled (either through ACL grants to AllUsers/AuthenticatedUsers or through bucket policy allowing public access). Include error handling for access denied.",
+            "type": "code",
+            "points": 8,
+            "answer": "import boto3\nfrom botocore.exceptions import ClientError\n\ndef find_public_buckets():\n    s3 = boto3.client('s3')\n    public_buckets = []\n    buckets = s3.list_buckets()['Buckets']\n    for bucket in buckets:\n        name = bucket['Name']\n        try:\n            acl = s3.get_bucket_acl(Bucket=name)\n            for grant in acl['Grants']:\n                grantee = grant.get('Grantee', {})\n                uri = grantee.get('URI', '')\n                if 'AllUsers' in uri or 'AuthenticatedUsers' in uri:\n                    public_buckets.append({'bucket': name, 'reason': 'public_acl'})\n                    break\n        except ClientError as e:\n            if e.response['Error']['Code'] == 'AccessDenied':\n                public_buckets.append({'bucket': name, 'reason': 'access_denied_to_audit'})\n    return public_buckets",
+            "rubric": [
+              {
+                "key": "Correct boto3 S3 client usage and bucket listing",
+                "value": 2
+              },
+              {
+                "key": "Correct ACL analysis for AllUsers and AuthenticatedUsers",
+                "value": 3
+              },
+              {
+                "key": "Proper ClientError handling for AccessDenied",
+                "value": 2
+              },
+              {
+                "key": "Returns structured results with bucket name and reason",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between static and dynamic malware analysis. For each, name two specific Python-based techniques and describe what information they reveal about a suspicious file.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Static analysis examines the file without executing it: (1) PE header analysis with pefile reveals imports (capabilities like network communication, process injection), sections (entropy indicating packing), compilation timestamp, and targeted architecture. (2) String extraction reveals hardcoded URLs (C2 servers), registry paths (persistence mechanisms), API names, and error messages. Dynamic analysis executes the file in a sandbox and observes behavior: (1) Sandbox API submission (VirusTotal, Any.Run) via requests returns observed network connections (actual C2 communication), file system changes (dropped files, modified registry), and process behavior (child processes, injection). (2) Process monitoring with psutil during execution captures runtime behavior including spawned processes, network connections made, and files accessed. Static analysis is safer and faster but misses runtime behavior (packed code, dynamic loading). Dynamic analysis reveals actual behavior but requires sandboxing to prevent infection.",
+            "rubric": [
+              {
+                "key": "Clear distinction between static and dynamic analysis",
+                "value": 2
+              },
+              {
+                "key": "Two valid Python static analysis techniques with information revealed",
+                "value": 2
+              },
+              {
+                "key": "Two valid Python dynamic analysis techniques with information revealed",
+                "value": 2
+              },
+              {
+                "key": "Mentions tradeoffs between the approaches",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "question": "Write a YARA rule that detects files containing both a URL pattern (http:// or https://) and a Windows registry persistence key path (SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run). Explain how you would scan a directory of files against this rule using yara-python.",
+            "type": "code",
+            "points": 7,
+            "answer": "YARA rule:\nrule suspicious_persistence {\n    meta:\n        description = \"Detects files with URL and registry persistence\"\n    strings:\n        $url = /https?:\\/\\/[a-zA-Z0-9.\\-]+/ nocase\n        $reg_run = \"SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\" nocase\n    condition:\n        $url and $reg_run\n}\n\nPython scanning:\nimport yara\nimport os\n\nrules = yara.compile(filepath='persistence.yar')\nfor root, dirs, files in os.walk('/suspect/files/'):\n    for fname in files:\n        fpath = os.path.join(root, fname)\n        matches = rules.match(fpath)\n        if matches:\n            print(f'MATCH: {fpath} -> {[m.rule for m in matches]}')",
+            "rubric": [
+              {
+                "key": "Correct YARA rule syntax with both string patterns",
+                "value": 3
+              },
+              {
+                "key": "Correct condition requiring both patterns",
+                "value": 1
+              },
+              {
+                "key": "Correct yara-python scanning code",
+                "value": 2
+              },
+              {
+                "key": "Directory traversal and match reporting",
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "total_points": 22
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "Secure Coding, Tool Packaging, and Comprehensive Review",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Review the following Python security tool code and identify three security vulnerabilities. For each, explain the risk and provide the corrected code:\n\nimport subprocess, os\nAPI_KEY = 'sk-abc123456789'\ndef scan_target(user_input):\n    cmd = f'nmap -sV {user_input}'\n    result = subprocess.run(cmd, shell=True, capture_output=True)\n    with open(f'/tmp/scan_{user_input}.txt', 'w') as f:\n        f.write(result.stdout.decode())\n    return result.stdout.decode()",
+            "type": "code",
+            "points": 9,
+            "answer": "Vulnerability 1: Hardcoded API key. Risk: key exposed in source code and git history. Fix: api_key = os.environ.get('API_KEY').\n\nVulnerability 2: Command injection via shell=True with user input. Risk: user_input '10.0.0.1; rm -rf /' executes destructive command. Fix: subprocess.run(['nmap', '-sV', user_input], shell=False, capture_output=True).\n\nVulnerability 3: Path traversal in output filename. Risk: user_input '../../../etc/cron.d/backdoor' writes to arbitrary location. Fix: safe_name = re.sub(r'[^a-zA-Z0-9._-]', '_', user_input); filepath = os.path.join('/tmp', f'scan_{safe_name}.txt'); assert os.path.realpath(filepath).startswith('/tmp/').",
+            "rubric": [
+              {
+                "key": "Identifies hardcoded API key with correct fix",
+                "value": 3
+              },
+              {
+                "key": "Identifies command injection with correct fix",
+                "value": 3
+              },
+              {
+                "key": "Identifies path traversal with correct fix",
                 "value": 3
               }
             ]
           },
           {
-            "question": "A stack buffer overflow vulnerability exists in a C program where a 64-byte buffer is allocated on the stack and user input is copied without bounds checking. On a 64-bit Linux system without ASLR, describe the memory layout and explain how you would craft an exploit payload.",
-            "type": "short_answer",
-            "points": 10,
-            "answer": "Stack layout (high to low): return address (8 bytes), saved RBP (8 bytes), 64-byte buffer. Offset from buffer start to return address = 72 bytes. Payload: 72 bytes of padding followed by the target return address in little-endian 64-bit format. The return address points to shellcode (placed in the buffer with a NOP sled) or a ROP gadget chain. Without ASLR, addresses are static and predictable.",
+            "question": "Design a pytest test suite for a port scanning function scan_ports(host, ports) that returns a dict of {port: status}. Write three test functions that test: (1) scanning an open port, (2) scanning a closed port, (3) handling an unreachable host with timeout. Explain your mocking strategy.",
+            "type": "code",
+            "points": 7,
+            "answer": "import pytest\nfrom unittest.mock import patch, MagicMock\nfrom scanner import scan_ports\n\ndef test_open_port():\n    with patch('scanner.socket.socket') as mock_sock:\n        instance = mock_sock.return_value\n        instance.connect_ex.return_value = 0\n        result = scan_ports('10.0.0.1', [80])\n        assert result[80] == 'open'\n\ndef test_closed_port():\n    with patch('scanner.socket.socket') as mock_sock:\n        instance = mock_sock.return_value\n        instance.connect_ex.return_value = 111\n        result = scan_ports('10.0.0.1', [81])\n        assert result[81] == 'closed'\n\ndef test_unreachable_host():\n    with patch('scanner.socket.socket') as mock_sock:\n        instance = mock_sock.return_value\n        instance.connect_ex.side_effect = socket.timeout\n        result = scan_ports('192.0.2.1', [80])\n        assert result[80] == 'closed'\n\nMocking strategy: patch socket.socket to control connect_ex return values. Return 0 simulates open, non-zero simulates closed, raising socket.timeout simulates unreachable. This avoids actual network calls, making tests fast and deterministic.",
             "rubric": [
               {
-                "key": "Correct stack layout and offset calculation",
-                "value": 4
-              },
-              {
-                "key": "Correct exploit payload structure",
+                "key": "Three distinct test functions covering open, closed, timeout",
                 "value": 3
               },
               {
-                "key": "Explains shellcode or ROP approach",
-                "value": 3
+                "key": "Correct mocking of socket.socket with patch",
+                "value": 2
+              },
+              {
+                "key": "Explains mocking strategy clearly",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "You have been asked to build a Python security tool that automates IoC (Indicator of Compromise) lookups across three threat intelligence APIs. Describe the complete architecture: what modules you would create, how you would handle configuration and credentials, how you would manage rate limiting across APIs, and how you would package it for distribution to your security team.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Architecture: (1) Modules: cli.py (argparse CLI with subcommands: lookup, bulk-lookup, report), config.py (YAML config loading with defaults), clients/ directory with vt_client.py, abuseipdb_client.py, otx_client.py (each implements a common interface), enrichment.py (orchestrates multi-source lookups), reporter.py (generates JSON/HTML/CSV output). (2) Credentials: YAML config file for non-sensitive settings (~/.ioc_tool/config.yaml). API keys via environment variables (IOC_VT_KEY, IOC_AIPDB_KEY) or OS keyring. Config file specifies which sources are enabled. (3) Rate limiting: each client tracks its last request time and enforces minimum intervals. A shared RateLimiter class with per-API limits. Cache responses in SQLite keyed by IoC hash to avoid redundant lookups. Exponential backoff on 429 responses. (4) Packaging: pyproject.toml with entry point [project.scripts] ioc-tool = 'ioc_tool.cli:main'. Dependencies in [project.dependencies]. pytest test suite with mocked API responses. README with installation and usage. Distributed via private PyPI or git clone + pip install.",
+            "rubric": [
+              {
+                "key": "Clear modular architecture with separation of concerns",
+                "value": 2
+              },
+              {
+                "key": "Secure credential management (not hardcoded)",
+                "value": 2
+              },
+              {
+                "key": "Rate limiting strategy with caching",
+                "value": 2
+              },
+              {
+                "key": "Complete packaging plan with entry points and testing",
+                "value": 2
               }
             ]
           }
         ],
-        "total_points": 20
+        "total_points": 24
       }
     ],
     "major_assignments": [
       {
         "assignment": 1,
-        "title": "Security Automation Tool Development",
-        "week_assigned": 2,
-        "week_due": 5,
-        "points": 100,
-        "description": "Develop a complete security automation tool that solves a real security operations problem. The tool must be packaged for distribution with proper CLI, documentation, and tests.",
+        "title": "Network Security Toolkit",
+        "week_assigned": 3,
+        "week_due": 6,
+        "points": 150,
+        "description": "Build a comprehensive network security toolkit in Python that includes: (1) a multi-threaded port scanner with banner grabbing, (2) a network host discovery tool using ARP scanning, (3) a threat intelligence enrichment module that checks discovered hosts and services against VirusTotal and AbuseIPDB, and (4) a consolidated security assessment report. The toolkit must have a proper CLI, error handling, and logging.",
         "objectives": [
-          "Build a functional security tool in Python",
-          "Implement proper software engineering practices",
-          "Package the tool for distribution",
-          "Write comprehensive documentation and tests"
+          "Implement TCP port scanning with multi-threading and banner grabbing",
+          "Build ARP-based host discovery using Scapy",
+          "Integrate threat intelligence API lookups for automated enrichment",
+          "Produce a professional network security assessment report"
         ],
         "requirements": {},
         "deliverables": [
-          "Complete Python package with source code",
-          "README with installation and usage instructions",
-          "Test suite with greater than 80 percent code coverage",
-          "Demo video showing the tool in action"
+          "Python package with modular source code for each component",
+          "CLI interface with subcommands for each tool function",
+          "Sample output from scanning the lab network",
+          "Security assessment report generated by the tool",
+          "README with installation, configuration, and usage instructions"
         ],
         "grading_rubric": {
-          "functionality": {
-            "points": 35,
+          "technical_implementation": {
+            "points": 50,
             "criteria": [
-              "Tool solves a real security problem",
-              "Core features work correctly",
-              "Edge cases handled",
-              "Error handling is comprehensive"
+              "Port scanner correctly identifies open ports with configurable timeout and thread count",
+              "Banner grabbing successfully identifies service versions",
+              "ARP scanning discovers all active hosts on the network segment",
+              "Threat intelligence integration correctly queries and parses API responses"
             ]
           },
-          "code_quality": {
+          "visual_quality": {
             "points": 25,
             "criteria": [
-              "Clean, readable code with docstrings",
-              "Modular architecture",
-              "No security anti-patterns",
-              "Type hints and consistent style"
+              "Generated report is well-formatted and professional",
+              "Findings are organized by severity and host",
+              "Report includes both summary and detailed sections"
             ]
           },
-          "packaging": {
-            "points": 20,
+          "performance_optimization": {
+            "points": 40,
             "criteria": [
-              "Installable via pip",
-              "CLI with argparse",
-              "Configuration file support",
-              "Logging implemented"
+              "Multi-threading provides significant speed improvement over single-threaded scanning",
+              "Rate limiting properly manages API quotas",
+              "Error handling covers network timeouts, unreachable hosts, and API failures",
+              "Tool handles edge cases gracefully (empty results, invalid inputs)"
             ]
           },
-          "testing": {
-            "points": 20,
+          "documentation": {
+            "points": 35,
             "criteria": [
-              "Test suite passes",
-              "Greater than 80 percent coverage",
-              "Edge cases tested",
-              "Security-relevant test cases"
+              "Code is well-organized with clear module separation",
+              "Functions have docstrings explaining purpose and parameters",
+              "README covers installation, configuration, and usage",
+              "CLI help text is informative and complete"
             ]
           }
         },
         "rubric": [
           {
             "attributes": {
-              "points": 100,
+              "points": 150,
               "criteria": [
-                "Functional security tool solving a real problem",
-                "Production-quality code with proper engineering",
-                "Properly packaged and documented for distribution",
-                "Comprehensive test suite"
+                "Functional network scanning with multi-threading and banner grabbing",
+                "Threat intelligence integration with proper API interaction",
+                "Professional report generation with organized findings",
+                "Well-documented, properly packaged toolkit with CLI"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Security Operations Automation Suite",
+        "week_assigned": 7,
+        "week_due": 11,
+        "points": 150,
+        "description": "Build an integrated security operations automation suite that includes: (1) a log analysis engine that parses multiple log formats (Apache, SSH auth, syslog) and detects attack patterns (brute force, SQL injection, directory traversal), (2) an incident response evidence collector that captures volatile system data with integrity verification, (3) a web application security header auditor, and (4) a dashboard that visualizes security events over time. Each component must be usable independently and together as a unified suite.",
+        "objectives": [
+          "Build a multi-format log parser with attack pattern detection",
+          "Implement automated IR evidence collection with forensic integrity",
+          "Create a web security header auditing tool",
+          "Generate security event dashboards with matplotlib/seaborn"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Python package with four integrated components",
+          "Log analysis report from processing sample log files",
+          "Evidence collection archive with hash verification log",
+          "Web security header audit report for 5 target URLs",
+          "Security event dashboard (PNG/HTML) showing attack trends",
+          "Test suite with >70% code coverage"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 50,
+            "criteria": [
+              "Log parser correctly handles Apache, SSH, and syslog formats",
+              "Attack detection identifies brute force, SQLi, and directory traversal with acceptable false positive rate",
+              "Evidence collector captures all volatile data types with proper hashing",
+              "Security header auditor checks all critical headers and rates findings"
+            ]
+          },
+          "visual_quality": {
+            "points": 25,
+            "criteria": [
+              "Dashboard effectively visualizes attack trends and patterns",
+              "Charts use appropriate types with clear labeling",
+              "Reports are professionally formatted and actionable"
+            ]
+          },
+          "performance_optimization": {
+            "points": 35,
+            "criteria": [
+              "Log parser handles large files efficiently (line-by-line processing)",
+              "Components work independently and as an integrated suite",
+              "Error handling is comprehensive throughout all components",
+              "Detection logic balances sensitivity and specificity"
+            ]
+          },
+          "documentation": {
+            "points": 40,
+            "criteria": [
+              "Modular architecture with clear interfaces between components",
+              "Test suite covers critical paths with meaningful assertions",
+              "Documentation explains detection logic and configuration options",
+              "Code follows secure coding practices throughout"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Multi-format log analysis with accurate attack pattern detection",
+                "Forensically sound evidence collection with integrity verification",
+                "Comprehensive security header auditing with severity ratings",
+                "Effective visualization of security events with professional reports"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Capstone Security Tool",
+        "week_assigned": 11,
+        "week_due": 15,
+        "points": 200,
+        "description": "Design and build a complete, original security tool that solves a real security operations problem. The tool must be packaged for distribution with proper CLI, configuration, logging, error handling, test suite, secure coding practices, and documentation. You must propose the tool concept (approved by instructor), implement it using skills from across the entire course, and present it to the class. Examples: automated cloud security auditor, malware analysis pipeline, custom SIEM correlation engine, vulnerability assessment framework, or phishing email analyzer.",
+        "objectives": [
+          "Design and implement an original security tool addressing a real need",
+          "Apply software engineering best practices: modularity, testing, documentation, packaging",
+          "Demonstrate secure coding practices in a security-context application",
+          "Present the tool professionally with demo, architecture discussion, and code walkthrough"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Complete Python package installable via pip",
+          "CLI with argparse, configuration file support, and logging",
+          "Test suite with >80% code coverage",
+          "Bandit security scan passing with no high-severity findings",
+          "README with installation, configuration, usage, and architecture documentation",
+          "Live demonstration to the class (10 minutes)",
+          "Architecture document explaining design decisions and extensibility"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 60,
+            "criteria": [
+              "Tool solves a genuine security operations problem",
+              "Core functionality works correctly and handles edge cases",
+              "Implementation demonstrates skills from at least 4 course topics",
+              "Error handling prevents silent failures and provides actionable error messages"
+            ]
+          },
+          "visual_quality": {
+            "points": 30,
+            "criteria": [
+              "Output is well-formatted and professionally presented",
+              "Reports or dashboards effectively communicate findings",
+              "CLI interface is intuitive and well-documented"
+            ]
+          },
+          "performance_optimization": {
+            "points": 50,
+            "criteria": [
+              "Test suite achieves >80% code coverage",
+              "Bandit security scan shows no high-severity findings",
+              "Tool handles realistic data volumes without performance issues",
+              "Credentials and sensitive data managed securely"
+            ]
+          },
+          "documentation": {
+            "points": 60,
+            "criteria": [
+              "Code is modular with clear separation of concerns",
+              "Functions and classes have docstrings",
+              "README enables installation and usage by a new user",
+              "Architecture document explains design decisions",
+              "Presentation demonstrates the tool effectively with live demo"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 200,
+              "criteria": [
+                "Original security tool solving a real operations problem",
+                "Production-quality code with testing and secure coding practices",
+                "Professional packaging with CLI, configuration, and documentation",
+                "Effective presentation with live demonstration and architecture discussion"
               ]
             }
           }
@@ -435,31 +1447,32 @@
   },
   "grading_breakdown": {
     "weekly_quizzes": {
-      "percentage": 15,
-      "description": "Assessment of Python programming skills applied to security"
+      "percentage": 20,
+      "description": "Five quizzes assessing Python security programming concepts and practical skills"
     },
     "lab_assignments": {
-      "percentage": 30,
-      "description": "Hands-on programming labs building security scripts and tools"
+      "percentage": 15,
+      "description": "Weekly hands-on programming labs building security scripts and tools with increasing complexity"
     },
     "major_assignments": {
-      "percentage": 25,
-      "description": "Security automation tool development project"
+      "percentage": 30,
+      "description": "Three major projects: network security toolkit, security operations suite, and capstone security tool"
     },
     "midterm_examination": {
-      "percentage": 10,
-      "description": "Practical coding exam: build a security script from requirements"
+      "percentage": 15,
+      "description": "Practical coding exam: build a security script from requirements under time constraints"
     },
-    "final_examination": {
+    "final_project": {
       "percentage": 20,
-      "description": "Comprehensive practical exam covering all Python security programming topics"
+      "description": "Capstone security tool demonstrating mastery of all course concepts in an original, packaged application"
     }
   },
   "course_policies": {
-    "attendance": "Attendance is mandatory for all lab sessions. More than 2 unexcused absences may result in a grade reduction.",
-    "late_submissions": "Late assignments are penalized 10% per day. No submissions accepted more than 5 days late without prior arrangement.",
-    "collaboration": "Lab exercises may be discussed. All code must be individually written.",
-    "academic_integrity": "All submitted code must be your own work. Using library functions and modules is expected. Copying entire solutions from external sources is plagiarism.",
-    "lab_safety": "Security tools developed in this course must only be used within the lab environment. Using tools against unauthorized targets is prohibited."
+    "attendance": "Attendance is mandatory for all lab sessions. Security programming requires hands-on practice in the lab environment. More than 2 unexcused absences may result in a 5% grade reduction per additional absence.",
+    "late_submissions": "Late assignments are penalized 10% per day. No submissions accepted more than 5 days late without prior arrangement. All code must execute without errors to receive credit.",
+    "collaboration": "Lab exercises may be discussed. All code must be individually written. Sharing complete solutions is academic dishonesty.",
+    "academic_integrity": "All submitted code must be your own work. Using library functions and modules is expected and encouraged. Copying entire solutions from external sources is plagiarism.",
+    "technology_requirements": "Laptop with Python 3.10+, VS Code, and lab VM software. Internet access for API exercises. All software is free.",
+    "lab_safety": "Security tools developed in this course must only be used within the authorized lab environment. Using tools against unauthorized targets violates computer crime laws and university policy."
   }
 }

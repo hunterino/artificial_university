@@ -13,203 +13,824 @@
     {
       "week_number": 1,
       "session_number": 1,
-      "topic": "Introduction to Operating Systems",
-      "duration": "50 minutes",
+      "topic": "Operating Systems Overview and History",
+      "duration": "75 minutes",
       "learning_objectives": [
         "Understand the role of an OS as resource manager and abstraction layer",
-        "Identify the major components of an operating system",
-        "Distinguish between kernel mode and user mode execution"
+        "Trace the evolution from batch systems to modern multi-core operating systems",
+        "Distinguish between kernel mode and user mode execution",
+        "Identify the major components of monolithic, microkernel, and hybrid architectures"
       ],
       "readings": [
         "Silberschatz, Operating System Concepts, Ch. 1-2",
-        "Arpaci-Dusseau, OSTEP: Introduction"
+        "Arpaci-Dusseau, OSTEP: Introduction and Dialogue on the Book",
+        "Tanenbaum, Modern Operating Systems, Ch. 1 (historical overview)"
       ],
       "lecture_notes": {
-        "introduction": "The operating system is the most important software on any computer. It manages hardware resources, provides abstractions for application programmers, and enforces security boundaries. Understanding OS internals makes you a dramatically better systems programmer.",
+        "introduction": "The operating system is the most important software on any computer. It sits between hardware and applications, managing physical resources like CPUs, memory, and disks while presenting clean abstractions that let programmers ignore hardware complexity. Without an OS, every application would need to contain its own disk driver, memory allocator, and scheduler. The history of operating systems mirrors the history of computing itself: from single-job batch systems in the 1960s that read punch cards, through time-sharing systems that gave multiple users the illusion of a dedicated machine, to today's multi-core systems running thousands of threads simultaneously. Understanding this evolution reveals why operating systems are designed the way they are. Modern OS internals knowledge makes you a dramatically better systems programmer because every performance bottleneck, every concurrency bug, and every security vulnerability ultimately involves the operating system.",
         "key_concepts": [
-          "OS roles: resource manager, abstraction provider, security enforcer",
-          "Kernel mode vs user mode: hardware privilege levels",
-          "System calls: the interface between applications and the kernel",
-          "OS structure: monolithic kernel, microkernel, hybrid approaches",
-          "History: batch systems, time-sharing, modern multi-core systems"
+          "OS roles: resource manager (CPU, memory, I/O), abstraction provider (processes, files, sockets), security enforcer (protection domains)",
+          "Kernel mode vs user mode: hardware privilege levels enforced by the CPU's protection ring mechanism",
+          "System calls: the controlled gateway from user mode to kernel mode via software interrupts (e.g., int 0x80 or syscall instruction)",
+          "OS structure: monolithic kernel (Linux) vs microkernel (Minix, seL4) vs hybrid (Windows NT, macOS XNU)",
+          "History: batch processing (1960s), multiprogramming (1970s), time-sharing (Unix), personal computing (DOS/Windows), mobile/cloud (Linux dominance)",
+          "Interrupts and traps: hardware interrupts for device events, software traps for system calls and exceptions",
+          "Boot process: BIOS/UEFI, bootloader, kernel initialization, init/systemd process tree",
+          "OS abstractions: processes (running programs), files (persistent storage), sockets (network communication), virtual memory (isolated address spaces)"
         ],
-        "demonstration": "Use strace on Linux to observe the system calls made by a simple hello world program, revealing the hidden OS interactions behind every program",
+        "demonstration": "Use strace on Linux to observe the system calls made by a simple hello world program compiled with GCC. Examine how printf translates to a write() system call, observe the dynamic linker loading shared libraries, and count the total number of kernel transitions required for a trivial program. Compare with a statically linked binary to see the reduced system call count.",
         "setup_requirements": [
-          "Linux VM or WSL2 configured",
-          "GCC compiler and make installed",
-          "strace available"
+          "Linux VM or WSL2 configured with Ubuntu 22.04+",
+          "GCC compiler, make, and gdb installed",
+          "strace and ltrace available for tracing",
+          "Access to /proc filesystem for process inspection"
         ],
         "review": [
           {
             "key": "Kernel Mode vs User Mode",
-            "value": "The CPU hardware enforces two privilege levels: kernel mode can run any instruction and access any memory; user mode is restricted. System calls are the controlled gateway from user mode to kernel mode"
+            "value": "The CPU hardware enforces two privilege levels: kernel mode can execute any instruction and access any memory address; user mode is restricted to a subset of instructions and its own address space. System calls are the controlled gateway between them, requiring a mode switch that saves registers and validates arguments."
           },
           {
             "key": "System Call Overhead",
-            "value": "A system call requires a mode switch (user to kernel and back), register saving and restoring, and argument validation; this overhead is why minimizing system calls matters for performance"
+            "value": "A system call requires a mode switch (user to kernel and back), register saving and restoring, argument validation, and potential TLB flushes. This overhead of roughly 1-10 microseconds is why minimizing system calls matters for performance-critical code."
+          },
+          {
+            "key": "Monolithic vs Microkernel",
+            "value": "Monolithic kernels (Linux) run all OS services in kernel space for performance but risk whole-system crashes from driver bugs. Microkernels (seL4) run most services in user space for isolation but pay IPC overhead. Most production systems use hybrid approaches."
+          },
+          {
+            "key": "Protection Rings",
+            "value": "x86 CPUs provide four privilege rings (0-3), but most operating systems use only ring 0 (kernel) and ring 3 (user). Hypervisors sometimes use ring -1 (VMX root mode) for virtualization."
           }
         ]
       }
     },
     {
       "week_number": 2,
-      "session_number": 3,
+      "session_number": 2,
       "topic": "Processes and Threads",
-      "duration": "50 minutes",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Understand process creation, states, and context switching",
+        "Understand process creation, states, and context switching mechanics",
         "Implement multi-threaded programs using POSIX threads",
-        "Distinguish between processes and threads in terms of resource sharing"
+        "Distinguish between processes and threads in terms of resource sharing and overhead",
+        "Analyze the performance implications of context switching"
       ],
       "readings": [
         "Silberschatz, Ch. 3-4 - Processes and Threads",
-        "OSTEP: Processes and Threads chapters"
+        "OSTEP: Processes, Direct Execution, and Threads chapters",
+        "Stevens, Advanced Programming in the UNIX Environment, Ch. 7-8 (fork/exec)"
       ],
       "lecture_notes": {
-        "introduction": "A process is a running program. Threads allow a single process to do multiple things concurrently, sharing memory. Understanding processes and threads is essential for writing concurrent software that exploits modern multi-core CPUs.",
+        "introduction": "A process is a running program: it has its own address space, open files, and execution state. But modern applications need concurrency within a single address space, which is where threads come in. Threads allow a process to do multiple things simultaneously while sharing memory, making communication trivial but synchronization essential. Understanding processes and threads is the foundation for writing concurrent software that exploits modern multi-core CPUs. The fork() system call creates a new process by duplicating the parent, while exec() replaces the current process image with a new program. Together, fork-exec is the Unix model for process creation. Threads are lighter weight: creating a thread requires allocating only a new stack and register set, not an entire address space. This lecture covers the mechanics of both, the trade-offs between them, and the practical implications for systems programming.",
         "key_concepts": [
-          "Process model: address space, PCB, process states (new, ready, running, waiting, terminated)",
-          "Process creation: fork and exec on Unix",
-          "Context switching: saving and restoring register state",
-          "Threads: shared address space, independent stacks and registers",
-          "POSIX threads (pthreads): pthread_create, pthread_join, pthread_exit"
+          "Process model: address space layout (text, data, heap, stack), Process Control Block (PCB), process states (new, ready, running, waiting, terminated)",
+          "Process creation on Unix: fork() duplicates the parent, exec() loads a new program, waitpid() collects exit status",
+          "Context switching: saving registers, program counter, and stack pointer to the PCB, loading another process's state",
+          "Threads: shared address space (code, data, heap, open files), independent stacks and register sets per thread",
+          "POSIX threads (pthreads): pthread_create, pthread_join, pthread_exit, pthread_detach",
+          "User-level vs kernel-level threads: green threads (Go goroutines, Java virtual threads) vs OS-managed threads",
+          "Thread pools: amortizing thread creation cost for server workloads",
+          "Process states and transitions: ready queue, blocked queue, preemption by timer interrupt",
+          "Copy-on-Write (COW): fork() shares pages read-only and copies only on write, making fork() nearly free for short-lived children"
         ],
-        "demonstration": "Write a C program that creates multiple threads to compute partial sums of a large array in parallel, then joins them to combine results",
+        "demonstration": "Write a C program that creates multiple threads to compute partial sums of a large array in parallel, then joins them to combine results. Measure the speedup compared to a single-threaded version. Use top and htop to observe thread creation and CPU utilization across cores.",
         "setup_requirements": [
-          "Linux environment with GCC",
+          "Linux environment with GCC and -lpthread",
           "pthreads library available",
-          "Process monitoring tools (top, htop)"
+          "Process monitoring tools: top, htop, ps aux",
+          "time command for measuring wall-clock and CPU time"
         ],
         "review": [
           {
             "key": "Process vs Thread",
-            "value": "Processes have separate address spaces and are isolated; threads share the same address space and cooperate. Thread creation is cheaper because no memory space duplication is needed"
+            "value": "Processes have separate address spaces and are fully isolated; threads share the same address space and cooperate directly through shared memory. Thread creation is 10-100x cheaper than process creation because no address space duplication or page table setup is needed."
           },
           {
             "key": "Context Switch Cost",
-            "value": "Switching between processes requires saving all registers, switching page tables, and flushing TLB entries; thread switches within the same process skip the page table and TLB steps"
+            "value": "Switching between processes requires saving all registers, switching page tables, and flushing TLB entries (typically 1-10 microseconds). Thread switches within the same process skip the page table switch and TLB flush, costing roughly 0.5-5 microseconds."
+          },
+          {
+            "key": "Copy-on-Write",
+            "value": "Modern fork() does not copy the parent's memory. Instead, both parent and child share the same physical pages marked read-only. A page fault on write triggers the kernel to copy just that page, making fork() fast even for large-memory processes."
+          },
+          {
+            "key": "Thread Safety",
+            "value": "A function is thread-safe if it can be called from multiple threads simultaneously without producing incorrect results. This requires either no shared state, read-only shared state, or proper synchronization of mutable shared state."
           }
         ]
       }
     },
     {
       "week_number": 3,
-      "session_number": 5,
-      "topic": "Synchronization and Concurrency",
-      "duration": "50 minutes",
+      "session_number": 3,
+      "topic": "CPU Scheduling Algorithms",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Identify race conditions and critical sections in concurrent code",
-        "Implement mutual exclusion using mutexes and semaphores",
-        "Solve classic synchronization problems: producer-consumer, readers-writers"
+        "Compare CPU scheduling algorithms: FCFS, SJF, SRTF, Round Robin, MLFQ",
+        "Calculate turnaround time, waiting time, and response time for each algorithm",
+        "Understand the design trade-offs between throughput, responsiveness, and fairness",
+        "Analyze the Linux CFS scheduler design"
       ],
       "readings": [
-        "Silberschatz, Ch. 6-7 - Synchronization",
-        "OSTEP: Locks, Condition Variables, Semaphores"
+        "Silberschatz, Ch. 5 - CPU Scheduling",
+        "OSTEP: Scheduling chapters (MLFQ, Proportional Share)",
+        "Love, Linux Kernel Development, Ch. 4 (CFS scheduler)"
       ],
       "lecture_notes": {
-        "introduction": "Concurrent programming is treacherous. Shared mutable state plus interleaved execution creates race conditions that appear randomly and are nearly impossible to reproduce. Synchronization primitives are the tools that make concurrent code correct.",
+        "introduction": "The CPU scheduler decides which process runs next. This seemingly simple decision profoundly affects user experience: a bad scheduler makes your laptop feel sluggish even with plenty of CPU available. Scheduling is a resource allocation problem with competing goals. Interactive users want low response time (the time from request to first output). Batch workloads want high throughput (total work completed per unit time). All users want fairness (no process starves). No single algorithm optimizes all three, so real schedulers use sophisticated multi-level approaches. The Linux Completely Fair Scheduler (CFS) uses a red-black tree sorted by virtual runtime to approximate ideal fair scheduling. Understanding scheduling explains why some systems feel fast and others feel slow, even with identical hardware.",
         "key_concepts": [
-          "Race condition: outcome depends on thread scheduling order",
-          "Critical section: code that accesses shared data",
-          "Mutex: mutual exclusion lock, pthread_mutex_lock and unlock",
-          "Semaphore: generalized lock with a counter, sem_wait and sem_post",
-          "Condition variables: pthread_cond_wait and signal for event notification",
-          "Deadlock conditions: mutual exclusion, hold and wait, no preemption, circular wait"
+          "Scheduling metrics: turnaround time (completion - arrival), waiting time (turnaround - burst), response time (first run - arrival)",
+          "FCFS (First Come First Served): simple but causes convoy effect where short jobs wait behind long ones",
+          "SJF (Shortest Job First): optimal average waiting time but requires predicting burst times",
+          "SRTF (Shortest Remaining Time First): preemptive SJF, optimal average turnaround but may starve long jobs",
+          "Round Robin: time quantum rotates among ready processes, good response time but higher average turnaround",
+          "MLFQ (Multi-Level Feedback Queue): multiple priority queues with demotion rules, adapts to process behavior",
+          "Linux CFS: virtual runtime tracking with red-black tree, nice values for priority weighting, O(log n) scheduling decisions",
+          "Real-time scheduling: Rate Monotonic (static priority by period) and Earliest Deadline First (dynamic priority)",
+          "Priority inversion: when a high-priority task waits for a low-priority task holding a lock, solved by priority inheritance"
         ],
-        "demonstration": "Start with a buggy bank transfer program that has a race condition, demonstrate the bug with repeated runs, then fix it with mutexes, and finally show a deadlock scenario",
+        "demonstration": "Simulate four scheduling algorithms (FCFS, SJF, Round Robin with q=4, MLFQ) on the same set of 6 processes with different arrival times and burst times. Calculate all metrics for each algorithm and compare using Gantt charts. Then use the chrt command on Linux to observe real-time scheduling priorities.",
         "setup_requirements": [
-          "Linux environment with GCC and pthreads",
-          "Thread sanitizer enabled with fsanitize flag"
+          "Scheduling simulator spreadsheet or Python script provided",
+          "Process arrival and burst time data set provided",
+          "Linux system with chrt and nice commands for priority experiments"
         ],
         "review": [
           {
-            "key": "Deadlock Prevention",
-            "value": "Breaking any one of the four Coffman conditions prevents deadlock; the most practical approach is imposing a global lock ordering to prevent circular wait"
+            "key": "Convoy Effect",
+            "value": "In FCFS, a single long-running CPU-bound process blocks many short I/O-bound processes, severely degrading average waiting time. This motivates preemptive scheduling where the OS can interrupt a running process."
           },
           {
-            "key": "Condition Variable Pattern",
-            "value": "Always check the condition in a while loop not an if, because spurious wakeups can occur and another thread may have already consumed the resource between signal and wakeup"
+            "key": "Time Quantum Trade-off",
+            "value": "Smaller time quantum gives better response time but increases context switch overhead. Larger quantum approaches FCFS behavior. Typical values are 1-10 milliseconds in modern systems. Linux CFS targets a configurable scheduling latency (default 6ms) divided among runnable tasks."
+          },
+          {
+            "key": "MLFQ Rules",
+            "value": "New processes enter the highest priority queue. If a process uses its full time slice, it is demoted. If it yields before the slice expires (I/O-bound), it stays or is promoted. Periodic priority boost prevents starvation."
+          },
+          {
+            "key": "Priority Inversion",
+            "value": "The Mars Pathfinder bug: a high-priority task blocked on a mutex held by a low-priority task, while a medium-priority task preempted the low-priority task indefinitely. Solved by priority inheritance protocol."
           }
         ]
       }
     },
     {
       "week_number": 4,
-      "session_number": 7,
-      "topic": "CPU Scheduling",
-      "duration": "50 minutes",
+      "session_number": 4,
+      "topic": "Synchronization: Mutexes and Semaphores",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Compare CPU scheduling algorithms: FCFS, SJF, Round Robin, MLFQ",
-        "Calculate turnaround time, waiting time, and response time",
-        "Understand the design trade-offs between throughput and responsiveness"
+        "Identify race conditions and critical sections in concurrent code",
+        "Implement mutual exclusion using mutexes, semaphores, and condition variables",
+        "Solve classic synchronization problems: producer-consumer, readers-writers, dining philosophers",
+        "Use thread sanitizers to detect data races"
       ],
       "readings": [
-        "Silberschatz, Ch. 5 - CPU Scheduling",
-        "OSTEP: Scheduling chapters"
+        "Silberschatz, Ch. 6-7 - Synchronization Tools and Examples",
+        "OSTEP: Locks, Condition Variables, Semaphores",
+        "Downey, The Little Book of Semaphores, Ch. 1-4"
       ],
       "lecture_notes": {
-        "introduction": "The CPU scheduler decides which process runs next. This decision profoundly affects user experience: a bad scheduler makes your laptop feel sluggish even with plenty of CPU available. Understanding scheduling explains why some systems feel fast and others feel slow.",
+        "introduction": "Concurrent programming is treacherous. Shared mutable state plus interleaved execution creates race conditions that appear randomly, vary between runs, and are nearly impossible to reproduce reliably. A race condition occurs when the correctness of a program depends on the relative timing of thread execution, which the programmer cannot control. The critical section problem asks: how do we ensure that when one thread is accessing shared data, no other thread can access it simultaneously? Synchronization primitives -- mutexes, semaphores, and condition variables -- are the tools that make concurrent code correct. This lecture covers their semantics, implementation, and the classic problems that illustrate their use. We also introduce thread sanitizer (TSan), a compiler-based tool that detects data races at runtime.",
         "key_concepts": [
-          "FCFS: simple but causes convoy effect",
-          "SJF: optimal average waiting time but requires prediction",
-          "Round Robin: time quantum, good response time, higher turnaround",
-          "MLFQ: adapts to process behavior dynamically",
-          "Real-time scheduling: rate-monotonic and earliest deadline first"
+          "Race condition: program outcome depends on non-deterministic thread scheduling order",
+          "Critical section: code that accesses shared data requiring mutual exclusion",
+          "Mutex: binary lock via pthread_mutex_lock/unlock, provides mutual exclusion for one thread at a time",
+          "Semaphore: generalized lock with integer counter, sem_wait decrements (blocks at 0), sem_post increments",
+          "Condition variables: pthread_cond_wait releases mutex and blocks, pthread_cond_signal wakes one waiter",
+          "Producer-consumer: bounded buffer with full/empty semaphores and a mutex for the buffer",
+          "Readers-writers: multiple concurrent readers allowed, writers need exclusive access",
+          "Dining philosophers: five philosophers, five forks, demonstrates deadlock and its solutions",
+          "Atomic operations: hardware-supported compare-and-swap (CAS) as the foundation for lock-free data structures",
+          "Thread Sanitizer (TSan): compile with -fsanitize=thread to detect data races at runtime"
         ],
-        "demonstration": "Simulate four scheduling algorithms on the same set of 6 processes, calculate all metrics, and compare using a Gantt chart visualization",
+        "demonstration": "Start with a buggy bank transfer program that has a race condition on the account balance. Demonstrate the bug by running it thousands of times and observing inconsistent results. Fix it with mutexes. Then introduce a second account and show a deadlock scenario when transferring between accounts with per-account locks in different orders. Solve the deadlock with global lock ordering.",
         "setup_requirements": [
-          "Scheduling simulator or spreadsheet",
-          "Process arrival and burst time data provided"
+          "Linux environment with GCC and pthreads",
+          "Thread sanitizer enabled with -fsanitize=thread flag",
+          "Valgrind with Helgrind for additional race detection"
         ],
         "review": [
           {
-            "key": "Convoy Effect",
-            "value": "In FCFS, a single long-running CPU-bound process can block many short IO-bound processes, severely degrading average waiting time; this motivates preemptive scheduling"
+            "key": "Lock Ordering",
+            "value": "Imposing a global order on lock acquisition (always lock the lower-numbered account first) prevents circular wait and thus prevents deadlock. This is the most practical deadlock prevention technique."
           },
           {
-            "key": "Time Quantum Trade-off",
-            "value": "Smaller time quantum gives better response time but increases context switch overhead; larger quantum approaches FCFS behavior. Typical values are 10 to 100 milliseconds"
+            "key": "Condition Variable Pattern",
+            "value": "Always check the condition in a while loop, not an if statement, because spurious wakeups can occur and another thread may have consumed the resource between signal and wakeup. Pattern: while(!condition) { pthread_cond_wait(&cv, &mutex); }"
+          },
+          {
+            "key": "Semaphore vs Mutex",
+            "value": "A mutex has ownership: only the thread that locked it can unlock it. A semaphore has no ownership: any thread can post. Semaphores are used for signaling between threads (producer posts, consumer waits) rather than for mutual exclusion."
+          },
+          {
+            "key": "Compare-and-Swap",
+            "value": "CAS atomically compares a memory location to an expected value and, if equal, replaces it with a new value. It is the hardware primitive underlying most lock-free algorithms and even mutex implementations."
           }
         ]
       }
     },
     {
       "week_number": 5,
-      "session_number": 9,
-      "topic": "Virtual Memory and Page Replacement",
-      "duration": "50 minutes",
+      "session_number": 5,
+      "topic": "Deadlocks: Detection, Prevention, and Avoidance",
+      "duration": "75 minutes",
       "learning_objectives": [
-        "Explain how virtual memory provides process isolation and the illusion of large memory",
-        "Trace address translation through page tables and TLB",
-        "Compare page replacement algorithms: FIFO, LRU, Clock"
+        "State the four Coffman conditions necessary for deadlock",
+        "Apply the Banker's algorithm for deadlock avoidance",
+        "Construct resource allocation graphs to detect deadlocks",
+        "Design systems that prevent deadlock through resource ordering or preemption"
       ],
       "readings": [
-        "Silberschatz, Ch. 9-10 - Virtual Memory",
-        "OSTEP: Address Spaces, Paging, Page Replacement"
+        "Silberschatz, Ch. 8 - Deadlocks",
+        "OSTEP: Deadlock chapter",
+        "Coffman et al., System Deadlocks (original 1971 paper, provided)"
       ],
       "lecture_notes": {
-        "introduction": "Virtual memory is the OS mechanism that gives each process the illusion of having its own large, contiguous address space. It enables process isolation, shared libraries, and running programs larger than physical memory.",
+        "introduction": "Deadlock is the permanent blocking of a set of processes where each process holds a resource needed by another process in the set. It is a fundamental problem in concurrent systems that can bring an entire server to a halt. Four conditions must all hold simultaneously for deadlock to occur: mutual exclusion, hold-and-wait, no preemption, and circular wait. Breaking any one of these conditions eliminates the possibility of deadlock. In practice, operating systems and databases use different strategies depending on the cost of deadlock versus the cost of prevention. This lecture covers detection algorithms using resource allocation graphs, the Banker's algorithm for avoidance, and practical prevention strategies used in real systems. We also examine how databases handle deadlocks through detection and rollback, contrasting this with the prevention approach used in most OS designs.",
         "key_concepts": [
-          "Virtual vs physical addresses: every process has its own address space",
-          "Page tables: mapping virtual pages to physical frames",
-          "TLB (Translation Lookaside Buffer): caching page table entries",
-          "Page fault handling: loading pages from disk on demand",
-          "Page replacement: FIFO, LRU, Clock (second chance) algorithms",
-          "Thrashing: when the working set exceeds physical memory"
+          "Four Coffman conditions: mutual exclusion, hold-and-wait, no preemption, circular wait (all four required)",
+          "Resource allocation graph: processes and resources as nodes, request and assignment edges, cycle detection for deadlock",
+          "Banker's algorithm: check if granting a request leaves the system in a safe state (a sequence exists to satisfy all remaining requests)",
+          "Prevention by breaking mutual exclusion: use lock-free data structures or spooling",
+          "Prevention by breaking hold-and-wait: request all resources atomically before starting",
+          "Prevention by allowing preemption: roll back and release resources when needed (databases do this)",
+          "Prevention by breaking circular wait: impose a total ordering on resources and always acquire in order",
+          "Deadlock detection: periodically run cycle detection on the wait-for graph, then kill a process to break the cycle",
+          "Livelock: processes continuously change state in response to each other without making progress (e.g., two polite people in a hallway)"
         ],
-        "demonstration": "Trace a sequence of virtual addresses through a page table, calculating TLB hit and miss and page fault rates, then compare FIFO and LRU replacement on the same reference string",
+        "demonstration": "Construct a resource allocation graph with four processes and three resource types. Trace through the Banker's algorithm step by step: define the Available, Max, Allocation, and Need matrices, then determine if the current state is safe by finding a safe sequence. Then modify the scenario to create an unsafe state and show the algorithm correctly rejects the request.",
         "setup_requirements": [
-          "Page table simulation worksheet",
-          "Reference string examples provided"
+          "Resource allocation graph drawing tool or whiteboard",
+          "Banker's algorithm worksheet with matrices",
+          "Python script for automated Banker's algorithm checking"
         ],
         "review": [
           {
-            "key": "Demand Paging",
-            "value": "Pages are loaded into physical memory only when accessed on page fault, not when the process starts; this reduces startup time and memory usage but introduces page fault latency"
+            "key": "Banker's Algorithm Complexity",
+            "value": "The Banker's algorithm runs in O(n^2 * m) time where n is the number of processes and m is the number of resource types. It must be run for every resource request, making it expensive for systems with many processes and frequent requests."
           },
           {
-            "key": "Belady Anomaly",
-            "value": "With FIFO replacement, increasing the number of physical frames can sometimes increase page faults which is counterintuitive; LRU does not suffer from this anomaly"
+            "key": "Safe State",
+            "value": "A state is safe if there exists a sequence of process completions where each process can obtain its maximum resources from what is currently available plus what will be released by already-completed processes. Unsafe does not mean deadlock will occur, only that it could."
+          },
+          {
+            "key": "Database Deadlock Handling",
+            "value": "PostgreSQL and MySQL detect deadlocks using wait-for graph cycle detection (typically every second) and resolve them by aborting the youngest transaction. This detection-and-rollback approach is practical because transactions are designed to be restartable."
+          },
+          {
+            "key": "Livelock vs Deadlock",
+            "value": "In deadlock, processes are blocked and make no progress. In livelock, processes are active (consuming CPU) but make no useful progress because they keep reacting to each other. Adding randomized backoff (as in Ethernet CSMA/CD) resolves many livelock scenarios."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Memory Management and Segmentation",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Explain contiguous memory allocation strategies: first-fit, best-fit, worst-fit",
+        "Understand memory segmentation and its role in early memory management",
+        "Analyze external and internal fragmentation problems",
+        "Compare segmentation with paging as memory management approaches"
+      ],
+      "readings": [
+        "Silberschatz, Ch. 9 - Main Memory",
+        "OSTEP: Address Spaces, Segmentation",
+        "Intel 64 and IA-32 Architectures Software Developer Manual, Vol. 3A, Ch. 3 (segmentation)"
+      ],
+      "lecture_notes": {
+        "introduction": "Before a process can run, its code and data must be in physical memory. Memory management is how the operating system allocates physical memory among competing processes, protects each process from accessing another's memory, and handles the mismatch between logical addresses used by programs and physical addresses used by hardware. Early systems used contiguous allocation, where each process occupied a single block of memory. This led to external fragmentation as processes of different sizes were loaded and unloaded. Segmentation improved on this by allowing a process's address space to be split into variable-sized segments (code, data, stack), but still suffered from fragmentation. Understanding these problems motivates the paging approach that dominates modern systems. This lecture covers the evolution of memory management, the mechanics of segmentation, and the fragmentation problems that drove the move to paging.",
+        "key_concepts": [
+          "Address binding: compile-time (absolute addresses), load-time (relocatable), run-time (base/limit registers enable relocation)",
+          "Contiguous allocation: each process gets one block; first-fit, best-fit, worst-fit placement strategies",
+          "External fragmentation: free memory exists but is scattered in small non-contiguous blocks",
+          "Internal fragmentation: allocated memory is larger than requested, wasting space within the block",
+          "Compaction: relocating processes to consolidate free memory, expensive because it requires copying and updating all addresses",
+          "Segmentation: divide address space into logical segments (code, data, stack, heap) with base-limit pairs in a segment table",
+          "Segment table: each entry has base address, limit, and protection bits (read/write/execute)",
+          "x86 segmentation: code segment (CS), data segment (DS), stack segment (SS) registers, still present but mostly disabled in 64-bit mode"
+        ],
+        "demonstration": "Simulate contiguous memory allocation with a 1MB memory space and 8 processes of varying sizes. Apply first-fit, best-fit, and worst-fit to the same allocation/deallocation sequence and measure external fragmentation after each step. Then draw a segmented address space for a running process and trace a logical address through the segment table to a physical address.",
+        "setup_requirements": [
+          "Memory allocation simulator (provided Python script)",
+          "Process size and arrival data set",
+          "Segment table trace worksheet"
+        ],
+        "review": [
+          {
+            "key": "First-Fit vs Best-Fit",
+            "value": "First-fit is faster (stops at the first hole large enough) and in practice produces less fragmentation than best-fit. Best-fit searches all holes and tends to create many tiny unusable fragments. Worst-fit leaves the largest remaining hole but wastes the most memory."
+          },
+          {
+            "key": "External Fragmentation",
+            "value": "After many allocation/deallocation cycles, free memory is broken into small scattered pieces. A process may not fit even though total free memory is sufficient. The 50% rule: with first-fit, roughly 1/3 of memory is wasted to fragmentation."
+          },
+          {
+            "key": "Segmentation Fault",
+            "value": "A segmentation fault (SIGSEGV) occurs when a process accesses memory outside any valid segment. The hardware compares the offset against the segment limit and traps to the OS if it exceeds the limit or violates protection bits."
+          },
+          {
+            "key": "Why Paging Won",
+            "value": "Segmentation suffers from external fragmentation because segments are variable-sized. Paging uses fixed-size pages, eliminating external fragmentation entirely (at the cost of some internal fragmentation in the last page)."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Virtual Memory and Paging",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Explain how virtual memory provides process isolation and the illusion of large memory",
+        "Trace address translation through multi-level page tables and TLB",
+        "Understand demand paging and its performance implications",
+        "Analyze the overhead of page tables and how inverted page tables address it"
+      ],
+      "readings": [
+        "Silberschatz, Ch. 9-10 - Virtual Memory",
+        "OSTEP: Address Spaces, Paging chapters",
+        "Drepper, What Every Programmer Should Know About Memory, Section 4"
+      ],
+      "lecture_notes": {
+        "introduction": "Virtual memory is the single most important abstraction in modern operating systems. It gives each process the illusion of having its own large, contiguous address space, regardless of how much physical memory is available or how it is laid out. Every address a program uses is a virtual address that the hardware translates to a physical address through page tables. This translation happens on every memory access, so it must be fast -- the Translation Lookaside Buffer (TLB) caches recent translations to avoid walking the page table for every access. Demand paging loads pages into physical memory only when they are first accessed, using page faults as the trigger. This means a process can start running before all its pages are in memory, and the OS can keep more processes in memory simultaneously by only loading the pages each actually uses. Understanding virtual memory is essential for systems programming, performance tuning, and security.",
+        "key_concepts": [
+          "Virtual vs physical addresses: the MMU translates virtual addresses to physical frame numbers using the page table",
+          "Page table structure: one entry per virtual page containing physical frame number, valid bit, dirty bit, access bits (R/W/X)",
+          "Multi-level page tables: 4-level on x86-64 (PML4, PDPT, PD, PT), saving memory by not allocating tables for unused address ranges",
+          "TLB (Translation Lookaside Buffer): a small, fast cache of page table entries, typically 64-1024 entries with 99%+ hit rate",
+          "TLB miss handling: hardware page table walk (x86) vs software-managed TLB (MIPS)",
+          "Demand paging: pages loaded only on first access via page fault, not at process start",
+          "Page fault handling: trap to OS, find the page on disk, allocate a frame, load the page, update the page table, restart the instruction",
+          "Inverted page tables: one entry per physical frame instead of per virtual page, used by PowerPC, requires hash table for lookup",
+          "Memory-mapped files: map a file into the address space so reads/writes become memory accesses handled by the pager"
+        ],
+        "demonstration": "Trace a 48-bit virtual address through a 4-level x86-64 page table, extracting the 9-bit index at each level and the 12-bit page offset. Calculate TLB hit and miss scenarios. Then use /proc/self/maps on Linux to examine a running process's virtual memory layout and /proc/self/pagemap to verify which pages are resident in physical memory.",
+        "setup_requirements": [
+          "Page table simulation worksheet for 4-level walk",
+          "Linux system with /proc filesystem",
+          "pagemap_reader utility or custom script to inspect page residency"
+        ],
+        "review": [
+          {
+            "key": "TLB Performance",
+            "value": "A TLB miss adds roughly 10-100 nanoseconds (the time to walk the page table in memory). With 99% hit rate and 5ns TLB access, effective memory access time = 0.99 * 5ns + 0.01 * 50ns = 5.45ns. Without TLB, every memory access would take 50ns."
+          },
+          {
+            "key": "Demand Paging Performance",
+            "value": "A page fault requiring disk I/O takes 5-10 milliseconds (SSD) or 10-100ms (HDD). If the page fault rate is p, effective access time = (1-p)*memory_time + p*page_fault_time. Even p=0.001 can make programs feel sluggish."
+          },
+          {
+            "key": "Page Table Size",
+            "value": "A flat page table for a 48-bit address space with 4KB pages would need 2^36 entries = 512GB. Multi-level page tables avoid this by only allocating tables for regions that contain mapped pages."
+          },
+          {
+            "key": "Shared Memory via Paging",
+            "value": "Two processes can share memory by having page table entries that point to the same physical frame. This is how shared libraries work: libc code pages are mapped read-only into every process but exist in physical memory only once."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Page Replacement Algorithms",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Compare page replacement algorithms: Optimal, FIFO, LRU, Clock (Second Chance)",
+        "Calculate page fault rates for given reference strings",
+        "Understand thrashing and the working set model",
+        "Analyze Belady's anomaly in FIFO replacement"
+      ],
+      "readings": [
+        "Silberschatz, Ch. 10 - Virtual Memory (Page Replacement section)",
+        "OSTEP: Swapping: Policies chapter",
+        "Denning, The Working Set Model for Program Behavior (1968, provided)"
+      ],
+      "lecture_notes": {
+        "introduction": "When physical memory is full and a new page must be loaded, the operating system must choose a victim page to evict. This decision dramatically affects performance: evicting a page that will be needed soon causes another expensive page fault, while evicting a page that will not be needed for a long time is essentially free. The optimal algorithm (OPT) evicts the page that will not be used for the longest time in the future, but it requires knowledge of future accesses and is only useful as a theoretical benchmark. Practical algorithms approximate OPT using past behavior to predict future behavior. FIFO is simple but performs poorly. LRU (Least Recently Used) performs well but is expensive to implement exactly. The Clock algorithm approximates LRU cheaply using a reference bit. When the working set of active pages exceeds physical memory, the system enters thrashing: spending more time swapping pages than executing useful instructions. The working set model detects this condition and adjusts the degree of multiprogramming accordingly.",
+        "key_concepts": [
+          "Optimal (OPT/MIN): evict the page that will not be used for the longest time, theoretical lower bound on page faults",
+          "FIFO: evict the oldest page, simple but suffers from Belady's anomaly (more frames can cause more faults)",
+          "LRU (Least Recently Used): evict the page that has not been used for the longest time, good performance but expensive hardware support",
+          "LRU approximation: reference bit set on access, cleared periodically; additional-reference-bits algorithm uses shift registers",
+          "Clock (Second Chance): circular buffer with reference bit, skip pages with reference bit set (clear it), evict first page with cleared bit",
+          "Enhanced Clock: use both reference and dirty bits for a 4-class priority (not referenced/not dirty is best victim)",
+          "Thrashing: occurs when the combined working sets exceed physical memory, causes catastrophic performance collapse",
+          "Working set model: track the set of pages accessed in the last tau time units, ensure the system provides enough frames for each process's working set"
+        ],
+        "demonstration": "Trace the reference string 7,0,1,2,0,3,0,4,2,3,0,3,2,1,2,0,1,7,0,1 through FIFO, LRU, and Clock algorithms with 3 frames. Count page faults for each and compare to OPT. Then demonstrate Belady's anomaly with FIFO by showing a reference string where 4 frames produce more faults than 3 frames.",
+        "setup_requirements": [
+          "Page replacement simulator (provided Python script)",
+          "Reference string data sets for comparison",
+          "Belady's anomaly example: 1,2,3,4,1,2,5,1,2,3,4,5"
+        ],
+        "review": [
+          {
+            "key": "Belady's Anomaly",
+            "value": "With FIFO replacement, increasing the number of physical frames can sometimes increase page faults. For the string 1,2,3,4,1,2,5,1,2,3,4,5: 3 frames yield 9 faults, 4 frames yield 10 faults. LRU and OPT are stack algorithms and never exhibit this anomaly."
+          },
+          {
+            "key": "Clock Algorithm Efficiency",
+            "value": "Clock approximates LRU with O(1) overhead: maintain a circular pointer, advance through pages clearing reference bits until finding a page with bit already cleared. In practice, performance is close to LRU with much less overhead, making it the most common choice."
+          },
+          {
+            "key": "Thrashing Detection",
+            "value": "Monitor the page fault rate. If it exceeds a threshold, the process needs more frames (reduce multiprogramming degree). If it drops below a threshold, the process may have excess frames (increase multiprogramming). This is the page fault frequency scheme."
+          },
+          {
+            "key": "Working Set Size",
+            "value": "The working set W(t, tau) is the set of pages referenced in the time interval [t-tau, t]. If the sum of all working set sizes exceeds total physical frames, thrashing will occur and the OS should suspend processes."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "File Systems: ext4 and NTFS",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Explain the logical and physical structure of ext4 and NTFS file systems",
+        "Trace file access from pathname to disk blocks through directory entries and inodes",
+        "Compare journaling strategies and their impact on crash recovery",
+        "Analyze the trade-offs between different file system designs"
+      ],
+      "readings": [
+        "Silberschatz, Ch. 13-14 - File System Interface and Implementation",
+        "OSTEP: File System Implementation, Journaling",
+        "Mathur et al., The New ext4 Filesystem: Current Status and Future Plans (2007)"
+      ],
+      "lecture_notes": {
+        "introduction": "A file system transforms raw disk blocks into the familiar hierarchy of files and directories. It must handle naming (mapping pathnames to data), persistence (surviving power failures), performance (caching frequently accessed data), and sharing (multiple processes accessing the same file). The ext4 file system dominates Linux, while NTFS is the standard on Windows. Both use different approaches to the same fundamental problems. ext4 uses an inode-based design with extent trees for efficient large file storage and a journal for crash consistency. NTFS uses the Master File Table (MFT) where every file system object is a file, including the MFT itself. Understanding file system internals explains why some operations are fast (appending to a file) and others are slow (moving a large directory tree), and why crash recovery without journaling risks data loss.",
+        "key_concepts": [
+          "File system layers: logical file system (API), file-organization module (blocks), basic file system (I/O scheduling), I/O control (device drivers)",
+          "Inode structure: metadata (permissions, timestamps, size) plus direct, indirect, double-indirect, and triple-indirect block pointers",
+          "ext4 extents: contiguous block ranges replace indirect block pointers for large files, reducing metadata and improving sequential I/O",
+          "ext4 block groups: disk divided into groups, each with its own inode table and block bitmap for locality",
+          "NTFS Master File Table: every object is a record in the MFT, small files stored entirely within the MFT record (resident attributes)",
+          "Journaling: write-ahead log records metadata changes before applying them, enabling fast crash recovery",
+          "ext4 journaling modes: journal (data + metadata), ordered (metadata only, data written first), writeback (metadata only, no ordering)",
+          "Directory implementation: ext4 uses HTree (hash tree) for O(1) lookup in large directories, NTFS uses B+ trees"
+        ],
+        "demonstration": "Use debugfs to examine an ext4 file system: inspect the superblock, locate an inode by filename, examine the extent tree for a large file, and trace the path from root directory to a deeply nested file. Then use fsstat from Sleuth Kit to examine an NTFS image and compare the MFT structure with ext4 inodes.",
+        "setup_requirements": [
+          "Linux system with ext4 filesystem and debugfs tool",
+          "NTFS image file for analysis with Sleuth Kit",
+          "dd and losetup for creating test file systems"
+        ],
+        "review": [
+          {
+            "key": "Inode vs MFT",
+            "value": "ext4 inodes are fixed-size (256 bytes default) and store metadata plus block pointers. NTFS MFT records are larger (1KB) and can store small file data inline (resident attributes). Both approaches have trade-offs in metadata overhead and small-file performance."
+          },
+          {
+            "key": "Journaling Recovery",
+            "value": "On crash recovery, the file system replays the journal: committed transactions are applied, uncommitted transactions are discarded. This reduces recovery time from minutes (full fsck scan) to seconds (journal replay)."
+          },
+          {
+            "key": "Extent Trees",
+            "value": "An extent is a (start_block, length) pair representing contiguous blocks. A 1GB file might need just 1-2 extents instead of 262,144 indirect block pointers, dramatically reducing metadata overhead and improving sequential read performance."
+          },
+          {
+            "key": "Block Group Locality",
+            "value": "ext4 tries to allocate a file's blocks and its inode in the same block group. This ensures that reading a file's metadata and data requires seeks within a small disk region, improving performance on HDDs."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "I/O Management and Device Drivers",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Explain the I/O software stack from user requests to hardware commands",
+        "Compare programmed I/O, interrupt-driven I/O, and DMA",
+        "Understand device driver architecture and the role of the I/O scheduler",
+        "Analyze the performance implications of different I/O strategies"
+      ],
+      "readings": [
+        "Silberschatz, Ch. 12 - I/O Systems",
+        "OSTEP: I/O Devices chapter",
+        "Corbet et al., Linux Device Drivers, Ch. 1-2 (provided excerpts)"
+      ],
+      "lecture_notes": {
+        "introduction": "Input/Output management is where the operating system meets the physical world. The OS must handle hundreds of different device types -- keyboards, disks, network cards, GPUs -- through a uniform interface while extracting maximum performance from each. The I/O software stack has four layers: user-level I/O library calls (printf, fread), the kernel I/O subsystem (buffering, caching, scheduling), device drivers (translate generic requests to device-specific commands), and interrupt handlers (respond to hardware events). Three techniques move data between CPU and devices: programmed I/O (CPU polls the device, simple but wastes CPU cycles), interrupt-driven I/O (device signals completion, CPU is free between interrupts), and DMA (Direct Memory Access, where a dedicated controller transfers data directly to/from memory without CPU involvement). Modern high-performance I/O uses DMA almost exclusively for bulk transfers, with interrupts to signal completion.",
+        "key_concepts": [
+          "I/O software layers: user libraries, kernel subsystem, device drivers, interrupt handlers",
+          "Programmed I/O (polling): CPU repeatedly checks device status register, simple but wastes CPU time",
+          "Interrupt-driven I/O: device raises hardware interrupt when ready, CPU handles it via interrupt service routine (ISR)",
+          "DMA (Direct Memory Access): dedicated controller transfers data between device and memory, CPU only involved at start and completion",
+          "Block devices vs character devices: block devices (disks) support random access, character devices (keyboards, serial ports) provide streams",
+          "Device driver interface: Linux character device: open(), read(), write(), ioctl(), close() file operations",
+          "I/O scheduling: reorder requests to minimize disk head movement (relevant for HDDs, less so for SSDs)",
+          "Buffering: single buffering, double buffering, circular buffer to handle speed mismatches between producer and consumer",
+          "Spooling: queuing output for slow devices (printers) to allow the process to continue without waiting"
+        ],
+        "demonstration": "Write a simple Linux character device driver (kernel module) that implements a ring buffer. Load it with insmod, create the device node with mknod, and use cat and echo from user space to read and write. Observe the kernel log messages showing the driver's open, read, write, and release calls. Measure the latency of a user-to-kernel-to-device round trip.",
+        "setup_requirements": [
+          "Linux VM with kernel headers installed for module compilation",
+          "make and gcc for building kernel modules",
+          "insmod, rmmod, lsmod, dmesg for module management",
+          "mknod for creating device nodes"
+        ],
+        "review": [
+          {
+            "key": "DMA Advantage",
+            "value": "Without DMA, transferring 1MB from disk at 200MB/s requires the CPU to execute ~262,000 I/O instructions over ~5ms, consuming 100% of a core. With DMA, the CPU issues one command and is interrupted once on completion, freeing the core for other work."
+          },
+          {
+            "key": "Interrupt Coalescing",
+            "value": "High-speed NICs receiving millions of packets per second would overwhelm the CPU with interrupts. NAPI (New API) in Linux switches to polling mode under high load, processing batches of packets per interrupt to reduce overhead."
+          },
+          {
+            "key": "Device Driver Isolation",
+            "value": "Device drivers run in kernel mode and a bug can crash the entire system. This is why driver bugs are the leading cause of OS crashes. Microkernels run drivers in user space for isolation, trading performance for stability."
+          },
+          {
+            "key": "Zero-Copy I/O",
+            "value": "Traditional I/O copies data from kernel buffer to user buffer (read) and back (write). sendfile() and splice() enable zero-copy by remapping pages or using DMA scatter-gather, eliminating copies for network servers."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "Disk Scheduling",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Compare disk scheduling algorithms: FCFS, SSTF, SCAN, C-SCAN, LOOK, C-LOOK",
+        "Calculate total head movement for a sequence of disk requests",
+        "Understand how SSDs change the relevance of traditional disk scheduling",
+        "Analyze the Linux I/O scheduler options: mq-deadline, BFQ, kyber, none"
+      ],
+      "readings": [
+        "Silberschatz, Ch. 11 - Mass Storage Structure",
+        "OSTEP: Hard Disk Drives chapter",
+        "Axboe, Linux Block I/O Layer documentation (kernel.org)"
+      ],
+      "lecture_notes": {
+        "introduction": "On traditional hard disk drives, the physical seek time to move the read/write head to the correct track dominates I/O performance. A random seek takes 5-15 milliseconds, while sequential access within the same track takes microseconds. Disk scheduling algorithms reorder pending I/O requests to minimize total head movement, dramatically improving throughput. FCFS processes requests in arrival order and may cause wild head oscillations. SSTF (Shortest Seek Time First) greedily chooses the closest request, reducing head movement but risking starvation of distant requests. SCAN (the elevator algorithm) moves the head in one direction servicing requests, then reverses, providing fair service without starvation. However, the rise of SSDs with their 0.1ms random access time has dramatically reduced the importance of seek optimization. Modern Linux systems often use the mq-deadline or none scheduler for SSDs, while BFQ provides fairness for HDDs and mixed workloads.",
+        "key_concepts": [
+          "HDD geometry: platters, tracks, sectors, cylinders, seek time (2-15ms), rotational latency (2-8ms), transfer time",
+          "FCFS disk scheduling: fair but causes head oscillation, worst-case head movement",
+          "SSTF: select the request closest to the current head position, greedy, may starve distant requests",
+          "SCAN (elevator): head moves in one direction servicing requests, then reverses direction",
+          "C-SCAN (circular SCAN): head services requests in one direction only, then jumps back to the beginning",
+          "LOOK and C-LOOK: like SCAN/C-SCAN but only go as far as the last request in each direction, not to the edge",
+          "SSD I/O characteristics: no seek time, uniform random access, parallelism across NAND channels, write amplification concerns",
+          "Linux I/O schedulers: mq-deadline (latency-focused), BFQ (fairness-focused), kyber (low-overhead), none (no reordering, for fast NVMe)"
+        ],
+        "demonstration": "Given a disk with 200 cylinders, an initial head position at cylinder 53, and the request queue [98, 183, 37, 122, 14, 124, 65, 67], calculate total head movement for FCFS, SSTF, SCAN, and C-SCAN. Draw the head movement diagram for each. Then check the current Linux I/O scheduler with cat /sys/block/sda/queue/scheduler and discuss when each scheduler is appropriate.",
+        "setup_requirements": [
+          "Disk scheduling calculation worksheet",
+          "Graph paper or plotting tool for head movement diagrams",
+          "Linux system with /sys/block/ for scheduler inspection"
+        ],
+        "review": [
+          {
+            "key": "SSTF Starvation",
+            "value": "If new requests keep arriving near the current head position, distant requests may wait indefinitely. SCAN avoids this by guaranteeing the head will eventually reach every cylinder."
+          },
+          {
+            "key": "C-SCAN Advantage",
+            "value": "C-SCAN provides more uniform wait times than SCAN. With SCAN, requests at the edges have longer maximum wait times because they are only serviced when the head reverses. C-SCAN treats the disk as circular."
+          },
+          {
+            "key": "SSD Scheduling",
+            "value": "SSDs have no seek time, so traditional disk scheduling provides no benefit. The 'none' scheduler passes requests directly to the device, and the SSD's internal Flash Translation Layer handles its own scheduling across NAND channels."
+          },
+          {
+            "key": "BFQ Scheduler",
+            "value": "Budget Fair Queueing assigns I/O budgets to processes, ensuring interactive applications (like a text editor) get responsive I/O even when a background process (like a backup) is doing heavy sequential reads."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Protection and Security Mechanisms",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Explain access control models: DAC, MAC, RBAC, and capability-based systems",
+        "Understand Unix file permissions, ACLs, and the setuid mechanism",
+        "Analyze common security vulnerabilities: buffer overflows, privilege escalation",
+        "Describe OS security mechanisms: ASLR, DEP, seccomp, namespaces"
+      ],
+      "readings": [
+        "Silberschatz, Ch. 16-17 - Security and Protection",
+        "Anderson, Security Engineering, Ch. 4 (Access Control)",
+        "OSTEP: Security chapter (online supplement)"
+      ],
+      "lecture_notes": {
+        "introduction": "Operating system security is the foundation of all computer security. If the OS is compromised, no application-level security measure can be trusted. Protection mechanisms control which processes can access which resources, enforcing the principle of least privilege. The Unix permission model (user/group/other with rwx bits) is simple and effective for many scenarios, but modern systems need finer-grained control through ACLs, mandatory access controls (SELinux, AppArmor), and capability-based security. Beyond access control, the OS provides defenses against exploitation: Address Space Layout Randomization (ASLR) makes it harder to exploit memory corruption bugs, Data Execution Prevention (DEP/NX) prevents executing data as code, and system call filtering (seccomp) limits which kernel interfaces a process can use. Understanding these mechanisms is essential for both securing systems and understanding how attackers bypass them.",
+        "key_concepts": [
+          "Protection domains: a set of access rights (object, rights) pairs defining what a subject can do",
+          "Discretionary Access Control (DAC): owner controls permissions, Unix rwx model",
+          "Mandatory Access Control (MAC): system policy overrides owner choices, SELinux and AppArmor",
+          "Role-Based Access Control (RBAC): permissions assigned to roles, users assigned to roles",
+          "Unix permissions: 9-bit mode (rwxrwxrwx), setuid/setgid bits for privilege escalation",
+          "Access Control Lists (ACLs): per-file list of (user/group, permissions) pairs beyond owner/group/other",
+          "Buffer overflow attacks: overwrite return address on the stack to redirect execution",
+          "ASLR: randomize the base addresses of stack, heap, libraries, and executable to prevent hardcoded exploit addresses",
+          "DEP/NX bit: mark memory pages as non-executable to prevent code injection via stack or heap",
+          "seccomp-bpf: filter system calls allowed by a process, used by containers and sandboxes (Chrome, Docker)"
+        ],
+        "demonstration": "Demonstrate a classic stack buffer overflow exploit on a program compiled without protections (-fno-stack-protector -z execstack -no-pie). Then recompile with ASLR, DEP, and stack canaries enabled and show how each defense blocks the exploit. Finally, write a seccomp filter that allows only read, write, and exit system calls.",
+        "setup_requirements": [
+          "Linux VM with GCC and GDB",
+          "Deliberately vulnerable C program provided",
+          "ASLR control via /proc/sys/kernel/randomize_va_space",
+          "seccomp-bpf library for filter writing"
+        ],
+        "review": [
+          {
+            "key": "Principle of Least Privilege",
+            "value": "Every process should run with the minimum privileges necessary for its function. A web server does not need root. This limits the damage from exploitation: if a process is compromised, the attacker gains only the privileges that process had."
+          },
+          {
+            "key": "setuid Danger",
+            "value": "A setuid-root binary runs as root regardless of who executes it. If it has a buffer overflow, any user can exploit it for root access. Modern systems minimize setuid binaries and use capabilities (CAP_NET_BIND_SERVICE, CAP_SYS_PTRACE) for fine-grained privilege grants."
+          },
+          {
+            "key": "ASLR Effectiveness",
+            "value": "ASLR provides 28-40 bits of entropy for library addresses on 64-bit systems. An attacker must guess the randomized base address, with ~1 in 2^28 chance per attempt. Information leaks that reveal memory addresses defeat ASLR."
+          },
+          {
+            "key": "Defense in Depth",
+            "value": "No single defense is sufficient: stack canaries catch simple overflows, DEP prevents code injection, ASLR prevents reliable exploitation. Combining them makes exploitation much harder but not impossible for a determined attacker with an information leak."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "Introduction to Distributed Systems",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Identify the fundamental challenges of distributed systems: partial failure, network partitions, clock synchronization",
+        "Understand the CAP theorem and its implications for distributed system design",
+        "Compare distributed consensus algorithms: two-phase commit and Raft",
+        "Analyze Remote Procedure Call (RPC) mechanisms"
+      ],
+      "readings": [
+        "Silberschatz, Ch. 18 - Distributed Systems",
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 8-9",
+        "Lamport, Time, Clocks, and the Ordering of Events in a Distributed System (1978)"
+      ],
+      "lecture_notes": {
+        "introduction": "A distributed system is a collection of independent computers that appears to its users as a single coherent system. Unlike a single-machine OS where failures are total (the whole machine crashes or it does not), distributed systems experience partial failures: some nodes crash while others continue running, network links fail or slow down unpredictably, and there is no shared clock to determine the order of events. These fundamental challenges make distributed systems qualitatively different from single-machine systems. The CAP theorem states that a distributed system can provide at most two of three guarantees: consistency (all nodes see the same data), availability (every request gets a response), and partition tolerance (the system works despite network failures). Since network partitions are unavoidable, real systems must choose between consistency and availability. This lecture introduces these challenges and the protocols designed to address them.",
+        "key_concepts": [
+          "Partial failure: some components fail while others continue, making failure detection unreliable (is the server crashed or just slow?)",
+          "Network partitions: network failures that divide the system into isolated groups of nodes that cannot communicate",
+          "Clock synchronization: no perfect global clock, NTP provides millisecond accuracy, logical clocks (Lamport timestamps) order events without physical time",
+          "CAP theorem: in the presence of a network partition, choose consistency (refuse requests) or availability (serve potentially stale data)",
+          "Two-phase commit (2PC): coordinator asks all participants to prepare, then commit or abort; blocks if coordinator crashes",
+          "Raft consensus: leader-based protocol where a majority must agree on each log entry, leader election handles leader failure",
+          "Remote Procedure Call (RPC): makes calling a function on another machine look like a local function call, hides serialization and network transport",
+          "Idempotency: designing operations so that retrying them is safe (important because network failures cause uncertain delivery)"
+        ],
+        "demonstration": "Simulate a two-phase commit with three processes using message passing. Show the blocking problem when the coordinator crashes after sending prepare but before sending commit. Then compare with a simplified Raft demonstration where a leader crash triggers a new election and the system recovers without blocking.",
+        "setup_requirements": [
+          "Three terminal windows simulating distributed nodes",
+          "Python scripts implementing simplified 2PC and Raft protocols",
+          "Network simulation tool to inject failures and delays"
+        ],
+        "review": [
+          {
+            "key": "CAP Trade-off",
+            "value": "CP systems (HBase, Spanner) refuse requests during partitions to maintain consistency. AP systems (Cassandra, DynamoDB) serve requests during partitions but may return stale data. Most real systems offer tunable consistency levels."
+          },
+          {
+            "key": "Lamport Timestamps",
+            "value": "Each process maintains a counter, incremented on every event. On message send, include the counter. On message receive, set counter to max(local, received) + 1. This creates a partial ordering of events consistent with causality."
+          },
+          {
+            "key": "Two-Phase Commit Problem",
+            "value": "2PC blocks if the coordinator crashes after participants have voted to commit but before the commit message is sent. Participants hold locks indefinitely, waiting for a decision that may never arrive. Three-phase commit (3PC) addresses this but is more complex."
+          },
+          {
+            "key": "RPC Failure Modes",
+            "value": "An RPC can fail in ways a local call cannot: the request may be lost, the server may crash before/during/after processing, the response may be lost. The caller cannot distinguish a slow server from a crashed server, making timeout-based retry with idempotent operations the standard pattern."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "Virtualization and Containers",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Explain the principles of hardware virtualization and the role of hypervisors",
+        "Compare Type 1 (bare-metal) and Type 2 (hosted) hypervisors",
+        "Understand Linux container mechanisms: namespaces, cgroups, and overlay filesystems",
+        "Analyze the trade-offs between VMs and containers for isolation and performance"
+      ],
+      "readings": [
+        "Silberschatz, Ch. 18 - Virtual Machines",
+        "Popek and Goldberg, Formal Requirements for Virtualizable Third Generation Architectures (1974)",
+        "Docker documentation: Understanding Docker internals"
+      ],
+      "lecture_notes": {
+        "introduction": "Virtualization is the technology that allows multiple operating systems to share the same physical hardware simultaneously. A hypervisor intercepts privileged instructions from guest operating systems and emulates them safely, giving each guest the illusion of owning the entire machine. Hardware virtualization extensions (Intel VT-x, AMD-V) make this interception efficient by providing a new CPU privilege level below the kernel. Type 1 hypervisors (VMware ESXi, Xen, KVM) run directly on hardware and are used in data centers. Type 2 hypervisors (VirtualBox, VMware Workstation) run as an application on a host OS and are used for development. Containers take a different approach: instead of virtualizing hardware, they use OS-level features (Linux namespaces and cgroups) to isolate processes within a single kernel. Docker containers share the host kernel, making them much lighter than VMs but providing weaker isolation. Understanding both technologies is essential for modern systems work, as virtually all cloud infrastructure uses virtualization and containers.",
+        "key_concepts": [
+          "Trap-and-emulate virtualization: guest OS runs in user mode, privileged instructions trap to the hypervisor which emulates them",
+          "Hardware-assisted virtualization: Intel VT-x/AMD-V add VMX root and non-root modes, allowing the guest kernel to execute in ring 0 of non-root mode",
+          "Type 1 hypervisor: runs directly on hardware (KVM, Xen, ESXi), minimal overhead, used in production clouds",
+          "Type 2 hypervisor: runs as a process on a host OS (VirtualBox), more overhead, used for development",
+          "Linux namespaces: PID, network, mount, UTS, user, cgroup namespaces isolate different aspects of the system view",
+          "cgroups (control groups): limit and account for CPU, memory, I/O, and network resources per process group",
+          "Overlay filesystem: UnionFS layers a read-write layer on top of read-only image layers, enabling efficient container images",
+          "Container vs VM trade-offs: containers share the kernel (lower overhead, faster startup) but have a larger attack surface; VMs provide hardware-level isolation",
+          "OCI (Open Container Initiative): standard container image format and runtime specification"
+        ],
+        "demonstration": "Create Linux namespaces manually using unshare: create a PID namespace (ps shows only the shell), a mount namespace (mount a tmpfs invisible to the host), and a network namespace (isolated network stack). Then use cgroups to limit a process to 50% CPU and 256MB memory. Compare this manual approach with building a simple Docker container.",
+        "setup_requirements": [
+          "Linux VM with kernel 5.x+ and namespace support",
+          "unshare, nsenter, and ip commands for namespace manipulation",
+          "cgroup v2 filesystem mounted at /sys/fs/cgroup",
+          "Docker installed for comparison demonstration"
+        ],
+        "review": [
+          {
+            "key": "Namespace Isolation",
+            "value": "PID namespace: process sees itself as PID 1 and cannot see host processes. Network namespace: process has its own network interfaces, routing table, and iptables rules. Mount namespace: process has its own filesystem view. Together these create the illusion of a separate machine."
+          },
+          {
+            "key": "cgroup Limits",
+            "value": "cgroups enforce hard limits: memory.max kills processes that exceed the limit (OOM), cpu.max throttles CPU usage to the specified quota per period. Without cgroups, a container could consume all host resources."
+          },
+          {
+            "key": "VM vs Container Performance",
+            "value": "VM overhead: ~2-5% CPU for hypervisor, ~200-500MB memory per VM for the guest kernel. Container overhead: ~1-2% CPU for namespace/cgroup accounting, ~10-50MB per container. Container startup: seconds. VM startup: 30-60 seconds."
+          },
+          {
+            "key": "Container Security",
+            "value": "Containers share the host kernel, so a kernel vulnerability compromises all containers. VM guests have their own kernels and are separated by the hypervisor. For untrusted workloads, use gVisor (user-space kernel) or Kata Containers (lightweight VM per container)."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Course Review and Integration",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Synthesize OS concepts across all topics: processes, memory, files, I/O, security",
+        "Trace a complete request through the OS from user action to hardware and back",
+        "Identify how OS concepts apply to modern systems: cloud computing, containers, mobile",
+        "Prepare for the final examination by reviewing key algorithms and trade-offs"
+      ],
+      "readings": [
+        "Review all assigned textbook chapters",
+        "OSTEP: Final Dialogue",
+        "Class notes and assignments from weeks 1-14"
+      ],
+      "lecture_notes": {
+        "introduction": "This final session integrates all the OS concepts we have studied by tracing a single user action -- opening a web page in a browser -- through every OS subsystem. When you type a URL and press Enter, the keyboard interrupt triggers the I/O subsystem. The browser process is scheduled by the CPU scheduler. It calls socket() and connect() system calls, each requiring a mode switch to kernel space. DNS resolution involves file system access (reading /etc/resolv.conf), network I/O (sending a UDP packet), and process synchronization (blocking the thread until the response arrives). The HTTP request triggers TCP/IP stack processing, DMA transfers for the network card, and interrupt handling for packet arrival. The response data is cached in the page cache (virtual memory), parsed by the renderer thread (multi-threading), and displayed through the GPU driver (I/O management). Every concept we covered -- processes, threads, scheduling, synchronization, memory management, file systems, I/O, security -- is involved in this single everyday operation. This integration demonstrates why operating systems knowledge is foundational to all systems work.",
+        "key_concepts": [
+          "End-to-end trace: keyboard interrupt, process scheduling, system call, file system read, network I/O, DMA, memory mapping, GPU rendering",
+          "Process lifecycle: browser fork/exec at launch, threads for tabs, scheduling for responsiveness, cleanup on exit",
+          "Memory management integration: code pages shared via COW, heap allocation for DOM, page cache for network data, ASLR for security",
+          "File system integration: reading configuration files, cookie storage, download management, temporary file cleanup",
+          "I/O integration: keyboard input (character device), network packets (DMA + interrupts), display output (GPU driver)",
+          "Security integration: process isolation protects tabs, ASLR prevents exploits, seccomp limits renderer, TLS encrypts network data",
+          "Scheduling integration: browser UI thread gets high priority for responsiveness, background tabs get lower priority",
+          "Modern OS challenges: energy-efficient scheduling for mobile, container orchestration for cloud, real-time scheduling for autonomous systems"
+        ],
+        "demonstration": "Live trace of a web page load using strace (system calls), perf (CPU scheduling events), /proc/pid/maps (memory layout), and Wireshark (network I/O). Map each observed event to the OS concept it represents, creating a complete picture of how the OS serves a single user request.",
+        "setup_requirements": [
+          "Linux system with Firefox or Chrome installed",
+          "strace, perf, and Wireshark for multi-level tracing",
+          "Review notes from all previous sessions"
+        ],
+        "review": [
+          {
+            "key": "OS as Integration",
+            "value": "The operating system is not a collection of independent subsystems. Every user action triggers a cascade through scheduling, memory management, file systems, I/O, and security. Understanding each subsystem in isolation is necessary but not sufficient; understanding their interactions is what makes an OS expert."
+          },
+          {
+            "key": "Performance Hierarchy",
+            "value": "Register access: <1ns. L1 cache: 1ns. L2 cache: 5ns. L3 cache: 10ns. Main memory: 50-100ns. SSD: 25-100 microseconds. HDD: 5-15 milliseconds. Network (same datacenter): 0.5ms. Network (cross-country): 50-100ms. Every OS optimization works by keeping data as high in this hierarchy as possible."
+          },
+          {
+            "key": "Modern Relevance",
+            "value": "OS concepts are more relevant than ever: container orchestration is process and resource management at scale, cloud computing is virtualization at global scale, mobile OS power management directly impacts battery life, and autonomous systems demand real-time scheduling guarantees."
+          },
+          {
+            "key": "Future Directions",
+            "value": "Persistent memory (Intel Optane) blurs the line between memory and storage. RISC-V enables custom hardware-software co-design. Unikernels compile application and OS into a single address space for cloud microservices. Rust-based OS kernels (Redox) promise memory safety without garbage collection."
           }
         ]
       }
@@ -219,171 +840,557 @@
     "quizzes": [
       {
         "quiz": 1,
-        "week": 2,
-        "topic": "Processes, Threads, and Synchronization",
-        "duration": "20 minutes",
+        "week": 3,
+        "topic": "Processes, Threads, and CPU Scheduling",
+        "duration": "25 minutes",
         "questions": [
           {
-            "question": "A program creates 3 threads that each increment a shared counter 1,000,000 times. Without synchronization, what is the likely result and why?",
+            "question": "A program creates 3 threads that each increment a shared counter 1,000,000 times. Without synchronization, what is the likely result and why? Include a specific interleaving example showing how an increment is lost.",
             "type": "short_answer",
-            "points": 10,
-            "answer": "The final counter value will be less than 3,000,000 and non-deterministic. Incrementing a counter is not atomic: it involves load, add, and store. When two threads load the same value before either stores, one increment is lost. The severity depends on thread scheduling interleaving.",
+            "points": 8,
+            "answer": "The final counter value will be less than 3,000,000 and non-deterministic. Incrementing a counter involves three steps: (1) load counter value from memory into register, (2) add 1, (3) store back to memory. When Thread A loads value 100 and Thread B loads value 100 before either stores, both compute 101 and store 101. One increment is lost. With 3 threads doing 1M increments each, tens of thousands to hundreds of thousands of increments will typically be lost, depending on scheduling interleaving.",
             "rubric": [
               {
                 "key": "States result will be less than 3,000,000",
-                "value": 3
+                "value": 2
               },
               {
                 "key": "Explains increment is not atomic (load-add-store)",
-                "value": 4
+                "value": 3
               },
               {
-                "key": "Explains lost update from interleaving",
+                "key": "Provides specific interleaving example showing lost update",
                 "value": 3
               }
             ]
           },
           {
-            "question": "Write pseudocode for a producer-consumer solution using a mutex and two semaphores (empty and full) for a bounded buffer of size N.",
-            "type": "code",
-            "points": 10,
-            "answer": "Initialization: mutex = 1, empty = N, full = 0\n\nProducer:\n  while true:\n    item = produce()\n    sem_wait(empty)\n    mutex_lock(mutex)\n    buffer.add(item)\n    mutex_unlock(mutex)\n    sem_post(full)\n\nConsumer:\n  while true:\n    sem_wait(full)\n    mutex_lock(mutex)\n    item = buffer.remove()\n    mutex_unlock(mutex)\n    sem_post(empty)\n    consume(item)",
+            "question": "Given processes P1(arrival=0, burst=8), P2(arrival=1, burst=4), P3(arrival=2, burst=2), P4(arrival=3, burst=1), calculate the average waiting time for Shortest Remaining Time First (SRTF) scheduling. Show all preemption decisions and a Gantt chart.",
+            "type": "calculation",
+            "points": 8,
+            "answer": "Execution order with SRTF:\nt=0: P1 starts (remaining=8)\nt=1: P2 arrives (remaining=4 < P1 remaining 7), preempt P1, run P2\nt=2: P3 arrives (remaining=2 < P2 remaining 3), preempt P2, run P3\nt=3: P4 arrives (remaining=1 < P3 remaining 1, tie goes to new), P3 finishes at t=4\nt=4: P4 runs (remaining=1), finishes at t=5\nt=5: P2 resumes (remaining=3), finishes at t=8\nt=8: P1 resumes (remaining=7), finishes at t=15\n\nGantt: |P1(0-1)|P2(1-2)|P3(2-4)|P4(4-5)|P2(5-8)|P1(8-15)|\n\nWaiting times: P1 = 15-0-8 = 7, P2 = 8-1-4 = 3, P3 = 4-2-2 = 0, P4 = 5-3-1 = 1\nAverage = (7+3+0+1)/4 = 2.75",
             "rubric": [
               {
-                "key": "Correct semaphore initialization (empty=N, full=0)",
+                "key": "Correct preemption decisions at each arrival",
                 "value": 3
               },
               {
-                "key": "Correct ordering: semaphore wait before mutex lock",
-                "value": 4
+                "key": "Correct Gantt chart with completion times",
+                "value": 3
               },
               {
-                "key": "Both producer and consumer correctly symmetric",
+                "key": "Correct average waiting time calculation (2.75)",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Write pseudocode for a producer-consumer solution using a mutex and two semaphores (empty and full) for a bounded buffer of size N. Explain why the semaphore wait must come before the mutex lock.",
+            "type": "code",
+            "points": 8,
+            "answer": "Initialization: mutex = 1, empty = N, full = 0\n\nProducer:\n  while true:\n    item = produce()\n    sem_wait(empty)      // block if buffer full\n    mutex_lock(mutex)    // enter critical section\n    buffer.add(item)\n    mutex_unlock(mutex)  // leave critical section\n    sem_post(full)       // signal consumer\n\nConsumer:\n  while true:\n    sem_wait(full)       // block if buffer empty\n    mutex_lock(mutex)    // enter critical section\n    item = buffer.remove()\n    mutex_unlock(mutex)  // leave critical section\n    sem_post(empty)      // signal producer\n    consume(item)\n\nThe semaphore wait must come BEFORE the mutex lock because if we lock the mutex first and then wait on the semaphore (buffer full/empty), we block while holding the mutex. The other thread cannot acquire the mutex to post the semaphore, causing deadlock.",
+            "rubric": [
+              {
+                "key": "Correct semaphore initialization (empty=N, full=0)",
+                "value": 2
+              },
+              {
+                "key": "Correct ordering: semaphore wait before mutex lock",
+                "value": 3
+              },
+              {
+                "key": "Explains deadlock if ordering is reversed",
                 "value": 3
               }
             ]
           }
         ],
-        "total_points": 20
+        "total_points": 24
       },
       {
         "quiz": 2,
-        "week": 4,
-        "topic": "Scheduling and Memory Management",
+        "week": 5,
+        "topic": "Deadlocks and Memory Management",
         "duration": "25 minutes",
         "questions": [
           {
-            "question": "Given these processes with arrival time and burst time: P1(0,8), P2(1,4), P3(2,2), P4(3,1), calculate the average waiting time for Shortest Remaining Time First scheduling.",
+            "question": "Given the following system state with 3 resource types (A=10, B=5, C=7 total), determine if it is safe using the Banker's algorithm. Available: A=3, B=3, C=2. Allocation matrix: P0(0,1,0), P1(2,0,0), P2(3,0,2), P3(2,1,1), P4(0,0,2). Max matrix: P0(7,5,3), P1(3,2,2), P2(9,0,2), P3(2,2,2), P4(4,3,3).",
             "type": "calculation",
-            "points": 15,
-            "answer": "Execution order with SRTF:\nt=0: P1 starts (remaining=8)\nt=1: P2 arrives (remaining=4 < P1 remaining 7), preempt, run P2\nt=2: P3 arrives (remaining=2 < P2 remaining 3), preempt, run P3\nt=3: P4 arrives (remaining=1 < P2 remaining 3), P3 done at t=4\nt=4: P4 runs (remaining=1), finishes t=5\nt=5: P2 resumes (remaining=3), finishes t=8\nt=8: P1 resumes (remaining=7), finishes t=15\n\nWaiting times: P1=15-0-8=7, P2=8-1-4=3, P3=4-2-2=0, P4=5-3-1=1\nAverage = (7+3+0+1)/4 = 2.75",
+            "points": 8,
+            "answer": "Need matrix = Max - Allocation:\nP0(7,4,3), P1(1,2,2), P2(6,0,0), P3(0,1,1), P4(4,3,1)\n\nAvailable = (3,3,2)\n\nStep 1: P1 Need(1,2,2) <= Available(3,3,2)? Yes. Complete P1, Available = (3,3,2)+(2,0,0) = (5,3,2)\nStep 2: P3 Need(0,1,1) <= Available(5,3,2)? Yes. Complete P3, Available = (5,3,2)+(2,1,1) = (7,4,3)\nStep 3: P4 Need(4,3,1) <= Available(7,4,3)? Yes. Complete P4, Available = (7,4,3)+(0,0,2) = (7,4,5)\nStep 4: P0 Need(7,4,3) <= Available(7,4,5)? Yes. Complete P0, Available = (7,4,5)+(0,1,0) = (7,5,5)\nStep 5: P2 Need(6,0,0) <= Available(7,5,5)? Yes. Complete P2.\n\nSafe sequence: <P1, P3, P4, P0, P2>. The state IS safe.",
             "rubric": [
               {
-                "key": "Correct preemption decisions at each arrival",
-                "value": 5
+                "key": "Correct Need matrix computation",
+                "value": 2
               },
               {
-                "key": "Correct completion times for all processes",
-                "value": 5
+                "key": "Correct safe sequence identification",
+                "value": 4
               },
               {
-                "key": "Correct average waiting time calculation",
-                "value": 5
+                "key": "Correct conclusion that state is safe",
+                "value": 2
               }
             ]
           },
           {
-            "question": "Given the reference string 1,2,3,4,1,2,5,1,2,3,4,5 and 3 physical frames, calculate the number of page faults using LRU replacement.",
-            "type": "calculation",
-            "points": 10,
-            "answer": "LRU trace with 3 frames:\n1: [1] miss (1)\n2: [1,2] miss (2)\n3: [1,2,3] miss (3)\n4: [2,3,4] miss, evict 1 LRU (4)\n1: [3,4,1] miss, evict 2 LRU (5)\n2: [4,1,2] miss, evict 3 LRU (6)\n5: [1,2,5] miss, evict 4 LRU (7)\n1: [2,5,1] hit\n2: [5,1,2] hit\n3: [1,2,3] miss, evict 5 LRU (8)\n4: [2,3,4] miss, evict 1 LRU (9)\n5: [3,4,5] miss, evict 2 LRU (10)\n\nTotal page faults: 10",
+            "question": "Explain the four Coffman conditions for deadlock. For each condition, provide one practical technique used in real systems (not just theoretical) to break that condition and prevent deadlock.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "(1) Mutual Exclusion: A resource can be held by only one process at a time. Break it by using lock-free data structures (e.g., concurrent hash maps using CAS operations) or spooling (print jobs go to a queue, not directly to the printer). (2) Hold and Wait: A process holding resources can request additional ones. Break it by requiring all resources be requested atomically at once (e.g., databases acquire all locks before starting a transaction in some protocols). (3) No Preemption: Resources cannot be forcibly taken from a process. Break it by allowing resource preemption (e.g., PostgreSQL kills the youngest transaction in a deadlock cycle, releasing its locks). (4) Circular Wait: A cycle exists in the resource wait graph. Break it by imposing a total ordering on resources (e.g., always acquire the mutex with the lower address first, as done in the Linux kernel's nested lock ordering rules).",
             "rubric": [
               {
-                "key": "Correct LRU eviction decisions",
-                "value": 5
-              },
-              {
-                "key": "Correct hit and miss identification",
+                "key": "All four conditions correctly stated",
                 "value": 3
               },
               {
-                "key": "Correct total page fault count",
+                "key": "Four real-world prevention techniques, one per condition",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "A system uses contiguous memory allocation with first-fit. Memory (100 units) has these holes: [10-30], [50-55], [70-90]. Processes arrive requesting 15, 8, and 5 units. Show the allocation for each and calculate remaining external fragmentation.",
+            "type": "calculation",
+            "points": 7,
+            "answer": "Holes: [10-30] = 20 units, [50-55] = 5 units, [70-90] = 20 units. Total free = 45.\n\nProcess 1 (15 units): First-fit scans from low address. [10-30] has 20 >= 15. Allocate [10-25]. Remaining hole: [25-30] = 5 units.\nProcess 2 (8 units): First-fit scans. [25-30] has 5 < 8, skip. [50-55] has 5 < 8, skip. [70-90] has 20 >= 8. Allocate [70-78]. Remaining hole: [78-90] = 12 units.\nProcess 3 (5 units): First-fit scans. [25-30] has 5 >= 5. Allocate [25-30]. Hole consumed.\n\nRemaining holes: [50-55] = 5 units, [78-90] = 12 units.\nTotal external fragmentation = 5 + 12 = 17 units. Allocated = 15 + 8 + 5 = 28 units. Efficiency = 28/45 = 62%.",
+            "rubric": [
+              {
+                "key": "Correct first-fit allocation for each process",
+                "value": 3
+              },
+              {
+                "key": "Correct remaining holes after allocation",
+                "value": 2
+              },
+              {
+                "key": "Correct fragmentation calculation",
                 "value": 2
               }
             ]
           }
         ],
-        "total_points": 25
+        "total_points": 22
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "Virtual Memory and Page Replacement",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Given the reference string 1,2,3,4,1,2,5,1,2,3,4,5 and 3 physical frames, calculate the number of page faults using both FIFO and LRU replacement. Show the frame contents after each reference.",
+            "type": "calculation",
+            "points": 10,
+            "answer": "FIFO with 3 frames:\n1: [1,-,-] fault (1)\n2: [1,2,-] fault (2)\n3: [1,2,3] fault (3)\n4: [4,2,3] fault, evict 1 oldest (4)\n1: [4,1,3] fault, evict 2 oldest (5)\n2: [4,1,2] fault, evict 3 oldest (6)\n5: [5,1,2] fault, evict 4 oldest (7)\n1: [5,1,2] hit\n2: [5,1,2] hit\n3: [3,1,2] fault, evict 5 oldest (8) -- Wait, FIFO evicts the page that was loaded earliest.\nCorrect FIFO trace:\n1:[1] F(1) 2:[1,2] F(2) 3:[1,2,3] F(3) 4:[4,2,3] F(4,evict 1) 1:[4,1,3] F(5,evict 2) 2:[4,1,2] F(6,evict 3) 5:[5,1,2] F(7,evict 4) 1:[5,1,2] H 2:[5,1,2] H 3:[5,3,2] F(8,evict 1) 4:[5,3,4] F(9,evict 2) 5:[5,3,4] H\nFIFO total: 9 page faults\n\nLRU with 3 frames:\n1:[1] F(1) 2:[1,2] F(2) 3:[1,2,3] F(3) 4:[2,3,4] F(4,evict 1 LRU) 1:[3,4,1] F(5,evict 2 LRU) 2:[4,1,2] F(6,evict 3 LRU) 5:[1,2,5] F(7,evict 4 LRU) 1:[2,5,1] H 2:[5,1,2] H 3:[1,2,3] F(8,evict 5 LRU) 4:[2,3,4] F(9,evict 1 LRU) 5:[3,4,5] F(10,evict 2 LRU)\nLRU total: 10 page faults",
+            "rubric": [
+              {
+                "key": "Correct FIFO trace with 9 faults",
+                "value": 4
+              },
+              {
+                "key": "Correct LRU trace with 10 faults",
+                "value": 4
+              },
+              {
+                "key": "Frame contents shown correctly for each step",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain why FIFO can exhibit Belady's anomaly but LRU cannot. What property of LRU makes it immune?",
+            "type": "short_answer",
+            "points": 6,
+            "answer": "Belady's anomaly occurs when increasing the number of frames increases page faults. LRU is immune because it is a stack algorithm: the set of pages in memory with n frames is always a subset of the pages in memory with n+1 frames. This is because LRU evicts the least recently used page, and the most recently used n pages are a subset of the most recently used n+1 pages. FIFO is not a stack algorithm because its eviction decision is based on insertion order, not usage. A page that has been in memory longest may still be frequently used; evicting it increases faults, and adding frames changes which page is oldest, leading to non-subset behavior.",
+            "rubric": [
+              {
+                "key": "Correctly defines Belady's anomaly",
+                "value": 2
+              },
+              {
+                "key": "Explains LRU is a stack algorithm with subset property",
+                "value": 2
+              },
+              {
+                "key": "Explains why FIFO is not a stack algorithm",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A system with 4KB pages uses a two-level page table. Virtual addresses are 32 bits with a 10-bit first-level index, 10-bit second-level index, and 12-bit offset. How many bytes of page table memory are needed for a process that uses only 4MB of its address space?",
+            "type": "calculation",
+            "points": 6,
+            "answer": "Page size = 4KB = 2^12 bytes. Each page table entry = 4 bytes (32-bit system).\nFirst-level table: 2^10 entries * 4 bytes = 4KB (always fully allocated).\n4MB of address space = 4MB / 4KB = 1024 pages.\nSecond-level tables: each has 2^10 entries covering 2^10 * 4KB = 4MB.\nSo 1024 pages fit in exactly 1 second-level table.\nSecond-level table size: 2^10 entries * 4 bytes = 4KB.\nTotal = 4KB (first-level) + 4KB (one second-level) = 8KB.\nWith a flat page table: 2^20 entries * 4 bytes = 4MB. The two-level approach saves 4MB - 8KB = ~4MB for this sparse usage pattern.",
+            "rubric": [
+              {
+                "key": "Correct first-level table size (4KB)",
+                "value": 2
+              },
+              {
+                "key": "Correct number of second-level tables needed (1)",
+                "value": 2
+              },
+              {
+                "key": "Correct total and comparison with flat page table",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 22
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "File Systems, I/O, and Disk Scheduling",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Trace the path of reading file /home/user/data.txt on ext4 from the root directory to the file's data blocks. Describe each step including inode lookups, directory entries, and extent tree traversal.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Step 1: Read the root inode (inode 2, always at a fixed location in the first block group). Step 2: Read root directory data blocks. Search the HTree for entry 'home'. Find the inode number for /home. Step 3: Read /home's inode from the inode table (inode number maps to block group and offset within its inode table). Step 4: Read /home directory data blocks. Search for entry 'user'. Find the inode number for /home/user. Step 5: Read /home/user's inode. Step 6: Read /home/user directory data. Search for 'data.txt'. Find its inode number. Step 7: Read data.txt's inode. Extract the extent tree from the inode. Step 8: The extent tree root (in the inode) contains extent entries: each is (logical_block, physical_start, length). For a small file, the extents fit in the inode. For a large file, the tree has intermediate nodes pointing to extent leaf blocks. Step 9: Read the physical blocks identified by the extents. The page cache is checked at each step; cached blocks skip disk I/O.",
+            "rubric": [
+              {
+                "key": "Correct root inode lookup (inode 2)",
+                "value": 2
+              },
+              {
+                "key": "Correct directory traversal through each path component",
+                "value": 3
+              },
+              {
+                "key": "Correct extent tree traversal for data blocks",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "A disk with 200 cylinders has the head at cylinder 53 moving toward cylinder 0. Request queue: [98, 183, 37, 122, 14, 124, 65, 67]. Calculate total head movement for SCAN and C-LOOK algorithms.",
+            "type": "calculation",
+            "points": 7,
+            "answer": "SCAN (moving toward 0):\nService order: 37, 14, 0 (go to edge), 65, 67, 98, 122, 124, 183\nHead movement: (53-37) + (37-14) + (14-0) + (0-65) + (65-67) + (67-98) + (98-122) + (122-124) + (124-183)\n= 16 + 23 + 14 + 65 + 2 + 31 + 24 + 2 + 59 = 236 cylinders\n\nC-LOOK (moving toward 0, then jump to highest):\nService order: 37, 14 (lowest request), jump to 183, 124, 122, 98, 67, 65\nWait - C-LOOK services in one direction, jumps to farthest in that direction:\nDirection toward 0: 37, 14 (no more requests below). Jump to 183.\nThen continue toward 0: 124, 122, 98, 67, 65.\nHead movement: (53-37) + (37-14) + jump(14 to 183) + (183-124) + (124-122) + (122-98) + (98-67) + (67-65)\n= 16 + 23 + 169 + 59 + 2 + 24 + 31 + 2 = 326 cylinders",
+            "rubric": [
+              {
+                "key": "Correct SCAN service order and total (236)",
+                "value": 4
+              },
+              {
+                "key": "Correct C-LOOK service order and total",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain how ext4 journaling in ordered mode handles a crash that occurs while writing a new file. What data is consistent and what might be lost?",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "In ordered mode, ext4 writes data blocks to their final locations BEFORE writing the corresponding metadata journal entry. The sequence is: (1) Write file data blocks to disk. (2) Write metadata changes (inode, directory entry, block bitmap) to the journal. (3) Mark the journal transaction as committed. (4) Apply journal entries to their final metadata locations (checkpoint). If crash occurs during step 1: data blocks partially written, but no metadata was journaled, so the file does not exist after recovery. No inconsistency, but the data is lost. If crash during step 2: some journal entries written. On recovery, the uncommitted transaction is discarded. File data blocks are on disk but unreferenced (will be reclaimed by fsck or marked as free). If crash during step 4: on recovery, the committed journal transaction is replayed, applying all metadata changes atomically. The file system is consistent. Key guarantee: you never see a file pointing to garbage data blocks, because data is written before metadata is committed.",
+            "rubric": [
+              {
+                "key": "Correct write ordering in ordered mode",
+                "value": 3
+              },
+              {
+                "key": "Correct crash recovery for each failure point",
+                "value": 2
+              },
+              {
+                "key": "Explains the consistency guarantee",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 22
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "Security, Distributed Systems, and Virtualization",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "A Docker container running a web server has been compromised. Explain the three Linux kernel mechanisms that limit the attacker's ability to affect the host system and other containers. For each mechanism, describe what it prevents and one way it could be bypassed.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "(1) Namespaces: PID namespace prevents the attacker from seeing or signaling host processes. Mount namespace hides the host filesystem. Network namespace isolates network interfaces. Bypass: kernel vulnerabilities can escape namespaces (e.g., CVE-2022-0185 allowed namespace escape via file system context). (2) cgroups: Limit CPU, memory, and I/O the compromised container can consume, preventing denial-of-service against the host and other containers. Bypass: cgroup limits can be modified if the attacker gains CAP_SYS_ADMIN capability, or bugs in the cgroup implementation can allow escape. (3) seccomp-bpf: Restricts which system calls the container can make, reducing the kernel attack surface. Docker's default seccomp profile blocks ~44 dangerous syscalls. Bypass: allowed syscalls may have exploitable vulnerabilities, or the profile may be too permissive (running with --privileged disables seccomp entirely).",
+            "rubric": [
+              {
+                "key": "Correctly explains all three mechanisms",
+                "value": 3
+              },
+              {
+                "key": "Describes what each prevents",
+                "value": 3
+              },
+              {
+                "key": "Provides realistic bypass for each",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "In a Raft consensus cluster with 5 nodes, the leader (node A) crashes after replicating a log entry to nodes B and C but before nodes D and E receive it. Describe what happens next, including leader election and whether the entry is committed.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "After A crashes, nodes B, C, D, and E stop receiving heartbeats. Their election timers expire (randomized to prevent split votes). One node, say B, increments its term and sends RequestVote RPCs. B has the log entry, so it has the most up-to-date log. Nodes C, D, E compare B's log with their own. C has the entry and votes for B. D and E do not have the entry, but B's log is at least as up-to-date as theirs, so they also vote for B. B wins with 4 votes (itself + C, D, E) out of 5. B becomes the new leader. The entry was replicated to A, B, and C (3 out of 5 = majority), so it IS committed. When B becomes leader, it will replicate the entry to D and E through normal AppendEntries RPCs, bringing all alive nodes into agreement.",
+            "rubric": [
+              {
+                "key": "Correct leader election process",
+                "value": 3
+              },
+              {
+                "key": "Correctly determines the entry is committed (3/5 majority)",
+                "value": 2
+              },
+              {
+                "key": "Explains how new leader replicates to remaining nodes",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Compare ASLR with DEP/NX as exploit mitigations. For each, explain what class of attacks it prevents and what class of attacks it does NOT prevent. Then describe a combined attack that bypasses both.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "ASLR: Randomizes base addresses of stack, heap, libraries, and executable. Prevents attacks that rely on known memory addresses (hardcoded return addresses, ROP gadget addresses). Does NOT prevent attacks that can leak memory addresses (format string bugs, information disclosure vulnerabilities). DEP/NX: Marks stack and heap pages as non-executable. Prevents code injection attacks (classic shellcode on the stack or heap). Does NOT prevent code reuse attacks that execute existing code at existing addresses. Combined bypass: Return-Oriented Programming (ROP) with information leak. (1) Use an information disclosure vulnerability to leak a libc address, defeating ASLR. (2) Calculate the base address of libc from the leaked address. (3) Chain existing code snippets (gadgets) ending in 'ret' within libc to perform arbitrary computation, defeating DEP because no injected code is executed. This is why modern defenses also include Control Flow Integrity (CFI) to restrict valid call/return targets.",
+            "rubric": [
+              {
+                "key": "Correct attack classes prevented/not prevented for each",
+                "value": 3
+              },
+              {
+                "key": "Correctly describes ROP with information leak",
+                "value": 2
+              },
+              {
+                "key": "Mentions CFI or similar advanced defense",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 22
       }
     ],
     "major_assignments": [
       {
         "assignment": 1,
-        "title": "Multi-threaded Web Server",
+        "title": "Multi-threaded Web Server with Thread Pool",
         "week_assigned": 3,
-        "week_due": 5,
-        "points": 100,
-        "description": "Build a multi-threaded HTTP server in C that handles concurrent client connections using a thread pool. Implement proper synchronization for shared data structures, handle signals gracefully, and include performance benchmarking.",
+        "week_due": 6,
+        "points": 150,
+        "description": "Build a multi-threaded HTTP/1.1 server in C that handles concurrent client connections using a thread pool with work queue. Implement proper synchronization for all shared data structures, handle edge cases robustly, measure performance under load, and document the design.",
         "objectives": [
           "Apply process and thread concepts to build a concurrent network server",
           "Implement a thread pool with work queue using mutexes and condition variables",
-          "Handle edge cases: connection timeouts, malformed requests, graceful shutdown",
-          "Benchmark throughput under varying concurrency levels"
+          "Handle edge cases: connection timeouts, malformed requests, graceful shutdown via signal handler",
+          "Benchmark throughput under varying concurrency with wrk or ab"
         ],
         "requirements": {},
         "deliverables": [
-          "C source code for the multi-threaded web server",
-          "Makefile with build, test, and clean targets",
-          "Performance benchmark results at 1, 10, 50, and 100 concurrent connections",
-          "Design document (2-3 pages) explaining thread pool architecture and synchronization"
+          "C source code for the multi-threaded web server with complete Makefile",
+          "Thread pool implementation using mutex and condition variable for the work queue",
+          "Signal handler for graceful shutdown (SIGINT/SIGTERM drain queue then exit)",
+          "Performance benchmark results at 1, 10, 50, and 100 concurrent connections using wrk",
+          "Design document (3-4 pages) explaining thread pool architecture, synchronization strategy, and benchmark analysis"
         ],
         "grading_rubric": {
           "correctness": {
-            "points": 35,
+            "points": 50,
             "criteria": [
-              "Server correctly serves static files over HTTP 1.1",
+              "Server correctly serves static files over HTTP/1.1 with proper headers",
               "Multiple clients can connect and be served concurrently",
-              "Thread pool distributes work across worker threads",
-              "No race conditions or memory leaks verified with sanitizer and valgrind"
+              "Thread pool distributes work across configurable number of worker threads",
+              "No race conditions or memory leaks verified with -fsanitize=thread and valgrind"
             ]
           },
           "synchronization": {
-            "points": 30,
+            "points": 40,
             "criteria": [
-              "Work queue uses mutex and condition variable correctly",
-              "No deadlocks under any tested workload",
-              "Graceful shutdown: signal handler sets flag, workers drain queue and exit",
-              "Shared statistics such as request count and bytes served are synchronized"
+              "Work queue uses mutex and condition variable correctly (no busy waiting)",
+              "No deadlocks under any tested workload including graceful shutdown",
+              "Graceful shutdown: signal handler sets flag, workers drain queue and exit cleanly",
+              "Shared statistics (request count, bytes served, active connections) are properly synchronized"
             ]
           },
           "robustness": {
-            "points": 20,
+            "points": 30,
             "criteria": [
-              "Malformed HTTP requests return appropriate error codes",
-              "Connection timeouts are handled without blocking the thread pool",
-              "Server recovers from individual connection failures",
-              "Resource limits for max connections and max file size are enforced"
+              "Malformed HTTP requests return appropriate 400/404/405 error codes",
+              "Connection timeouts handled without blocking the thread pool (select/poll with timeout)",
+              "Server recovers from individual connection failures without crashing",
+              "Resource limits: max connections, max request size, and file size enforced"
             ]
           },
           "documentation": {
-            "points": 15,
+            "points": 30,
             "criteria": [
-              "Design document explains architecture and synchronization strategy",
-              "Benchmark methodology is described and results are analyzed",
-              "Code is well-commented with clear function documentation",
-              "Makefile is complete and functional"
+              "Design document explains architecture with clear diagrams",
+              "Synchronization strategy documented with correctness argument",
+              "Benchmark methodology described with analysis of results and bottlenecks",
+              "Code is well-commented with clear function-level documentation"
             ]
           }
         },
         "rubric": [
           {
             "attributes": {
-              "points": 100,
+              "points": 150,
               "criteria": [
-                "Correct multi-threaded HTTP server with thread pool",
-                "Race-condition-free synchronization verified by sanitizer",
-                "Robust error handling for network and protocol edge cases",
-                "Clear documentation with performance benchmark analysis"
+                "Correct multi-threaded HTTP server with thread pool (50 pts)",
+                "Race-condition-free synchronization verified by sanitizer (40 pts)",
+                "Robust error handling for network and protocol edge cases (30 pts)",
+                "Clear documentation with performance benchmark analysis (30 pts)"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Virtual Memory Simulator",
+        "week_assigned": 7,
+        "week_due": 10,
+        "points": 150,
+        "description": "Implement a virtual memory simulator that models address translation through multi-level page tables, implements multiple page replacement algorithms (FIFO, LRU, Clock, Enhanced Clock), and collects performance statistics. The simulator reads memory access traces and reports page fault rates, TLB hit rates, and dirty page write-backs.",
+        "objectives": [
+          "Implement a two-level page table with valid, dirty, and reference bits",
+          "Implement four page replacement algorithms and compare their performance",
+          "Simulate a TLB with configurable size and measure hit rates",
+          "Analyze performance on real workload traces"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "C or Python source code for the virtual memory simulator",
+          "Support for configurable page size, frame count, TLB size, and replacement algorithm",
+          "Performance report comparing all four algorithms on at least three different trace files",
+          "Analysis of TLB size impact on effective memory access time",
+          "Verification that FIFO exhibits Belady's anomaly on the provided test case"
+        ],
+        "grading_rubric": {
+          "page_table_implementation": {
+            "points": 40,
+            "criteria": [
+              "Two-level page table correctly translates virtual to physical addresses",
+              "Valid, dirty, and reference bits maintained correctly on every access",
+              "Page fault triggers correct allocation, eviction if needed, and page table update",
+              "TLB lookup before page table walk, TLB update on miss"
+            ]
+          },
+          "replacement_algorithms": {
+            "points": 50,
+            "criteria": [
+              "FIFO correctly evicts the oldest page",
+              "LRU correctly tracks recency and evicts the least recently used page",
+              "Clock algorithm correctly uses reference bit with circular scanning",
+              "Enhanced Clock correctly uses both reference and dirty bits for 4-class priority"
+            ]
+          },
+          "analysis": {
+            "points": 35,
+            "criteria": [
+              "Performance comparison with clear metrics and graphs",
+              "Belady's anomaly demonstrated with FIFO",
+              "TLB size analysis with effective access time calculation",
+              "Insights about workload characteristics and algorithm suitability"
+            ]
+          },
+          "code_quality": {
+            "points": 25,
+            "criteria": [
+              "Clean, modular code with separate modules for page table, TLB, and algorithms",
+              "Comprehensive test cases including edge cases (empty frames, all frames dirty)",
+              "Command-line interface for all configurable parameters",
+              "Well-documented code and README"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Correct page table and TLB implementation (40 pts)",
+                "Four correct replacement algorithms (50 pts)",
+                "Thorough performance analysis with insights (35 pts)",
+                "Clean modular code with tests (25 pts)"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Simple File System Implementation",
+        "week_assigned": 10,
+        "week_due": 13,
+        "points": 150,
+        "description": "Implement a simplified file system (SimpleFS) that operates on a virtual disk (a regular file). Implement inode-based file storage, directory support, journaling for crash consistency, and a FUSE interface so the file system can be mounted and used with standard Unix commands.",
+        "objectives": [
+          "Implement inode-based file storage with direct and indirect block pointers",
+          "Implement directory operations: create, list, remove files and subdirectories",
+          "Implement write-ahead journaling for metadata crash consistency",
+          "Mount the file system via FUSE so standard Unix tools (ls, cat, cp) work"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "C source code implementing SimpleFS with Makefile",
+          "Virtual disk format: superblock, inode table, data bitmap, journal area, data blocks",
+          "FUSE interface supporting: open, read, write, create, unlink, mkdir, rmdir, readdir, getattr",
+          "Journal implementation that survives simulated crashes (kill -9 during write)",
+          "Test suite demonstrating correct operation and crash recovery"
+        ],
+        "grading_rubric": {
+          "file_operations": {
+            "points": 45,
+            "criteria": [
+              "Create, read, write, and delete files correctly",
+              "Direct and single-indirect block pointers support files up to ~4MB",
+              "File metadata (size, timestamps, permissions) tracked in inodes",
+              "Block bitmap correctly tracks free/allocated blocks"
+            ]
+          },
+          "directory_support": {
+            "points": 30,
+            "criteria": [
+              "mkdir and rmdir work correctly including . and .. entries",
+              "readdir lists all entries in a directory",
+              "Path resolution traverses directories correctly",
+              "Cannot remove non-empty directories"
+            ]
+          },
+          "journaling": {
+            "points": 40,
+            "criteria": [
+              "Write-ahead journal records metadata changes before applying",
+              "Journal replay on mount recovers from simulated crashes",
+              "Committed transactions applied, uncommitted transactions discarded",
+              "Demonstrated with kill -9 test showing consistency after recovery"
+            ]
+          },
+          "fuse_integration": {
+            "points": 35,
+            "criteria": [
+              "File system can be mounted and used with standard Unix commands",
+              "ls, cat, cp, rm, mkdir work correctly on mounted filesystem",
+              "Unmount is clean with all data flushed",
+              "Error codes (ENOENT, EEXIST, ENOTDIR, ENOTEMPTY) returned correctly"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Correct inode-based file operations (45 pts)",
+                "Working directory support (30 pts)",
+                "Crash-consistent journaling (40 pts)",
+                "FUSE mount with standard Unix tool compatibility (35 pts)"
               ]
             }
           }
@@ -393,31 +1400,31 @@
   },
   "grading_breakdown": {
     "weekly_quizzes": {
-      "percentage": 15,
-      "description": "Regular assessment of OS concepts and calculations"
+      "percentage": 20,
+      "description": "Five quizzes (weeks 3, 5, 8, 11, 14) testing OS concepts, algorithms, and calculations"
     },
     "lab_assignments": {
-      "percentage": 25,
-      "description": "Systems programming labs in C with pthreads and system calls"
+      "percentage": 15,
+      "description": "Weekly hands-on labs in C with pthreads, system calls, and kernel modules"
     },
     "major_assignments": {
-      "percentage": 25,
-      "description": "Comprehensive systems programming projects"
+      "percentage": 30,
+      "description": "Three comprehensive systems programming projects: web server, VM simulator, file system"
     },
     "midterm_examination": {
       "percentage": 15,
-      "description": "Written exam covering processes, threads, and synchronization"
+      "description": "Written exam covering processes, threads, scheduling, synchronization, and deadlocks (weeks 1-7)"
     },
-    "final_examination": {
+    "final_project": {
       "percentage": 20,
-      "description": "Comprehensive exam covering all OS topics including memory and file systems"
+      "description": "Comprehensive final exam covering all OS topics with both conceptual and calculation problems"
     }
   },
   "course_policies": {
     "attendance": "Attendance is expected for all lectures and mandatory for lab sessions. More than 3 unexcused absences may result in a reduced participation grade.",
-    "late_submissions": "Late assignments lose 10% per day. No submissions accepted more than 5 days late. Systems programming bugs discovered after submission may be addressed in office hours.",
-    "collaboration": "Discussion of OS concepts and debugging approaches is encouraged. All code must be written individually. Sharing code constitutes plagiarism.",
-    "academic_integrity": "All submitted code must be your own work. Using code from the internet, textbooks, or other students without attribution is plagiarism.",
-    "technology_requirements": "Students need a Linux environment (VM or WSL2), GCC, make, valgrind, and strace. Lab computers with Linux are available."
+    "late_submissions": "Late assignments lose 10% per day for up to 5 days. No submissions accepted more than 5 days late. One 48-hour extension is granted per student per semester, no questions asked.",
+    "collaboration": "Discussion of OS concepts and debugging approaches is encouraged. All code must be written individually. Sharing code or allowing others to copy your code constitutes plagiarism. Use of AI coding assistants must be disclosed.",
+    "academic_integrity": "All submitted code must be your own work. Using code from the internet, textbooks, or other students without attribution is plagiarism. First offense results in a zero on the assignment; second offense results in course failure.",
+    "technology_requirements": "Students need a Linux environment (Ubuntu 22.04+ VM or WSL2), GCC 11+, make, valgrind, strace, and gdb. FUSE development libraries are needed for Assignment 3. Lab computers with Linux are available in the CS building."
   }
 }
