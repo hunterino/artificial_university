@@ -1,0 +1,472 @@
+{
+  "course_info": {
+    "course_id": "CS402",
+    "title": "Artificial Intelligence Fundamentals",
+    "credit_hours": 4,
+    "duration": "15 weeks",
+    "meeting_schedule": "Monday, Wednesday, Friday - 4 hours per week",
+    "prerequisites": [
+      "CS201 - Data Structures and Algorithms"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "date": "2024-01-15",
+      "topic": "Introduction to Artificial Intelligence",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Define AI and distinguish between narrow AI and general AI",
+        "Identify the major subfields of AI: search, knowledge representation, learning, planning",
+        "Understand the historical development and current state of AI"
+      ],
+      "readings": [
+        "Russell & Norvig, AIMA, Ch. 1-2",
+        "Turing, 'Computing Machinery and Intelligence' (1950)"
+      ],
+      "lecture_notes": {
+        "introduction": "Artificial intelligence is the study of agents that perceive their environment and take actions to maximize their chance of achieving goals. This course covers the foundational algorithms and techniques that power modern AI systems.",
+        "key_concepts": [
+          "Rational agents: perceiving and acting to maximize expected utility",
+          "AI subfields: search, reasoning, learning, perception, natural language",
+          "History: Turing test, expert systems, AI winter, deep learning revolution",
+          "Types of environments: deterministic vs stochastic, fully vs partially observable",
+          "The role of heuristics in making intractable problems solvable"
+        ],
+        "demonstration": "Demonstrate a simple reflex agent, a model-based agent, and a goal-based agent solving a grid-world navigation problem, contrasting their capabilities",
+        "setup_requirements": [
+          "Python 3.12+ with NumPy installed",
+          "Jupyter Notebook configured",
+          "AIMA Python code repository cloned"
+        ],
+        "review": [
+          {
+            "key": "Rational Agent",
+            "value": "An agent that, for each percept sequence, selects the action expected to maximize its performance measure, given the evidence provided by the percept sequence and whatever built-in knowledge the agent has"
+          },
+          {
+            "key": "Narrow vs General AI",
+            "value": "Narrow AI excels at a specific task (chess, image recognition); general AI would match human cognitive ability across all domains. All current AI is narrow"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 1,
+      "session_number": 2,
+      "date": "2024-01-17",
+      "topic": "Search Algorithms: BFS, DFS, and Uniform Cost",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Implement uninformed search strategies for problem solving",
+        "Analyze the completeness, optimality, and complexity of each strategy",
+        "Formulate real-world problems as search problems"
+      ],
+      "readings": [
+        "AIMA, Ch. 3 - Solving Problems by Searching",
+        "Lecture notes on search tree visualization"
+      ],
+      "lecture_notes": {
+        "introduction": "Many AI problems can be formulated as search: find a sequence of actions from an initial state to a goal state. The choice of search strategy determines whether you find a solution at all, whether it is optimal, and how long it takes.",
+        "key_concepts": [
+          "Problem formulation: states, actions, transition model, goal test, path cost",
+          "Breadth-first search: complete, optimal for uniform costs, O(b^d) space",
+          "Depth-first search: incomplete in infinite spaces, O(bm) space",
+          "Uniform cost search: optimal for variable costs, expands cheapest node first",
+          "Iterative deepening: combines BFS optimality with DFS space efficiency"
+        ],
+        "demonstration": "Formulate the 8-puzzle as a search problem and solve it with BFS, DFS, and uniform cost search, comparing nodes expanded and solution quality",
+        "setup_requirements": [
+          "Python environment with AIMA library",
+          "Search visualization tool"
+        ],
+        "review": [
+          {
+            "key": "Completeness vs Optimality",
+            "value": "Complete means the algorithm will find a solution if one exists; optimal means it finds the least-cost solution. BFS is both for uniform costs; DFS is neither in general"
+          },
+          {
+            "key": "Branching Factor",
+            "value": "The average number of successors per state; determines how quickly the search tree grows. A branching factor of 10 with depth 6 means 10^6 = 1 million nodes to explore"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 4,
+      "date": "2024-01-24",
+      "topic": "Informed Search: A* and Heuristic Design",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Implement A* search with admissible heuristics",
+        "Design effective heuristics for specific problems",
+        "Prove heuristic admissibility and consistency"
+      ],
+      "readings": [
+        "AIMA, Ch. 3.5-3.6 - Informed Search Strategies",
+        "Hart, Nilsson, Raphael, 'A Formal Basis for the Heuristic Determination of Minimum Cost Paths' (1968)"
+      ],
+      "lecture_notes": {
+        "introduction": "Uninformed search is often too slow for real problems. Heuristics provide domain-specific knowledge that guides search toward the goal. A* search, combining path cost with heuristic estimates, is the most important search algorithm in AI.",
+        "key_concepts": [
+          "Heuristic function h(n): estimated cost from n to the goal",
+          "A* search: f(n) = g(n) + h(n), expands node with lowest f",
+          "Admissibility: h(n) never overestimates the true cost (guarantees optimality)",
+          "Consistency: h(n) <= c(n,a,n') + h(n') (guarantees no re-expansion)",
+          "Designing heuristics: relaxed problems, pattern databases"
+        ],
+        "demonstration": "Solve the 15-puzzle with A* using Manhattan distance heuristic vs misplaced tiles heuristic, comparing nodes expanded to show the impact of heuristic quality",
+        "setup_requirements": [
+          "Python with AIMA search library",
+          "Priority queue implementation"
+        ],
+        "review": [
+          {
+            "key": "Manhattan Distance",
+            "value": "For the sliding tile puzzle, the sum of each tile's distance from its goal position (counting horizontal + vertical moves); this is admissible because each tile must move at least that many steps"
+          },
+          {
+            "key": "Dominance",
+            "value": "Heuristic h2 dominates h1 if h2(n) >= h1(n) for all n; a dominant heuristic expands fewer nodes because it provides tighter estimates, always preferring the more informed heuristic"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 6,
+      "date": "2024-01-31",
+      "topic": "Adversarial Search and Game Playing",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Implement minimax search for two-player zero-sum games",
+        "Apply alpha-beta pruning to reduce search space",
+        "Design evaluation functions for game states"
+      ],
+      "readings": [
+        "AIMA, Ch. 5 - Adversarial Search",
+        "Silver et al., 'Mastering Chess and Shogi by Self-Play' (2017)"
+      ],
+      "lecture_notes": {
+        "introduction": "Games are a natural testbed for AI: they have clear rules, well-defined winning conditions, and adversarial opponents. Minimax search and its optimizations are the foundation of game-playing AI from chess engines to Go programs.",
+        "key_concepts": [
+          "Minimax: maximizing player's score assuming opponent plays optimally",
+          "Alpha-beta pruning: eliminating branches that cannot affect the decision",
+          "Evaluation functions: estimating board value for non-terminal states",
+          "Depth-limited search with iterative deepening",
+          "Monte Carlo Tree Search: exploration-exploitation for complex games"
+        ],
+        "demonstration": "Build a tic-tac-toe AI with minimax, then extend to Connect Four with alpha-beta pruning and an evaluation function, observing the speedup from pruning",
+        "setup_requirements": [
+          "Python environment",
+          "Game visualization library"
+        ],
+        "review": [
+          {
+            "key": "Alpha-Beta Pruning",
+            "value": "Maintains alpha (best guaranteed score for maximizer) and beta (best guaranteed score for minimizer); prunes when alpha >= beta because the opponent would never allow reaching that branch. Optimal move ordering gives O(b^(d/2)) vs minimax O(b^d)"
+          },
+          {
+            "key": "Evaluation Function",
+            "value": "For depth-limited search, the evaluation function estimates the value of non-terminal states; a good evaluation function captures domain knowledge (material count in chess, territory in Go) and is fast to compute"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 8,
+      "date": "2024-02-07",
+      "topic": "Knowledge Representation and Constraint Satisfaction",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Formulate problems as constraint satisfaction problems (CSPs)",
+        "Apply backtracking search with constraint propagation",
+        "Understand propositional and first-order logic for knowledge representation"
+      ],
+      "readings": [
+        "AIMA, Ch. 6 - Constraint Satisfaction Problems",
+        "AIMA, Ch. 7 - Logical Agents"
+      ],
+      "lecture_notes": {
+        "introduction": "Many AI problems are naturally expressed as constraints rather than search trees. CSP formulation enables powerful inference techniques that dramatically reduce the search space compared to generic search.",
+        "key_concepts": [
+          "CSP formulation: variables, domains, constraints",
+          "Backtracking search: systematic assignment with early failure detection",
+          "Arc consistency (AC-3): reducing domains by propagating constraints",
+          "Variable ordering heuristics: MRV (most constrained variable first)",
+          "Propositional logic: syntax, semantics, inference rules"
+        ],
+        "demonstration": "Solve Sudoku as a CSP with backtracking and arc consistency, showing how constraint propagation reduces the search space from billions to hundreds of nodes",
+        "setup_requirements": [
+          "Python environment",
+          "CSP solver library or custom implementation"
+        ],
+        "review": [
+          {
+            "key": "Arc Consistency",
+            "value": "A variable Xi is arc-consistent with Xj if for every value in Xi's domain, there exists a value in Xj's domain that satisfies the constraint. AC-3 enforces this for all pairs, often solving the problem without any search"
+          },
+          {
+            "key": "MRV Heuristic",
+            "value": "Choose the variable with the fewest remaining legal values first; this is the most constrained variable, and choosing it first detects failures earlier (fail-first principle)"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 10,
+      "date": "2024-02-14",
+      "topic": "Introduction to Machine Learning for AI",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Distinguish between supervised, unsupervised, and reinforcement learning",
+        "Implement a simple decision tree and k-nearest neighbors classifier",
+        "Evaluate model performance using cross-validation and appropriate metrics"
+      ],
+      "readings": [
+        "AIMA, Ch. 18-19 - Learning from Examples",
+        "Bishop, Pattern Recognition and Machine Learning, Ch. 1"
+      ],
+      "lecture_notes": {
+        "introduction": "Machine learning enables AI systems to improve from experience rather than being explicitly programmed. This session introduces the three major learning paradigms and basic classification algorithms as a bridge to the dedicated Machine Learning course.",
+        "key_concepts": [
+          "Supervised learning: labeled training data, classification and regression",
+          "Unsupervised learning: finding structure in unlabeled data, clustering",
+          "Reinforcement learning: learning from rewards and penalties",
+          "Decision trees: recursive partitioning by feature values",
+          "k-NN: classify by majority vote of nearest neighbors",
+          "Cross-validation: estimating generalization performance"
+        ],
+        "demonstration": "Train a decision tree and k-NN classifier on the Iris dataset, compare accuracy using 5-fold cross-validation, and visualize decision boundaries",
+        "setup_requirements": [
+          "Python with scikit-learn and matplotlib",
+          "Jupyter Notebook",
+          "Iris dataset"
+        ],
+        "review": [
+          {
+            "key": "Overfitting",
+            "value": "A model that memorizes training data (high accuracy on training set, low on test set) has overfit; it captures noise rather than the underlying pattern. Cross-validation and regularization are defenses"
+          },
+          {
+            "key": "Bias-Variance Trade-off",
+            "value": "Simple models (high bias) underfit; complex models (high variance) overfit. The goal is to find the model complexity that minimizes total error, balancing these two sources"
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "Search Algorithms and Heuristics",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "Prove that the Manhattan distance heuristic is admissible for the 8-puzzle. Then calculate h(n) for the state where tile 1 is at position (0,2), tile 2 is at position (2,0), and all other tiles are in their goal positions.",
+            "type": "calculation",
+            "points": 10,
+            "answer": "Proof of admissibility: In the 8-puzzle, each tile must be moved individually to its goal position. Manhattan distance counts the minimum number of horizontal and vertical moves for each tile. Since tiles can block each other (requiring additional moves), the actual cost is always >= Manhattan distance. Therefore it never overestimates and is admissible.\n\nCalculation: If tile 1's goal is (0,0) and it's at (0,2): distance = |0-0| + |2-0| = 2. If tile 2's goal is (0,1) and it's at (2,0): distance = |0-2| + |1-0| = 3. All others at goal = 0. h(n) = 2 + 3 = 5.",
+            "rubric": [
+              {
+                "key": "Correct admissibility argument",
+                "value": 4
+              },
+              {
+                "key": "Correct Manhattan distance calculation for each tile",
+                "value": 4
+              },
+              {
+                "key": "Correct total h(n) = 5",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Compare BFS and A* in terms of completeness, optimality, time complexity, and space complexity. Under what condition does A* reduce to uniform cost search?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "BFS: Complete (yes, for finite branching), Optimal (yes, for uniform step costs), Time O(b^d), Space O(b^d). A*: Complete (yes, with admissible heuristic and finite branching), Optimal (yes, with admissible heuristic), Time depends on heuristic quality (worst case same as BFS), Space O(b^d). A* reduces to uniform cost search when h(n) = 0 for all n, meaning the heuristic provides no guidance.",
+            "rubric": [
+              {
+                "key": "Correct properties for both algorithms",
+                "value": 5
+              },
+              {
+                "key": "Correctly identifies h(n)=0 gives uniform cost",
+                "value": 3
+              },
+              {
+                "key": "Notes heuristic quality affects A* performance",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 4,
+        "topic": "Game Playing and Constraint Satisfaction",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Draw the minimax game tree for a game with the following terminal values (left to right): 3, 12, 8, 2, 4, 6, 14, 5, 2. The tree has branching factor 3 and depth 2 (max at root). What is the minimax value? Identify which branches alpha-beta pruning would eliminate.",
+            "type": "analysis",
+            "points": 15,
+            "answer": "Level 2 (min nodes): Node A = min(3,12,8) = 3, Node B = min(2,4,6) = 2, Node C = min(14,5,2) = 2. Level 0 (max root): max(3,2,2) = 3. Minimax value = 3.\n\nAlpha-beta pruning (left-to-right): After evaluating Node A (value 3), alpha = 3. In Node B, after seeing 2, beta = 2 < alpha = 3, so the remaining children of B (4, 6) are pruned. In Node C, after seeing 14 then 5, then 2, all must be evaluated (but after seeing any value <= 3 in C, we know C cannot beat A). Node C returns 2. Final: 3.",
+            "rubric": [
+              {
+                "key": "Correct minimax values at each node",
+                "value": 5
+              },
+              {
+                "key": "Correct final minimax value of 3",
+                "value": 3
+              },
+              {
+                "key": "Correct identification of pruned branches",
+                "value": 4
+              },
+              {
+                "key": "Correct alpha-beta reasoning",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between node consistency, arc consistency, and path consistency in CSPs. Which is most commonly used in practice and why?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Node consistency: every value in a variable's domain satisfies all unary constraints on that variable. Arc consistency: for every pair of variables, every value in one variable's domain has a compatible value in the other's domain. Path consistency: for every triple of variables, every consistent pair of values for two variables can be extended to a consistent assignment for the third. Arc consistency (AC-3) is most commonly used because it provides a good balance between inference power and computational cost. Path consistency is more powerful but much more expensive (requires maintaining pairs of values), while node consistency is too weak to be useful on its own.",
+            "rubric": [
+              {
+                "key": "Correct definition of all three levels",
+                "value": 5
+              },
+              {
+                "key": "Identifies arc consistency as most common",
+                "value": 3
+              },
+              {
+                "key": "Explains the cost-benefit trade-off",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 25
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "AI Agent for Pacman",
+        "week_assigned": 2,
+        "week_due": 5,
+        "points": 100,
+        "description": "Implement a series of AI agents for a Pacman game environment. Start with search-based agents (BFS, A*), then build adversarial agents (minimax with alpha-beta), and finally implement a simple reinforcement learning agent that improves through experience.",
+        "objectives": [
+          "Apply search algorithms to navigate Pacman through mazes",
+          "Design effective heuristics for maze pathfinding",
+          "Implement minimax with alpha-beta pruning for ghost avoidance",
+          "Build a basic Q-learning agent that learns from repeated play"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Python source code for all agent implementations",
+          "Performance comparison: nodes expanded and scores for each agent",
+          "Analysis report (3-4 pages) comparing search vs adversarial vs learning approaches",
+          "Visualizations of agent behavior in different maze configurations"
+        ],
+        "grading_rubric": {
+          "search_agents": {
+            "points": 25,
+            "criteria": [
+              "BFS and A* correctly find paths to food",
+              "Custom heuristic is admissible and consistent",
+              "Agents handle maze dead-ends and multiple food pellets",
+              "Performance metrics (nodes expanded, path cost) are reported"
+            ]
+          },
+          "adversarial_agents": {
+            "points": 30,
+            "criteria": [
+              "Minimax correctly models ghost behavior as adversary",
+              "Alpha-beta pruning is implemented and speeds up search",
+              "Evaluation function considers food distance, ghost proximity, and game state",
+              "Agent survives significantly longer than a random agent"
+            ]
+          },
+          "learning_agent": {
+            "points": 25,
+            "criteria": [
+              "Q-learning update rule is implemented correctly",
+              "Agent's performance improves over training episodes",
+              "Exploration-exploitation balance is tuned appropriately",
+              "Learning curves are plotted and analyzed"
+            ]
+          },
+          "analysis": {
+            "points": 20,
+            "criteria": [
+              "Comparison of all approaches with empirical data",
+              "Strengths and weaknesses of each approach are discussed",
+              "Heuristic design decisions are justified",
+              "Report is well-written and professionally formatted"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Correct search, adversarial, and learning agent implementations",
+                "Effective heuristic and evaluation function design",
+                "Demonstrable improvement in the learning agent",
+                "Thorough comparative analysis with empirical evidence"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 15,
+      "description": "Regular assessment of AI concepts and algorithm analysis"
+    },
+    "lab_assignments": {
+      "percentage": 20,
+      "description": "Algorithm implementation labs"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "Multi-part AI agent projects"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Written exam covering search, games, and CSPs"
+    },
+    "final_examination": {
+      "percentage": 20,
+      "description": "Comprehensive exam covering all AI topics"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is expected for all lectures and mandatory for lab sessions. More than 3 unexcused absences may result in a reduced participation grade.",
+    "late_submissions": "Late assignments lose 10% per day. No submissions accepted more than 5 days late.",
+    "collaboration": "Discussion of AI concepts and algorithm design is encouraged. All code and written analysis must be individual work.",
+    "academic_integrity": "All submitted work must be your own. Using solutions from AI textbook solution manuals or online repositories constitutes plagiarism.",
+    "technology_requirements": "Students need Python 3.12+ with NumPy, scikit-learn, and matplotlib. Jupyter Notebook recommended. Lab computers are available."
+  }
+}

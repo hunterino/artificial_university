@@ -1,0 +1,469 @@
+{
+  "course_info": {
+    "course_id": "CS301",
+    "title": "Database Management Systems",
+    "credit_hours": 3,
+    "duration": "15 weeks",
+    "meeting_schedule": "Tuesday, Thursday - 3 hours per week",
+    "prerequisites": [
+      "CS201 - Data Structures and Algorithms"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "date": "2024-01-16",
+      "topic": "Introduction to Database Systems",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Understand the purpose and advantages of database management systems over file-based storage",
+        "Identify the components of a DBMS architecture",
+        "Differentiate between database models: relational, document, key-value, graph"
+      ],
+      "readings": [
+        "Silberschatz, Database System Concepts, Ch. 1",
+        "Codd, 'A Relational Model of Data for Large Shared Data Banks' (1970)"
+      ],
+      "lecture_notes": {
+        "introduction": "Every application you use is backed by a database. This course teaches you to design, query, and optimize databases — skills required for every software engineering role regardless of specialization.",
+        "key_concepts": [
+          "Data independence: logical vs physical",
+          "DBMS architecture: query processor, storage manager, transaction manager",
+          "Relational model: tables, rows, columns, keys",
+          "ACID properties preview: Atomicity, Consistency, Isolation, Durability",
+          "SQL as a declarative language vs imperative programming"
+        ],
+        "demonstration": "Connect to a PostgreSQL database, explore an existing schema with psql, and run basic SELECT queries to see how relational data is organized",
+        "setup_requirements": [
+          "PostgreSQL 16 installed",
+          "pgAdmin or DBeaver database client",
+          "Sample university database loaded"
+        ],
+        "review": [
+          {
+            "key": "Data Independence",
+            "value": "Physical data independence means the storage format can change without affecting applications; logical data independence means the schema can evolve without breaking existing queries"
+          },
+          {
+            "key": "Declarative vs Imperative",
+            "value": "SQL describes what data you want, not how to get it; the query optimizer decides the execution strategy, freeing programmers from manual data access planning"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 1,
+      "session_number": 2,
+      "date": "2024-01-18",
+      "topic": "Relational Model and SQL Foundations",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Write SQL SELECT queries with WHERE, ORDER BY, and LIMIT",
+        "Use aggregate functions and GROUP BY for data summarization",
+        "Understand primary keys, foreign keys, and referential integrity"
+      ],
+      "readings": [
+        "Silberschatz, Ch. 3 - Introduction to SQL",
+        "PostgreSQL Documentation: SELECT syntax"
+      ],
+      "lecture_notes": {
+        "introduction": "SQL is the universal language for relational databases. Mastering SELECT is the foundation; every other operation builds on the ability to precisely describe which rows you need and how to combine them.",
+        "key_concepts": [
+          "SELECT, FROM, WHERE, ORDER BY, LIMIT",
+          "Aggregate functions: COUNT, SUM, AVG, MIN, MAX",
+          "GROUP BY and HAVING for grouped aggregation",
+          "NULL handling: IS NULL, COALESCE, three-valued logic",
+          "Primary keys, foreign keys, and ON DELETE/UPDATE actions"
+        ],
+        "demonstration": "Write progressively complex queries against the university database: enrollment counts per department, average GPA by major, students with no enrolled courses",
+        "setup_requirements": [
+          "PostgreSQL with sample database",
+          "SQL client configured"
+        ],
+        "review": [
+          {
+            "key": "Three-Valued Logic",
+            "value": "NULL represents unknown, not zero or empty string; any comparison with NULL yields NULL (not true or false), which is why you must use IS NULL instead of = NULL"
+          },
+          {
+            "key": "Referential Integrity",
+            "value": "Foreign keys ensure that every reference to another table points to an existing row; the database rejects inserts/updates that would create orphaned references"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 3,
+      "date": "2024-01-23",
+      "topic": "Joins, Subqueries, and Set Operations",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Write INNER JOIN, LEFT JOIN, RIGHT JOIN, and FULL OUTER JOIN queries",
+        "Use correlated and uncorrelated subqueries",
+        "Apply UNION, INTERSECT, and EXCEPT for set operations"
+      ],
+      "readings": [
+        "Silberschatz, Ch. 3-4 - Advanced SQL",
+        "PostgreSQL Documentation: Joins Between Tables"
+      ],
+      "lecture_notes": {
+        "introduction": "Real queries span multiple tables. Joins are the mechanism for combining related data from different tables, and understanding which join type to use is essential for getting correct results.",
+        "key_concepts": [
+          "INNER JOIN: matching rows from both tables",
+          "LEFT/RIGHT OUTER JOIN: preserving all rows from one side",
+          "FULL OUTER JOIN: preserving all rows from both sides",
+          "Subqueries in WHERE, FROM, and SELECT clauses",
+          "Correlated subqueries: referencing outer query values",
+          "UNION, INTERSECT, EXCEPT for combining result sets"
+        ],
+        "demonstration": "Build a report showing all students, their enrolled courses (if any), and their grades, using LEFT JOIN to include students with no enrollments",
+        "setup_requirements": [
+          "PostgreSQL with sample database",
+          "Familiarity with basic SELECT from previous session"
+        ],
+        "review": [
+          {
+            "key": "LEFT JOIN vs INNER JOIN",
+            "value": "INNER JOIN returns only rows where both tables have matching keys; LEFT JOIN returns all rows from the left table plus matching rows from the right, filling NULLs where no match exists"
+          },
+          {
+            "key": "Correlated Subquery",
+            "value": "A subquery that references a column from the outer query, causing it to be re-evaluated for each outer row; often can be rewritten as a JOIN for better performance"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 5,
+      "date": "2024-01-30",
+      "topic": "Database Design and Normalization",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Design database schemas using entity-relationship diagrams",
+        "Apply normalization rules through third normal form (3NF)",
+        "Identify and eliminate update, insertion, and deletion anomalies"
+      ],
+      "readings": [
+        "Silberschatz, Ch. 6 - Entity-Relationship Model",
+        "Silberschatz, Ch. 7 - Normalization"
+      ],
+      "lecture_notes": {
+        "introduction": "A poorly designed database causes data anomalies, wasted storage, and complex queries. Normalization is a systematic process for organizing tables to eliminate redundancy and ensure data integrity.",
+        "key_concepts": [
+          "Entity-relationship diagrams: entities, attributes, relationships",
+          "Cardinality: one-to-one, one-to-many, many-to-many",
+          "Functional dependencies and candidate keys",
+          "1NF: atomic values, no repeating groups",
+          "2NF: no partial dependencies on composite keys",
+          "3NF: no transitive dependencies"
+        ],
+        "demonstration": "Take a denormalized spreadsheet of order data with repeated customer and product information, identify all anomalies, and normalize it step by step to 3NF",
+        "setup_requirements": [
+          "ER diagramming tool (draw.io or pgModeler)",
+          "Sample denormalized data set"
+        ],
+        "review": [
+          {
+            "key": "Update Anomaly",
+            "value": "When the same fact is stored in multiple rows, updating one copy but not the others creates inconsistency; normalization ensures each fact is stored exactly once"
+          },
+          {
+            "key": "3NF Definition",
+            "value": "A table is in 3NF if for every non-trivial functional dependency X -> A, either X is a superkey or A is part of a candidate key; informally, every non-key attribute depends on the key, the whole key, and nothing but the key"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 7,
+      "date": "2024-02-06",
+      "topic": "Indexing and Query Optimization",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Understand B-tree and hash index structures",
+        "Use EXPLAIN ANALYZE to diagnose query performance",
+        "Create indexes to optimize slow queries"
+      ],
+      "readings": [
+        "Silberschatz, Ch. 11 - Indexing",
+        "PostgreSQL Documentation: EXPLAIN and Index Types"
+      ],
+      "lecture_notes": {
+        "introduction": "A query that scans every row in a million-row table takes seconds; the same query with a proper index takes milliseconds. Understanding indexing is the difference between an application that works and one that scales.",
+        "key_concepts": [
+          "B-tree indexes: balanced tree structure, O(log n) lookups",
+          "Hash indexes: O(1) equality lookups, no range support",
+          "Composite indexes and column ordering",
+          "EXPLAIN ANALYZE: reading query execution plans",
+          "Index trade-offs: faster reads vs slower writes and storage cost"
+        ],
+        "demonstration": "Run a slow query on a 500,000-row table, use EXPLAIN ANALYZE to identify a sequential scan, create the appropriate index, and re-run to observe the speedup",
+        "setup_requirements": [
+          "PostgreSQL with large sample dataset loaded",
+          "psql or pgAdmin for EXPLAIN ANALYZE"
+        ],
+        "review": [
+          {
+            "key": "B-tree Properties",
+            "value": "B-trees keep all leaf nodes at the same depth, ensuring O(log n) operations; internal nodes have high fanout (hundreds of children) minimizing disk I/O, making them ideal for database indexes"
+          },
+          {
+            "key": "Composite Index Ordering",
+            "value": "An index on (A, B) supports queries filtering on A alone or on both A and B, but not on B alone; column order in composite indexes must match query filter patterns"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 9,
+      "date": "2024-02-13",
+      "topic": "Transactions, Concurrency, and Recovery",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Understand ACID properties and transaction isolation levels",
+        "Identify concurrency anomalies: dirty reads, non-repeatable reads, phantom reads",
+        "Explain write-ahead logging and crash recovery basics"
+      ],
+      "readings": [
+        "Silberschatz, Ch. 14-15 - Transactions and Concurrency Control",
+        "PostgreSQL Documentation: Transaction Isolation"
+      ],
+      "lecture_notes": {
+        "introduction": "Databases serve many users simultaneously. Transactions ensure that concurrent operations do not corrupt data, and recovery mechanisms ensure data survives crashes. These guarantees are what distinguish a database from a file.",
+        "key_concepts": [
+          "ACID: Atomicity (all or nothing), Consistency (valid states), Isolation (no interference), Durability (survives crashes)",
+          "Isolation levels: READ UNCOMMITTED, READ COMMITTED, REPEATABLE READ, SERIALIZABLE",
+          "Concurrency anomalies and which isolation levels prevent each",
+          "Locking: shared vs exclusive locks, deadlock detection",
+          "Write-ahead logging (WAL): ensuring durability and enabling recovery"
+        ],
+        "demonstration": "Open two psql sessions, demonstrate a dirty read at READ UNCOMMITTED, then show how REPEATABLE READ prevents it, and trigger a deadlock to observe PostgreSQL's automatic detection",
+        "setup_requirements": [
+          "Two terminal windows with psql sessions",
+          "PostgreSQL configured for transaction experiments"
+        ],
+        "review": [
+          {
+            "key": "Isolation Level Trade-off",
+            "value": "Higher isolation prevents more anomalies but reduces concurrency (more blocking); READ COMMITTED is the PostgreSQL default and sufficient for most applications; SERIALIZABLE is safest but slowest"
+          },
+          {
+            "key": "Write-Ahead Logging",
+            "value": "Before modifying any data page, the change is recorded in a sequential log on disk; on crash, the log is replayed to bring the database to a consistent state, ensuring durability without requiring every write to immediately flush to data files"
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "SQL Queries and Joins",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "Write a SQL query that returns the names of all students who are enrolled in more than 3 courses, along with their enrollment count. Use the tables: students(id, name) and enrollments(student_id, course_id).",
+            "type": "code",
+            "points": 10,
+            "answer": "SELECT s.name, COUNT(e.course_id) AS course_count\nFROM students s\nJOIN enrollments e ON s.id = e.student_id\nGROUP BY s.id, s.name\nHAVING COUNT(e.course_id) > 3;",
+            "rubric": [
+              {
+                "key": "Correct JOIN between students and enrollments",
+                "value": 3
+              },
+              {
+                "key": "Correct GROUP BY and COUNT",
+                "value": 4
+              },
+              {
+                "key": "Correct HAVING clause for filtering",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between WHERE and HAVING in a SQL query. When must you use HAVING instead of WHERE?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "WHERE filters individual rows before grouping occurs. HAVING filters groups after GROUP BY and aggregation. You must use HAVING when the filter condition involves an aggregate function (COUNT, SUM, AVG, etc.) because aggregate results do not exist until after grouping.",
+            "rubric": [
+              {
+                "key": "Correctly explains WHERE filters before grouping",
+                "value": 4
+              },
+              {
+                "key": "Correctly explains HAVING filters after grouping",
+                "value": 3
+              },
+              {
+                "key": "Explains that aggregate functions require HAVING",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 4,
+        "topic": "Normalization and Indexing",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Given a table Orders(order_id, customer_name, customer_email, product_name, product_price, quantity), identify all functional dependencies, determine the highest normal form, and normalize to 3NF.",
+            "type": "analysis",
+            "points": 15,
+            "answer": "Functional dependencies: order_id -> customer_name, customer_email, product_name, product_price, quantity; customer_name -> customer_email (assuming unique names); product_name -> product_price.\n\nThe table is in 1NF but not 2NF (assuming composite key scenarios) or 3NF due to transitive dependencies (order_id -> customer_name -> customer_email, order_id -> product_name -> product_price).\n\n3NF decomposition:\n- Customers(customer_name, customer_email)\n- Products(product_name, product_price)\n- Orders(order_id, customer_name, product_name, quantity)\n\nWith foreign keys from Orders to Customers and Products.",
+            "rubric": [
+              {
+                "key": "Correct identification of functional dependencies",
+                "value": 5
+              },
+              {
+                "key": "Correct identification of transitive dependencies",
+                "value": 4
+              },
+              {
+                "key": "Correct 3NF decomposition into three tables",
+                "value": 6
+              }
+            ]
+          },
+          {
+            "question": "A query SELECT * FROM orders WHERE customer_id = 42 AND order_date > '2024-01-01' ORDER BY order_date is slow on a table with 2 million rows. What index would you create and why?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "CREATE INDEX idx_orders_cust_date ON orders(customer_id, order_date);\n\nThe composite index should have customer_id first because it is an equality condition, and order_date second because it is used for both a range filter and ORDER BY. This allows the index to narrow to the specific customer, then scan dates in order, avoiding a separate sort step.",
+            "rubric": [
+              {
+                "key": "Correct composite index with proper column order",
+                "value": 5
+              },
+              {
+                "key": "Explains why customer_id comes first (equality before range)",
+                "value": 3
+              },
+              {
+                "key": "Notes the index also satisfies ORDER BY",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 25
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Database Design and Implementation Project",
+        "week_assigned": 3,
+        "week_due": 5,
+        "points": 100,
+        "description": "Design and implement a complete database for an e-commerce application. Start from requirements, produce an ER diagram, normalize to 3NF, implement in PostgreSQL with proper constraints and indexes, populate with realistic data, and write a suite of complex queries including reports and analytics.",
+        "objectives": [
+          "Apply the full database design process from requirements to implementation",
+          "Produce a normalized schema with proper constraints and referential integrity",
+          "Write complex SQL queries for business reporting and analytics",
+          "Optimize query performance using indexes and EXPLAIN ANALYZE"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "ER diagram with all entities, attributes, and relationships",
+          "SQL DDL script creating all tables with constraints and indexes",
+          "Data population script with at least 1000 orders across 100 customers",
+          "Ten complex queries with EXPLAIN ANALYZE output and optimization notes",
+          "Design document (3-4 pages) explaining schema decisions and normalization"
+        ],
+        "grading_rubric": {
+          "schema_design": {
+            "points": 30,
+            "criteria": [
+              "ER diagram accurately models the domain with correct cardinalities",
+              "Schema is in 3NF with no redundancy",
+              "All constraints (PK, FK, NOT NULL, CHECK, UNIQUE) are appropriate",
+              "Data types are chosen correctly for each column"
+            ]
+          },
+          "sql_queries": {
+            "points": 35,
+            "criteria": [
+              "All ten queries produce correct results",
+              "Queries demonstrate JOIN, subquery, aggregation, and window function usage",
+              "EXPLAIN ANALYZE output is provided and interpreted correctly",
+              "At least two queries are optimized with indexes and performance is documented"
+            ]
+          },
+          "data_quality": {
+            "points": 15,
+            "criteria": [
+              "Population script generates realistic, varied data",
+              "Referential integrity is maintained across all data",
+              "Sufficient volume to demonstrate performance characteristics",
+              "No dummy or placeholder values"
+            ]
+          },
+          "documentation": {
+            "points": 20,
+            "criteria": [
+              "Design document explains all schema decisions with rationale",
+              "Normalization steps are shown explicitly",
+              "Index choices are justified with query patterns",
+              "Professional writing and formatting"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Well-designed 3NF schema with comprehensive constraints",
+                "Complex SQL queries demonstrating advanced SQL proficiency",
+                "Performance analysis with EXPLAIN ANALYZE and index optimization",
+                "Thorough documentation of design decisions and normalization"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 15,
+      "description": "Regular assessment of SQL and database concepts"
+    },
+    "lab_assignments": {
+      "percentage": 25,
+      "description": "Hands-on SQL and database design exercises"
+    },
+    "major_assignments": {
+      "percentage": 25,
+      "description": "Comprehensive database design and implementation project"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Written and SQL exam covering relational model and query writing"
+    },
+    "final_examination": {
+      "percentage": 20,
+      "description": "Comprehensive exam including optimization and transactions"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is expected for all lectures and mandatory for lab sessions. More than 3 unexcused absences may result in a reduced participation grade.",
+    "late_submissions": "Late assignments lose 10% per day. No submissions accepted more than 5 days late.",
+    "collaboration": "Discussion of SQL approaches is encouraged. All queries, schemas, and written analysis must be individual work.",
+    "academic_integrity": "All submitted work must be your own. Copying SQL queries from the internet or other students without attribution constitutes plagiarism.",
+    "technology_requirements": "Students need PostgreSQL 16+, a database client (pgAdmin or DBeaver), and access to the course database server. Lab computers are available."
+  }
+}

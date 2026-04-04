@@ -1,0 +1,469 @@
+{
+  "course_info": {
+    "course_id": "HI402",
+    "title": "Clinical Decision Support Systems",
+    "credit_hours": 3,
+    "duration": "15 weeks",
+    "meeting_schedule": "Tuesday, Thursday - 3 hours per week",
+    "prerequisites": [
+      "HI301 - Health Information Systems",
+      "HI302 - Healthcare Analytics"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "date": "2024-01-16",
+      "topic": "Foundations of Clinical Decision Support",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Define CDS and its categories: knowledge-based and non-knowledge-based",
+        "Understand the CDS Five Rights framework",
+        "Trace the evolution of CDS from simple alerts to AI-driven systems"
+      ],
+      "readings": [
+        "Clinical Decision Support: The Road to Broad Adoption Ch. 1-2",
+        "Osheroff JA. The CDS Five Rights. JAMIA 2007"
+      ],
+      "lecture_notes": {
+        "introduction": "Clinical Decision Support systems provide clinicians with person-specific, actionable recommendations at the point of care. When done right, CDS saves lives. When done poorly, it drives alert fatigue and clinician burnout.",
+        "key_concepts": [
+          "CDS categories: alerts/reminders, order sets, info buttons, dashboards, documentation templates",
+          "Knowledge-based CDS: rules engine (IF-THEN), clinical guidelines, drug knowledge bases",
+          "Non-knowledge-based CDS: machine learning, pattern recognition, NLP",
+          "CDS Five Rights: right info, right person, right format, right channel, right time",
+          "CDS governance: who decides which CDS to implement, modify, or retire"
+        ],
+        "demonstration": "Walkthrough of CDS interventions in an EHR: drug interaction alert, order set, evidence link, and documentation template",
+        "setup_requirements": [
+          "EHR training environment with CDS module",
+          "CDS governance framework document"
+        ],
+        "review": [
+          {
+            "key": "CDS Five Rights",
+            "value": "Framework ensuring CDS delivers the right information to the right person in the right format through the right channel at the right time in workflow"
+          },
+          {
+            "key": "Knowledge-Based CDS",
+            "value": "Rules built from clinical knowledge (guidelines, drug databases) using IF-THEN logic: IF patient on warfarin AND new NSAID ordered, THEN alert for bleeding risk"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 1,
+      "session_number": 2,
+      "date": "2024-01-18",
+      "topic": "CDS Knowledge Representation and Rules Engines",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Design CDS rules using structured knowledge representation",
+        "Understand Arden Syntax and CQL for CDS logic expression",
+        "Evaluate the trade-offs between local and enterprise CDS architectures"
+      ],
+      "readings": [
+        "Clinical Decision Support Ch. 5",
+        "HL7 CDS Hooks Specification Overview"
+      ],
+      "lecture_notes": {
+        "introduction": "The effectiveness of CDS depends on how well clinical knowledge is represented, maintained, and executed. Standardized approaches enable shareable, maintainable CDS logic.",
+        "key_concepts": [
+          "Arden Syntax: the original standard for shareable clinical rules (Medical Logic Modules)",
+          "CQL (Clinical Quality Language): modern standard for computable clinical logic",
+          "CDS Hooks: HL7 standard for invoking CDS services at specific points in the EHR workflow",
+          "Rules engine architecture: centralized CDS service vs. EHR-embedded rules",
+          "Knowledge maintenance: keeping CDS current with evolving clinical evidence"
+        ],
+        "demonstration": "Write a CDS rule in pseudocode for sepsis screening: IF SIRS criteria met AND suspected infection, THEN trigger sepsis alert with recommended order set",
+        "setup_requirements": [
+          "CDS logic authoring tool",
+          "CDS Hooks sandbox environment"
+        ],
+        "review": [
+          {
+            "key": "CDS Hooks",
+            "value": "HL7 standard defining 'hooks' in clinical workflow (e.g., order-select, patient-view) where external CDS services can provide recommendations via FHIR"
+          },
+          {
+            "key": "CQL",
+            "value": "Clinical Quality Language: HL7 standard for expressing clinical logic that can be used for both CDS rules and quality measure calculation"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 3,
+      "date": "2024-01-23",
+      "topic": "Medication Safety CDS",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Design drug-drug interaction and drug-allergy alerting systems",
+        "Understand the evidence base for medication safety CDS",
+        "Evaluate and optimize medication CDS to reduce alert fatigue"
+      ],
+      "readings": [
+        "Clinical Decision Support Ch. 8",
+        "Phansalkar S, et al. High-Priority Drug-Drug Interactions. JAMIA 2012"
+      ],
+      "lecture_notes": {
+        "introduction": "Medication safety is the most mature and widely deployed form of CDS. Drug interaction and allergy checking has prevented countless adverse events, but excessive alerting undermines its effectiveness.",
+        "key_concepts": [
+          "Drug knowledge bases: First Databank, Medi-Span, Multum - how they classify interactions",
+          "Alert severity tiering: high (contraindicated), moderate (use caution), low (minor)",
+          "Drug-allergy cross-reactivity alerting and class-based allergy documentation",
+          "Dose range checking: weight-based, renal-adjusted, age-appropriate dosing",
+          "Alert fatigue metrics: override rates, acceptance rates by severity tier"
+        ],
+        "demonstration": "Configure medication CDS in a test EHR: set up tiered drug interaction alerts, test with clinical scenarios, and measure override rates",
+        "setup_requirements": [
+          "EHR training environment with CPOE",
+          "Drug knowledge base reference",
+          "Clinical medication scenarios"
+        ],
+        "review": [
+          {
+            "key": "Alert Fatigue",
+            "value": "Override rates exceeding 90% indicate alert fatigue; clinicians stop reading alerts and miss clinically important ones hidden among trivial warnings"
+          },
+          {
+            "key": "Tiered Alerting",
+            "value": "Classifying alerts by clinical severity so hard stops are reserved for life-threatening interactions and informational displays for low-risk ones"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 5,
+      "date": "2024-01-30",
+      "topic": "Diagnostic and Predictive CDS",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Evaluate AI-powered diagnostic CDS systems",
+        "Understand the evidence base for sepsis and deterioration prediction CDS",
+        "Design workflows for integrating predictive CDS into clinical operations"
+      ],
+      "readings": [
+        "Clinical Decision Support Ch. 11",
+        "Wong A, et al. Quantifying Sepsis Early Warning Alert Accuracy. JAMA Intern Med 2021"
+      ],
+      "lecture_notes": {
+        "introduction": "Predictive CDS represents the frontier of clinical decision support, using AI to identify patients at risk before clinical deterioration occurs. Its promise is immense but so are the challenges.",
+        "key_concepts": [
+          "Sepsis prediction models: Epic Sepsis Model critique, real-world performance vs. validation",
+          "Early warning scores: NEWS2, MEWS, and their integration into EHR CDS",
+          "AI-assisted diagnosis: imaging (radiology, pathology), ECG interpretation",
+          "Model deployment: real-time scoring, alert delivery, clinical response workflows",
+          "Validation requirements: external validation, prospective studies, clinical impact assessment"
+        ],
+        "demonstration": "Analyze the published evaluation of the Epic Sepsis Model, discussing why high AUC in development did not translate to clinical utility",
+        "setup_requirements": [
+          "Published Epic Sepsis Model evaluation papers",
+          "Prediction model deployment framework"
+        ],
+        "review": [
+          {
+            "key": "Epic Sepsis Model Controversy",
+            "value": "Widely deployed proprietary model that showed AUC 0.76 internally but 0.63 in external validation, with high false positive rates in practice"
+          },
+          {
+            "key": "Clinical Impact Assessment",
+            "value": "Evaluating whether a predictive CDS actually changes clinical outcomes, not just whether the model has good discrimination metrics"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 7,
+      "date": "2024-02-06",
+      "topic": "CDS Governance and Lifecycle Management",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Design a CDS governance program for a health system",
+        "Develop CDS implementation and evaluation workflows",
+        "Create metrics for monitoring CDS effectiveness and burden"
+      ],
+      "readings": [
+        "Clinical Decision Support Ch. 14",
+        "AHRQ CDS Implementation Guide"
+      ],
+      "lecture_notes": {
+        "introduction": "Without governance, CDS proliferates unchecked, alert fatigue worsens, and clinical benefit erodes. A structured governance program ensures CDS remains effective and trusted.",
+        "key_concepts": [
+          "CDS governance committee: composition, charter, decision-making authority",
+          "CDS lifecycle: needs identification, design, build, test, deploy, monitor, optimize, retire",
+          "Approval criteria: evidence strength, clinical impact, workflow burden, patient population",
+          "Monitoring metrics: firing rate, override rate, acceptance rate, time-to-dismiss, clinical outcomes",
+          "Annual CDS review and optimization process"
+        ],
+        "demonstration": "Design a CDS governance charter and evaluate three CDS requests using a structured scoring rubric",
+        "setup_requirements": [
+          "CDS governance charter template",
+          "CDS evaluation rubric"
+        ],
+        "review": [
+          {
+            "key": "CDS Governance",
+            "value": "Organizational structure and processes for managing the CDS lifecycle, including approval, monitoring, optimization, and retirement of clinical alerts and tools"
+          },
+          {
+            "key": "Override Rate Monitoring",
+            "value": "Tracking the percentage of alerts dismissed by clinicians as a key indicator of CDS effectiveness - high override rates signal needed optimization"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 9,
+      "date": "2024-02-13",
+      "topic": "Next-Generation CDS: FHIR, CDS Hooks, and Shareable CDS",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Implement CDS using FHIR-based CDS Hooks standard",
+        "Evaluate the potential of shareable CDS across organizations",
+        "Assess the future of ambient and conversational CDS"
+      ],
+      "readings": [
+        "Clinical Decision Support Ch. 16",
+        "HL7 CDS Hooks Implementation Guide"
+      ],
+      "lecture_notes": {
+        "introduction": "The future of CDS is standards-based, shareable, and increasingly intelligent. CDS Hooks and FHIR enable CDS services that work across EHR platforms, and ambient AI is beginning to augment real-time clinical decision-making.",
+        "key_concepts": [
+          "CDS Hooks architecture: hook triggers, CDS service, card responses",
+          "SMART on FHIR CDS apps: EHR-integrated applications for complex decision support",
+          "Shareable CDS: one set of rules deployed across multiple EHR platforms",
+          "Ambient CDS: AI listening to encounters and surfacing relevant information in real-time",
+          "Conversational CDS: LLM-powered clinical assistants"
+        ],
+        "demonstration": "Implement a simple CDS Hooks service that triggers on order-select and returns a recommendation card when a high-risk medication is ordered for a patient with renal insufficiency",
+        "setup_requirements": [
+          "CDS Hooks sandbox",
+          "Node.js or Python for CDS service implementation",
+          "FHIR test server"
+        ],
+        "review": [
+          {
+            "key": "CDS Hooks Card",
+            "value": "The response format from a CDS service: contains summary, detail, source, and optional suggestions/links displayed as actionable cards within the EHR workflow"
+          },
+          {
+            "key": "Shareable CDS",
+            "value": "Standards-based CDS logic that can be published once and deployed across different EHR platforms, reducing duplication and improving consistency"
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "CDS Foundations and Medication Safety",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "A hospital has an overall drug interaction alert override rate of 93%. Using the CDS Five Rights framework, analyze what might be going wrong and propose three specific interventions to improve alert effectiveness.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "A 93% override rate indicates severe alert fatigue. Applying the Five Rights: Right information - many alerts may be clinically insignificant (minor interactions); Right person - alerts may fire for pharmacists who already reviewed the interaction; Right format - interruptive pop-ups for low-severity issues; Right channel - all alerts use the same disruptive modality; Right time - alerts may fire at order entry when the interaction was already addressed. Interventions: (1) Tier alerts by severity - implement hard stops only for contraindicated combinations, passive alerts for moderate, info-only for minor. (2) Suppress duplicate alerts - if pharmacy has already approved the combination, do not re-alert the nurse during administration. (3) Context-aware filtering - suppress interaction alerts when the patient has been on both drugs stably for >30 days without adverse effects.",
+            "rubric": [
+              {
+                "key": "Five Rights analysis applied to the scenario",
+                "value": 4
+              },
+              {
+                "key": "Three specific, evidence-based interventions",
+                "value": 4
+              },
+              {
+                "key": "Understanding of alert fatigue mechanisms",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Compare knowledge-based and non-knowledge-based (machine learning) CDS. For each, describe how the clinical logic is created, give a healthcare example, and identify the main limitation.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Knowledge-based CDS: Logic is explicitly authored by clinical experts encoding guidelines into IF-THEN rules. Example: drug-drug interaction alerting where pharmacologists classify interactions by severity and rules fire when two interacting drugs are co-prescribed. Main limitation: rules are brittle, require manual updating as evidence evolves, and cannot handle complex patterns across many variables. Non-knowledge-based (ML) CDS: Logic is learned from data using machine learning algorithms that identify patterns without explicit rule authoring. Example: sepsis prediction model trained on millions of EHR records to identify patients likely to develop sepsis hours before clinical recognition. Main limitation: 'black box' nature makes it difficult for clinicians to understand why a recommendation was made, reducing trust and actionability.",
+            "rubric": [
+              {
+                "key": "Accurate description of how logic is created for each type",
+                "value": 3
+              },
+              {
+                "key": "Valid healthcare example for each",
+                "value": 4
+              },
+              {
+                "key": "Correct identification of main limitations",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 4,
+        "topic": "Predictive CDS and Governance",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "The Epic Sepsis Model was widely deployed but later shown to perform poorly in external validation. What lessons does this teach about deploying predictive CDS in clinical environments?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Key lessons: (1) Internal validation metrics (AUC) do not guarantee real-world performance - external validation at the deploying site using local data is essential before go-live. (2) Discrimination (AUC) alone is insufficient - calibration, positive predictive value at the chosen threshold, and alert burden must be evaluated. (3) Clinical workflow integration matters as much as model accuracy - a technically accurate model that generates too many false alarms will be ignored. (4) Prospective clinical impact studies should be required before widespread deployment - does the model actually change outcomes? (5) Proprietary models that cannot be independently validated pose risks - transparency and reproducibility are important for clinical AI.",
+            "rubric": [
+              {
+                "key": "Identifies external validation necessity",
+                "value": 3
+              },
+              {
+                "key": "Discusses metrics beyond AUC",
+                "value": 3
+              },
+              {
+                "key": "Addresses workflow and clinical impact assessment",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "Design the key elements of a CDS governance charter for a 10-hospital health system. Include committee composition, decision criteria for new CDS, and monitoring requirements.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "CDS Governance Charter: Committee composition: CMIO (chair), pharmacy director, nursing informatics, emergency medicine physician, clinical informaticist, IT representative, quality/safety officer. Decision criteria for new CDS: (1) Evidence strength (level of clinical evidence supporting the intervention), (2) Patient safety impact (magnitude of potential harm prevented), (3) Workflow burden (estimated alert frequency, time to respond), (4) Technical feasibility (data availability, EHR capability), (5) Maintenance requirements (update frequency, knowledge base dependencies). Monitoring requirements: Monthly metrics dashboard showing firing rates, override rates by severity tier, time-to-dismiss, and clinician feedback. Quarterly effectiveness reviews comparing outcomes for patients who received CDS vs. those who did not. Annual comprehensive review of all active CDS for continued clinical relevance. Retirement process for CDS with consistently high override rates or no demonstrated clinical impact.",
+            "rubric": [
+              {
+                "key": "Appropriate committee composition with clinical and IT representation",
+                "value": 3
+              },
+              {
+                "key": "Comprehensive decision criteria for new CDS",
+                "value": 3
+              },
+              {
+                "key": "Detailed monitoring and review requirements",
+                "value": 4
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Clinical Decision Support System Design and Evaluation",
+        "week_assigned": 2,
+        "week_due": 5,
+        "points": 100,
+        "description": "Design a comprehensive CDS intervention for a clinical problem, including evidence review, knowledge representation, workflow integration, implementation plan, and evaluation framework.",
+        "objectives": [
+          "Design evidence-based CDS for a real clinical problem",
+          "Represent clinical knowledge in a computable format",
+          "Integrate CDS into clinical workflows using the Five Rights",
+          "Develop a monitoring and evaluation plan for CDS effectiveness"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Clinical evidence review supporting the CDS intervention (5-7 pages)",
+          "CDS logic specification in pseudocode or CQL",
+          "Workflow integration diagrams showing where CDS fires and how clinicians interact",
+          "Monitoring dashboard design with key metrics",
+          "Presentation to class (15 minutes)"
+        ],
+        "grading_rubric": {
+          "evidence_review": {
+            "points": 20,
+            "criteria": [
+              "Thorough literature review supporting the CDS",
+              "Clinical problem clearly defined",
+              "Evidence strength assessed",
+              "Gap in current care identified"
+            ]
+          },
+          "cds_design": {
+            "points": 35,
+            "criteria": [
+              "Logic correctly represents clinical knowledge",
+              "Five Rights framework applied",
+              "Alert fatigue considerations addressed",
+              "Edge cases and exceptions handled"
+            ]
+          },
+          "workflow_integration": {
+            "points": 25,
+            "criteria": [
+              "Clear workflow diagrams",
+              "Appropriate trigger points identified",
+              "Clinician response options designed",
+              "Training and communication plan"
+            ]
+          },
+          "evaluation_plan": {
+            "points": 20,
+            "criteria": [
+              "Appropriate effectiveness metrics selected",
+              "Monitoring dashboard designed",
+              "Optimization process defined",
+              "Clinical outcome measurement plan"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Evidence-based CDS design for a meaningful clinical problem",
+                "Computable knowledge representation with alert fatigue mitigation",
+                "Thoughtful workflow integration using Five Rights framework",
+                "Comprehensive evaluation and monitoring plan"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 20,
+      "description": "Assessment of CDS concepts, design principles, and governance"
+    },
+    "lab_assignments": {
+      "percentage": 20,
+      "description": "Hands-on CDS configuration, CDS Hooks implementation, and testing"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "CDS system design and evaluation project"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Comprehensive assessment of CDS foundations and medication safety CDS"
+    },
+    "final_examination": {
+      "percentage": 15,
+      "description": "Cumulative exam including predictive CDS, governance, and emerging approaches"
+    }
+  },
+  "course_policies": {
+    "attendance": "Regular attendance expected. Lab sessions are mandatory. More than 2 unexcused lab absences result in grade reduction.",
+    "late_submissions": "Late assignments lose 10% per day up to 5 days. CDS design milestones must be met for feedback.",
+    "collaboration": "Lab exercises may be done in pairs. CDS design project and all written work must be individual.",
+    "academic_integrity": "All CDS designs must be original. Published clinical guidelines may be used as the evidence base but logic implementation must be the student's own work.",
+    "technology_requirements": "Laptop with internet access. EHR training environment, CDS Hooks sandbox, and coding environment (Python or Node.js) will be provided."
+  }
+}

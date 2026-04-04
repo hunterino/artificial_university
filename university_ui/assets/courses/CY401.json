@@ -1,0 +1,476 @@
+{
+  "course_info": {
+    "course_id": "CY401",
+    "title": "Advanced Network Security",
+    "credit_hours": 4,
+    "duration": "15 weeks",
+    "meeting_schedule": "Monday, Wednesday, Friday - 4 hours per week",
+    "prerequisites": [
+      "CY203 - Network Security",
+      "CY302 - Incident Response and Management"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "date": "2024-01-15",
+      "topic": "Advanced Threat Detection with Machine Learning",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Apply machine learning techniques to network anomaly detection",
+        "Evaluate ML-based IDS effectiveness and limitations",
+        "Implement a behavioral network baseline with automated deviation alerts"
+      ],
+      "readings": [
+        "Machine Learning and Security Ch. 5-7",
+        "Academic papers on ML-based network intrusion detection"
+      ],
+      "lecture_notes": {
+        "introduction": "Traditional signature-based detection cannot keep pace with novel threats. Machine learning enables detection of previously unseen attacks by learning normal network behavior and identifying deviations.",
+        "key_concepts": [
+          "Supervised vs unsupervised ML for network security",
+          "Feature engineering from network flow data",
+          "Anomaly detection: isolation forests, autoencoders",
+          "Classification: random forests for traffic categorization",
+          "False positive management in ML-based detection"
+        ],
+        "demonstration": "Training an isolation forest model on NetFlow data to detect anomalous network behavior, then testing against simulated attack traffic",
+        "setup_requirements": [
+          "Python with scikit-learn and pandas",
+          "NetFlow dataset (CICIDS2017 or similar)",
+          "Jupyter notebook environment"
+        ],
+        "review": [
+          {
+            "key": "Isolation Forest",
+            "value": "Unsupervised anomaly detection algorithm that isolates observations by randomly selecting features and split values. Anomalies require fewer splits to isolate, yielding a shorter path length."
+          },
+          {
+            "key": "Feature Engineering",
+            "value": "Extracting meaningful features from raw network data: flow duration, packet count, byte count, inter-arrival times, port entropy, protocol ratios"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 1,
+      "session_number": 2,
+      "date": "2024-01-17",
+      "topic": "Software-Defined Networking Security",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Analyze the security implications of SDN architecture",
+        "Implement micro-segmentation with SDN controllers",
+        "Identify SDN-specific attack vectors and defenses"
+      ],
+      "readings": [
+        "SDN: Software Defined Networks Ch. 8-10",
+        "OpenFlow specification security considerations"
+      ],
+      "lecture_notes": {
+        "introduction": "SDN separates the control plane from the data plane, enabling programmable network security. This creates both powerful defense capabilities and new attack surfaces.",
+        "key_concepts": [
+          "SDN architecture: controller, southbound API, northbound API",
+          "OpenFlow protocol and flow table management",
+          "Micro-segmentation: per-workload firewall policies via SDN",
+          "SDN attacks: controller compromise, flow table poisoning, DoS of control plane",
+          "Network Function Virtualization (NFV) for security services"
+        ],
+        "demonstration": "Using an OpenDaylight controller to implement micro-segmentation policies and demonstrating how flow rules dynamically isolate a compromised host",
+        "setup_requirements": [
+          "Mininet SDN emulator",
+          "OpenDaylight or ONOS controller",
+          "SDN flow rule testing tools"
+        ],
+        "review": [
+          {
+            "key": "SDN Controller Security",
+            "value": "The controller is the single point of control (and failure). Compromise gives the attacker control over all network flows. Must be hardened, redundant, and monitored."
+          },
+          {
+            "key": "Micro-segmentation via SDN",
+            "value": "SDN enables firewall policies at the individual VM/container level, not just at network boundaries. Dramatically limits lateral movement after a breach."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 3,
+      "date": "2024-01-22",
+      "topic": "Advanced Persistent Threat Detection and Hunting",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Characterize APT tactics, techniques, and procedures",
+        "Develop threat hunting hypotheses based on MITRE ATT&CK",
+        "Implement detection engineering for APT techniques"
+      ],
+      "readings": [
+        "Threat Hunting with MITRE ATT&CK",
+        "Mandiant APT reports"
+      ],
+      "lecture_notes": {
+        "introduction": "Advanced Persistent Threats operate with nation-state resources and patience. Detecting them requires going beyond automated alerts to proactive, intelligence-driven hunting.",
+        "key_concepts": [
+          "APT lifecycle: initial access, execution, persistence, privilege escalation, lateral movement, exfiltration",
+          "MITRE ATT&CK-based hunting methodology",
+          "Network-based APT indicators: beaconing patterns, DNS anomalies, encrypted C2",
+          "Hunting for lateral movement: anomalous SMB, RDP, WMI traffic",
+          "Threat intelligence integration for IOC-based detection"
+        ],
+        "demonstration": "Hunting for APT-style beaconing in NetFlow data using JA3 fingerprints and timing analysis to identify encrypted C2 channels",
+        "setup_requirements": [
+          "Zeek with JA3 module",
+          "NetFlow analysis tools",
+          "Threat intelligence feeds for enrichment"
+        ],
+        "review": [
+          {
+            "key": "Beaconing Detection",
+            "value": "APT malware regularly contacts C2 servers at predictable intervals. Detecting beaconing: analyze connection timing patterns using standard deviation of inter-connection intervals. Low jitter = beaconing."
+          },
+          {
+            "key": "JA3 Fingerprinting",
+            "value": "MD5 hash of TLS ClientHello parameters (cipher suites, extensions, curves). Each TLS client produces a unique fingerprint. Known malware JA3 hashes enable detection regardless of destination."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 5,
+      "date": "2024-01-29",
+      "topic": "Encrypted Traffic Analysis",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Analyze encrypted traffic without decryption using metadata",
+        "Implement TLS inspection and its privacy implications",
+        "Use traffic analysis techniques to classify encrypted flows"
+      ],
+      "readings": [
+        "Encrypted Traffic Analysis research papers",
+        "Cisco ETA (Encrypted Traffic Analytics) whitepaper"
+      ],
+      "lecture_notes": {
+        "introduction": "With over 90% of web traffic now encrypted, defenders can no longer rely on deep packet inspection. Encrypted traffic analysis uses metadata and behavioral patterns to detect threats without decryption.",
+        "key_concepts": [
+          "TLS metadata: certificate info, SNI, JA3/JA3S fingerprints",
+          "Flow-based analysis: packet sizes, timing, directionality",
+          "Machine learning on encrypted traffic: classifying applications and malware",
+          "TLS inspection (man-in-the-middle proxy): capabilities and privacy concerns",
+          "DNS-over-HTTPS and DNS-over-TLS impact on visibility"
+        ],
+        "demonstration": "Classifying encrypted traffic flows using packet size distributions and timing patterns to distinguish between legitimate HTTPS and malware C2",
+        "setup_requirements": [
+          "pcap files with encrypted traffic",
+          "Python with traffic analysis libraries",
+          "JA3/JA3S extraction tools"
+        ],
+        "review": [
+          {
+            "key": "Metadata Analysis",
+            "value": "Even encrypted traffic reveals: who talks to whom, when, how much data, certificate details, TLS parameters. This metadata alone can identify threats without breaking encryption."
+          },
+          {
+            "key": "Traffic Classification",
+            "value": "ML models trained on packet size distributions and inter-arrival times can classify encrypted traffic (web browsing, streaming, file transfer, malware C2) with high accuracy."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 7,
+      "date": "2024-02-05",
+      "topic": "Network Deception and Active Defense",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Deploy honeypots and honeynets for threat intelligence",
+        "Implement network deception with decoy assets",
+        "Design an active defense strategy within legal boundaries"
+      ],
+      "readings": [
+        "The Art of Intrusion Detection Ch. 5-8",
+        "MITRE Shield active defense framework"
+      ],
+      "lecture_notes": {
+        "introduction": "Active defense shifts from purely reactive security to strategically engaging with adversaries using deception, misdirection, and deliberate engagement to gather intelligence.",
+        "key_concepts": [
+          "Honeypots: low-interaction (Cowrie, Dionaea) vs high-interaction",
+          "Honeynets: networks of honeypots simulating real infrastructure",
+          "Honey tokens: fake credentials, documents, and database records",
+          "Canary tokens: tripwires that alert when accessed",
+          "Legal and ethical boundaries of active defense"
+        ],
+        "demonstration": "Deploying Cowrie SSH honeypot, generating canary tokens, and analyzing attacker behavior captured by the honeypot",
+        "setup_requirements": [
+          "Cowrie SSH honeypot",
+          "Canary token generator",
+          "Isolated network for honeypot deployment"
+        ],
+        "review": [
+          {
+            "key": "Honeypot Value",
+            "value": "Any interaction with a honeypot is suspicious by definition (legitimate users have no reason to access it). Provides high-fidelity alerts with zero false positives for early breach detection."
+          },
+          {
+            "key": "Canary Tokens",
+            "value": "Files (Word docs, PDFs) or credentials that trigger an alert when opened or used. Plant in file shares, admin directories, or credential stores. Any access indicates compromise."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 9,
+      "date": "2024-02-12",
+      "topic": "Security Automation and Orchestration (SOAR)",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Design automated incident response playbooks",
+        "Implement SOAR workflows for common alert types",
+        "Integrate security tools through APIs and automation"
+      ],
+      "readings": [
+        "SOAR platform documentation (Shuffle/TheHive)",
+        "Security automation best practices"
+      ],
+      "lecture_notes": {
+        "introduction": "Security teams are overwhelmed by alert volume. SOAR platforms automate repetitive response tasks, enabling analysts to focus on complex investigations while routine incidents are handled automatically.",
+        "key_concepts": [
+          "SOAR architecture: orchestration, automation, response, case management",
+          "Playbook design: trigger conditions, decision trees, automated actions",
+          "API integration: SIEM, firewall, EDR, threat intelligence",
+          "Automated enrichment: IP reputation, domain age, hash lookup",
+          "Human-in-the-loop decisions for high-impact actions"
+        ],
+        "demonstration": "Building a SOAR playbook that automatically triages phishing alerts: extracts IOCs, checks reputation, blocks malicious URLs, and escalates to an analyst if uncertain",
+        "setup_requirements": [
+          "Shuffle SOAR platform or TheHive + Cortex",
+          "SIEM with alert API",
+          "VirusTotal API key for enrichment"
+        ],
+        "review": [
+          {
+            "key": "Playbook Design",
+            "value": "Define trigger (SIEM alert), enrichment steps (lookup IOCs), decision points (malicious threshold), automated actions (block IP, disable account), and escalation criteria (analyst review)."
+          },
+          {
+            "key": "MTTR Impact",
+            "value": "SOAR reduces Mean Time to Respond from hours to minutes for common incident types. Automated containment of confirmed threats while analysts handle ambiguous cases."
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "ML Detection, SDN Security, and APT Hunting",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "You are analyzing NetFlow data and notice that host 10.0.5.22 has been connecting to IP 198.51.100.42:443 every 300 seconds (+/- 5 seconds) for the past 72 hours, transferring approximately 2KB per connection. Explain what this traffic pattern suggests, what additional data points you would analyze to confirm, and how you would determine if it is malicious.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "The regular 300-second interval with minimal jitter strongly suggests automated beaconing, consistent with C2 communication. The small, consistent data size suggests check-in/heartbeat traffic rather than data exfiltration. Additional analysis: (1) JA3 fingerprint of the TLS client to compare against known malware fingerprints. (2) Certificate analysis: is the certificate self-signed, recently issued, or from a free CA? (3) Domain/IP reputation lookup. (4) Historical first-seen date: new connections to previously uncontacted IPs are suspicious. (5) Check if 10.0.5.22 connects to any other unusual IPs. To confirm malicious: isolate the host (without alerting), capture memory for forensic analysis, and examine the process making the connections.",
+            "rubric": [
+              {
+                "key": "Correctly identifies beaconing pattern",
+                "value": 4
+              },
+              {
+                "key": "Relevant additional analysis data points",
+                "value": 3
+              },
+              {
+                "key": "Appropriate confirmation methodology",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain why an SDN controller is both a powerful security tool and a critical risk. Describe two security architectures that mitigate the risk of SDN controller compromise.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Power: The SDN controller has a global view of the entire network and can programmatically modify any flow rule instantly. This enables real-time micro-segmentation, automated quarantine, and dynamic policy enforcement. Risk: Controller compromise gives the attacker god-mode over the network: redirect traffic, disable security rules, create covert channels, or cause total network outage. Architecture 1: Controller clustering with Byzantine fault tolerance. Deploy 3+ controllers where flow rule changes require consensus. Even if one controller is compromised, the others reject malicious rules. Architecture 2: Separation of security policy controllers from routing controllers. A dedicated security controller enforces firewall rules with its own authentication, separate from the routing controller. Compromise of the routing controller does not bypass security policies.",
+            "rubric": [
+              {
+                "key": "Explains SDN controller power correctly",
+                "value": 3
+              },
+              {
+                "key": "Explains SDN controller risk correctly",
+                "value": 3
+              },
+              {
+                "key": "Two valid mitigation architectures",
+                "value": 4
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 4,
+        "topic": "Encrypted Traffic Analysis, Deception, and SOAR",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "A security architect argues that TLS inspection (MITM proxy) should be deployed on all network traffic for security visibility. Present two strong arguments for and two against this approach, considering both security and organizational factors.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "For: (1) Restores visibility into 90%+ of network traffic, enabling DLP, malware detection, and compliance monitoring that is otherwise blind to encrypted content. (2) Enables IDS signatures and content filtering to detect threats that would bypass perimeter controls inside encrypted channels. Against: (1) Breaks end-to-end encryption, creating a single point of decryption where all traffic is exposed. If the proxy is compromised, all traffic is compromised. Also breaks certificate pinning for applications that implement it. (2) Privacy and legal concerns: intercepting encrypted traffic may violate employee privacy expectations, healthcare (HIPAA) and financial regulations, and may be illegal in some jurisdictions without explicit consent. Banking and healthcare sites should be exempted.",
+            "rubric": [
+              {
+                "key": "Two valid arguments for TLS inspection",
+                "value": 4
+              },
+              {
+                "key": "Two valid arguments against",
+                "value": 4
+              },
+              {
+                "key": "Consideration of both security and organizational factors",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Design a SOAR playbook for automatically responding to a 'brute force SSH login' SIEM alert. Include the trigger condition, at least four automated steps, one decision point requiring human judgment, and the expected outcome.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Trigger: SIEM alert when >10 failed SSH login attempts from the same source IP within 5 minutes. Step 1: Enrich the source IP (geolocation, reputation lookup via VirusTotal/AbuseIPDB, check if it is a known VPN/Tor exit node). Step 2: Query SIEM for this IP's historical activity across all systems (has it targeted other hosts?). Step 3: Check if any of the attempted usernames correspond to actual system accounts. Step 4: If the IP is external and reputation is malicious, automatically create a firewall block rule for the source IP (24-hour temporary block). Decision point: If the IP is internal or belongs to a known partner, escalate to an analyst for investigation (could be a misconfigured service, compromised internal host, or legitimate user lockout). Step 5: Create an incident ticket with all enrichment data. Expected outcome: External brute force blocked within 2 minutes of detection. Internal/partner sources investigated by an analyst with full context pre-gathered.",
+            "rubric": [
+              {
+                "key": "Clear trigger condition",
+                "value": 2
+              },
+              {
+                "key": "Four logical automated steps",
+                "value": 4
+              },
+              {
+                "key": "Appropriate human decision point",
+                "value": 2
+              },
+              {
+                "key": "Clear expected outcome",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Advanced Network Defense Architecture",
+        "week_assigned": 2,
+        "week_due": 5,
+        "points": 100,
+        "description": "Design and implement an advanced network defense architecture incorporating ML-based detection, deception technologies, and automated response for a provided enterprise scenario.",
+        "objectives": [
+          "Deploy ML-based anomaly detection on network traffic",
+          "Implement deception technologies for early breach detection",
+          "Build automated response playbooks for detected threats",
+          "Demonstrate detection of simulated APT-style attacks"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Architecture design document with defense-in-depth justification",
+          "Working ML detection model with training and testing results",
+          "Deployed honeypots and canary tokens with monitoring",
+          "SOAR playbook for automated threat response"
+        ],
+        "grading_rubric": {
+          "ml_detection": {
+            "points": 30,
+            "criteria": [
+              "Appropriate ML algorithm selection with justification",
+              "Feature engineering from network data",
+              "Model training with proper train/test split",
+              "Detection demonstrated against simulated attacks"
+            ]
+          },
+          "deception_technologies": {
+            "points": 25,
+            "criteria": [
+              "Honeypots deployed and capturing attacker behavior",
+              "Canary tokens placed in strategic locations",
+              "Alerts generated on deception asset interaction",
+              "Deception integrated with SIEM"
+            ]
+          },
+          "automation": {
+            "points": 25,
+            "criteria": [
+              "SOAR playbook functional for detected threats",
+              "Automated enrichment and containment",
+              "Human escalation for ambiguous cases",
+              "End-to-end workflow tested"
+            ]
+          },
+          "documentation": {
+            "points": 20,
+            "criteria": [
+              "Architecture design well-justified",
+              "Detection performance metrics reported",
+              "Operational procedures documented",
+              "Limitations and assumptions clearly stated"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Comprehensive defense architecture integrating multiple advanced techniques",
+                "Demonstrated detection capability against realistic attack scenarios",
+                "Functional automation reducing response time",
+                "Professional documentation suitable for enterprise deployment"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 10,
+      "description": "Assessment of advanced network security concepts and techniques"
+    },
+    "lab_assignments": {
+      "percentage": 25,
+      "description": "Hands-on labs with ML detection, deception, and SOAR automation"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "Advanced network defense architecture project"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Practical exam: detect and respond to simulated network attacks"
+    },
+    "final_project": {
+      "percentage": 20,
+      "description": "Capstone: defend a network against a multi-phase simulated APT"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is mandatory for all lab sessions. More than 2 unexcused absences may result in course failure.",
+    "late_submissions": "Late assignments are penalized 10% per day. No submissions accepted more than 5 days late without prior arrangement.",
+    "collaboration": "Lab exercises may be completed in pairs. Reports and code must be individual work.",
+    "academic_integrity": "All detection models and automation must be your own work. Using pre-built models without modification and analysis is not acceptable.",
+    "lab_safety": "All testing must be conducted within the isolated lab environment. ML models must be trained on provided datasets only."
+  }
+}

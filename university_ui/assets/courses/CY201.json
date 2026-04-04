@@ -1,0 +1,474 @@
+{
+  "course_info": {
+    "course_id": "CY201",
+    "title": "Ethical Hacking and Penetration Testing",
+    "credit_hours": 4,
+    "duration": "15 weeks",
+    "meeting_schedule": "Monday, Wednesday, Friday - 4 hours per week",
+    "prerequisites": [
+      "CY101 - Introduction to Cybersecurity",
+      "CY102 - Network Fundamentals",
+      "CY103 - Operating Systems Security"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "date": "2024-01-15",
+      "topic": "Penetration Testing Methodology and Legal Framework",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Describe the phases of a professional penetration test",
+        "Understand the legal and ethical boundaries of security testing",
+        "Draft a Rules of Engagement document"
+      ],
+      "readings": [
+        "The Web Application Hacker's Handbook Ch. 1",
+        "PTES (Penetration Testing Execution Standard) documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Ethical hacking is the practice of testing systems with authorization to find vulnerabilities before malicious actors do. The line between ethical and criminal is defined by authorization.",
+        "key_concepts": [
+          "Penetration testing phases: Reconnaissance, Scanning, Exploitation, Post-Exploitation, Reporting",
+          "Rules of Engagement and scope definition",
+          "Legal frameworks: CFAA, GDPR implications, state laws",
+          "Types of tests: black box, white box, gray box",
+          "Bug bounty programs and responsible disclosure"
+        ],
+        "demonstration": "Walking through a sample Rules of Engagement document and penetration test report",
+        "setup_requirements": [
+          "Kali Linux 2023.4 VM configured",
+          "Lab network with vulnerable targets",
+          "Signed lab ethics agreement"
+        ],
+        "review": [
+          {
+            "key": "Rules of Engagement",
+            "value": "Legal document defining scope, authorized targets, testing window, emergency contacts, and out-of-scope systems. Must be signed before any testing begins."
+          },
+          {
+            "key": "PTES Phases",
+            "value": "Pre-engagement, Intelligence Gathering, Threat Modeling, Vulnerability Analysis, Exploitation, Post-Exploitation, Reporting"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 1,
+      "session_number": 2,
+      "date": "2024-01-17",
+      "topic": "Reconnaissance and OSINT",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Perform passive and active reconnaissance techniques",
+        "Use OSINT tools to gather intelligence on targets",
+        "Enumerate subdomains, email addresses, and organizational structure"
+      ],
+      "readings": [
+        "Open Source Intelligence Techniques Ch. 1-3",
+        "PTES Intelligence Gathering section"
+      ],
+      "lecture_notes": {
+        "introduction": "Reconnaissance is the most critical phase of a penetration test. The quality of your intelligence directly determines the success of your exploitation attempts.",
+        "key_concepts": [
+          "Passive reconnaissance: WHOIS, DNS records, certificate transparency logs",
+          "Active reconnaissance: port scanning, service enumeration",
+          "OSINT tools: Maltego, theHarvester, Shodan, Censys",
+          "Google dorking for sensitive information discovery",
+          "Social media OSINT and metadata analysis"
+        ],
+        "demonstration": "Performing full reconnaissance against a lab target using theHarvester, Shodan, and Nmap",
+        "setup_requirements": [
+          "Kali Linux with OSINT tools",
+          "Lab target with exposed services",
+          "Shodan API key for educational use"
+        ],
+        "review": [
+          {
+            "key": "Passive vs Active Recon",
+            "value": "Passive recon gathers information without touching the target (WHOIS, public records). Active recon directly interacts with the target (port scanning), which may be detected."
+          },
+          {
+            "key": "Google Dorking",
+            "value": "Using advanced search operators (site:, filetype:, intitle:, inurl:) to discover sensitive files, login portals, and misconfigurations indexed by search engines"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 3,
+      "date": "2024-01-22",
+      "topic": "Network Scanning and Enumeration",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Perform comprehensive port scanning with Nmap",
+        "Enumerate services and identify versions",
+        "Use NSE scripts for vulnerability detection"
+      ],
+      "readings": [
+        "Nmap Network Scanning Ch. 1-6",
+        "SANS GPEN course materials on scanning"
+      ],
+      "lecture_notes": {
+        "introduction": "Scanning and enumeration bridge the gap between reconnaissance and exploitation by identifying exactly what services are running and what vulnerabilities they expose.",
+        "key_concepts": [
+          "Nmap scan types: SYN, TCP connect, UDP, ACK, FIN",
+          "Service version detection (-sV) and OS fingerprinting (-O)",
+          "Nmap Scripting Engine (NSE) for vulnerability detection",
+          "SMB, SNMP, LDAP, and NFS enumeration",
+          "Scan evasion techniques: timing, fragmentation, decoys"
+        ],
+        "demonstration": "Full Nmap scan against a Metasploitable target, demonstrating different scan types and NSE scripts",
+        "setup_requirements": [
+          "Kali Linux with Nmap",
+          "Metasploitable 2 and 3 VMs",
+          "Isolated lab network"
+        ],
+        "review": [
+          {
+            "key": "SYN Scan",
+            "value": "Half-open scan (-sS) sends SYN, receives SYN-ACK for open ports. Does not complete the handshake, making it faster and less logged than full TCP connect scans."
+          },
+          {
+            "key": "NSE Scripts",
+            "value": "Nmap Scripting Engine provides categorized scripts (auth, brute, vuln, exploit) that automate service enumeration and vulnerability detection"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 5,
+      "date": "2024-01-29",
+      "topic": "Exploitation with Metasploit",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Navigate the Metasploit Framework architecture",
+        "Select and configure exploits, payloads, and encoders",
+        "Exploit common vulnerabilities in a lab environment"
+      ],
+      "readings": [
+        "Metasploit: The Penetration Tester's Guide Ch. 3-5",
+        "Rapid7 Metasploit documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Metasploit is the industry-standard exploitation framework. Understanding its architecture and capabilities is essential for any penetration tester.",
+        "key_concepts": [
+          "Metasploit architecture: modules, payloads, encoders, post modules",
+          "msfconsole workflow: search, use, set, exploit",
+          "Payload types: singles, stagers, stages, Meterpreter",
+          "Exploit selection based on enumeration results",
+          "Pivoting through compromised hosts"
+        ],
+        "demonstration": "Exploiting EternalBlue (MS17-010) on a lab Windows target, establishing a Meterpreter session, and demonstrating post-exploitation capabilities",
+        "setup_requirements": [
+          "Kali Linux with Metasploit Framework",
+          "Windows 7 SP1 vulnerable target VM",
+          "Metasploitable VMs"
+        ],
+        "review": [
+          {
+            "key": "Meterpreter",
+            "value": "Advanced payload providing an interactive shell with capabilities for file operations, process manipulation, network pivoting, and privilege escalation"
+          },
+          {
+            "key": "Exploit/Payload Selection",
+            "value": "Choose exploits based on target OS, service version, and architecture. Match payload to network conditions (reverse vs bind, staged vs stageless)."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 7,
+      "date": "2024-02-05",
+      "topic": "Web Application Penetration Testing",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Identify and exploit OWASP Top 10 vulnerabilities",
+        "Use Burp Suite for web application testing",
+        "Perform SQL injection and XSS attacks in a lab"
+      ],
+      "readings": [
+        "The Web Application Hacker's Handbook Ch. 6-10",
+        "OWASP Testing Guide v4.2"
+      ],
+      "lecture_notes": {
+        "introduction": "Web applications are the largest attack surface for most organizations. Mastering web application testing is a core penetration testing skill.",
+        "key_concepts": [
+          "OWASP Top 10 2021: Broken Access Control, Injection, Cryptographic Failures",
+          "SQL injection: UNION-based, blind, time-based, out-of-band",
+          "Cross-Site Scripting: reflected, stored, DOM-based",
+          "Burp Suite workflow: proxy, scanner, repeater, intruder",
+          "Authentication and session management testing"
+        ],
+        "demonstration": "Exploiting SQL injection and XSS on DVWA and OWASP Juice Shop, demonstrating Burp Suite interception and request manipulation",
+        "setup_requirements": [
+          "Burp Suite Community Edition",
+          "DVWA (Damn Vulnerable Web Application)",
+          "OWASP Juice Shop",
+          "Browser configured with Burp proxy"
+        ],
+        "review": [
+          {
+            "key": "SQL Injection",
+            "value": "Inserting SQL commands into application inputs that are concatenated into database queries. Parameterized queries (prepared statements) are the primary defense."
+          },
+          {
+            "key": "XSS",
+            "value": "Injecting malicious scripts into web pages viewed by other users. Reflected XSS is in the URL, Stored XSS persists in the database, DOM XSS manipulates the page's JavaScript."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 9,
+      "date": "2024-02-12",
+      "topic": "Post-Exploitation and Reporting",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Perform privilege escalation on Linux and Windows",
+        "Maintain persistence and pivot through networks",
+        "Write a professional penetration test report"
+      ],
+      "readings": [
+        "Red Team Field Manual (RTFM)",
+        "PTES Reporting section"
+      ],
+      "lecture_notes": {
+        "introduction": "Exploitation is only half the job. Post-exploitation demonstrates the real business impact, and the report is what the client pays for.",
+        "key_concepts": [
+          "Linux privilege escalation: SUID binaries, kernel exploits, cron jobs, sudo misconfigurations",
+          "Windows privilege escalation: service misconfigurations, unquoted paths, token impersonation",
+          "Persistence mechanisms: scheduled tasks, registry run keys, SSH keys",
+          "Lateral movement: Pass-the-Hash, PsExec, WMI",
+          "Report structure: executive summary, methodology, findings, remediation"
+        ],
+        "demonstration": "Escalating from a low-privilege shell to root/SYSTEM on lab targets using multiple techniques, then drafting findings for the report",
+        "setup_requirements": [
+          "Compromised shells from previous exercises",
+          "LinPEAS and WinPEAS enumeration scripts",
+          "Report template provided"
+        ],
+        "review": [
+          {
+            "key": "Privilege Escalation",
+            "value": "After initial access, the tester attempts to gain higher privileges. On Linux: check SUID, sudo -l, writable cron jobs, kernel version. On Windows: check services, scheduled tasks, token privileges."
+          },
+          {
+            "key": "Pentest Report",
+            "value": "Executive summary for leadership, technical details for IT staff. Each finding: title, severity, evidence, business impact, remediation steps. The report is the deliverable."
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "Reconnaissance, Scanning, and Methodology",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "You are conducting a penetration test against a company's external perimeter. Your Nmap SYN scan of the web server shows port 443 open with an expired SSL certificate and port 8443 running Apache Tomcat 9.0.30. Describe your next three steps with specific tools and techniques.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Step 1: Enumerate the SSL/TLS configuration on port 443 using sslscan or testssl.sh to identify weak ciphers, protocol versions, and certificate issues beyond expiration. Step 2: Run Nmap NSE scripts (http-enum, http-title, http-methods) against both ports, and use Nikto for web server misconfiguration scanning on both 443 and 8443. Step 3: For Tomcat 9.0.30 specifically, check for CVE-2020-1938 (Ghostcat/AJP vulnerability), attempt to access /manager and /host-manager with default credentials (tomcat:tomcat), and use Burp Suite to spider the application for additional attack surface.",
+            "rubric": [
+              {
+                "key": "SSL/TLS enumeration with specific tools",
+                "value": 3
+              },
+              {
+                "key": "Web server enumeration with appropriate tools",
+                "value": 4
+              },
+              {
+                "key": "Version-specific vulnerability research for Tomcat",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between a SYN scan (-sS) and a TCP connect scan (-sT) in Nmap. Under what circumstances would you be forced to use -sT instead of -sS, and what are the security implications?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "SYN scan sends a SYN packet and waits for SYN-ACK (open) or RST (closed) without completing the handshake. It requires raw socket privileges (root/admin). TCP connect scan completes the full three-way handshake using the OS's connect() system call. You are forced to use -sT when running Nmap as a non-root user, when scanning through certain SOCKS proxies, or when IPv6 scanning on some systems. Security implications: -sT creates a full connection that is logged by the target's TCP stack and application logs, making detection much more likely. -sS is stealthier as the half-open connection is often not logged by applications.",
+            "rubric": [
+              {
+                "key": "Correct technical difference explained",
+                "value": 4
+              },
+              {
+                "key": "Valid scenarios requiring -sT",
+                "value": 3
+              },
+              {
+                "key": "Detection/logging implications",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 4,
+        "topic": "Exploitation and Web Application Testing",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Given the following PHP code: $query = \"SELECT * FROM users WHERE id = \" . $_GET['id']; Demonstrate a UNION-based SQL injection payload that would extract all usernames and passwords from a 'users' table with columns 'username' and 'password'. Explain each part of the payload.",
+            "type": "code",
+            "points": 10,
+            "answer": "Payload: ?id=1 UNION SELECT username, password FROM users-- Explanation: '1' satisfies the original query. UNION appends a second SELECT that extracts username and password columns. The '--' comments out any trailing SQL. The UNION SELECT must have the same number of columns as the original query. If the original has more columns, pad with NULL: ?id=1 UNION SELECT username, password, NULL, NULL FROM users--",
+            "rubric": [
+              {
+                "key": "Correct UNION SELECT syntax",
+                "value": 4
+              },
+              {
+                "key": "Explains each component of the payload",
+                "value": 3
+              },
+              {
+                "key": "Addresses column count matching",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "You have a Meterpreter session on a Windows 10 workstation as a standard user. Describe two specific techniques you would attempt for privilege escalation, including the Meterpreter commands or modules you would use.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Technique 1: Run 'getsystem' which attempts multiple techniques including Named Pipe Impersonation and Token Duplication. If that fails, use 'run post/multi/recon/local_exploit_suggester' to identify kernel exploits matching the target's patch level. Technique 2: Check for unquoted service paths with 'run post/windows/gather/enum_unquoted_service_paths'. If found, generate a payload with msfvenom matching the service path, upload with 'upload', and restart the vulnerable service. The service will execute our payload with SYSTEM privileges due to the unquoted path parsing.",
+            "rubric": [
+              {
+                "key": "First technique with specific commands",
+                "value": 4
+              },
+              {
+                "key": "Second technique with specific commands",
+                "value": 4
+              },
+              {
+                "key": "Explains why each technique grants elevated privileges",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Full-Scope Penetration Test",
+        "week_assigned": 2,
+        "week_due": 5,
+        "points": 100,
+        "description": "Conduct a comprehensive penetration test against the provided lab network containing multiple hosts with various operating systems and services. Produce a professional penetration test report.",
+        "objectives": [
+          "Execute all phases of a penetration test methodically",
+          "Demonstrate proficiency with industry-standard tools",
+          "Identify and exploit vulnerabilities across multiple attack vectors",
+          "Produce a professional-quality penetration test report"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Penetration test report with executive summary and technical details",
+          "Evidence documentation: screenshots, command outputs, exploit code",
+          "Remediation recommendations prioritized by CVSS severity",
+          "Methodology section describing tools and techniques used"
+        ],
+        "grading_rubric": {
+          "reconnaissance_and_enumeration": {
+            "points": 20,
+            "criteria": [
+              "Complete host and service discovery",
+              "Thorough version enumeration",
+              "OSINT and information gathering documented",
+              "Attack surface fully mapped"
+            ]
+          },
+          "exploitation": {
+            "points": 35,
+            "criteria": [
+              "Multiple vulnerabilities successfully exploited",
+              "Exploitation techniques properly documented",
+              "Both network and web application vectors tested",
+              "Manual testing beyond automated tools"
+            ]
+          },
+          "post_exploitation": {
+            "points": 20,
+            "criteria": [
+              "Privilege escalation achieved where possible",
+              "Lateral movement demonstrated",
+              "Sensitive data discovery documented",
+              "Business impact clearly articulated"
+            ]
+          },
+          "report_quality": {
+            "points": 25,
+            "criteria": [
+              "Professional report format following PTES template",
+              "Clear executive summary for non-technical audience",
+              "Each finding includes evidence, impact, and remediation",
+              "Risk ratings justified with CVSS scores"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Comprehensive penetration test covering all accessible attack vectors",
+                "Multiple successful exploits with documented evidence chains",
+                "Professional report suitable for delivery to a real client",
+                "Actionable remediation plan with prioritized findings"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 10,
+      "description": "Assessment of penetration testing concepts and methodology knowledge"
+    },
+    "lab_assignments": {
+      "percentage": 30,
+      "description": "Hands-on labs covering reconnaissance, exploitation, and post-exploitation"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "Full-scope penetration test with professional report"
+    },
+    "midterm_examination": {
+      "percentage": 10,
+      "description": "Practical exam: timed penetration test of a lab environment"
+    },
+    "final_project": {
+      "percentage": 20,
+      "description": "Capstone penetration test against a complex multi-host environment"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is mandatory for all lab sessions. More than 2 unexcused absences may result in course failure.",
+    "late_submissions": "Late assignments are penalized 10% per day. No submissions accepted more than 5 days late without prior arrangement.",
+    "collaboration": "Lab exercises may be discussed but all exploitation and reporting must be individual work. Sharing exploits or flags is prohibited.",
+    "academic_integrity": "All testing must be conducted within the authorized lab environment. Testing external systems without written authorization is a criminal offense and grounds for immediate expulsion.",
+    "lab_safety": "Students must sign the lab ethics agreement before accessing any tools. Unauthorized use of penetration testing tools outside the lab will result in course failure and disciplinary action."
+  }
+}

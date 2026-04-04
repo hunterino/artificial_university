@@ -1,0 +1,472 @@
+{
+  "course_info": {
+    "course_id": "CY103",
+    "title": "Operating Systems Security",
+    "credit_hours": 3,
+    "duration": "15 weeks",
+    "meeting_schedule": "Tuesday, Thursday - 3 hours per week",
+    "prerequisites": [
+      "CY101 - Introduction to Cybersecurity",
+      "CY102 - Network Fundamentals"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "date": "2024-01-16",
+      "topic": "Operating System Security Architecture",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Describe the security architecture of modern operating systems",
+        "Understand kernel vs user space separation and its security implications",
+        "Identify OS-level security mechanisms"
+      ],
+      "readings": [
+        "Operating System Concepts Ch. 1-2",
+        "NIST SP 800-123 Guide to General Server Security"
+      ],
+      "lecture_notes": {
+        "introduction": "Operating systems are the foundation upon which all software runs. Their security mechanisms form the first line of defense against local and remote attacks.",
+        "key_concepts": [
+          "Kernel mode vs user mode privilege separation",
+          "Process isolation and memory protection",
+          "Security reference monitor concept",
+          "Hardware security features: NX bit, ASLR, SMEP",
+          "Trusted Computing Base (TCB)"
+        ],
+        "demonstration": "Demonstrating process isolation by attempting cross-process memory access on Linux and observing kernel enforcement",
+        "setup_requirements": [
+          "Ubuntu Server 22.04 LTS VM",
+          "Windows Server 2022 VM",
+          "GDB debugger installed"
+        ],
+        "review": [
+          {
+            "key": "Privilege Separation",
+            "value": "Kernel mode has unrestricted hardware access; user mode is restricted. System calls are the controlled interface between them."
+          },
+          {
+            "key": "ASLR",
+            "value": "Address Space Layout Randomization randomizes memory addresses of key data areas, making exploitation of memory corruption vulnerabilities significantly harder"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 1,
+      "session_number": 2,
+      "date": "2024-01-18",
+      "topic": "Linux Security Fundamentals",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Configure Linux file permissions and ownership",
+        "Implement SELinux and AppArmor mandatory access controls",
+        "Harden a Linux system using CIS benchmarks"
+      ],
+      "readings": [
+        "The Linux Command Line Ch. 9-10",
+        "CIS Benchmark for Ubuntu Linux"
+      ],
+      "lecture_notes": {
+        "introduction": "Linux powers the majority of servers on the internet. Mastering its security features is essential for any cybersecurity professional.",
+        "key_concepts": [
+          "File permissions: rwx, SUID, SGID, sticky bit",
+          "User and group management for access control",
+          "SELinux: contexts, policies, and enforcement modes",
+          "AppArmor: profiles and learning mode",
+          "Systemd service hardening directives"
+        ],
+        "demonstration": "Configuring SELinux in enforcing mode, creating custom policies, and observing how they prevent unauthorized access",
+        "setup_requirements": [
+          "CentOS/RHEL VM with SELinux enabled",
+          "Ubuntu VM with AppArmor enabled",
+          "audit2allow and semanage tools"
+        ],
+        "review": [
+          {
+            "key": "SELinux",
+            "value": "Mandatory Access Control implementation that assigns security contexts to all processes and files, enforcing policy even against root"
+          },
+          {
+            "key": "SUID Bit",
+            "value": "When set on an executable, it runs with the file owner's privileges. Common attack vector if misconfigured on sensitive binaries."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 3,
+      "date": "2024-01-23",
+      "topic": "Windows Security Architecture",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Understand Windows security architecture including SAM, LSA, and LSASS",
+        "Configure Windows Group Policy for security hardening",
+        "Implement Windows Defender and AppLocker controls"
+      ],
+      "readings": [
+        "Windows Internals Part 1 Ch. 7",
+        "CIS Benchmark for Windows Server"
+      ],
+      "lecture_notes": {
+        "introduction": "Windows dominates enterprise environments. Understanding its security architecture is critical for defending corporate networks.",
+        "key_concepts": [
+          "Security Account Manager (SAM) and NTLM hashes",
+          "Local Security Authority Subsystem (LSASS)",
+          "Active Directory security fundamentals",
+          "Group Policy Objects (GPOs) for security",
+          "Windows Defender Application Control and AppLocker"
+        ],
+        "demonstration": "Configuring AppLocker policies to whitelist approved applications and demonstrating how GPOs enforce password policies",
+        "setup_requirements": [
+          "Windows Server 2022 with Active Directory",
+          "Windows 10/11 client VM joined to domain",
+          "Group Policy Management Console"
+        ],
+        "review": [
+          {
+            "key": "LSASS",
+            "value": "Handles authentication and stores credentials in memory. Primary target for credential dumping tools like Mimikatz."
+          },
+          {
+            "key": "AppLocker",
+            "value": "Application whitelisting technology that controls which executables, scripts, and DLLs are allowed to run based on path, hash, or publisher"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 5,
+      "date": "2024-01-30",
+      "topic": "Patch Management and Vulnerability Hardening",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Design an enterprise patch management strategy",
+        "Use vulnerability scanners to identify missing patches",
+        "Apply OS hardening checklists systematically"
+      ],
+      "readings": [
+        "NIST SP 800-40 Patch Management Guide",
+        "DISA STIG for Ubuntu and Windows"
+      ],
+      "lecture_notes": {
+        "introduction": "Unpatched systems are the easiest targets. A disciplined patch management process is one of the most effective security controls.",
+        "key_concepts": [
+          "Patch management lifecycle: identify, test, deploy, verify",
+          "WSUS, SCCM, and Ansible for automated patching",
+          "Vulnerability scanning with Nessus and OpenVAS",
+          "CVSS scoring and patch prioritization",
+          "CIS Benchmarks and DISA STIGs for hardening"
+        ],
+        "demonstration": "Running an OpenVAS scan against an unpatched VM, analyzing results, applying patches, and rescanning to verify remediation",
+        "setup_requirements": [
+          "OpenVAS/GVM installed",
+          "Intentionally unpatched Windows and Linux VMs",
+          "Patch repository access"
+        ],
+        "review": [
+          {
+            "key": "CVSS Scoring",
+            "value": "Common Vulnerability Scoring System rates vulnerabilities 0-10 based on exploitability, impact, and environmental factors to prioritize patching"
+          },
+          {
+            "key": "STIG",
+            "value": "Security Technical Implementation Guide provides detailed hardening configurations developed by DISA for U.S. Department of Defense systems"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 7,
+      "date": "2024-02-06",
+      "topic": "Logging, Auditing, and Monitoring",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Configure comprehensive logging on Linux and Windows",
+        "Analyze audit logs to detect security events",
+        "Implement centralized log management"
+      ],
+      "readings": [
+        "NIST SP 800-92 Log Management Guide",
+        "Linux auditd documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Logs are the evidence trail of system activity. Without proper logging and monitoring, breaches go undetected for months.",
+        "key_concepts": [
+          "Linux auditd: rules, log analysis, and aureport",
+          "Windows Event Log: Security, System, Application channels",
+          "Syslog and rsyslog for centralized logging",
+          "Log integrity protection with append-only and remote storage",
+          "Key events to monitor: logins, privilege escalation, file access"
+        ],
+        "demonstration": "Configuring auditd rules to detect unauthorized file access, forwarding logs to a central syslog server, and correlating events",
+        "setup_requirements": [
+          "Linux VM with auditd configured",
+          "Windows VM with advanced audit policies",
+          "Central syslog server (rsyslog)"
+        ],
+        "review": [
+          {
+            "key": "auditd",
+            "value": "Linux kernel audit framework that monitors system calls. Rules define which events to log, enabling detection of policy violations and intrusions."
+          },
+          {
+            "key": "Log Integrity",
+            "value": "Attackers often tamper with logs to cover tracks. Remote logging and append-only file attributes protect log integrity."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 9,
+      "date": "2024-02-13",
+      "topic": "Containerization and Virtualization Security",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Identify security concerns specific to containers and VMs",
+        "Harden Docker containers using security best practices",
+        "Understand hypervisor security and VM escape attacks"
+      ],
+      "readings": [
+        "NIST SP 800-190 Application Container Security",
+        "Docker security best practices documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Containers and virtual machines are the building blocks of modern infrastructure. Their security requires understanding isolation boundaries and escape vectors.",
+        "key_concepts": [
+          "Hypervisor types and VM isolation guarantees",
+          "VM escape attacks and hypervisor vulnerabilities",
+          "Docker security: namespaces, cgroups, capabilities",
+          "Container image scanning and supply chain security",
+          "Rootless containers and seccomp profiles"
+        ],
+        "demonstration": "Building a hardened Docker container with a minimal base image, dropping capabilities, and applying a seccomp profile",
+        "setup_requirements": [
+          "Docker Engine installed",
+          "Trivy or Grype for image scanning",
+          "Sample vulnerable container images"
+        ],
+        "review": [
+          {
+            "key": "Container Isolation",
+            "value": "Containers share the host kernel, relying on namespaces and cgroups for isolation. This is weaker than VM isolation where each guest has its own kernel."
+          },
+          {
+            "key": "Image Security",
+            "value": "Container images may contain vulnerabilities in base OS packages or application dependencies. Scanning with tools like Trivy is essential before deployment."
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "OS Architecture and Linux/Windows Security",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "A Linux server is running a web application as root. An attacker exploits an SQL injection vulnerability in the application. Explain the security impact of running the application as root versus running it as a dedicated non-privileged user, and list three specific hardening measures that would limit the blast radius.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Running as root gives the attacker full system access upon exploitation, including reading /etc/shadow, installing rootkits, and pivoting to other systems. Running as a non-privileged user confines the attacker to that user's permissions. Three hardening measures: (1) SELinux/AppArmor policy confining the web application process to only necessary files and network ports. (2) Drop all Linux capabilities except those required (e.g., CAP_NET_BIND_SERVICE). (3) Use a read-only filesystem with a dedicated writable tmpfs for temporary data.",
+            "rubric": [
+              {
+                "key": "Explains root vs non-privileged impact clearly",
+                "value": 4
+              },
+              {
+                "key": "Three valid hardening measures described",
+                "value": 4
+              },
+              {
+                "key": "Technical accuracy of explanations",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Describe how an attacker would use Mimikatz to extract credentials from a Windows system, and explain two specific defenses that prevent or mitigate this attack.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Mimikatz reads LSASS process memory to extract NTLM hashes, Kerberos tickets, and plaintext passwords stored by WDigest. It requires local administrator or SYSTEM privileges. Defenses: (1) Enable Credential Guard, which uses virtualization-based security to isolate LSASS in a protected container that Mimikatz cannot access. (2) Disable WDigest authentication via registry (UseLogonCredential = 0) to prevent plaintext password caching in LSASS memory.",
+            "rubric": [
+              {
+                "key": "Correct description of Mimikatz technique",
+                "value": 4
+              },
+              {
+                "key": "First valid defense with technical detail",
+                "value": 3
+              },
+              {
+                "key": "Second valid defense with technical detail",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 4,
+        "topic": "Patch Management, Logging, and Container Security",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "An organization's vulnerability scan reveals CVE-2024-1234 with a CVSS base score of 9.8 on a production database server. The vendor patch requires a reboot. Describe a risk-based approach to handling this, including what factors determine the patching timeline.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "A CVSS 9.8 is Critical severity, indicating remote code execution with no authentication required. Factors for timeline: (1) Is there active exploitation in the wild (check CISA KEV)? If yes, emergency patch within 24-48 hours. (2) Is the server internet-facing or internal only? Internet-facing increases urgency. (3) What compensating controls exist (WAF rules, network segmentation)? These may buy time. (4) What is the business impact of downtime? Schedule maintenance window. Approach: Deploy compensating controls immediately, test patch in staging within 24 hours, deploy to production in the next available maintenance window (within 72 hours for critical with active exploitation).",
+            "rubric": [
+              {
+                "key": "Identifies severity and urgency correctly",
+                "value": 3
+              },
+              {
+                "key": "Lists relevant decision factors",
+                "value": 4
+              },
+              {
+                "key": "Provides realistic timeline with compensating controls",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "A Docker container running as root was compromised. The attacker escaped the container and gained host access. Explain two specific mechanisms that failed and two controls that would have prevented the escape.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Failed mechanisms: (1) Running the container as root with all capabilities, allowing the attacker to use CAP_SYS_ADMIN to mount the host filesystem or exploit kernel vulnerabilities. (2) No seccomp profile, allowing dangerous system calls like mount, ptrace, and unshare. Prevention controls: (1) Run the container as a non-root user (USER directive in Dockerfile) with rootless Docker or Podman, eliminating root-level kernel interaction. (2) Apply a restrictive seccomp profile that blocks unnecessary system calls, and drop all capabilities except those explicitly required.",
+            "rubric": [
+              {
+                "key": "Two failed mechanisms correctly identified",
+                "value": 4
+              },
+              {
+                "key": "Two valid prevention controls with detail",
+                "value": 4
+              },
+              {
+                "key": "Technical accuracy throughout",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Operating System Hardening Project",
+        "week_assigned": 2,
+        "week_due": 5,
+        "points": 100,
+        "description": "Harden both a Linux and Windows server from a default installation to meet CIS Benchmark Level 2 compliance. Document every change with before/after evidence and produce a hardening guide.",
+        "objectives": [
+          "Apply CIS Benchmark hardening standards to Linux and Windows",
+          "Verify hardening effectiveness with vulnerability scanning",
+          "Document all changes with before/after evidence",
+          "Produce a reusable hardening guide for each OS"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "CIS Benchmark compliance report for Linux (before and after)",
+          "CIS Benchmark compliance report for Windows (before and after)",
+          "Hardening guide with step-by-step instructions",
+          "Vulnerability scan results showing remediation"
+        ],
+        "grading_rubric": {
+          "linux_hardening": {
+            "points": 30,
+            "criteria": [
+              "CIS Level 2 compliance achieved",
+              "SELinux or AppArmor properly configured",
+              "All unnecessary services disabled",
+              "Proper file permissions and ownership"
+            ]
+          },
+          "windows_hardening": {
+            "points": 30,
+            "criteria": [
+              "CIS Level 2 compliance achieved",
+              "GPOs properly configured and applied",
+              "AppLocker or WDAC policies implemented",
+              "Audit policies configured"
+            ]
+          },
+          "verification": {
+            "points": 20,
+            "criteria": [
+              "Before and after vulnerability scan comparison",
+              "All critical findings remediated",
+              "Functional testing confirms services still operate",
+              "Compliance score improvement documented"
+            ]
+          },
+          "documentation": {
+            "points": 20,
+            "criteria": [
+              "Clear step-by-step hardening guide",
+              "Screenshots of all configuration changes",
+              "Explanation of security rationale for each change",
+              "Rollback procedures included"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Both operating systems hardened to CIS Level 2 compliance",
+                "Comprehensive documentation with before/after evidence",
+                "Reusable hardening guide suitable for production deployment",
+                "Demonstrates thorough understanding of OS security mechanisms"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 15,
+      "description": "Regular assessment of OS security concepts and hardening techniques"
+    },
+    "lab_assignments": {
+      "percentage": 25,
+      "description": "Hands-on exercises with Linux and Windows security configuration"
+    },
+    "major_assignments": {
+      "percentage": 25,
+      "description": "Comprehensive OS hardening project with CIS Benchmark compliance"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Assessment covering OS architecture, access controls, and hardening"
+    },
+    "final_examination": {
+      "percentage": 20,
+      "description": "Cumulative exam covering all operating system security topics"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is mandatory for all lab sessions. More than 2 unexcused absences may result in a grade reduction.",
+    "late_submissions": "Late assignments are penalized 10% per day. No submissions accepted more than 5 days late without prior arrangement.",
+    "collaboration": "Lab exercises may be completed in pairs. Hardening reports and documentation must be individual work.",
+    "academic_integrity": "All configuration changes must be performed on designated lab VMs only. Modifying shared infrastructure is prohibited.",
+    "lab_safety": "Students must only modify systems within their assigned lab environment. Unauthorized changes to shared resources will result in disciplinary action."
+  }
+}

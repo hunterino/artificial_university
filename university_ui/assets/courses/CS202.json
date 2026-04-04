@@ -1,0 +1,426 @@
+{
+  "course_info": {
+    "course_id": "CS202",
+    "title": "Computer Systems Architecture",
+    "credit_hours": 3,
+    "duration": "15 weeks",
+    "meeting_schedule": "Tuesday, Thursday - 3 hours per week",
+    "prerequisites": [
+      "CS101 - Programming Fundamentals I"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "date": "2024-01-16",
+      "topic": "Introduction to Computer Organization",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Understand the von Neumann architecture and its components",
+        "Identify the roles of CPU, memory, and I/O in a computer system",
+        "Convert between binary, decimal, and hexadecimal number systems"
+      ],
+      "readings": [
+        "Patterson & Hennessy, Computer Organization and Design, Ch. 1",
+        "Nisan & Schocken, The Elements of Computing Systems, Ch. 1"
+      ],
+      "lecture_notes": {
+        "introduction": "This course bridges the gap between software and hardware. Understanding how a computer actually executes your code makes you a better programmer, enabling you to write faster software and debug mysterious performance issues.",
+        "key_concepts": [
+          "Von Neumann architecture: stored program concept",
+          "CPU components: ALU, control unit, registers",
+          "Memory hierarchy overview: registers, cache, RAM, disk",
+          "Binary and hexadecimal number systems",
+          "Twos complement representation for signed integers"
+        ],
+        "demonstration": "Use a CPU simulator to trace the fetch-decode-execute cycle for simple instructions, observing register and memory state changes at each step",
+        "setup_requirements": [
+          "CPU simulator software installed (MARS MIPS or similar)",
+          "Binary/hex calculator available"
+        ],
+        "review": [
+          {
+            "key": "Von Neumann Bottleneck",
+            "value": "Instructions and data share a single memory bus, meaning the CPU often waits for data; this bottleneck drives the need for caches and out-of-order execution"
+          },
+          {
+            "key": "Twos Complement",
+            "value": "Negative numbers are represented by flipping all bits and adding 1; this allows the same hardware adder to handle both addition and subtraction"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 3,
+      "date": "2024-01-23",
+      "topic": "Assembly Language and the Instruction Set Architecture",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Write simple programs in MIPS assembly language",
+        "Understand how high-level constructs map to assembly instructions",
+        "Explain the role of the instruction set architecture as a hardware/software interface"
+      ],
+      "readings": [
+        "Patterson & Hennessy, Ch. 2 - Instructions: Language of the Computer",
+        "MIPS Assembly Quick Reference Guide"
+      ],
+      "lecture_notes": {
+        "introduction": "Assembly language reveals what the CPU actually does. Every if-statement, loop, and function call in Python or C compiles down to sequences of these simple instructions. Understanding assembly makes you a far better debugger and optimizer.",
+        "key_concepts": [
+          "MIPS instruction format: R-type, I-type, J-type",
+          "Arithmetic instructions: add, sub, mul, div",
+          "Memory instructions: lw (load word), sw (store word)",
+          "Branch and jump instructions for control flow",
+          "Translating C/Python constructs to assembly"
+        ],
+        "demonstration": "Translate a simple C function (iterative factorial) to MIPS assembly step by step, then run it in the MARS simulator",
+        "setup_requirements": [
+          "MARS MIPS simulator installed",
+          "Assembly reference card provided"
+        ],
+        "review": [
+          {
+            "key": "ISA as Contract",
+            "value": "The instruction set architecture is the contract between hardware and software: hardware promises to implement these instructions, and compilers promise to generate only these instructions"
+          },
+          {
+            "key": "RISC vs CISC",
+            "value": "MIPS is RISC (few simple instructions, fixed length); x86 is CISC (many complex instructions, variable length). Modern CISC CPUs internally decode to RISC-like micro-ops"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 5,
+      "date": "2024-01-30",
+      "topic": "The Processor: Datapath and Control",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Trace instruction execution through the CPU datapath",
+        "Understand how control signals direct data through the processor",
+        "Explain the single-cycle processor design and its limitations"
+      ],
+      "readings": [
+        "Patterson & Hennessy, Ch. 4 - The Processor (sections 4.1-4.4)",
+        "Lecture slides on datapath diagrams"
+      ],
+      "lecture_notes": {
+        "introduction": "The datapath is the highway system inside the CPU: data flows from registers through the ALU and back, directed by control signals. Understanding this reveals why some instructions are faster than others and why pipelining is necessary.",
+        "key_concepts": [
+          "Datapath components: register file, ALU, multiplexers, memory units",
+          "Control signals: determining which operations occur at each stage",
+          "Single-cycle design: every instruction completes in one clock cycle",
+          "Clock period determined by the slowest instruction",
+          "Limitations of single-cycle: wasted time on fast instructions"
+        ],
+        "demonstration": "Trace three different instructions (add, lw, beq) through the single-cycle datapath, highlighting which components are active for each",
+        "setup_requirements": [
+          "Datapath diagram handout",
+          "Control signal truth table reference"
+        ],
+        "review": [
+          {
+            "key": "Critical Path",
+            "value": "The clock period is set by the longest instruction path through the hardware; in a single-cycle design, this is typically the load word instruction which accesses both instruction and data memory"
+          },
+          {
+            "key": "Control Signals",
+            "value": "Binary signals that configure multiplexers, enable register writes, and select ALU operations; the control unit generates them by decoding the instruction opcode"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 7,
+      "date": "2024-02-06",
+      "topic": "Pipelining and Hazards",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Explain how pipelining improves processor throughput",
+        "Identify and resolve data, control, and structural hazards",
+        "Understand forwarding, stalling, and branch prediction"
+      ],
+      "readings": [
+        "Patterson & Hennessy, Ch. 4 - The Processor (sections 4.5-4.8)",
+        "Hennessy & Patterson, Computer Architecture, Appendix C"
+      ],
+      "lecture_notes": {
+        "introduction": "Pipelining is the single most important technique in processor design. Like an assembly line in a factory, it overlaps instruction execution so that while one instruction is being decoded, another is being fetched, and another is being executed.",
+        "key_concepts": [
+          "Five-stage pipeline: IF, ID, EX, MEM, WB",
+          "Pipeline speedup: ideally N stages gives N times throughput",
+          "Data hazards: RAW dependencies between consecutive instructions",
+          "Forwarding (bypassing): resolving data hazards without stalling",
+          "Control hazards: branches and branch prediction",
+          "Structural hazards: resource conflicts"
+        ],
+        "demonstration": "Trace a sequence of 6 instructions through the 5-stage pipeline, identifying hazards and showing how forwarding and stalling resolve them",
+        "setup_requirements": [
+          "Pipeline diagram worksheets",
+          "Colored pencils for tracking instruction stages"
+        ],
+        "review": [
+          {
+            "key": "Forwarding",
+            "value": "Instead of waiting for a result to be written to the register file (WB stage), the result is forwarded directly from the EX or MEM stage to the instruction that needs it, eliminating one or two stall cycles"
+          },
+          {
+            "key": "Branch Prediction",
+            "value": "Rather than stalling on every branch, the processor predicts whether the branch will be taken and speculatively executes; modern processors achieve 95%+ accuracy using history-based predictors"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 9,
+      "date": "2024-02-13",
+      "topic": "Memory Hierarchy and Caching",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Understand the memory hierarchy and why caches are necessary",
+        "Calculate cache hit rates for direct-mapped and set-associative caches",
+        "Explain write policies and cache replacement strategies"
+      ],
+      "readings": [
+        "Patterson & Hennessy, Ch. 5 - Large and Fast: Exploiting Memory Hierarchy",
+        "Bryant & O'Hallaron, CS:APP, Ch. 6 - Memory Hierarchy"
+      ],
+      "lecture_notes": {
+        "introduction": "The speed gap between the CPU and main memory is enormous — about 100x. Caches bridge this gap by keeping recently used data close to the processor. Understanding caches explains why array traversal is fast but linked list traversal is slow.",
+        "key_concepts": [
+          "Temporal locality: recently accessed data is likely to be accessed again",
+          "Spatial locality: data near recently accessed data is likely to be accessed soon",
+          "Direct-mapped, set-associative, and fully-associative caches",
+          "Cache address breakdown: tag, index, offset",
+          "Write-through vs write-back policies",
+          "LRU replacement and cache miss types: compulsory, capacity, conflict"
+        ],
+        "demonstration": "Trace a sequence of memory accesses through a 4-line direct-mapped cache, calculating hit/miss at each step and computing the overall hit rate",
+        "setup_requirements": [
+          "Cache simulator or spreadsheet for calculations",
+          "Address breakdown worksheets"
+        ],
+        "review": [
+          {
+            "key": "Cache Hit Rate Impact",
+            "value": "A 95% cache hit rate with 1-cycle cache and 100-cycle memory gives average access time of 0.95*1 + 0.05*100 = 5.95 cycles; a 90% hit rate gives 10.9 cycles — nearly 2x slower for just 5% more misses"
+          },
+          {
+            "key": "Set Associativity Trade-off",
+            "value": "Higher associativity reduces conflict misses but increases hit time and hardware complexity; 4-way or 8-way set-associative caches are the typical sweet spot in modern processors"
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "Number Systems and Assembly Language",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "Convert the decimal number -13 to an 8-bit twos complement binary representation. Show your work.",
+            "type": "calculation",
+            "points": 10,
+            "answer": "Step 1: 13 in binary = 00001101. Step 2: Flip all bits = 11110010. Step 3: Add 1 = 11110011. So -13 in 8-bit twos complement is 11110011.",
+            "rubric": [
+              {
+                "key": "Correct positive binary representation",
+                "value": 3
+              },
+              {
+                "key": "Correct bit inversion",
+                "value": 3
+              },
+              {
+                "key": "Correct final answer 11110011",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "Write MIPS assembly code that computes the sum of integers from 1 to N, where N is stored in register $s0. Store the result in $s1.",
+            "type": "code",
+            "points": 10,
+            "answer": "    li   $s1, 0        # sum = 0\n    li   $t0, 1        # i = 1\nloop:\n    bgt  $t0, $s0, done  # if i > N, exit\n    add  $s1, $s1, $t0   # sum += i\n    addi $t0, $t0, 1     # i++\n    j    loop\ndone:",
+            "rubric": [
+              {
+                "key": "Correct initialization of sum and counter",
+                "value": 3
+              },
+              {
+                "key": "Correct loop condition and branch",
+                "value": 3
+              },
+              {
+                "key": "Correct accumulation and increment",
+                "value": 4
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 4,
+        "topic": "Datapath, Pipelining, and Caching",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Given the following MIPS instruction sequence, identify all data hazards and state whether each can be resolved with forwarding or requires a stall.\n\nadd $s0, $t0, $t1\nsub $s1, $s0, $t2\nlw  $s2, 0($s0)\nadd $s3, $s2, $s1",
+            "type": "analysis",
+            "points": 15,
+            "answer": "Hazard 1: sub reads $s0 written by add — EX-to-EX forwarding resolves this, no stall needed. Hazard 2: lw reads $s0 written by add — EX-to-EX forwarding resolves this, no stall needed. Hazard 3: add reads $s2 written by lw — this is a load-use hazard requiring one stall cycle because the data is not available until the MEM stage. Hazard 4: add reads $s1 written by sub — MEM-to-EX forwarding resolves this, no stall needed.",
+            "rubric": [
+              {
+                "key": "Identifies all data hazards correctly",
+                "value": 6
+              },
+              {
+                "key": "Correctly distinguishes forwarding from stall cases",
+                "value": 5
+              },
+              {
+                "key": "Identifies the load-use hazard requiring a stall",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "A direct-mapped cache has 8 cache lines, each holding 4 bytes. Given byte addresses 0, 4, 8, 12, 32, 0, 4, 32, determine the hit/miss for each access.",
+            "type": "calculation",
+            "points": 10,
+            "answer": "Block size = 4 bytes, so block number = address / 4. Cache index = block number % 8.\nAddr 0 → block 0 → index 0: MISS (compulsory)\nAddr 4 → block 1 → index 1: MISS (compulsory)\nAddr 8 → block 2 → index 2: MISS (compulsory)\nAddr 12 → block 3 → index 3: MISS (compulsory)\nAddr 32 → block 8 → index 0: MISS (conflict, evicts block 0)\nAddr 0 → block 0 → index 0: MISS (conflict, evicts block 8)\nAddr 4 → block 1 → index 1: HIT\nAddr 32 → block 8 → index 0: MISS (conflict, evicts block 0)\nHit rate: 1/8 = 12.5%",
+            "rubric": [
+              {
+                "key": "Correct block number and index calculations",
+                "value": 4
+              },
+              {
+                "key": "Correct hit/miss determination for all 8 accesses",
+                "value": 4
+              },
+              {
+                "key": "Correct final hit rate",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 25
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "MIPS Assembly Programming and Processor Simulation",
+        "week_assigned": 2,
+        "week_due": 5,
+        "points": 100,
+        "description": "Write a set of MIPS assembly programs implementing fundamental algorithms, then simulate their execution through a pipelined processor to analyze hazards and performance. Includes a cache performance analysis component.",
+        "objectives": [
+          "Write correct MIPS assembly for sorting, searching, and string manipulation",
+          "Trace instruction execution through a 5-stage pipeline identifying hazards",
+          "Analyze cache performance for different access patterns",
+          "Connect assembly-level understanding to high-level performance implications"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "MIPS assembly source files for all assigned programs",
+          "Pipeline diagrams showing hazard detection and resolution",
+          "Cache simulation results and analysis report (2-3 pages)",
+          "Reflection document connecting low-level insights to software optimization"
+        ],
+        "grading_rubric": {
+          "assembly_programs": {
+            "points": 35,
+            "criteria": [
+              "All programs assemble and run correctly in MARS",
+              "Programs handle edge cases (empty arrays, single elements)",
+              "Register usage follows MIPS calling conventions",
+              "Code is commented explaining the purpose of each section"
+            ]
+          },
+          "pipeline_analysis": {
+            "points": 30,
+            "criteria": [
+              "All hazards are correctly identified and classified",
+              "Forwarding vs stalling decisions are correct",
+              "Pipeline diagrams are complete and accurate",
+              "Cycle count analysis is correct"
+            ]
+          },
+          "cache_analysis": {
+            "points": 20,
+            "criteria": [
+              "Hit rates calculated correctly for given access patterns",
+              "Different cache configurations compared meaningfully",
+              "Performance impact quantified with miss penalty calculations",
+              "Recommendations for software optimization based on cache behavior"
+            ]
+          },
+          "documentation": {
+            "points": 15,
+            "criteria": [
+              "Analysis report is clear and well-organized",
+              "Reflection connects low-level concepts to practical software decisions",
+              "All diagrams are legible and correctly labeled",
+              "Professional writing quality"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Correct MIPS assembly programs following calling conventions",
+                "Thorough pipeline analysis with accurate hazard resolution",
+                "Insightful cache performance analysis with optimization recommendations",
+                "Clear documentation connecting low-level understanding to software engineering"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 15,
+      "description": "Regular assessment of architecture concepts and calculations"
+    },
+    "lab_assignments": {
+      "percentage": 25,
+      "description": "Assembly programming labs and hardware simulation exercises"
+    },
+    "major_assignments": {
+      "percentage": 20,
+      "description": "Comprehensive projects integrating multiple architecture topics"
+    },
+    "midterm_examination": {
+      "percentage": 20,
+      "description": "Written exam covering ISA, datapath, and pipelining"
+    },
+    "final_examination": {
+      "percentage": 20,
+      "description": "Comprehensive exam covering all topics including memory hierarchy"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is expected for all lectures and mandatory for lab sessions. More than 3 unexcused absences may result in a reduced participation grade.",
+    "late_submissions": "Late assignments lose 10% per day. No submissions accepted more than 5 days late without prior arrangement.",
+    "collaboration": "Discussion of concepts is encouraged. Assembly code and written analysis must be individual work.",
+    "academic_integrity": "All submitted work must be your own. Copying assembly code or pipeline analyses from any source without attribution constitutes plagiarism.",
+    "technology_requirements": "Students need access to the MARS MIPS simulator and a computer capable of running cache simulation tools. Lab computers are available."
+  }
+}

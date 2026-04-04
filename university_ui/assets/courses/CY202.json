@@ -1,0 +1,472 @@
+{
+  "course_info": {
+    "course_id": "CY202",
+    "title": "Cryptography and Data Protection",
+    "credit_hours": 4,
+    "duration": "15 weeks",
+    "meeting_schedule": "Monday, Wednesday, Friday - 4 hours per week",
+    "prerequisites": [
+      "CY101 - Introduction to Cybersecurity",
+      "MATH210 - Applied Mathematics for Security"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "date": "2024-01-15",
+      "topic": "Historical Cryptography and Mathematical Foundations",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Trace the evolution of cryptography from classical to modern",
+        "Understand modular arithmetic and its role in cryptographic algorithms",
+        "Identify the properties of secure cryptographic systems"
+      ],
+      "readings": [
+        "Understanding Cryptography Ch. 1",
+        "Applied Cryptography Ch. 1-2"
+      ],
+      "lecture_notes": {
+        "introduction": "Cryptography is the science of securing information through mathematical transformation. We begin with its history and the mathematics that make modern cryptography possible.",
+        "key_concepts": [
+          "Classical ciphers: Caesar, Vigenere, Enigma",
+          "Kerckhoffs' principle: security through key secrecy, not algorithm secrecy",
+          "Modular arithmetic, prime numbers, and finite fields",
+          "Shannon's concepts: confusion and diffusion",
+          "Computational hardness assumptions"
+        ],
+        "demonstration": "Breaking a substitution cipher using frequency analysis, then showing why this approach fails against modern ciphers",
+        "setup_requirements": [
+          "Python 3 with PyCryptodome library",
+          "CyberChef for encoding/decoding exercises",
+          "Mathematical notation reference sheet"
+        ],
+        "review": [
+          {
+            "key": "Kerckhoffs' Principle",
+            "value": "A cryptosystem should be secure even if everything about the system, except the key, is public knowledge"
+          },
+          {
+            "key": "Confusion and Diffusion",
+            "value": "Confusion obscures the relationship between key and ciphertext. Diffusion spreads plaintext statistics across the ciphertext. Both are essential for strong ciphers."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 1,
+      "session_number": 2,
+      "date": "2024-01-17",
+      "topic": "Symmetric Encryption: Block Ciphers",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Explain AES algorithm structure and key schedule",
+        "Compare block cipher modes of operation (ECB, CBC, CTR, GCM)",
+        "Identify weaknesses in improper mode selection"
+      ],
+      "readings": [
+        "Understanding Cryptography Ch. 3-4",
+        "NIST SP 800-38A Block Cipher Modes"
+      ],
+      "lecture_notes": {
+        "introduction": "Symmetric encryption is the workhorse of data confidentiality. Understanding how block ciphers work and how mode selection affects security is fundamental.",
+        "key_concepts": [
+          "AES: SubBytes, ShiftRows, MixColumns, AddRoundKey",
+          "Key sizes: AES-128, AES-192, AES-256",
+          "ECB mode vulnerability to pattern analysis",
+          "CBC mode: IV requirements and padding oracle attacks",
+          "CTR and GCM modes: authenticated encryption"
+        ],
+        "demonstration": "Encrypting an image with ECB mode to reveal pattern leakage, then comparing with CBC and GCM modes",
+        "setup_requirements": [
+          "Python with PyCryptodome",
+          "Image files for ECB demonstration",
+          "OpenSSL command line tools"
+        ],
+        "review": [
+          {
+            "key": "ECB Weakness",
+            "value": "ECB encrypts identical plaintext blocks to identical ciphertext blocks, revealing patterns in the data. Never use for multi-block data."
+          },
+          {
+            "key": "GCM Mode",
+            "value": "Galois/Counter Mode provides both confidentiality and authenticity (AEAD). Used in TLS 1.3 and IPsec. Requires a unique nonce per encryption."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 3,
+      "date": "2024-01-22",
+      "topic": "Asymmetric Encryption and Key Exchange",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Explain RSA key generation, encryption, and signing",
+        "Understand Diffie-Hellman key exchange and its vulnerabilities",
+        "Compare RSA with Elliptic Curve Cryptography"
+      ],
+      "readings": [
+        "Understanding Cryptography Ch. 6-7",
+        "NIST SP 800-56A Key Establishment"
+      ],
+      "lecture_notes": {
+        "introduction": "Asymmetric cryptography solves the key distribution problem that plagued symmetric cryptography for centuries. It enables secure communication between parties who have never shared a secret.",
+        "key_concepts": [
+          "RSA: key generation from large primes, e, d, n",
+          "RSA encryption vs RSA signing",
+          "Diffie-Hellman key exchange and man-in-the-middle vulnerability",
+          "Elliptic Curve Cryptography: smaller keys, equivalent security",
+          "Key encapsulation and hybrid encryption schemes"
+        ],
+        "demonstration": "Implementing RSA key generation in Python, performing encryption/decryption, and demonstrating a Diffie-Hellman key exchange",
+        "setup_requirements": [
+          "Python with cryptography library",
+          "OpenSSL for key operations",
+          "Large prime number generator"
+        ],
+        "review": [
+          {
+            "key": "RSA Security",
+            "value": "RSA security relies on the difficulty of factoring the product of two large primes. RSA-2048 is considered secure through 2030; RSA-3072+ for longer term."
+          },
+          {
+            "key": "ECC Advantage",
+            "value": "A 256-bit ECC key provides equivalent security to a 3072-bit RSA key. Smaller keys mean faster operations and lower bandwidth requirements."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 5,
+      "date": "2024-01-29",
+      "topic": "Hashing, MACs, and Digital Signatures",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Analyze the properties of cryptographic hash functions",
+        "Implement HMAC for message authentication",
+        "Verify digital signatures using PKI"
+      ],
+      "readings": [
+        "Understanding Cryptography Ch. 11-12",
+        "NIST FIPS 180-4 Secure Hash Standard"
+      ],
+      "lecture_notes": {
+        "introduction": "Hashing and digital signatures provide integrity and authentication, the other pillars of information security alongside confidentiality.",
+        "key_concepts": [
+          "Hash function properties: pre-image resistance, second pre-image resistance, collision resistance",
+          "SHA-2 family: SHA-256, SHA-384, SHA-512",
+          "SHA-3 (Keccak) and its sponge construction",
+          "HMAC construction and its security proof",
+          "Digital signatures: RSA-PSS, ECDSA, EdDSA"
+        ],
+        "demonstration": "Computing SHA-256 hashes, demonstrating the avalanche effect, creating and verifying HMAC and ECDSA digital signatures",
+        "setup_requirements": [
+          "Python with hashlib and cryptography libraries",
+          "OpenSSL for signature operations",
+          "Certificate chain for verification exercise"
+        ],
+        "review": [
+          {
+            "key": "HMAC",
+            "value": "Hash-based Message Authentication Code: HMAC(K, M) = H((K xor opad) || H((K xor ipad) || M)). Provides integrity and authentication using a shared secret key."
+          },
+          {
+            "key": "Digital Signatures",
+            "value": "Signer hashes the message and encrypts the hash with their private key. Verifier decrypts with public key and compares hashes. Provides non-repudiation."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 7,
+      "date": "2024-02-05",
+      "topic": "Public Key Infrastructure and TLS",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Describe the PKI hierarchy: root CAs, intermediate CAs, end-entity certificates",
+        "Analyze the TLS 1.3 handshake at the protocol level",
+        "Identify common TLS misconfigurations and attacks"
+      ],
+      "readings": [
+        "Bulletproof TLS and PKI Ch. 1-4",
+        "RFC 8446 TLS 1.3 specification overview"
+      ],
+      "lecture_notes": {
+        "introduction": "PKI and TLS are the cryptographic infrastructure that secures the internet. Understanding how they work and how they can fail is essential.",
+        "key_concepts": [
+          "X.509 certificate structure and extensions",
+          "Certificate chain validation process",
+          "TLS 1.3 handshake: 1-RTT and 0-RTT",
+          "Certificate Transparency logs",
+          "TLS attacks: BEAST, POODLE, Heartbleed, ROBOT"
+        ],
+        "demonstration": "Analyzing a TLS 1.3 handshake in Wireshark, inspecting certificates, and testing a server's TLS configuration with testssl.sh",
+        "setup_requirements": [
+          "Wireshark with TLS key log",
+          "testssl.sh or sslyze installed",
+          "Lab web server with configurable TLS"
+        ],
+        "review": [
+          {
+            "key": "TLS 1.3 Improvements",
+            "value": "Removed insecure algorithms (RC4, SHA-1, RSA key exchange), reduced handshake to 1-RTT, mandatory forward secrecy with ephemeral DH/ECDH"
+          },
+          {
+            "key": "Certificate Transparency",
+            "value": "Public append-only logs of all issued certificates, enabling domain owners to detect unauthorized certificate issuance"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 9,
+      "date": "2024-02-12",
+      "topic": "Data Protection and Post-Quantum Cryptography",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Implement data-at-rest and data-in-transit encryption strategies",
+        "Understand the quantum computing threat to current cryptography",
+        "Evaluate post-quantum cryptographic algorithms"
+      ],
+      "readings": [
+        "NIST SP 800-111 Storage Encryption",
+        "NIST Post-Quantum Cryptography Standardization overview"
+      ],
+      "lecture_notes": {
+        "introduction": "Data protection extends cryptography into practical deployment. Post-quantum cryptography prepares us for the next generation of threats.",
+        "key_concepts": [
+          "Full disk encryption: LUKS, BitLocker, FileVault",
+          "Database encryption: TDE, column-level, application-level",
+          "Key management: HSMs, key rotation, key escrow",
+          "Shor's algorithm threat to RSA and ECC",
+          "NIST PQC standards: CRYSTALS-Kyber (ML-KEM), CRYSTALS-Dilithium (ML-DSA)"
+        ],
+        "demonstration": "Setting up LUKS encryption on a Linux partition, configuring key management, and testing lattice-based key encapsulation with liboqs",
+        "setup_requirements": [
+          "Linux VM with unencrypted partition",
+          "cryptsetup and LUKS tools",
+          "liboqs (Open Quantum Safe) library"
+        ],
+        "review": [
+          {
+            "key": "Shor's Algorithm",
+            "value": "Quantum algorithm that can factor large numbers and compute discrete logarithms in polynomial time, breaking RSA and ECC. Requires a sufficiently large quantum computer."
+          },
+          {
+            "key": "ML-KEM (Kyber)",
+            "value": "Lattice-based key encapsulation mechanism selected by NIST as the primary post-quantum standard. Based on the hardness of the Module Learning With Errors problem."
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "Symmetric and Asymmetric Cryptography",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "A developer encrypts user data using AES-256-ECB and stores the ciphertext in a database. When two users submit the same SSN, the ciphertext is identical. Explain why this is a vulnerability, what information it leaks, and which mode should be used instead with specific implementation requirements.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "ECB mode encrypts identical plaintext blocks to identical ciphertext blocks. This leaks equality information: an attacker can determine when two records contain the same value without decryption. This enables frequency analysis and known-plaintext correlation attacks. Use AES-256-GCM instead, which requires a unique 96-bit nonce per encryption operation. GCM provides both confidentiality (the same plaintext produces different ciphertext each time due to the nonce) and authenticity (the authentication tag detects tampering). Store the nonce alongside the ciphertext as it is not secret.",
+            "rubric": [
+              {
+                "key": "Explains ECB deterministic encryption vulnerability",
+                "value": 3
+              },
+              {
+                "key": "Identifies specific information leaked",
+                "value": 3
+              },
+              {
+                "key": "Recommends GCM with correct implementation requirements",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "Explain why RSA encryption is not used to encrypt large files directly. Describe the hybrid encryption scheme used in practice and how it combines the advantages of both symmetric and asymmetric cryptography.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "RSA encryption is extremely slow compared to symmetric ciphers (roughly 1000x slower) and can only encrypt data smaller than the key size (e.g., 245 bytes for RSA-2048 with OAEP padding). Hybrid encryption generates a random symmetric key (e.g., AES-256), encrypts the data with this key (fast, handles arbitrary size), then encrypts only the symmetric key with RSA (small data, leveraging RSA's key distribution advantage). The recipient decrypts the symmetric key with their RSA private key, then decrypts the data with the recovered symmetric key. This combines RSA's key distribution without a shared secret with AES's speed and efficiency.",
+            "rubric": [
+              {
+                "key": "Explains RSA performance and size limitations",
+                "value": 3
+              },
+              {
+                "key": "Correctly describes hybrid scheme steps",
+                "value": 4
+              },
+              {
+                "key": "Articulates how advantages of both are combined",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 4,
+        "topic": "Hashing, PKI, and TLS",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "During a TLS 1.3 handshake, the server sends its certificate chain. Describe the exact steps the client performs to validate this chain, and explain what happens if Certificate Transparency checking is enabled.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Chain validation: (1) Verify the end-entity certificate's signature using the issuing intermediate CA's public key. (2) Verify the intermediate CA's certificate signature using the root CA's public key. (3) Confirm the root CA is in the client's trust store. (4) Check each certificate's validity period (notBefore/notAfter). (5) Verify the end-entity certificate's Subject Alternative Name matches the requested hostname. (6) Check revocation status via OCSP stapling (included in the TLS handshake) or CRL. With CT enabled, the client also verifies that the certificate includes Signed Certificate Timestamps (SCTs) from multiple independent CT logs, proving the certificate was publicly logged and enabling the domain owner to detect misissued certificates.",
+            "rubric": [
+              {
+                "key": "Correct chain validation steps",
+                "value": 4
+              },
+              {
+                "key": "Hostname and validity verification",
+                "value": 3
+              },
+              {
+                "key": "CT checking explanation with SCTs",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "A password database was breached. Passwords were stored as unsalted SHA-256 hashes. Explain the specific attack that makes this dangerous, and describe how bcrypt with a work factor of 12 and per-user salt changes the attacker's calculus.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Without salting, attackers use precomputed rainbow tables to reverse SHA-256 hashes instantly for common passwords, and identical passwords produce identical hashes enabling batch attacks. SHA-256 is designed for speed; modern GPUs compute billions of SHA-256 hashes per second. With bcrypt (work factor 12): each password has a unique random 128-bit salt, so rainbow tables are useless and each password must be attacked individually. The work factor of 12 means 2^12 = 4096 rounds of the Blowfish-based key derivation, deliberately slowing computation to approximately 250ms per hash on modern hardware. An attacker trying 10 billion SHA-256 hashes per second would be reduced to roughly 4 bcrypt hashes per second per GPU, making brute force of complex passwords computationally infeasible.",
+            "rubric": [
+              {
+                "key": "Identifies rainbow table and speed attacks",
+                "value": 3
+              },
+              {
+                "key": "Explains per-user salt eliminating batch attacks",
+                "value": 4
+              },
+              {
+                "key": "Quantifies the computational cost difference",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Cryptographic Systems Implementation",
+        "week_assigned": 2,
+        "week_due": 5,
+        "points": 100,
+        "description": "Design and implement a secure messaging system that uses hybrid encryption, digital signatures, and proper key management. Demonstrate understanding of cryptographic primitives by building them into a working application.",
+        "objectives": [
+          "Implement hybrid encryption (RSA + AES-GCM) for message confidentiality",
+          "Implement digital signatures (ECDSA) for message authentication",
+          "Design a key management scheme with key generation, distribution, and rotation",
+          "Analyze the security properties of the implementation"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Working secure messaging application source code",
+          "Security analysis document explaining cryptographic choices",
+          "Key management design document",
+          "Test cases demonstrating correct encryption, decryption, and signature verification"
+        ],
+        "grading_rubric": {
+          "cryptographic_implementation": {
+            "points": 35,
+            "criteria": [
+              "Correct AES-GCM encryption with unique nonces",
+              "Correct RSA key encapsulation for symmetric key",
+              "Proper ECDSA signature generation and verification",
+              "No cryptographic misuse (hardcoded keys, reused nonces, etc.)"
+            ]
+          },
+          "key_management": {
+            "points": 25,
+            "criteria": [
+              "Secure key generation using CSPRNG",
+              "Key storage with appropriate protection",
+              "Key rotation mechanism",
+              "Key distribution scheme documented"
+            ]
+          },
+          "security_analysis": {
+            "points": 25,
+            "criteria": [
+              "Threat model for the messaging system",
+              "Justification for each algorithm and parameter choice",
+              "Analysis of attack resistance",
+              "Identification of limitations and assumptions"
+            ]
+          },
+          "code_quality": {
+            "points": 15,
+            "criteria": [
+              "Clean, well-documented code",
+              "Comprehensive test suite",
+              "Error handling for cryptographic operations",
+              "No security anti-patterns"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Correct implementation of hybrid encryption and digital signatures",
+                "Robust key management with no security anti-patterns",
+                "Thorough security analysis demonstrating deep understanding",
+                "Production-quality code with comprehensive testing"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 10,
+      "description": "Assessment of cryptographic concepts and mathematical foundations"
+    },
+    "lab_assignments": {
+      "percentage": 25,
+      "description": "Hands-on implementation of cryptographic algorithms and protocols"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "Comprehensive cryptographic systems implementation project"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Assessment covering symmetric, asymmetric, and hashing fundamentals"
+    },
+    "final_examination": {
+      "percentage": 20,
+      "description": "Cumulative exam covering all cryptography and data protection topics"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is mandatory for all lab sessions and demonstrations. More than 2 unexcused absences may result in a grade reduction.",
+    "late_submissions": "Late assignments are penalized 10% per day. No submissions accepted more than 5 days late without prior arrangement.",
+    "collaboration": "Mathematical exercises may be discussed. All implementation code must be individually written. Using cryptographic library functions is permitted; copying implementation code is not.",
+    "academic_integrity": "All code must be original work. Using third-party cryptographic libraries (PyCryptodome, OpenSSL) is expected, but implementations of core algorithms for learning exercises must be your own.",
+    "lab_safety": "Cryptographic tools and techniques learned in this course must only be used for authorized purposes. Attempting to break encryption on systems you do not own is illegal."
+  }
+}

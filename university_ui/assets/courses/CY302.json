@@ -1,0 +1,472 @@
+{
+  "course_info": {
+    "course_id": "CY302",
+    "title": "Incident Response and Management",
+    "credit_hours": 3,
+    "duration": "15 weeks",
+    "meeting_schedule": "Tuesday, Thursday - 3 hours per week",
+    "prerequisites": [
+      "CY203 - Network Security",
+      "CY301 - Digital Forensics"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "date": "2024-01-16",
+      "topic": "Incident Response Framework and Team Structure",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Describe the NIST incident response lifecycle",
+        "Define roles and responsibilities in a CSIRT",
+        "Develop an incident response plan"
+      ],
+      "readings": [
+        "NIST SP 800-61 Rev. 2 Computer Security Incident Handling Guide",
+        "Incident Response & Computer Forensics Ch. 1-2"
+      ],
+      "lecture_notes": {
+        "introduction": "When a security incident occurs, the difference between a minor disruption and a catastrophic breach often comes down to the quality of the incident response plan and the team executing it.",
+        "key_concepts": [
+          "NIST IR lifecycle: Preparation, Detection & Analysis, Containment, Eradication & Recovery, Post-Incident",
+          "CSIRT roles: IR manager, triage analyst, forensic analyst, threat intelligence, communications",
+          "Incident classification and severity levels",
+          "IR plan components: scope, authority, escalation paths, communication templates",
+          "Tabletop exercises and IR readiness assessment"
+        ],
+        "demonstration": "Walking through a real-world incident response plan and conducting a mini tabletop exercise with a ransomware scenario",
+        "setup_requirements": [
+          "Sample incident response plan template",
+          "Tabletop exercise scenario materials",
+          "SIEM access for detection exercises"
+        ],
+        "review": [
+          {
+            "key": "NIST IR Lifecycle",
+            "value": "Cyclical process: Preparation ensures readiness; Detection identifies incidents; Containment limits damage; Eradication removes the threat; Recovery restores operations; Post-Incident improves future response."
+          },
+          {
+            "key": "Incident Severity",
+            "value": "Typically 4 levels: Critical (business-threatening), High (significant impact), Medium (moderate impact), Low (minimal impact). Severity drives response urgency and escalation."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 1,
+      "session_number": 2,
+      "date": "2024-01-18",
+      "topic": "Detection and Analysis: SIEM and Threat Hunting",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Configure SIEM detection rules for common attack patterns",
+        "Perform hypothesis-driven threat hunting",
+        "Triage and validate security alerts"
+      ],
+      "readings": [
+        "Blue Team Handbook: SOC, SIEM, and Threat Hunting Ch. 1-4",
+        "MITRE ATT&CK-based detection strategies"
+      ],
+      "lecture_notes": {
+        "introduction": "Detection is the first step of incident response. Modern SOCs combine automated SIEM rules with proactive threat hunting to find adversaries before they achieve their objectives.",
+        "key_concepts": [
+          "SIEM architecture: log collection, normalization, correlation, alerting",
+          "Detection engineering: writing Sigma rules and SIEM correlation rules",
+          "Threat hunting: hypothesis-driven, IoC-based, anomaly-based approaches",
+          "Alert triage: true positive, false positive, benign true positive",
+          "MITRE ATT&CK for detection coverage mapping"
+        ],
+        "demonstration": "Writing Sigma rules to detect lateral movement (PsExec, WMI) and importing them into Splunk for real-time detection",
+        "setup_requirements": [
+          "Splunk instance with security data",
+          "Sigma rule converter (sigmac)",
+          "Sample attack data for rule testing"
+        ],
+        "review": [
+          {
+            "key": "Sigma Rules",
+            "value": "Vendor-agnostic detection rule format. Rules describe the log source, detection logic, and metadata. Can be converted to Splunk SPL, Elastic Query, QRadar AQL, etc."
+          },
+          {
+            "key": "Threat Hunting",
+            "value": "Proactive search for threats that evade existing detections. Starts with a hypothesis (e.g., 'an attacker is using DNS tunneling'), then searches for evidence to confirm or deny."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 3,
+      "date": "2024-01-23",
+      "topic": "Containment Strategies and Tactics",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Execute containment actions for different incident types",
+        "Balance containment urgency with evidence preservation",
+        "Implement network and host-based isolation techniques"
+      ],
+      "readings": [
+        "Incident Response & Computer Forensics Ch. 7-8",
+        "SANS Incident Handler's Handbook"
+      ],
+      "lecture_notes": {
+        "introduction": "Containment is the race to limit damage while preserving evidence. The wrong containment action can alert the attacker or destroy critical forensic artifacts.",
+        "key_concepts": [
+          "Short-term containment: network isolation, account lockout, DNS sinkhole",
+          "Long-term containment: clean system rebuild, enhanced monitoring",
+          "Containment for ransomware: isolate, assess encryption scope, preserve samples",
+          "Evidence preservation during containment: memory capture before shutdown",
+          "Communication during containment: stakeholders, legal, PR"
+        ],
+        "demonstration": "Executing a containment workflow: isolating a compromised host via switch port shutdown, capturing memory, and sinkholing a C2 domain",
+        "setup_requirements": [
+          "Lab network with managed switches",
+          "DNS server for sinkhole configuration",
+          "Memory acquisition tools"
+        ],
+        "review": [
+          {
+            "key": "DNS Sinkhole",
+            "value": "Redirecting malware C2 domain queries to an internal IP. Prevents C2 communication without alerting the attacker that the host has been detected (unlike network isolation)."
+          },
+          {
+            "key": "Containment vs Evidence",
+            "value": "Always capture volatile evidence (memory, running processes) before containment actions that may destroy it (e.g., powering off a system, killing processes)."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 5,
+      "date": "2024-01-30",
+      "topic": "Eradication, Recovery, and Business Continuity",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Plan and execute threat eradication across compromised systems",
+        "Develop a recovery plan with verification milestones",
+        "Integrate incident response with business continuity planning"
+      ],
+      "readings": [
+        "NIST SP 800-34 Contingency Planning Guide",
+        "Incident Response & Computer Forensics Ch. 10-11"
+      ],
+      "lecture_notes": {
+        "introduction": "Eradication removes the threat completely, and recovery restores business operations. Both must be thorough: incomplete eradication leads to reinfection.",
+        "key_concepts": [
+          "Eradication checklist: malware removal, backdoor identification, credential reset",
+          "Clean rebuild vs remediation decision framework",
+          "Recovery sequence: critical systems first, with verification",
+          "Monitoring during recovery: detecting persistent access",
+          "Business continuity: RPO, RTO, and communication plans"
+        ],
+        "demonstration": "Executing a structured eradication and recovery for a simulated ransomware incident, including credential rotation and backup verification",
+        "setup_requirements": [
+          "Compromised lab systems from previous exercises",
+          "Backup restoration tools",
+          "Credential management system"
+        ],
+        "review": [
+          {
+            "key": "Clean Rebuild",
+            "value": "When in doubt, rebuild from known-good media rather than attempting to clean a compromised system. Attackers plant multiple persistence mechanisms; missing even one means reinfection."
+          },
+          {
+            "key": "RPO and RTO",
+            "value": "Recovery Point Objective: maximum acceptable data loss (determines backup frequency). Recovery Time Objective: maximum acceptable downtime (determines infrastructure investment)."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 7,
+      "date": "2024-02-06",
+      "topic": "Ransomware Incident Response",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Execute a structured response to a ransomware incident",
+        "Assess decryption options and payment considerations",
+        "Implement ransomware-specific recovery procedures"
+      ],
+      "readings": [
+        "CISA Ransomware Guide",
+        "No More Ransom Project resources"
+      ],
+      "lecture_notes": {
+        "introduction": "Ransomware incidents are the most common crisis cybersecurity teams face today. A well-practiced response plan can mean the difference between recovery in days versus months.",
+        "key_concepts": [
+          "Ransomware IR workflow: detect, isolate, assess scope, identify variant",
+          "Decryption options: NoMoreRansom.org, known decryptors, backup restoration",
+          "Payment decision framework: legal, ethical, and practical considerations",
+          "Ransomware-specific eradication: identifying initial access and persistence",
+          "Post-ransomware hardening: preventing reinfection"
+        ],
+        "demonstration": "Responding to a simulated Conti-style ransomware incident: network isolation, scope assessment, backup integrity check, and recovery execution",
+        "setup_requirements": [
+          "Lab environment with ransomware simulation",
+          "Backup systems for recovery testing",
+          "Incident communication templates"
+        ],
+        "review": [
+          {
+            "key": "Ransomware Payment",
+            "value": "FBI advises against payment as it funds criminal enterprises and does not guarantee recovery. OFAC sanctions may make payment illegal if the group is sanctioned. Always consult legal counsel."
+          },
+          {
+            "key": "Scope Assessment",
+            "value": "Determine which systems are encrypted, which are accessible but potentially compromised, and which are confirmed clean. This drives recovery prioritization."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 9,
+      "date": "2024-02-13",
+      "topic": "Post-Incident Activities and Continuous Improvement",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Conduct effective post-incident reviews (blameless postmortems)",
+        "Produce incident reports for different stakeholders",
+        "Derive actionable improvements from incident lessons learned"
+      ],
+      "readings": [
+        "NIST SP 800-61 Rev. 2 Ch. 3.4",
+        "Google SRE Book: Postmortem Culture"
+      ],
+      "lecture_notes": {
+        "introduction": "The post-incident phase is where organizations learn and improve. Without structured lessons learned, the same types of incidents recur.",
+        "key_concepts": [
+          "Blameless postmortem methodology",
+          "Incident report structure: timeline, root cause, contributing factors, action items",
+          "Metrics: MTTD (Mean Time to Detect), MTTC (Mean Time to Contain), MTTR (Mean Time to Recover)",
+          "Action item tracking and verification",
+          "Detection and prevention gap analysis"
+        ],
+        "demonstration": "Conducting a blameless postmortem for the simulated incidents from previous weeks, deriving specific detection and prevention improvements",
+        "setup_requirements": [
+          "Incident documentation from previous exercises",
+          "Postmortem template",
+          "Action item tracking system"
+        ],
+        "review": [
+          {
+            "key": "Blameless Postmortem",
+            "value": "Focus on systemic failures, not individual blame. Ask 'what controls failed?' not 'who failed?'. This encourages honest reporting and identifies root causes."
+          },
+          {
+            "key": "IR Metrics",
+            "value": "MTTD measures detection capability, MTTC measures containment speed, MTTR measures recovery efficiency. Track trends over time to demonstrate improvement."
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "IR Framework, Detection, and Containment",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "At 2:00 AM, your SIEM alerts on unusual PowerShell activity from a finance workstation. The user is not typically active at this hour. The command includes 'Invoke-WebRequest' to an external IP. Walk through your first 30 minutes of incident response, including specific actions and their order.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Minutes 0-5: Validate the alert in SIEM. Check if the user account shows a legitimate logon (Event 4624) or if credentials may be compromised. Query EDR for the full PowerShell command. Minutes 5-10: Declare an incident and classify severity (likely High given off-hours activity with external communication). Notify the IR lead. Minutes 10-15: Short-term containment: block the external IP at the firewall to sever potential C2. Do NOT isolate the host yet (preserve volatile evidence). Minutes 15-25: Capture memory remotely using EDR capability or WinPMEM. Collect PowerShell script block logs (Event ID 4104). Check if Invoke-WebRequest downloaded a payload and if it executed. Minutes 25-30: Assess scope: query SIEM for other hosts communicating with the same external IP. Check if the finance user's credentials were used elsewhere. Begin timeline documentation.",
+            "rubric": [
+              {
+                "key": "Correct alert validation and triage",
+                "value": 3
+              },
+              {
+                "key": "Appropriate containment with evidence preservation",
+                "value": 4
+              },
+              {
+                "key": "Scope assessment and documentation",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between a DNS sinkhole and network isolation as containment techniques. For each, describe a scenario where it would be the preferred approach and why.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "DNS sinkhole redirects malware C2 domain queries to an internal server, severing C2 communication while the host remains on the network. Preferred when: you have identified multiple infected hosts communicating with the same C2 domain and need to contain all of them simultaneously without disrupting business operations, or when you want to monitor which additional hosts attempt C2 communication. Network isolation physically or logically disconnects the host from the network entirely. Preferred when: the attacker has direct IP-based C2 (DNS sinkhole is ineffective), the host is actively exfiltrating large volumes of data, or the attacker has demonstrated ability to use alternative C2 channels. Key tradeoff: DNS sinkhole is stealthier and less disruptive but only works for DNS-resolved C2; network isolation is comprehensive but alerts the attacker and disrupts business.",
+            "rubric": [
+              {
+                "key": "Correct definitions of both techniques",
+                "value": 3
+              },
+              {
+                "key": "Valid preferred scenario for each",
+                "value": 4
+              },
+              {
+                "key": "Tradeoff analysis",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 4,
+        "topic": "Eradication, Recovery, and Ransomware Response",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "Your organization was hit by ransomware. 200 of 500 workstations and 3 of 10 servers are encrypted. Your most recent full backup is 48 hours old, and the incremental backup from 12 hours ago may be compromised. Describe your recovery decision framework and the specific steps to safely restore operations.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Decision framework: (1) Verify backup integrity: restore the 48-hour-old full backup to an isolated environment and scan for ransomware indicators. Test the 12-hour incremental by restoring and scanning in isolation. (2) Assess acceptable data loss: 48 hours of data loss may be acceptable if the incremental is compromised. (3) Recovery sequence: restore critical servers first (Active Directory, email, ERP) from verified clean backups to rebuilt/reformatted hardware. (4) Workstation strategy: reimage all 500 workstations (not just the 200 encrypted) since unencrypted ones may have dormant malware. Use a known-good golden image. (5) Credential rotation: reset ALL passwords (domain admin first, then all users) before reconnecting restored systems. (6) Enhanced monitoring: deploy EDR with heightened alerting on all restored systems. (7) Staged reconnection: bring systems online in groups, monitoring for reinfection indicators.",
+            "rubric": [
+              {
+                "key": "Backup verification before restoration",
+                "value": 3
+              },
+              {
+                "key": "Comprehensive recovery approach including unencrypted machines",
+                "value": 4
+              },
+              {
+                "key": "Credential rotation and monitoring during recovery",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "After resolving a major security incident, you need to conduct a post-incident review. The CISO wants metrics to present to the board. Describe the specific metrics you would calculate, how you would calculate them, and what each metric tells the board about the organization's security posture.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Metrics: (1) MTTD (Mean Time to Detect): time from initial compromise to first detection alert. Calculated by subtracting the earliest evidence of compromise (from forensic timeline) from the first SIEM alert timestamp. Tells the board how quickly threats are detected. (2) MTTC (Mean Time to Contain): time from detection to effective containment. Calculated from first alert to confirmed isolation of all affected systems. Tells the board how quickly damage is limited. (3) MTTR (Mean Time to Recover): time from containment to full business operations restoration. Tells the board about organizational resilience. (4) Scope metrics: percentage of systems compromised, data volume potentially exposed. Tells the board about blast radius. (5) Cost metrics: direct costs (IR consulting, overtime, hardware) and indirect costs (lost revenue, reputational impact). Tells the board about financial impact for risk quantification.",
+            "rubric": [
+              {
+                "key": "Correct MTTD, MTTC, MTTR calculations",
+                "value": 4
+              },
+              {
+                "key": "Scope and cost metrics",
+                "value": 3
+              },
+              {
+                "key": "Clear explanation of what each metric communicates",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Incident Response Tabletop and Plan Development",
+        "week_assigned": 2,
+        "week_due": 5,
+        "points": 100,
+        "description": "Develop a comprehensive incident response plan for a fictional organization, then execute it in a graded tabletop exercise against a multi-phase attack scenario injected by the instructor.",
+        "objectives": [
+          "Develop a comprehensive incident response plan",
+          "Demonstrate effective incident handling in a tabletop exercise",
+          "Produce an incident report and post-incident review",
+          "Identify detection and response gaps and propose improvements"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Incident response plan document (10-15 pages)",
+          "Tabletop exercise responses (graded during exercise)",
+          "Post-incident report with timeline and findings",
+          "Lessons learned document with actionable improvements"
+        ],
+        "grading_rubric": {
+          "ir_plan_quality": {
+            "points": 30,
+            "criteria": [
+              "Complete plan covering all NIST IR phases",
+              "Clear roles, responsibilities, and escalation paths",
+              "Communication templates and stakeholder notification procedures",
+              "Integration with business continuity"
+            ]
+          },
+          "tabletop_performance": {
+            "points": 30,
+            "criteria": [
+              "Appropriate triage and severity classification",
+              "Effective containment decisions balancing speed and evidence",
+              "Logical eradication and recovery sequence",
+              "Clear communication and decision documentation"
+            ]
+          },
+          "incident_report": {
+            "points": 25,
+            "criteria": [
+              "Accurate timeline of events and response actions",
+              "Root cause analysis with evidence",
+              "Impact assessment",
+              "Professional report formatting"
+            ]
+          },
+          "lessons_learned": {
+            "points": 15,
+            "criteria": [
+              "Specific gaps identified in detection, containment, and recovery",
+              "Actionable improvement recommendations",
+              "Metrics-based assessment of response performance",
+              "Blameless analysis focused on systemic improvements"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Professional-quality incident response plan ready for organizational adoption",
+                "Effective performance in tabletop exercise demonstrating sound judgment",
+                "Thorough incident report with accurate timeline and root cause",
+                "Actionable lessons learned that would measurably improve future response"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 15,
+      "description": "Assessment of incident response concepts, frameworks, and decision-making"
+    },
+    "lab_assignments": {
+      "percentage": 25,
+      "description": "Hands-on incident detection, containment, and recovery exercises"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "IR plan development and tabletop exercise"
+    },
+    "midterm_examination": {
+      "percentage": 10,
+      "description": "Timed incident response simulation"
+    },
+    "final_examination": {
+      "percentage": 20,
+      "description": "Cumulative exam covering all incident response and management topics"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is mandatory for all lab sessions and tabletop exercises. Missed tabletop exercises cannot be made up.",
+    "late_submissions": "Late assignments are penalized 10% per day. No submissions accepted more than 5 days late without prior arrangement.",
+    "collaboration": "Tabletop exercises are team-based. IR plans and reports must be individual work.",
+    "academic_integrity": "All incident reports must be based on actual exercise observations. Fabricating timeline entries or findings is grounds for course failure.",
+    "lab_safety": "All incident response exercises must be conducted within the designated lab environment. Simulated attacks must not target production systems."
+  }
+}

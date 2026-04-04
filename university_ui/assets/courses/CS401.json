@@ -1,0 +1,431 @@
+{
+  "course_info": {
+    "course_id": "CS401",
+    "title": "Computer Networks",
+    "credit_hours": 3,
+    "duration": "15 weeks",
+    "meeting_schedule": "Tuesday, Thursday - 3 hours per week",
+    "prerequisites": [
+      "CS302 - Operating Systems"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "date": "2024-01-16",
+      "topic": "Introduction to Computer Networks and the Internet",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Understand the layered network architecture (OSI and TCP/IP models)",
+        "Identify the role of each layer in network communication",
+        "Use network diagnostic tools: ping, traceroute, nslookup"
+      ],
+      "readings": [
+        "Kurose & Ross, Computer Networking, Ch. 1",
+        "RFC 1122 - Requirements for Internet Hosts"
+      ],
+      "lecture_notes": {
+        "introduction": "Every application you build communicates over a network. This course teaches you how networks actually work, from electrical signals on a wire to the HTTP requests your browser sends. Understanding networking is essential for building reliable distributed systems.",
+        "key_concepts": [
+          "Layered architecture: physical, data link, network, transport, application",
+          "TCP/IP model vs OSI model",
+          "Packet switching vs circuit switching",
+          "Throughput, latency, bandwidth, and jitter",
+          "The end-to-end principle: intelligence at the edges, simplicity in the network"
+        ],
+        "demonstration": "Use Wireshark to capture and analyze packets during a web browsing session, identifying HTTP, TCP, IP, and Ethernet headers at each layer",
+        "setup_requirements": [
+          "Wireshark installed",
+          "Terminal with ping, traceroute, nslookup",
+          "Network access for packet capture"
+        ],
+        "review": [
+          {
+            "key": "End-to-End Principle",
+            "value": "Application-specific functionality should be implemented at the endpoints, not in the network core; this keeps the network simple and general, enabling innovation at the application layer"
+          },
+          {
+            "key": "Packet Switching",
+            "value": "Data is divided into packets that share network links with other traffic; no dedicated path is reserved, enabling efficient use of bandwidth but introducing variable delay"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 3,
+      "date": "2024-01-23",
+      "topic": "Application Layer: HTTP, DNS, and Socket Programming",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Understand HTTP request/response semantics and connection management",
+        "Explain DNS resolution process and record types",
+        "Write a simple client-server application using TCP sockets"
+      ],
+      "readings": [
+        "Kurose & Ross, Ch. 2 - Application Layer",
+        "Beej's Guide to Network Programming, Ch. 1-5"
+      ],
+      "lecture_notes": {
+        "introduction": "The application layer is where developers spend most of their time. HTTP drives the web, DNS translates names to addresses, and sockets are the API through which all network communication happens.",
+        "key_concepts": [
+          "HTTP/1.1, HTTP/2, HTTP/3: evolution of the web protocol",
+          "DNS hierarchy: root, TLD, authoritative servers, caching",
+          "DNS record types: A, AAAA, CNAME, MX, TXT",
+          "BSD socket API: socket, bind, listen, accept, connect, send, recv",
+          "TCP vs UDP sockets: connection-oriented vs connectionless"
+        ],
+        "demonstration": "Build a simple TCP echo server and client in Python using the socket module, then extend it to handle multiple concurrent clients",
+        "setup_requirements": [
+          "Python 3.12+ or C with socket libraries",
+          "Wireshark for packet analysis",
+          "dig or nslookup for DNS queries"
+        ],
+        "review": [
+          {
+            "key": "DNS Caching",
+            "value": "DNS responses include a TTL (time to live); resolvers cache results for that duration, reducing query latency and root/TLD server load. Most DNS lookups are served from cache"
+          },
+          {
+            "key": "Socket Lifecycle",
+            "value": "Server: socket -> bind -> listen -> accept -> send/recv -> close. Client: socket -> connect -> send/recv -> close. accept() blocks until a client connects, creating a new socket for that connection"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 5,
+      "date": "2024-01-30",
+      "topic": "Transport Layer: TCP and UDP",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Explain TCP connection establishment, flow control, and congestion control",
+        "Contrast TCP and UDP and identify appropriate use cases for each",
+        "Analyze TCP behavior using packet captures"
+      ],
+      "readings": [
+        "Kurose & Ross, Ch. 3 - Transport Layer",
+        "RFC 793 - TCP Specification (selected sections)"
+      ],
+      "lecture_notes": {
+        "introduction": "TCP and UDP are the two workhorses of the transport layer. TCP provides reliable, ordered delivery at the cost of latency; UDP provides fast, best-effort delivery. Every networked application chooses between them based on its needs.",
+        "key_concepts": [
+          "TCP three-way handshake: SYN, SYN-ACK, ACK",
+          "TCP flow control: sliding window, receiver advertised window",
+          "TCP congestion control: slow start, congestion avoidance, fast retransmit",
+          "UDP: no connection, no reliability, no ordering, minimal overhead",
+          "Use cases: TCP for web, email, file transfer; UDP for video streaming, DNS, gaming"
+        ],
+        "demonstration": "Capture a TCP connection in Wireshark, identify the three-way handshake, observe the sliding window growing during slow start, and trigger a retransmission by dropping a packet",
+        "setup_requirements": [
+          "Wireshark with capture permissions",
+          "Network traffic generator tool"
+        ],
+        "review": [
+          {
+            "key": "TCP Congestion Control",
+            "value": "TCP starts with a small congestion window (slow start), doubles it each RTT until loss occurs, then reduces the window. This probing behavior ensures TCP does not overwhelm the network while utilizing available bandwidth"
+          },
+          {
+            "key": "Head-of-Line Blocking",
+            "value": "In TCP, if one packet is lost, all subsequent packets are buffered until the lost packet is retransmitted; this delays the entire stream. UDP avoids this by delivering packets independently, which is why real-time applications prefer UDP"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 7,
+      "date": "2024-02-06",
+      "topic": "Network Layer: IP Addressing and Routing",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Perform subnetting calculations with CIDR notation",
+        "Understand how routers forward packets using routing tables",
+        "Compare distance-vector and link-state routing algorithms"
+      ],
+      "readings": [
+        "Kurose & Ross, Ch. 4-5 - Network Layer",
+        "CIDR subnetting tutorial"
+      ],
+      "lecture_notes": {
+        "introduction": "The network layer is responsible for getting packets from source to destination across multiple networks. IP addressing and routing are the mechanisms that make global Internet communication possible.",
+        "key_concepts": [
+          "IPv4 addressing: 32-bit addresses, dotted decimal notation",
+          "CIDR notation and subnet masks",
+          "Subnetting: dividing address spaces for organizational and routing efficiency",
+          "Routing tables: longest prefix match forwarding",
+          "Distance-vector (RIP, Bellman-Ford) vs link-state (OSPF, Dijkstra) algorithms",
+          "IPv6: 128-bit addresses, simplified header, no fragmentation"
+        ],
+        "demonstration": "Subnet a /24 network into four /26 subnets, calculate the network address, broadcast address, and usable host range for each, then trace a packet through a 3-router network using routing tables",
+        "setup_requirements": [
+          "Subnetting calculator for verification",
+          "Network topology diagram handout"
+        ],
+        "review": [
+          {
+            "key": "Longest Prefix Match",
+            "value": "When a router has multiple matching entries for a destination, it uses the one with the longest (most specific) prefix; this enables hierarchical aggregation of routes while still allowing specific overrides"
+          },
+          {
+            "key": "Distance-Vector vs Link-State",
+            "value": "Distance-vector: each router shares its distance table with neighbors, converges slowly (count-to-infinity problem). Link-state: each router floods its link costs to all routers, each computes shortest paths independently, converges faster"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 9,
+      "date": "2024-02-13",
+      "topic": "Network Security Fundamentals",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Understand common network attacks and their mitigations",
+        "Explain how TLS provides confidentiality, integrity, and authentication",
+        "Configure firewalls and understand network perimeter defense"
+      ],
+      "readings": [
+        "Kurose & Ross, Ch. 8 - Security in Computer Networks",
+        "Cloudflare Learning Center: What is TLS?"
+      ],
+      "lecture_notes": {
+        "introduction": "Every network is hostile. Data can be intercepted, modified, or faked. Network security provides the tools to protect communication: encryption for confidentiality, MACs for integrity, and certificates for authentication.",
+        "key_concepts": [
+          "Symmetric encryption (AES) vs asymmetric encryption (RSA, ECDSA)",
+          "TLS handshake: certificate verification, key exchange, encrypted channel",
+          "Certificate authorities and the chain of trust",
+          "Common attacks: man-in-the-middle, DDoS, DNS spoofing, ARP poisoning",
+          "Firewalls: packet filtering, stateful inspection, application-layer gateways"
+        ],
+        "demonstration": "Capture a TLS handshake in Wireshark, examine the certificate exchange, verify the certificate chain, and observe that payload data is encrypted",
+        "setup_requirements": [
+          "Wireshark with TLS dissector",
+          "openssl command-line tool for certificate inspection"
+        ],
+        "review": [
+          {
+            "key": "TLS Handshake",
+            "value": "Client sends supported cipher suites; server responds with its certificate and chosen cipher; client verifies certificate chain to a trusted CA; both derive session keys; all subsequent data is encrypted and integrity-protected"
+          },
+          {
+            "key": "Defense in Depth",
+            "value": "No single security measure is sufficient; layered defenses (firewalls, TLS, authentication, input validation, monitoring) ensure that bypassing one layer does not compromise the entire system"
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "Application and Transport Layers",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "Explain the TCP three-way handshake step by step. Why is a three-way handshake necessary instead of a two-way handshake?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Step 1: Client sends SYN with initial sequence number X. Step 2: Server responds with SYN-ACK, acknowledging X+1 and sending its own initial sequence number Y. Step 3: Client sends ACK acknowledging Y+1. A three-way handshake is necessary because both sides need to exchange and acknowledge initial sequence numbers. A two-way handshake would only confirm that the client can reach the server, but not that the server can reach the client, leaving the server unable to verify the client received its sequence number.",
+            "rubric": [
+              {
+                "key": "Correctly describes all three steps with sequence numbers",
+                "value": 5
+              },
+              {
+                "key": "Explains why three steps are needed over two",
+                "value": 3
+              },
+              {
+                "key": "Mentions bidirectional sequence number agreement",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A DNS resolver receives a query for www.example.com. Describe the iterative resolution process, listing each server queried in order.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "1. Client queries its local DNS resolver. 2. Resolver queries a root DNS server, which responds with the address of the .com TLD server. 3. Resolver queries the .com TLD server, which responds with the address of the example.com authoritative server. 4. Resolver queries the example.com authoritative server, which responds with the IP address for www.example.com. 5. Resolver returns the IP address to the client and caches the result.",
+            "rubric": [
+              {
+                "key": "Correct order: root, TLD, authoritative",
+                "value": 5
+              },
+              {
+                "key": "Correctly describes iterative (not recursive) resolution",
+                "value": 3
+              },
+              {
+                "key": "Mentions caching of the result",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 4,
+        "topic": "Network Layer and Routing",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Given the network 192.168.10.0/24, subnet it into 8 equal subnets. For the third subnet, provide the network address, broadcast address, first usable host, last usable host, and subnet mask.",
+            "type": "calculation",
+            "points": 15,
+            "answer": "8 subnets require 3 additional bits (2^3=8), so /24 becomes /27. Each subnet has 32 addresses (2^5), 30 usable hosts.\n\nSubnet 3 (index 2, counting from 0): 192.168.10.64/27\nNetwork address: 192.168.10.64\nBroadcast address: 192.168.10.95\nFirst usable host: 192.168.10.65\nLast usable host: 192.168.10.94\nSubnet mask: 255.255.255.224",
+            "rubric": [
+              {
+                "key": "Correct /27 prefix length for 8 subnets",
+                "value": 4
+              },
+              {
+                "key": "Correct network and broadcast addresses",
+                "value": 5
+              },
+              {
+                "key": "Correct first and last usable host addresses",
+                "value": 4
+              },
+              {
+                "key": "Correct subnet mask",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the count-to-infinity problem in distance-vector routing and describe one technique to mitigate it.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "The count-to-infinity problem occurs when a link failure causes two routers to keep incrementing their distance estimates by routing through each other. For example, if the link from A to C fails, A updates its distance to C via B, but B's route to C goes through A. They keep incrementing each other's estimates until reaching infinity. Split horizon mitigates this by preventing a router from advertising a route back to the neighbor it learned it from, breaking the routing loop.",
+            "rubric": [
+              {
+                "key": "Correctly explains the loop causing distance increment",
+                "value": 5
+              },
+              {
+                "key": "Names a valid mitigation technique",
+                "value": 3
+              },
+              {
+                "key": "Explains how the mitigation works",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 25
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Reliable File Transfer Protocol",
+        "week_assigned": 2,
+        "week_due": 5,
+        "points": 100,
+        "description": "Design and implement a reliable file transfer protocol on top of UDP. Your protocol must handle packet loss, reordering, and corruption by implementing acknowledgments, retransmission, and checksums. Test it over a simulated lossy network.",
+        "objectives": [
+          "Implement reliable delivery mechanisms on top of an unreliable transport",
+          "Design a protocol with sequence numbers, acknowledgments, and retransmission timers",
+          "Handle packet loss, corruption, and reordering gracefully",
+          "Analyze protocol performance under varying loss rates"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Source code for sender and receiver implementing the reliable protocol",
+          "Protocol specification document describing message formats and state machines",
+          "Performance analysis: throughput vs loss rate graph for 0%, 5%, 10%, 20% loss",
+          "Test results showing successful file transfer under all loss conditions"
+        ],
+        "grading_rubric": {
+          "protocol_design": {
+            "points": 30,
+            "criteria": [
+              "Protocol specification clearly defines message formats with headers",
+              "State machines for sender and receiver are well-defined",
+              "Sequence numbers and acknowledgments handle all edge cases",
+              "Checksum detects corruption reliably"
+            ]
+          },
+          "implementation": {
+            "points": 35,
+            "criteria": [
+              "Files transfer correctly with no byte errors under all loss rates",
+              "Retransmission timer handles packet loss efficiently",
+              "Protocol handles duplicate packets and out-of-order delivery",
+              "Clean shutdown with no hanging connections or lost data"
+            ]
+          },
+          "performance": {
+            "points": 20,
+            "criteria": [
+              "Throughput analysis under varying loss rates is provided",
+              "Protocol uses go-back-N or selective repeat for efficiency",
+              "Timer values are tuned based on measured RTT",
+              "Comparison with stop-and-wait shows improvement"
+            ]
+          },
+          "documentation": {
+            "points": 15,
+            "criteria": [
+              "Protocol specification is clear and complete",
+              "Performance analysis is presented with graphs",
+              "Code is well-documented",
+              "Test methodology is described"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Correct reliable file transfer over lossy UDP",
+                "Well-designed protocol with clear specification",
+                "Performance analysis demonstrating protocol efficiency",
+                "Thorough testing under multiple loss conditions"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 15,
+      "description": "Regular assessment of networking concepts and calculations"
+    },
+    "lab_assignments": {
+      "percentage": 25,
+      "description": "Socket programming and network analysis labs"
+    },
+    "major_assignments": {
+      "percentage": 25,
+      "description": "Protocol design and implementation projects"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Written exam covering layers 3-7"
+    },
+    "final_examination": {
+      "percentage": 20,
+      "description": "Comprehensive exam covering all networking topics"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is expected for all lectures and mandatory for lab sessions. More than 3 unexcused absences may result in a reduced participation grade.",
+    "late_submissions": "Late assignments lose 10% per day. No submissions accepted more than 5 days late.",
+    "collaboration": "Discussion of networking concepts is encouraged. All code and protocol designs must be individual work.",
+    "academic_integrity": "All submitted work must be your own. Copying protocol implementations from the internet or other students constitutes plagiarism.",
+    "technology_requirements": "Students need a Linux environment, Wireshark, Python 3.12+ or C with socket libraries, and network access for packet capture experiments."
+  }
+}

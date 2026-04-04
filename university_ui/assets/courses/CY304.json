@@ -1,0 +1,474 @@
+{
+  "course_info": {
+    "course_id": "CY304",
+    "title": "Malware Analysis",
+    "credit_hours": 3,
+    "duration": "15 weeks",
+    "meeting_schedule": "Monday, Wednesday - 3 hours per week",
+    "prerequisites": [
+      "CY103 - Operating Systems Security",
+      "CY201 - Ethical Hacking and Penetration Testing",
+      "CS110 - Programming for Security"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "date": "2024-01-15",
+      "topic": "Malware Classification and Analysis Methodology",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Classify malware by type, behavior, and delivery mechanism",
+        "Describe the malware analysis workflow: static, dynamic, and code analysis",
+        "Set up a safe malware analysis environment"
+      ],
+      "readings": [
+        "Practical Malware Analysis Ch. 1-2",
+        "MITRE ATT&CK software taxonomy"
+      ],
+      "lecture_notes": {
+        "introduction": "Malware analysis is the process of understanding what malicious software does, how it works, and how to detect and defend against it. It requires a careful, methodical approach in a controlled environment.",
+        "key_concepts": [
+          "Malware types: virus, worm, trojan, ransomware, rootkit, botnet, spyware",
+          "Analysis types: static (no execution), dynamic (behavioral), code (reverse engineering)",
+          "Analysis environment: isolated VMs, inetsim for network simulation, snapshots",
+          "Indicators of Compromise (IoCs): hashes, IPs, domains, file paths, registry keys",
+          "YARA rules for malware classification"
+        ],
+        "demonstration": "Setting up a FlareVM analysis workstation, configuring inetsim for network simulation, and analyzing a sample's file properties with PEStudio",
+        "setup_requirements": [
+          "FlareVM (Windows analysis VM) configured",
+          "REMnux (Linux analysis VM) configured",
+          "inetsim for network simulation",
+          "Isolated network with no internet access"
+        ],
+        "review": [
+          {
+            "key": "Static vs Dynamic",
+            "value": "Static analysis examines the malware without running it (strings, PE headers, imports). Dynamic analysis observes its behavior during execution (file, registry, network activity). Both provide complementary intelligence."
+          },
+          {
+            "key": "YARA Rules",
+            "value": "Pattern-matching language for identifying and classifying malware. Rules match byte patterns, strings, and conditions in files. Used by AV engines, IDS, and threat hunting."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 1,
+      "session_number": 2,
+      "date": "2024-01-17",
+      "topic": "Static Analysis Techniques",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Extract and analyze PE file headers and imports",
+        "Use strings analysis and entropy measurement to identify packed samples",
+        "Apply YARA rules for malware detection and classification"
+      ],
+      "readings": [
+        "Practical Malware Analysis Ch. 3",
+        "PE file format specification"
+      ],
+      "lecture_notes": {
+        "introduction": "Static analysis is the safest first step because the malware is never executed. It reveals the malware's structure, capabilities, and sometimes its purpose without any risk of infection.",
+        "key_concepts": [
+          "PE header analysis: sections, imports, exports, timestamps",
+          "Import Address Table (IAT): reveals API calls and capabilities",
+          "Strings analysis: URLs, IPs, registry paths, error messages",
+          "Entropy analysis: high entropy indicates packing or encryption",
+          "PEiD, Detect It Easy for packer identification"
+        ],
+        "demonstration": "Analyzing a malware sample with PEStudio: examining imports (CreateRemoteThread = injection, InternetOpenUrl = network), extracting strings, and identifying UPX packing",
+        "setup_requirements": [
+          "PEStudio, PEview, CFF Explorer",
+          "FLOSS (FLARE Obfuscated String Solver)",
+          "Sample malware files (provided)"
+        ],
+        "review": [
+          {
+            "key": "Suspicious Imports",
+            "value": "CreateRemoteThread (code injection), VirtualAllocEx (memory allocation in another process), WriteProcessMemory (process hollowing), WinExec/ShellExecute (command execution)"
+          },
+          {
+            "key": "Packing Detection",
+            "value": "Packed executables have high entropy (>7.0), few readable strings, small import table, and sections named UPX0/UPX1 or similar. Unpacking is required before further static analysis."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 3,
+      "date": "2024-01-22",
+      "topic": "Dynamic Analysis: Behavioral Monitoring",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Execute malware safely in a sandbox environment",
+        "Monitor file system, registry, process, and network activity",
+        "Identify malware capabilities from behavioral observations"
+      ],
+      "readings": [
+        "Practical Malware Analysis Ch. 4",
+        "Cuckoo Sandbox documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Dynamic analysis reveals what malware actually does when it runs. This is essential for understanding samples that use packing, encryption, or anti-analysis techniques to hide their static characteristics.",
+        "key_concepts": [
+          "Process Monitor (ProcMon): filtering for file, registry, and network operations",
+          "Process Explorer: process tree, DLLs loaded, handles, network connections",
+          "Regshot: registry before/after comparison",
+          "Wireshark/FakeNet-NG: capturing network traffic",
+          "Automated sandboxes: Cuckoo, ANY.RUN, Joe Sandbox"
+        ],
+        "demonstration": "Executing a ransomware sample in a sandboxed VM with ProcMon, capturing its file encryption behavior, registry persistence, and C2 communication",
+        "setup_requirements": [
+          "FlareVM with ProcMon, Process Explorer, Regshot",
+          "FakeNet-NG for network simulation",
+          "VM snapshots for rapid restoration"
+        ],
+        "review": [
+          {
+            "key": "ProcMon Filters",
+            "value": "Filter by process name to isolate malware activity. Key operations: CreateFile (file creation/modification), RegSetValue (persistence), TCP Connect (C2), WriteFile (data exfiltration)."
+          },
+          {
+            "key": "Anti-Analysis Techniques",
+            "value": "Malware may detect VMs (VMware tools, registry keys), debuggers (IsDebuggerPresent), or sandboxes (short uptime, single CPU). May sleep or behave benignly in analysis environments."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 5,
+      "date": "2024-01-29",
+      "topic": "Reverse Engineering with IDA and Ghidra",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Navigate disassembled code in IDA Free and Ghidra",
+        "Identify key malware functions from assembly patterns",
+        "Analyze control flow graphs to understand malware logic"
+      ],
+      "readings": [
+        "Practical Malware Analysis Ch. 5-6",
+        "x86 Assembly Language reference"
+      ],
+      "lecture_notes": {
+        "introduction": "Reverse engineering is the deepest level of malware analysis. It reveals the exact logic, algorithms, and secrets embedded in the malware's code.",
+        "key_concepts": [
+          "x86 assembly fundamentals: registers, stack, calling conventions",
+          "IDA Pro/Free: navigation, cross-references, renaming, commenting",
+          "Ghidra: decompiler for pseudo-C code output",
+          "Identifying encryption routines, C2 protocols, and configuration parsing",
+          "Control flow graphs and function call graphs"
+        ],
+        "demonstration": "Loading a malware sample into Ghidra, using the decompiler to identify the C2 communication function, and extracting the hardcoded C2 domain and encryption key",
+        "setup_requirements": [
+          "Ghidra 10.x installed",
+          "IDA Free installed",
+          "x86 assembly reference sheet"
+        ],
+        "review": [
+          {
+            "key": "Ghidra Decompiler",
+            "value": "Converts disassembly to pseudo-C code, making analysis accessible without deep assembly expertise. Cross-references between assembly and decompiled view for verification."
+          },
+          {
+            "key": "C2 Identification",
+            "value": "Look for WinHTTP/WinINet API calls, socket operations, and string construction that builds URLs or IP addresses. Follow the data flow to find C2 addresses and protocols."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 7,
+      "date": "2024-02-05",
+      "topic": "Anti-Analysis Techniques and Evasion",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Identify and bypass common anti-analysis techniques",
+        "Understand code obfuscation and packing",
+        "Defeat anti-debugging and anti-VM mechanisms"
+      ],
+      "readings": [
+        "Practical Malware Analysis Ch. 15-17",
+        "Unpackers and anti-anti-debugging resources"
+      ],
+      "lecture_notes": {
+        "introduction": "Sophisticated malware employs multiple layers of anti-analysis techniques to frustrate reverse engineering. Understanding these techniques is essential for analyzing advanced threats.",
+        "key_concepts": [
+          "Packing and unpacking: UPX, custom packers, multi-layer packing",
+          "Anti-debugging: IsDebuggerPresent, NtQueryInformationProcess, timing checks",
+          "Anti-VM: checking registry keys, CPUID, MAC addresses, installed tools",
+          "Code obfuscation: control flow flattening, dead code insertion, string encryption",
+          "Shellcode analysis and position-independent code"
+        ],
+        "demonstration": "Unpacking a UPX-packed sample, bypassing IsDebuggerPresent with x64dbg, and decrypting XOR-encrypted strings",
+        "setup_requirements": [
+          "x64dbg debugger",
+          "UPX unpacker",
+          "ScyllaHide anti-anti-debugging plugin"
+        ],
+        "review": [
+          {
+            "key": "XOR Encryption",
+            "value": "Most common string obfuscation in malware. Look for XOR loops in disassembly. Single-byte XOR can be broken with frequency analysis. Multi-byte requires finding the key (often near the XOR loop)."
+          },
+          {
+            "key": "Debugging Bypass",
+            "value": "Patch the IsDebuggerPresent return value, use ScyllaHide for automatic anti-debug bypass, or modify the PEB directly. For timing checks, patch the time-comparison jump."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 9,
+      "date": "2024-02-12",
+      "topic": "Malware Reporting and Threat Intelligence",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Write a professional malware analysis report",
+        "Extract and share IoCs using STIX/TAXII format",
+        "Contribute findings to organizational threat intelligence"
+      ],
+      "readings": [
+        "STIX/TAXII 2.1 specification overview",
+        "MITRE ATT&CK mapping best practices"
+      ],
+      "lecture_notes": {
+        "introduction": "The value of malware analysis is realized through clear reporting and sharing of intelligence. A well-written report enables defenders across the organization and community to protect against the threat.",
+        "key_concepts": [
+          "Malware analysis report structure: summary, static, dynamic, code analysis, IoCs",
+          "MITRE ATT&CK mapping for analyzed techniques",
+          "IoC extraction: hashes, network indicators, host artifacts",
+          "STIX/TAXII for structured threat intelligence sharing",
+          "YARA rule writing from analysis findings"
+        ],
+        "demonstration": "Producing a complete malware analysis report from the week's samples, extracting IoCs, writing a YARA detection rule, and packaging as STIX",
+        "setup_requirements": [
+          "Malware analysis report template",
+          "YARA rule editor",
+          "STIX/TAXII tools"
+        ],
+        "review": [
+          {
+            "key": "Report Structure",
+            "value": "Executive summary, malware overview (type, hash, source), static analysis findings, dynamic behavior, code analysis, IoCs, MITRE ATT&CK mapping, detection recommendations."
+          },
+          {
+            "key": "YARA from Analysis",
+            "value": "Write rules targeting unique malware characteristics: specific strings, byte patterns at offsets, PE characteristics, or combinations. Test against clean files to avoid false positives."
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "Static and Dynamic Analysis",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "You are analyzing a suspicious executable. PEStudio shows these imports: CreateToolhelp32Snapshot, Process32First, OpenProcess, VirtualAllocEx, WriteProcessMemory, CreateRemoteThread. The entropy of the .text section is 7.8. What is the likely malware capability, and what does the entropy indicate about analysis difficulty?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "The import chain reveals classic DLL injection / process injection capability: CreateToolhelp32Snapshot + Process32First enumerate running processes to find a target. OpenProcess opens the target. VirtualAllocEx allocates memory in the target process. WriteProcessMemory writes malicious code into the allocated memory. CreateRemoteThread executes the injected code. The entropy of 7.8 (near maximum 8.0) indicates the .text section is packed or encrypted. The readable imports are likely from a stub/loader; the actual malicious payload is encrypted within the high-entropy section and will only be visible after unpacking at runtime. Dynamic analysis or debugging to capture the unpacked code is necessary.",
+            "rubric": [
+              {
+                "key": "Correctly identifies process injection from imports",
+                "value": 4
+              },
+              {
+                "key": "Explains each API's role in the injection chain",
+                "value": 3
+              },
+              {
+                "key": "Interprets high entropy correctly",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "During dynamic analysis of a malware sample, ProcMon shows: (1) CreateFile C:\\Users\\user\\AppData\\Roaming\\svchost.exe, (2) RegSetValue HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run 'WindowsUpdate' = path to svchost.exe, (3) TCP Connect to 185.220.101.45:443. Interpret each behavior and explain what the malware is doing.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "(1) CreateFile to AppData\\Roaming\\svchost.exe: The malware drops a copy of itself (or a second-stage payload) disguised as svchost.exe in the user's AppData folder. The name mimics a legitimate Windows process to avoid suspicion. (2) RegSetValue to Run key: Establishes persistence by adding a registry entry that runs the dropped file at every user login. This ensures the malware survives reboots. (3) TCP Connect to 185.220.101.45:443: The malware establishes a C2 connection over port 443, disguising it as HTTPS traffic to blend with normal web browsing. This is likely the initial beacon to the attacker's infrastructure. IoCs to extract: hash of svchost.exe, IP 185.220.101.45, registry key path and value.",
+            "rubric": [
+              {
+                "key": "Correct interpretation of file drop with naming evasion",
+                "value": 3
+              },
+              {
+                "key": "Correct interpretation of registry persistence",
+                "value": 3
+              },
+              {
+                "key": "Correct interpretation of C2 communication with IoCs",
+                "value": 4
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 4,
+        "topic": "Reverse Engineering and Anti-Analysis",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "In Ghidra's decompiler, you see this function: it reads 256 bytes from a resource, XORs each byte with 0x5A, calls InternetOpenUrlA with the result, and reads the response into a buffer that is then passed to CreateThread. Explain what this malware is doing and how you would extract the C2 URL.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "The malware stores its C2 URL encrypted in a PE resource section. It decrypts the URL by XORing each byte with the key 0x5A. It then downloads a second-stage payload from the decrypted URL using InternetOpenUrlA. The downloaded content is executable code that is passed to CreateThread for execution (download-and-execute behavior). To extract the C2 URL: (1) Use Resource Hacker to dump the 256-byte resource. (2) XOR each byte with 0x5A using a script: decoded = bytes([b ^ 0x5A for b in resource_bytes]). (3) The result is the plaintext C2 URL. This is a common pattern: encrypted config in resources, runtime decryption, stage 2 download.",
+            "rubric": [
+              {
+                "key": "Correctly identifies download-and-execute behavior",
+                "value": 4
+              },
+              {
+                "key": "Correct URL extraction method with XOR key",
+                "value": 4
+              },
+              {
+                "key": "Identifies the execution mechanism",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A malware sample behaves differently in your analysis VM than reported by victims. It appears to do nothing and exits cleanly after 2 seconds. What three anti-analysis checks would you investigate first, and how would you bypass each one?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Check 1: VM detection - The malware may query registry keys (HKLM\\SOFTWARE\\VMware, HKLM\\HARDWARE\\ACPI\\DSDT\\VBOX), check for VM-specific processes (vmtoolsd, VBoxService), or use CPUID instruction. Bypass: use ScyllaHide to hide VM artifacts, modify registry keys, and kill VM tools processes. Check 2: Sleep/timing evasion - The malware may call Sleep(120000) to delay execution beyond sandbox analysis timeout. Bypass: patch the Sleep call to Sleep(0) using a debugger, or hook the Sleep API to return immediately. Check 3: Anti-debugging - Check for IsDebuggerPresent, NtQueryInformationProcess(ProcessDebugPort), or PEB.BeingDebugged flag. Bypass: set PEB.BeingDebugged to 0, use ScyllaHide's anti-anti-debug features, or patch the conditional jump after the check.",
+            "rubric": [
+              {
+                "key": "Three valid anti-analysis techniques identified",
+                "value": 4
+              },
+              {
+                "key": "Specific bypass for each technique",
+                "value": 4
+              },
+              {
+                "key": "Technical accuracy of bypass methods",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Comprehensive Malware Analysis Report",
+        "week_assigned": 2,
+        "week_due": 5,
+        "points": 100,
+        "description": "Perform a complete analysis of an unknown malware sample using static, dynamic, and code analysis techniques. Produce a professional malware analysis report with IoCs, MITRE ATT&CK mapping, and YARA detection rule.",
+        "objectives": [
+          "Apply static, dynamic, and reverse engineering techniques",
+          "Extract all indicators of compromise from the sample",
+          "Map malware behavior to MITRE ATT&CK techniques",
+          "Write a YARA rule that detects the analyzed malware family"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Complete malware analysis report (8-12 pages)",
+          "IoC list in STIX format",
+          "MITRE ATT&CK mapping with technique IDs",
+          "YARA detection rule tested against clean files"
+        ],
+        "grading_rubric": {
+          "static_analysis": {
+            "points": 20,
+            "criteria": [
+              "PE header analysis complete",
+              "Imports analyzed and capabilities identified",
+              "Strings and entropy analysis performed",
+              "Packing identified and addressed"
+            ]
+          },
+          "dynamic_analysis": {
+            "points": 25,
+            "criteria": [
+              "All behavioral observations documented with screenshots",
+              "File, registry, process, and network activity captured",
+              "Anti-analysis techniques identified if present",
+              "Complete network IoCs extracted"
+            ]
+          },
+          "code_analysis": {
+            "points": 25,
+            "criteria": [
+              "Key functions identified and analyzed",
+              "C2 protocol documented",
+              "Encryption/encoding routines explained",
+              "Configuration extraction if applicable"
+            ]
+          },
+          "reporting": {
+            "points": 30,
+            "criteria": [
+              "Professional report format with clear structure",
+              "MITRE ATT&CK mapping complete and accurate",
+              "YARA rule functional and tested",
+              "IoCs in shareable format"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Thorough multi-technique analysis with consistent findings",
+                "All IoCs extracted and accurately documented",
+                "Professional report suitable for threat intelligence sharing",
+                "Functional YARA rule with low false-positive rate"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 10,
+      "description": "Assessment of malware analysis concepts and tool knowledge"
+    },
+    "lab_assignments": {
+      "percentage": 30,
+      "description": "Hands-on malware analysis labs with guided and independent samples"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "Comprehensive malware analysis report on an unknown sample"
+    },
+    "midterm_examination": {
+      "percentage": 10,
+      "description": "Practical exam: timed analysis of a malware sample"
+    },
+    "final_project": {
+      "percentage": 20,
+      "description": "Independent analysis of an advanced malware sample with anti-analysis techniques"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is mandatory for all lab sessions. More than 2 unexcused absences may result in course failure.",
+    "late_submissions": "Late assignments are penalized 10% per day. No submissions accepted more than 5 days late without prior arrangement.",
+    "collaboration": "All malware analysis must be individual work. Sharing IoCs or analysis findings between students before submission is prohibited.",
+    "academic_integrity": "Malware samples must only be analyzed within the provided isolated lab environment. Removing samples from the lab or executing them on non-lab systems is grounds for expulsion.",
+    "lab_safety": "Never connect the analysis VM to the internet. Always use snapshots. Never transfer malware samples to personal devices. Report any accidental execution outside the sandbox immediately."
+  }
+}

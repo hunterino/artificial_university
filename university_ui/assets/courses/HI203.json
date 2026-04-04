@@ -1,0 +1,467 @@
+{
+  "course_info": {
+    "course_id": "HI203",
+    "title": "Healthcare Database Systems",
+    "credit_hours": 3,
+    "duration": "15 weeks",
+    "meeting_schedule": "Tuesday, Thursday - 3 hours per week",
+    "prerequisites": [
+      "HI101 - Introduction to Health Informatics",
+      "CS105 - Programming for Health Informatics"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "date": "2024-01-16",
+      "topic": "Introduction to Database Systems in Healthcare",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Explain why databases are essential infrastructure in healthcare",
+        "Differentiate between relational, document, and graph database models",
+        "Identify common healthcare databases and their purposes"
+      ],
+      "readings": [
+        "Database Systems: Design, Implementation, and Management Ch. 1",
+        "Healthcare Database Overview (AHIMA)"
+      ],
+      "lecture_notes": {
+        "introduction": "Every healthcare system relies on databases to store patient records, manage billing, track inventory, and support analytics. This course builds your ability to design, query, and manage healthcare databases.",
+        "key_concepts": [
+          "Database models: relational (SQL), document (NoSQL), graph, time-series",
+          "Healthcare database examples: EHR backend, claims databases, registries, MPI",
+          "ACID properties and why they matter for patient data",
+          "Database Management System (DBMS) landscape: PostgreSQL, SQL Server, MongoDB, FHIR stores",
+          "Data integrity constraints in clinical contexts"
+        ],
+        "demonstration": "Exploration of a sample healthcare database schema showing patients, encounters, diagnoses, medications, and providers",
+        "setup_requirements": [
+          "PostgreSQL installed or cloud database access",
+          "SQL client tool (pgAdmin, DBeaver, or similar)"
+        ],
+        "review": [
+          {
+            "key": "ACID Properties",
+            "value": "Atomicity, Consistency, Isolation, Durability - guarantees ensuring database transactions are processed reliably, critical for patient safety"
+          },
+          {
+            "key": "Relational Model",
+            "value": "Data organized in tables with rows and columns, connected by foreign keys - dominant model for structured healthcare data"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 1,
+      "session_number": 2,
+      "date": "2024-01-18",
+      "topic": "Relational Database Design and Normalization",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Apply entity-relationship modeling to healthcare scenarios",
+        "Normalize database tables through third normal form",
+        "Design primary and foreign key relationships for clinical data"
+      ],
+      "readings": [
+        "Database Systems Ch. 3-4",
+        "Healthcare Data Modeling Best Practices"
+      ],
+      "lecture_notes": {
+        "introduction": "Good database design prevents data anomalies, ensures integrity, and supports efficient queries. We learn to model healthcare data correctly from the start.",
+        "key_concepts": [
+          "Entity-relationship (ER) diagrams for healthcare domains",
+          "Entities: Patient, Provider, Encounter, Diagnosis, Medication, Procedure",
+          "Normalization: 1NF (atomic values), 2NF (full functional dependency), 3NF (no transitive dependency)",
+          "De-normalization tradeoffs for query performance",
+          "Healthcare-specific modeling: handling multiple diagnoses per encounter, medication history"
+        ],
+        "demonstration": "Design an ER diagram for a clinic database handling patients, appointments, providers, diagnoses, and prescriptions",
+        "setup_requirements": [
+          "ER diagramming tool (draw.io, Lucidchart)",
+          "Sample clinical data requirements"
+        ],
+        "review": [
+          {
+            "key": "Third Normal Form",
+            "value": "Every non-key attribute depends on the key, the whole key, and nothing but the key - eliminates update anomalies"
+          },
+          {
+            "key": "Many-to-Many in Healthcare",
+            "value": "Patients have many encounters, encounters have many diagnoses - resolved with junction tables like encounter_diagnosis"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 3,
+      "date": "2024-01-23",
+      "topic": "SQL Fundamentals for Healthcare Data",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Write SQL SELECT queries to retrieve clinical data",
+        "Use WHERE, JOIN, and GROUP BY to answer healthcare questions",
+        "Apply aggregate functions to compute clinical metrics"
+      ],
+      "readings": [
+        "Database Systems Ch. 7-8",
+        "SQL Tutorial for Healthcare Analysts"
+      ],
+      "lecture_notes": {
+        "introduction": "SQL is the universal language for querying relational databases. Healthcare analysts use SQL daily to extract data for quality reporting, research, and operational decisions.",
+        "key_concepts": [
+          "SELECT, FROM, WHERE, ORDER BY for basic data retrieval",
+          "JOIN types: INNER, LEFT, RIGHT for combining related tables",
+          "GROUP BY and aggregate functions: COUNT, SUM, AVG for clinical metrics",
+          "Filtering with dates for encounter-based queries",
+          "Subqueries and common table expressions for complex analytics"
+        ],
+        "demonstration": "Write queries against the sample healthcare database: find diabetic patients, calculate average length of stay, list top diagnoses by frequency",
+        "setup_requirements": [
+          "PostgreSQL with sample healthcare database loaded",
+          "SQL client tool"
+        ],
+        "review": [
+          {
+            "key": "JOIN",
+            "value": "SQL operation combining rows from two tables based on a related column, essential for connecting patients to their encounters and diagnoses"
+          },
+          {
+            "key": "GROUP BY",
+            "value": "Groups rows sharing values in specified columns, enabling aggregate calculations like average length of stay per diagnosis"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 5,
+      "date": "2024-01-30",
+      "topic": "Advanced SQL and Clinical Quality Queries",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Write advanced SQL with window functions and CTEs",
+        "Implement clinical quality measure logic in SQL",
+        "Optimize queries for large healthcare datasets"
+      ],
+      "readings": [
+        "Database Systems Ch. 9",
+        "CMS eCQM Specifications (selected measures)"
+      ],
+      "lecture_notes": {
+        "introduction": "Real healthcare analytics requires advanced SQL. Today we implement actual clinical quality measures as SQL queries and learn optimization techniques for million-row datasets.",
+        "key_concepts": [
+          "Window functions: ROW_NUMBER, RANK, LAG, LEAD for temporal clinical analysis",
+          "Common Table Expressions (CTEs) for readable complex queries",
+          "Implementing eCQM logic: numerator, denominator, exclusions in SQL",
+          "Query execution plans and index optimization",
+          "Date arithmetic for clinical timeframes (30-day readmission windows)"
+        ],
+        "demonstration": "Implement a 30-day hospital readmission measure in SQL: define the denominator (index admissions), numerator (readmissions within 30 days), and exclusions",
+        "setup_requirements": [
+          "PostgreSQL with large sample dataset",
+          "Query plan visualization tool"
+        ],
+        "review": [
+          {
+            "key": "Window Functions",
+            "value": "Functions operating across a set of rows related to the current row - essential for comparing sequential encounters or calculating running totals"
+          },
+          {
+            "key": "eCQM in SQL",
+            "value": "Translating clinical quality measure specifications into SQL queries that identify patient populations meeting measure criteria"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 7,
+      "date": "2024-02-06",
+      "topic": "Data Warehousing for Healthcare Analytics",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Describe the architecture of a healthcare data warehouse",
+        "Differentiate between OLTP and OLAP systems",
+        "Design a star schema for clinical analytics"
+      ],
+      "readings": [
+        "Database Systems Ch. 13",
+        "Healthcare Data Warehousing: Design and Implementation"
+      ],
+      "lecture_notes": {
+        "introduction": "Data warehouses aggregate data from multiple source systems into an analytics-optimized structure. They are the foundation of healthcare business intelligence and population health platforms.",
+        "key_concepts": [
+          "OLTP vs. OLAP: transactional vs. analytical workloads",
+          "ETL pipeline: extract from EHR/claims, transform/clean, load into warehouse",
+          "Star schema: fact tables (encounters, claims) and dimension tables (patient, provider, date, diagnosis)",
+          "Slowly changing dimensions for tracking patient demographics over time",
+          "Data lake vs. data warehouse in healthcare"
+        ],
+        "demonstration": "Design a star schema for a hospital readmission analytics warehouse, then write dimensional queries against it",
+        "setup_requirements": [
+          "Data modeling tool",
+          "Sample data warehouse database"
+        ],
+        "review": [
+          {
+            "key": "Star Schema",
+            "value": "Dimensional model with a central fact table linked to surrounding dimension tables, optimized for analytical queries"
+          },
+          {
+            "key": "ETL",
+            "value": "Extract, Transform, Load - pipeline that moves data from operational systems into the warehouse after cleaning and standardization"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 9,
+      "date": "2024-02-13",
+      "topic": "Database Security and HIPAA Technical Safeguards",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Implement database security controls required by HIPAA",
+        "Design role-based access control for clinical databases",
+        "Understand database auditing and monitoring for compliance"
+      ],
+      "readings": [
+        "Database Systems Ch. 15",
+        "HIPAA Security Rule Technical Safeguard Requirements"
+      ],
+      "lecture_notes": {
+        "introduction": "Healthcare databases contain the most sensitive data in any industry. Technical safeguards mandated by HIPAA must be implemented at the database level to protect patient privacy.",
+        "key_concepts": [
+          "Role-based access control (RBAC) for clinical databases",
+          "Encryption at rest (TDE) and in transit (TLS)",
+          "Database audit logging: who accessed what, when, and why",
+          "Row-level security for multi-tenant healthcare applications",
+          "Backup, recovery, and business continuity for healthcare data"
+        ],
+        "demonstration": "Implement RBAC in PostgreSQL: create roles for clinician, nurse, coder, and analyst with appropriate permissions",
+        "setup_requirements": [
+          "PostgreSQL with administrative access",
+          "Security configuration documentation"
+        ],
+        "review": [
+          {
+            "key": "RBAC in Healthcare",
+            "value": "Access control model where permissions are assigned to roles (physician, nurse, coder) rather than individuals, simplifying PHI access management"
+          },
+          {
+            "key": "Database Audit Logging",
+            "value": "Recording all data access events to detect unauthorized access and support HIPAA breach investigation requirements"
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "Database Design and SQL Fundamentals",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "A clinic needs to track patients, their appointments with providers, and diagnoses assigned during each appointment. A patient can have many appointments, each appointment is with one provider, and multiple diagnoses can be assigned per appointment. Draw the entity-relationship model (list entities, attributes, and relationships) and explain your normalization decisions.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Entities: Patient (patient_id PK, name, dob, gender, phone), Provider (provider_id PK, name, specialty, npi), Appointment (appointment_id PK, patient_id FK, provider_id FK, date, time, reason), Diagnosis (diagnosis_id PK, icd10_code, description), Appointment_Diagnosis (appointment_id FK, diagnosis_id FK, sequence_number) - junction table. Relationships: Patient 1:M Appointment, Provider 1:M Appointment, Appointment M:M Diagnosis (via junction). This is in 3NF because all non-key attributes depend only on their table's primary key with no transitive dependencies.",
+            "rubric": [
+              {
+                "key": "Correct entities with appropriate attributes",
+                "value": 3
+              },
+              {
+                "key": "Proper relationship cardinalities and junction table",
+                "value": 4
+              },
+              {
+                "key": "Valid normalization explanation",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Write a SQL query to find all patients diagnosed with Type 2 Diabetes (ICD-10 codes starting with E11) who had more than 3 encounters in 2023. Return patient name, total encounter count, and most recent encounter date.",
+            "type": "code",
+            "points": 10,
+            "answer": "SELECT p.name, COUNT(DISTINCT e.encounter_id) AS encounter_count, MAX(e.encounter_date) AS last_encounter FROM patient p JOIN encounter e ON p.patient_id = e.patient_id JOIN encounter_diagnosis ed ON e.encounter_id = ed.encounter_id JOIN diagnosis d ON ed.diagnosis_id = d.diagnosis_id WHERE d.icd10_code LIKE 'E11%' AND e.encounter_date BETWEEN '2023-01-01' AND '2023-12-31' GROUP BY p.patient_id, p.name HAVING COUNT(DISTINCT e.encounter_id) > 3 ORDER BY encounter_count DESC;",
+            "rubric": [
+              {
+                "key": "Correct JOINs connecting all required tables",
+                "value": 4
+              },
+              {
+                "key": "Proper WHERE filtering for ICD-10 and date range",
+                "value": 3
+              },
+              {
+                "key": "Correct GROUP BY and HAVING for encounter count threshold",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 4,
+        "topic": "Advanced SQL and Data Warehousing",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Explain the difference between OLTP and OLAP databases in a healthcare context. Give a specific example of each and explain why they require different architectures.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "OLTP (Online Transaction Processing) handles real-time operational workloads with frequent small reads and writes. Example: the EHR production database that records patient registrations, clinical notes, and orders in real time. It requires normalized schemas for data integrity, row-level locking, and fast individual record access. OLAP (Online Analytical Processing) handles complex analytical queries across large datasets. Example: a population health data warehouse aggregating data from multiple hospitals to calculate quality measures across millions of encounters. It requires denormalized star schemas for fast aggregation, columnar storage for scan performance, and batch loading from source systems.",
+            "rubric": [
+              {
+                "key": "Correct definitions of OLTP and OLAP",
+                "value": 3
+              },
+              {
+                "key": "Valid healthcare-specific examples",
+                "value": 3
+              },
+              {
+                "key": "Clear explanation of architectural differences",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "Write a SQL query using a window function to identify hospital readmissions within 30 days. For each patient admission, determine if there was a subsequent admission within 30 days of discharge.",
+            "type": "code",
+            "points": 10,
+            "answer": "WITH ordered_admissions AS (SELECT patient_id, encounter_id, admission_date, discharge_date, LEAD(admission_date) OVER (PARTITION BY patient_id ORDER BY admission_date) AS next_admission_date FROM encounter WHERE encounter_type = 'inpatient') SELECT patient_id, encounter_id AS index_encounter, admission_date, discharge_date, next_admission_date, next_admission_date - discharge_date AS days_to_readmission FROM ordered_admissions WHERE next_admission_date IS NOT NULL AND next_admission_date - discharge_date <= 30;",
+            "rubric": [
+              {
+                "key": "Correct use of LEAD window function with PARTITION BY patient",
+                "value": 4
+              },
+              {
+                "key": "Proper 30-day calculation from discharge to next admission",
+                "value": 3
+              },
+              {
+                "key": "CTE structure for readability",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Healthcare Database Design and Implementation",
+        "week_assigned": 2,
+        "week_due": 5,
+        "points": 100,
+        "description": "Design and implement a relational database for a multi-specialty clinic, including schema design, sample data loading, SQL queries for clinical and operational reporting, and security implementation.",
+        "objectives": [
+          "Apply database design principles to a healthcare scenario",
+          "Implement a normalized schema in PostgreSQL",
+          "Write complex SQL queries for clinical reporting",
+          "Implement HIPAA-compliant security controls"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "ER diagram and schema documentation",
+          "SQL DDL scripts for table creation",
+          "Sample data loading scripts (minimum 100 patients, 500 encounters)",
+          "10 analytical queries with documented output",
+          "Security implementation (RBAC, audit logging)"
+        ],
+        "grading_rubric": {
+          "schema_design": {
+            "points": 30,
+            "criteria": [
+              "Properly normalized to 3NF",
+              "Appropriate data types and constraints",
+              "Complete ER diagram with all relationships",
+              "Healthcare-appropriate design decisions"
+            ]
+          },
+          "sql_queries": {
+            "points": 30,
+            "criteria": [
+              "Correct and efficient query logic",
+              "Range of complexity from basic to advanced",
+              "Clinically meaningful questions addressed",
+              "Proper use of JOINs, aggregations, and window functions"
+            ]
+          },
+          "security_implementation": {
+            "points": 25,
+            "criteria": [
+              "RBAC with clinically appropriate roles",
+              "Audit logging configured",
+              "Encryption consideration documented",
+              "HIPAA alignment explained"
+            ]
+          },
+          "documentation": {
+            "points": 15,
+            "criteria": [
+              "Clear schema documentation",
+              "Query explanations and business context",
+              "Design decision rationale",
+              "Professional formatting"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Well-designed normalized schema appropriate for healthcare",
+                "Complex and clinically relevant SQL queries",
+                "HIPAA-aligned security controls implemented",
+                "Thorough documentation of design and implementation"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 15,
+      "description": "Assessment of database concepts, SQL skills, and healthcare data modeling"
+    },
+    "lab_assignments": {
+      "percentage": 30,
+      "description": "Hands-on SQL programming exercises and database administration tasks"
+    },
+    "major_assignments": {
+      "percentage": 25,
+      "description": "Healthcare database design and implementation project"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Comprehensive assessment of database design and SQL fundamentals"
+    },
+    "final_examination": {
+      "percentage": 15,
+      "description": "Cumulative exam including data warehousing and security topics"
+    }
+  },
+  "course_policies": {
+    "attendance": "Lab sessions are mandatory. More than 2 unexcused lab absences result in grade reduction. Lecture attendance is strongly encouraged.",
+    "late_submissions": "Late assignments lose 10% per day. SQL lab submissions must be completed within one week of the lab session.",
+    "collaboration": "Students may discuss concepts but all SQL code must be individually written. Identical query submissions will be treated as academic dishonesty.",
+    "academic_integrity": "All database designs and SQL queries must be original work. Use of AI code generation tools must be disclosed and the student must explain the code.",
+    "technology_requirements": "PostgreSQL installation (local or cloud), SQL client tool, ER diagramming software. Lab computers are available with pre-configured environments."
+  }
+}

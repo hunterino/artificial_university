@@ -1,0 +1,428 @@
+{
+  "course_info": {
+    "course_id": "CS302",
+    "title": "Operating Systems",
+    "credit_hours": 3,
+    "duration": "15 weeks",
+    "meeting_schedule": "Tuesday, Thursday - 3 hours per week",
+    "prerequisites": [
+      "CS202 - Computer Systems Architecture"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "date": "2024-01-16",
+      "topic": "Introduction to Operating Systems",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Understand the role of an OS as resource manager and abstraction layer",
+        "Identify the major components of an operating system",
+        "Distinguish between kernel mode and user mode execution"
+      ],
+      "readings": [
+        "Silberschatz, Operating System Concepts, Ch. 1-2",
+        "Arpaci-Dusseau, OSTEP: Introduction"
+      ],
+      "lecture_notes": {
+        "introduction": "The operating system is the most important software on any computer. It manages hardware resources, provides abstractions for application programmers, and enforces security boundaries. Understanding OS internals makes you a dramatically better systems programmer.",
+        "key_concepts": [
+          "OS roles: resource manager, abstraction provider, security enforcer",
+          "Kernel mode vs user mode: hardware privilege levels",
+          "System calls: the interface between applications and the kernel",
+          "OS structure: monolithic kernel, microkernel, hybrid approaches",
+          "History: batch systems, time-sharing, modern multi-core systems"
+        ],
+        "demonstration": "Use strace on Linux to observe the system calls made by a simple hello world program, revealing the hidden OS interactions behind every program",
+        "setup_requirements": [
+          "Linux VM or WSL2 configured",
+          "GCC compiler and make installed",
+          "strace available"
+        ],
+        "review": [
+          {
+            "key": "Kernel Mode vs User Mode",
+            "value": "The CPU hardware enforces two privilege levels: kernel mode can run any instruction and access any memory; user mode is restricted. System calls are the controlled gateway from user mode to kernel mode"
+          },
+          {
+            "key": "System Call Overhead",
+            "value": "A system call requires a mode switch (user to kernel and back), register saving and restoring, and argument validation; this overhead is why minimizing system calls matters for performance"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 3,
+      "date": "2024-01-23",
+      "topic": "Processes and Threads",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Understand process creation, states, and context switching",
+        "Implement multi-threaded programs using POSIX threads",
+        "Distinguish between processes and threads in terms of resource sharing"
+      ],
+      "readings": [
+        "Silberschatz, Ch. 3-4 - Processes and Threads",
+        "OSTEP: Processes and Threads chapters"
+      ],
+      "lecture_notes": {
+        "introduction": "A process is a running program. Threads allow a single process to do multiple things concurrently, sharing memory. Understanding processes and threads is essential for writing concurrent software that exploits modern multi-core CPUs.",
+        "key_concepts": [
+          "Process model: address space, PCB, process states (new, ready, running, waiting, terminated)",
+          "Process creation: fork and exec on Unix",
+          "Context switching: saving and restoring register state",
+          "Threads: shared address space, independent stacks and registers",
+          "POSIX threads (pthreads): pthread_create, pthread_join, pthread_exit"
+        ],
+        "demonstration": "Write a C program that creates multiple threads to compute partial sums of a large array in parallel, then joins them to combine results",
+        "setup_requirements": [
+          "Linux environment with GCC",
+          "pthreads library available",
+          "Process monitoring tools (top, htop)"
+        ],
+        "review": [
+          {
+            "key": "Process vs Thread",
+            "value": "Processes have separate address spaces and are isolated; threads share the same address space and cooperate. Thread creation is cheaper because no memory space duplication is needed"
+          },
+          {
+            "key": "Context Switch Cost",
+            "value": "Switching between processes requires saving all registers, switching page tables, and flushing TLB entries; thread switches within the same process skip the page table and TLB steps"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 5,
+      "date": "2024-01-30",
+      "topic": "Synchronization and Concurrency",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Identify race conditions and critical sections in concurrent code",
+        "Implement mutual exclusion using mutexes and semaphores",
+        "Solve classic synchronization problems: producer-consumer, readers-writers"
+      ],
+      "readings": [
+        "Silberschatz, Ch. 6-7 - Synchronization",
+        "OSTEP: Locks, Condition Variables, Semaphores"
+      ],
+      "lecture_notes": {
+        "introduction": "Concurrent programming is treacherous. Shared mutable state plus interleaved execution creates race conditions that appear randomly and are nearly impossible to reproduce. Synchronization primitives are the tools that make concurrent code correct.",
+        "key_concepts": [
+          "Race condition: outcome depends on thread scheduling order",
+          "Critical section: code that accesses shared data",
+          "Mutex: mutual exclusion lock, pthread_mutex_lock and unlock",
+          "Semaphore: generalized lock with a counter, sem_wait and sem_post",
+          "Condition variables: pthread_cond_wait and signal for event notification",
+          "Deadlock conditions: mutual exclusion, hold and wait, no preemption, circular wait"
+        ],
+        "demonstration": "Start with a buggy bank transfer program that has a race condition, demonstrate the bug with repeated runs, then fix it with mutexes, and finally show a deadlock scenario",
+        "setup_requirements": [
+          "Linux environment with GCC and pthreads",
+          "Thread sanitizer enabled with fsanitize flag"
+        ],
+        "review": [
+          {
+            "key": "Deadlock Prevention",
+            "value": "Breaking any one of the four Coffman conditions prevents deadlock; the most practical approach is imposing a global lock ordering to prevent circular wait"
+          },
+          {
+            "key": "Condition Variable Pattern",
+            "value": "Always check the condition in a while loop not an if, because spurious wakeups can occur and another thread may have already consumed the resource between signal and wakeup"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 7,
+      "date": "2024-02-06",
+      "topic": "CPU Scheduling",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Compare CPU scheduling algorithms: FCFS, SJF, Round Robin, MLFQ",
+        "Calculate turnaround time, waiting time, and response time",
+        "Understand the design trade-offs between throughput and responsiveness"
+      ],
+      "readings": [
+        "Silberschatz, Ch. 5 - CPU Scheduling",
+        "OSTEP: Scheduling chapters"
+      ],
+      "lecture_notes": {
+        "introduction": "The CPU scheduler decides which process runs next. This decision profoundly affects user experience: a bad scheduler makes your laptop feel sluggish even with plenty of CPU available. Understanding scheduling explains why some systems feel fast and others feel slow.",
+        "key_concepts": [
+          "FCFS: simple but causes convoy effect",
+          "SJF: optimal average waiting time but requires prediction",
+          "Round Robin: time quantum, good response time, higher turnaround",
+          "MLFQ: adapts to process behavior dynamically",
+          "Real-time scheduling: rate-monotonic and earliest deadline first"
+        ],
+        "demonstration": "Simulate four scheduling algorithms on the same set of 6 processes, calculate all metrics, and compare using a Gantt chart visualization",
+        "setup_requirements": [
+          "Scheduling simulator or spreadsheet",
+          "Process arrival and burst time data provided"
+        ],
+        "review": [
+          {
+            "key": "Convoy Effect",
+            "value": "In FCFS, a single long-running CPU-bound process can block many short IO-bound processes, severely degrading average waiting time; this motivates preemptive scheduling"
+          },
+          {
+            "key": "Time Quantum Trade-off",
+            "value": "Smaller time quantum gives better response time but increases context switch overhead; larger quantum approaches FCFS behavior. Typical values are 10 to 100 milliseconds"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 9,
+      "date": "2024-02-13",
+      "topic": "Virtual Memory and Page Replacement",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Explain how virtual memory provides process isolation and the illusion of large memory",
+        "Trace address translation through page tables and TLB",
+        "Compare page replacement algorithms: FIFO, LRU, Clock"
+      ],
+      "readings": [
+        "Silberschatz, Ch. 9-10 - Virtual Memory",
+        "OSTEP: Address Spaces, Paging, Page Replacement"
+      ],
+      "lecture_notes": {
+        "introduction": "Virtual memory is the OS mechanism that gives each process the illusion of having its own large, contiguous address space. It enables process isolation, shared libraries, and running programs larger than physical memory.",
+        "key_concepts": [
+          "Virtual vs physical addresses: every process has its own address space",
+          "Page tables: mapping virtual pages to physical frames",
+          "TLB (Translation Lookaside Buffer): caching page table entries",
+          "Page fault handling: loading pages from disk on demand",
+          "Page replacement: FIFO, LRU, Clock (second chance) algorithms",
+          "Thrashing: when the working set exceeds physical memory"
+        ],
+        "demonstration": "Trace a sequence of virtual addresses through a page table, calculating TLB hit and miss and page fault rates, then compare FIFO and LRU replacement on the same reference string",
+        "setup_requirements": [
+          "Page table simulation worksheet",
+          "Reference string examples provided"
+        ],
+        "review": [
+          {
+            "key": "Demand Paging",
+            "value": "Pages are loaded into physical memory only when accessed on page fault, not when the process starts; this reduces startup time and memory usage but introduces page fault latency"
+          },
+          {
+            "key": "Belady Anomaly",
+            "value": "With FIFO replacement, increasing the number of physical frames can sometimes increase page faults which is counterintuitive; LRU does not suffer from this anomaly"
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "Processes, Threads, and Synchronization",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "A program creates 3 threads that each increment a shared counter 1,000,000 times. Without synchronization, what is the likely result and why?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "The final counter value will be less than 3,000,000 and non-deterministic. Incrementing a counter is not atomic: it involves load, add, and store. When two threads load the same value before either stores, one increment is lost. The severity depends on thread scheduling interleaving.",
+            "rubric": [
+              {
+                "key": "States result will be less than 3,000,000",
+                "value": 3
+              },
+              {
+                "key": "Explains increment is not atomic (load-add-store)",
+                "value": 4
+              },
+              {
+                "key": "Explains lost update from interleaving",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Write pseudocode for a producer-consumer solution using a mutex and two semaphores (empty and full) for a bounded buffer of size N.",
+            "type": "code",
+            "points": 10,
+            "answer": "Initialization: mutex = 1, empty = N, full = 0\n\nProducer:\n  while true:\n    item = produce()\n    sem_wait(empty)\n    mutex_lock(mutex)\n    buffer.add(item)\n    mutex_unlock(mutex)\n    sem_post(full)\n\nConsumer:\n  while true:\n    sem_wait(full)\n    mutex_lock(mutex)\n    item = buffer.remove()\n    mutex_unlock(mutex)\n    sem_post(empty)\n    consume(item)",
+            "rubric": [
+              {
+                "key": "Correct semaphore initialization (empty=N, full=0)",
+                "value": 3
+              },
+              {
+                "key": "Correct ordering: semaphore wait before mutex lock",
+                "value": 4
+              },
+              {
+                "key": "Both producer and consumer correctly symmetric",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 4,
+        "topic": "Scheduling and Memory Management",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Given these processes with arrival time and burst time: P1(0,8), P2(1,4), P3(2,2), P4(3,1), calculate the average waiting time for Shortest Remaining Time First scheduling.",
+            "type": "calculation",
+            "points": 15,
+            "answer": "Execution order with SRTF:\nt=0: P1 starts (remaining=8)\nt=1: P2 arrives (remaining=4 < P1 remaining 7), preempt, run P2\nt=2: P3 arrives (remaining=2 < P2 remaining 3), preempt, run P3\nt=3: P4 arrives (remaining=1 < P2 remaining 3), P3 done at t=4\nt=4: P4 runs (remaining=1), finishes t=5\nt=5: P2 resumes (remaining=3), finishes t=8\nt=8: P1 resumes (remaining=7), finishes t=15\n\nWaiting times: P1=15-0-8=7, P2=8-1-4=3, P3=4-2-2=0, P4=5-3-1=1\nAverage = (7+3+0+1)/4 = 2.75",
+            "rubric": [
+              {
+                "key": "Correct preemption decisions at each arrival",
+                "value": 5
+              },
+              {
+                "key": "Correct completion times for all processes",
+                "value": 5
+              },
+              {
+                "key": "Correct average waiting time calculation",
+                "value": 5
+              }
+            ]
+          },
+          {
+            "question": "Given the reference string 1,2,3,4,1,2,5,1,2,3,4,5 and 3 physical frames, calculate the number of page faults using LRU replacement.",
+            "type": "calculation",
+            "points": 10,
+            "answer": "LRU trace with 3 frames:\n1: [1] miss (1)\n2: [1,2] miss (2)\n3: [1,2,3] miss (3)\n4: [2,3,4] miss, evict 1 LRU (4)\n1: [3,4,1] miss, evict 2 LRU (5)\n2: [4,1,2] miss, evict 3 LRU (6)\n5: [1,2,5] miss, evict 4 LRU (7)\n1: [2,5,1] hit\n2: [5,1,2] hit\n3: [1,2,3] miss, evict 5 LRU (8)\n4: [2,3,4] miss, evict 1 LRU (9)\n5: [3,4,5] miss, evict 2 LRU (10)\n\nTotal page faults: 10",
+            "rubric": [
+              {
+                "key": "Correct LRU eviction decisions",
+                "value": 5
+              },
+              {
+                "key": "Correct hit and miss identification",
+                "value": 3
+              },
+              {
+                "key": "Correct total page fault count",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 25
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Multi-threaded Web Server",
+        "week_assigned": 3,
+        "week_due": 5,
+        "points": 100,
+        "description": "Build a multi-threaded HTTP server in C that handles concurrent client connections using a thread pool. Implement proper synchronization for shared data structures, handle signals gracefully, and include performance benchmarking.",
+        "objectives": [
+          "Apply process and thread concepts to build a concurrent network server",
+          "Implement a thread pool with work queue using mutexes and condition variables",
+          "Handle edge cases: connection timeouts, malformed requests, graceful shutdown",
+          "Benchmark throughput under varying concurrency levels"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "C source code for the multi-threaded web server",
+          "Makefile with build, test, and clean targets",
+          "Performance benchmark results at 1, 10, 50, and 100 concurrent connections",
+          "Design document (2-3 pages) explaining thread pool architecture and synchronization"
+        ],
+        "grading_rubric": {
+          "correctness": {
+            "points": 35,
+            "criteria": [
+              "Server correctly serves static files over HTTP 1.1",
+              "Multiple clients can connect and be served concurrently",
+              "Thread pool distributes work across worker threads",
+              "No race conditions or memory leaks verified with sanitizer and valgrind"
+            ]
+          },
+          "synchronization": {
+            "points": 30,
+            "criteria": [
+              "Work queue uses mutex and condition variable correctly",
+              "No deadlocks under any tested workload",
+              "Graceful shutdown: signal handler sets flag, workers drain queue and exit",
+              "Shared statistics such as request count and bytes served are synchronized"
+            ]
+          },
+          "robustness": {
+            "points": 20,
+            "criteria": [
+              "Malformed HTTP requests return appropriate error codes",
+              "Connection timeouts are handled without blocking the thread pool",
+              "Server recovers from individual connection failures",
+              "Resource limits for max connections and max file size are enforced"
+            ]
+          },
+          "documentation": {
+            "points": 15,
+            "criteria": [
+              "Design document explains architecture and synchronization strategy",
+              "Benchmark methodology is described and results are analyzed",
+              "Code is well-commented with clear function documentation",
+              "Makefile is complete and functional"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Correct multi-threaded HTTP server with thread pool",
+                "Race-condition-free synchronization verified by sanitizer",
+                "Robust error handling for network and protocol edge cases",
+                "Clear documentation with performance benchmark analysis"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 15,
+      "description": "Regular assessment of OS concepts and calculations"
+    },
+    "lab_assignments": {
+      "percentage": 25,
+      "description": "Systems programming labs in C with pthreads and system calls"
+    },
+    "major_assignments": {
+      "percentage": 25,
+      "description": "Comprehensive systems programming projects"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Written exam covering processes, threads, and synchronization"
+    },
+    "final_examination": {
+      "percentage": 20,
+      "description": "Comprehensive exam covering all OS topics including memory and file systems"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is expected for all lectures and mandatory for lab sessions. More than 3 unexcused absences may result in a reduced participation grade.",
+    "late_submissions": "Late assignments lose 10% per day. No submissions accepted more than 5 days late. Systems programming bugs discovered after submission may be addressed in office hours.",
+    "collaboration": "Discussion of OS concepts and debugging approaches is encouraged. All code must be written individually. Sharing code constitutes plagiarism.",
+    "academic_integrity": "All submitted code must be your own work. Using code from the internet, textbooks, or other students without attribution is plagiarism.",
+    "technology_requirements": "Students need a Linux environment (VM or WSL2), GCC, make, valgrind, and strace. Lab computers with Linux are available."
+  }
+}

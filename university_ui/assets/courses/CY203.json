@@ -1,0 +1,472 @@
+{
+  "course_info": {
+    "course_id": "CY203",
+    "title": "Network Security",
+    "credit_hours": 4,
+    "duration": "15 weeks",
+    "meeting_schedule": "Monday, Wednesday, Friday - 4 hours per week",
+    "prerequisites": [
+      "CY102 - Network Fundamentals",
+      "CY103 - Operating Systems Security"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "date": "2024-01-15",
+      "topic": "Network Security Architecture and Design",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Design a defense-in-depth network architecture",
+        "Implement network segmentation strategies",
+        "Apply zero trust network principles"
+      ],
+      "readings": [
+        "Network Security Essentials Ch. 1-2",
+        "NIST SP 800-207 Zero Trust Architecture"
+      ],
+      "lecture_notes": {
+        "introduction": "Network security architecture defines how an organization protects its digital assets at the network layer. Modern approaches are moving beyond perimeter-based models toward zero trust.",
+        "key_concepts": [
+          "Defense-in-depth: layered network controls",
+          "Network segmentation with VLANs and subnets",
+          "DMZ architecture for public-facing services",
+          "Zero Trust Architecture: never trust, always verify",
+          "Micro-segmentation with software-defined networking"
+        ],
+        "demonstration": "Designing and implementing a segmented network with pfSense firewalls, VLANs, and zone-based policies",
+        "setup_requirements": [
+          "pfSense VM or GNS3 with firewall images",
+          "Multi-VLAN lab switch configuration",
+          "Network diagramming tool"
+        ],
+        "review": [
+          {
+            "key": "Zero Trust",
+            "value": "No implicit trust based on network location. Every access request is authenticated, authorized, and encrypted regardless of source. Policy enforcement at every point."
+          },
+          {
+            "key": "Micro-segmentation",
+            "value": "Applying firewall policies at the individual workload level rather than at the network perimeter, limiting lateral movement after a breach"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 1,
+      "session_number": 2,
+      "date": "2024-01-17",
+      "topic": "Advanced Firewall Technologies",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Configure next-generation firewall rules with application awareness",
+        "Implement stateful inspection and deep packet inspection",
+        "Design firewall rule sets following the principle of least privilege"
+      ],
+      "readings": [
+        "Network Security Essentials Ch. 4",
+        "pfSense Firewall documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Next-generation firewalls go beyond simple port and IP filtering to inspect application-layer traffic, providing granular control over what enters and leaves the network.",
+        "key_concepts": [
+          "Stateful inspection vs deep packet inspection",
+          "Application-layer gateway (ALG) functions",
+          "Next-gen features: SSL inspection, threat intelligence feeds",
+          "Rule ordering and optimization",
+          "Firewall logging and audit trail"
+        ],
+        "demonstration": "Configuring pfSense with Snort integration for deep packet inspection, writing rules that block specific application behaviors",
+        "setup_requirements": [
+          "pfSense VM with Snort package",
+          "Lab traffic generators",
+          "Rule set testing framework"
+        ],
+        "review": [
+          {
+            "key": "Deep Packet Inspection",
+            "value": "Examines the payload of packets, not just headers. Can detect malware, application misuse, and data exfiltration hidden in allowed protocols."
+          },
+          {
+            "key": "Rule Ordering",
+            "value": "Firewalls evaluate rules top-to-bottom. Most specific deny rules first, then allow rules, with an implicit deny-all at the end. Order affects both security and performance."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 3,
+      "date": "2024-01-22",
+      "topic": "Intrusion Detection and Prevention Systems",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Configure Snort/Suricata IDS rules for threat detection",
+        "Differentiate between signature-based and anomaly-based detection",
+        "Tune IDS to reduce false positives while maintaining detection"
+      ],
+      "readings": [
+        "Snort IDS and IPS Ch. 1-4",
+        "Suricata documentation on rule writing"
+      ],
+      "lecture_notes": {
+        "introduction": "IDS and IPS systems are the network's immune system, detecting and responding to threats that bypass perimeter controls.",
+        "key_concepts": [
+          "Signature-based detection: pattern matching against known threats",
+          "Anomaly-based detection: statistical baseline deviation",
+          "Snort rule syntax: header (action, protocol, src, dst) and options",
+          "IDS placement: inline (IPS) vs passive (IDS) deployment",
+          "False positive tuning and threshold configuration"
+        ],
+        "demonstration": "Writing custom Snort rules to detect a simulated attack, then tuning thresholds to reduce false positives from legitimate traffic",
+        "setup_requirements": [
+          "Snort 3 or Suricata installed on Linux VM",
+          "pcap replay tools for testing",
+          "Lab traffic with embedded attack samples"
+        ],
+        "review": [
+          {
+            "key": "Snort Rule",
+            "value": "alert tcp $EXTERNAL_NET any -> $HOME_NET 80 (msg:'SQL Injection Attempt'; content:'UNION SELECT'; nocase; sid:1000001;)"
+          },
+          {
+            "key": "False Positive Tuning",
+            "value": "Suppress rules by source, adjust detection thresholds, whitelist known-good traffic patterns. Goal: high detection rate with actionable alerts."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 5,
+      "date": "2024-01-29",
+      "topic": "VPN Technologies and Secure Remote Access",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Configure IPsec site-to-site and remote access VPNs",
+        "Compare IPsec with WireGuard and OpenVPN",
+        "Implement TLS-based VPN for remote workers"
+      ],
+      "readings": [
+        "Network Security Essentials Ch. 6",
+        "WireGuard whitepaper"
+      ],
+      "lecture_notes": {
+        "introduction": "VPNs extend secure network access across untrusted networks. The choice of VPN technology impacts security, performance, and manageability.",
+        "key_concepts": [
+          "IPsec: IKE phase 1 and phase 2, AH vs ESP",
+          "IPsec modes: transport vs tunnel",
+          "OpenVPN: TLS-based, certificate authentication",
+          "WireGuard: modern, minimal, high-performance",
+          "Split tunneling risks and policy considerations"
+        ],
+        "demonstration": "Setting up a WireGuard VPN between two lab networks and verifying encrypted traffic with tcpdump",
+        "setup_requirements": [
+          "Two Linux VMs as VPN endpoints",
+          "WireGuard and OpenVPN installed",
+          "tcpdump for traffic verification"
+        ],
+        "review": [
+          {
+            "key": "IPsec ESP",
+            "value": "Encapsulating Security Payload provides confidentiality, integrity, and authentication. In tunnel mode, the entire original IP packet is encrypted and encapsulated."
+          },
+          {
+            "key": "WireGuard",
+            "value": "Modern VPN protocol with ~4000 lines of code (vs 100K+ for OpenVPN). Uses Noise protocol framework, ChaCha20, Poly1305, Curve25519. Stateless design with cryptokey routing."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 7,
+      "date": "2024-02-05",
+      "topic": "Network Monitoring and Traffic Analysis",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Deploy network monitoring with NetFlow and packet capture",
+        "Detect network anomalies and lateral movement",
+        "Build network baselines for behavioral analysis"
+      ],
+      "readings": [
+        "The Practice of Network Security Monitoring Ch. 3-5",
+        "Zeek (Bro) documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "You cannot defend what you cannot see. Network monitoring provides the visibility required to detect threats that evade preventive controls.",
+        "key_concepts": [
+          "NetFlow/IPFIX for traffic metadata collection",
+          "Full packet capture vs metadata-only approaches",
+          "Zeek network analysis framework",
+          "Network behavioral baselines and deviation detection",
+          "DNS analytics for C2 detection"
+        ],
+        "demonstration": "Using Zeek to analyze pcap files, generating connection logs, and identifying suspicious DNS queries indicative of C2 communication",
+        "setup_requirements": [
+          "Zeek installed on Linux VM",
+          "Sample pcap files with embedded threats",
+          "ELK stack for log visualization"
+        ],
+        "review": [
+          {
+            "key": "Zeek",
+            "value": "Network analysis framework that produces structured logs (conn.log, dns.log, http.log) from traffic. Unlike IDS, it focuses on network visibility and metadata extraction."
+          },
+          {
+            "key": "DNS C2 Detection",
+            "value": "Malware often uses DNS for command and control via long subdomain queries, high query frequency, or TXT record exfiltration. Monitoring DNS analytically reveals these patterns."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 9,
+      "date": "2024-02-12",
+      "topic": "Network Attack Defense: DDoS, MitM, and DNS Attacks",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Implement DDoS mitigation strategies",
+        "Detect and prevent man-in-the-middle attacks",
+        "Deploy DNS security measures including DNSSEC and DNS-over-HTTPS"
+      ],
+      "readings": [
+        "Network Security Essentials Ch. 8",
+        "NIST SP 800-81 Secure DNS Deployment"
+      ],
+      "lecture_notes": {
+        "introduction": "Network attacks target the availability and integrity of communication channels. Defending against them requires both technical controls and architectural planning.",
+        "key_concepts": [
+          "DDoS types: volumetric, protocol, application-layer",
+          "DDoS mitigation: rate limiting, scrubbing centers, Anycast",
+          "ARP spoofing detection with Dynamic ARP Inspection",
+          "802.1X port-based network access control",
+          "DNS security: DNSSEC, DoH, DoT"
+        ],
+        "demonstration": "Simulating an ARP spoofing attack with Ettercap, detecting it with arpwatch, and preventing it with Dynamic ARP Inspection on a managed switch",
+        "setup_requirements": [
+          "Managed switch with DAI capability",
+          "Ettercap and arpwatch installed",
+          "Lab network with multiple hosts"
+        ],
+        "review": [
+          {
+            "key": "DDoS Mitigation",
+            "value": "Volumetric attacks require upstream filtering (ISP scrubbing, CDN absorption). Application-layer attacks require WAF rules and rate limiting. No single solution handles all types."
+          },
+          {
+            "key": "802.1X",
+            "value": "Port-based NAC using EAP authentication. Unauthenticated devices are placed in a quarantine VLAN. Prevents rogue devices from accessing the network."
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "Network Architecture, Firewalls, and IDS",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Design a network architecture for a small company with a public web server, internal corporate network, and guest Wi-Fi. Specify where you would place firewalls, which zones you would create, and write two specific firewall rules (in pseudocode) that enforce the security policy.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Three zones: DMZ (web server), Internal (corporate), Guest. Two firewalls: external (between internet and DMZ) and internal (between DMZ and Internal/Guest). Rules: (1) ALLOW tcp from ANY to DMZ_WEBSERVER port 443 - permits HTTPS to the public web server. (2) DENY all from GUEST_ZONE to INTERNAL_ZONE - prevents guest devices from accessing corporate resources. Additional: allow DMZ to Internal on specific database port only, deny all DMZ-initiated connections to Internal otherwise.",
+            "rubric": [
+              {
+                "key": "Correct zone design with DMZ",
+                "value": 4
+              },
+              {
+                "key": "Two valid firewall rules with justification",
+                "value": 4
+              },
+              {
+                "key": "Guest isolation properly addressed",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Write a Snort rule that detects potential SSH brute force attacks (more than 5 failed connection attempts within 60 seconds from the same source IP to port 22). Explain each component of the rule.",
+            "type": "code",
+            "points": 10,
+            "answer": "alert tcp $EXTERNAL_NET any -> $HOME_NET 22 (msg:\"SSH Brute Force Attempt\"; flow:to_server,established; content:\"SSH-\"; detection_filter:track by_src, count 5, seconds 60; sid:1000002; rev:1;) Explanation: alert generates notification, tcp specifies protocol, $EXTERNAL_NET any -> $HOME_NET 22 matches external IPs to internal port 22, flow:to_server,established matches established connections to the server, content:\"SSH-\" matches SSH protocol banner, detection_filter triggers after 5 matches from same source within 60 seconds.",
+            "rubric": [
+              {
+                "key": "Correct Snort rule syntax",
+                "value": 4
+              },
+              {
+                "key": "Appropriate use of detection_filter for rate-based detection",
+                "value": 3
+              },
+              {
+                "key": "Clear explanation of each component",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 4,
+        "topic": "VPNs, Network Monitoring, and Attack Defense",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Compare IPsec tunnel mode with WireGuard for a site-to-site VPN connecting two offices. Address: cryptographic primitives used, configuration complexity, performance characteristics, and a specific scenario where each would be preferred.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "IPsec tunnel mode uses IKEv2 for key exchange with configurable cipher suites (AES-GCM, SHA-2, DH groups). Configuration is complex with multiple phases and parameters. Performance depends on hardware offload support. WireGuard uses fixed modern primitives (ChaCha20, Poly1305, Curve25519, BLAKE2s). Minimal configuration (public/private keys and allowed IPs). Higher throughput due to simpler code path. Prefer IPsec when regulatory compliance requires specific cipher suites or when integrating with legacy equipment. Prefer WireGuard for modern environments prioritizing simplicity, performance, and auditability.",
+            "rubric": [
+              {
+                "key": "Correct cryptographic comparison",
+                "value": 3
+              },
+              {
+                "key": "Configuration and performance analysis",
+                "value": 4
+              },
+              {
+                "key": "Valid preferred scenarios for each",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "An analyst notices a DNS query log showing hundreds of requests to subdomains like 'a3f2b1c4.d5e6f7.malware.example.com' from an internal workstation. What type of attack does this indicate, how does it work, and what network security controls would detect and prevent it?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "This indicates DNS tunneling for data exfiltration or C2 communication. The attacker encodes stolen data or commands in subdomain labels of DNS queries to an attacker-controlled authoritative nameserver, bypassing firewalls that allow DNS traffic. Detection: DNS analytics monitoring for high entropy in subdomain names, unusual query volume per domain, and abnormal TXT record sizes. Prevention: (1) Force all DNS through an internal resolver that blocks known malicious domains. (2) Implement DNS-over-HTTPS inspection on the resolver. (3) Deploy DNS firewall (RPZ) blocking newly registered and uncategorized domains. (4) Set maximum subdomain length and query rate limits.",
+            "rubric": [
+              {
+                "key": "Correctly identifies DNS tunneling",
+                "value": 3
+              },
+              {
+                "key": "Explains the exfiltration mechanism",
+                "value": 3
+              },
+              {
+                "key": "Detection and prevention controls specified",
+                "value": 4
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Secure Network Design and Implementation",
+        "week_assigned": 2,
+        "week_due": 5,
+        "points": 100,
+        "description": "Design and implement a complete secure network infrastructure for a small business using virtual lab equipment. Include segmentation, firewalls, IDS, VPN, and monitoring.",
+        "objectives": [
+          "Design a defense-in-depth network architecture",
+          "Implement firewall rules, IDS, and VPN in a virtual environment",
+          "Deploy network monitoring and verify detection capabilities",
+          "Document the architecture with security justifications"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Network architecture diagram with security zones and traffic flows",
+          "Working virtual lab implementation with all components configured",
+          "Firewall rule set documentation with security justification",
+          "IDS testing results showing detection of simulated attacks"
+        ],
+        "grading_rubric": {
+          "architecture_design": {
+            "points": 25,
+            "criteria": [
+              "Proper zone segmentation with security justification",
+              "Defense-in-depth with multiple control layers",
+              "Zero trust principles applied where appropriate",
+              "Scalable and maintainable design"
+            ]
+          },
+          "implementation": {
+            "points": 35,
+            "criteria": [
+              "All network components correctly configured",
+              "Firewall rules enforce least-privilege access",
+              "IDS rules detect test attacks without excessive false positives",
+              "VPN provides secure remote access"
+            ]
+          },
+          "monitoring_and_testing": {
+            "points": 25,
+            "criteria": [
+              "Network monitoring deployed and capturing traffic",
+              "Simulated attacks detected by IDS",
+              "Firewall rules tested and verified",
+              "Baseline traffic analysis documented"
+            ]
+          },
+          "documentation": {
+            "points": 15,
+            "criteria": [
+              "Complete architecture documentation",
+              "Security policy for each zone transition",
+              "Testing methodology and results",
+              "Operational procedures for ongoing management"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Professional-quality network architecture with defense-in-depth",
+                "Fully functional implementation with all security controls operational",
+                "Verified detection and prevention capabilities through testing",
+                "Comprehensive documentation suitable for a real deployment"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 10,
+      "description": "Assessment of network security concepts and defense techniques"
+    },
+    "lab_assignments": {
+      "percentage": 30,
+      "description": "Hands-on labs with firewalls, IDS, VPN, and monitoring tools"
+    },
+    "major_assignments": {
+      "percentage": 25,
+      "description": "Comprehensive secure network design and implementation project"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Practical exam: configure and defend a network against simulated attacks"
+    },
+    "final_project": {
+      "percentage": 20,
+      "description": "Advanced network security architecture for a complex scenario"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is mandatory for all lab sessions. More than 2 unexcused absences may result in course failure.",
+    "late_submissions": "Late assignments are penalized 10% per day. No submissions accepted more than 5 days late without prior arrangement.",
+    "collaboration": "Lab exercises may be completed in pairs. Design documents and reports must be individual work.",
+    "academic_integrity": "All network configurations must be your own work. Sharing firewall rules or IDS configurations between students is prohibited.",
+    "lab_safety": "All network testing must be conducted within the isolated lab environment. Scanning or attacking production networks will result in immediate course failure."
+  }
+}

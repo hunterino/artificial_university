@@ -1,0 +1,473 @@
+{
+  "course_info": {
+    "course_id": "CY301",
+    "title": "Digital Forensics",
+    "credit_hours": 4,
+    "duration": "15 weeks",
+    "meeting_schedule": "Monday, Wednesday, Friday - 4 hours per week",
+    "prerequisites": [
+      "CY103 - Operating Systems Security",
+      "CY201 - Ethical Hacking and Penetration Testing"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "date": "2024-01-15",
+      "topic": "Digital Forensics Principles and Methodology",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Describe the digital forensics investigation process",
+        "Understand chain of custody and legal admissibility requirements",
+        "Apply forensic principles to preserve evidence integrity"
+      ],
+      "readings": [
+        "Guide to Computer Forensics and Investigations Ch. 1-2",
+        "NIST SP 800-86 Guide to Integrating Forensic Techniques"
+      ],
+      "lecture_notes": {
+        "introduction": "Digital forensics is the science of identifying, preserving, analyzing, and presenting digital evidence in a manner that is legally admissible. Every action must be documented and defensible.",
+        "key_concepts": [
+          "Forensic process: Identification, Preservation, Analysis, Presentation",
+          "Chain of custody documentation",
+          "Write-blocking and evidence integrity",
+          "Legal considerations: search warrants, consent, privacy laws",
+          "Forensic imaging: bit-for-bit vs logical acquisition"
+        ],
+        "demonstration": "Creating a forensic image of a USB drive using dd and dc3dd, verifying integrity with SHA-256 hashes",
+        "setup_requirements": [
+          "Forensic workstation with write-blocker",
+          "SIFT Workstation VM",
+          "Sample evidence drives"
+        ],
+        "review": [
+          {
+            "key": "Chain of Custody",
+            "value": "Documented chronological record of who handled evidence, when, what they did, and where it was stored. Any break in the chain can render evidence inadmissible."
+          },
+          {
+            "key": "Write-Blocking",
+            "value": "Hardware or software mechanism that prevents any modification to the evidence drive during acquisition. Essential for maintaining evidence integrity."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 1,
+      "session_number": 2,
+      "date": "2024-01-17",
+      "topic": "Disk Forensics and File System Analysis",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Analyze NTFS and ext4 file system structures forensically",
+        "Recover deleted files using file carving techniques",
+        "Interpret Master File Table entries and inode structures"
+      ],
+      "readings": [
+        "File System Forensic Analysis Ch. 8-12",
+        "The Sleuth Kit documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "File systems contain a wealth of forensic evidence beyond the files themselves. Understanding their internal structures enables recovery of deleted data and timeline reconstruction.",
+        "key_concepts": [
+          "NTFS: MFT entries, $STANDARD_INFORMATION vs $FILE_NAME timestamps",
+          "ext4: inodes, journal, extent trees",
+          "Deleted file recovery: MFT entry reuse, inode unlink",
+          "File carving: header/footer signature scanning",
+          "Slack space and unallocated space analysis"
+        ],
+        "demonstration": "Using Autopsy and The Sleuth Kit to recover deleted files from an NTFS image, analyzing MFT entries to reconstruct the deletion timeline",
+        "setup_requirements": [
+          "Autopsy 4.x installed",
+          "The Sleuth Kit command-line tools",
+          "Sample forensic images with deleted files"
+        ],
+        "review": [
+          {
+            "key": "NTFS Timestamps",
+            "value": "MFT stores two sets of timestamps: $STANDARD_INFORMATION (modifiable by user) and $FILE_NAME (only modified by the kernel). Discrepancies indicate timestomping."
+          },
+          {
+            "key": "File Carving",
+            "value": "Scanning raw disk sectors for file headers (e.g., JPEG: FF D8 FF, PDF: %PDF) to recover files regardless of file system metadata status"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 3,
+      "date": "2024-01-22",
+      "topic": "Memory Forensics",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Acquire volatile memory from running systems",
+        "Analyze memory dumps with Volatility framework",
+        "Extract processes, network connections, and injected code from memory"
+      ],
+      "readings": [
+        "The Art of Memory Forensics Ch. 1-5",
+        "Volatility 3 documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "RAM contains evidence that exists nowhere else: running processes, network connections, encryption keys, and malware that never touches disk. Memory forensics is essential for incident response.",
+        "key_concepts": [
+          "Memory acquisition: FTK Imager, WinPMEM, LiME",
+          "Volatility framework: profiles, plugins, analysis workflow",
+          "Process analysis: pslist, pstree, malfind",
+          "Network artifact extraction: netscan, connections",
+          "Code injection detection: hollow process, DLL injection"
+        ],
+        "demonstration": "Acquiring memory from a compromised Windows VM, using Volatility to identify a hidden malware process and extract its C2 server address",
+        "setup_requirements": [
+          "Volatility 3 installed",
+          "WinPMEM for memory acquisition",
+          "Windows VM with simulated malware infection"
+        ],
+        "review": [
+          {
+            "key": "Volatility pslist vs psscan",
+            "value": "pslist walks the active process list (EPROCESS linked list). psscan scans all memory for EPROCESS structures, finding hidden/unlinked processes."
+          },
+          {
+            "key": "malfind Plugin",
+            "value": "Identifies injected code by finding memory regions with executable permissions that were not loaded from a file on disk. Primary tool for detecting code injection."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 5,
+      "date": "2024-01-29",
+      "topic": "Network Forensics and Log Analysis",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Reconstruct network events from packet captures",
+        "Correlate log entries across multiple systems",
+        "Build forensic timelines from network evidence"
+      ],
+      "readings": [
+        "Network Forensics: Tracking Hackers through Cyberspace Ch. 3-6",
+        "SANS Network Forensics Poster"
+      ],
+      "lecture_notes": {
+        "introduction": "Network forensics examines the traces attackers leave in packet captures, flow records, and logs as they move through a network.",
+        "key_concepts": [
+          "Packet capture analysis: TCP stream reconstruction",
+          "HTTP session reconstruction and file extraction",
+          "DNS query log analysis for threat hunting",
+          "Log correlation across firewall, IDS, and server logs",
+          "Timeline construction: super-timeline methodology"
+        ],
+        "demonstration": "Reconstructing an entire intrusion from a pcap file: identifying the initial exploit, lateral movement, and data exfiltration",
+        "setup_requirements": [
+          "Wireshark and NetworkMiner",
+          "Sample pcap with multi-stage attack",
+          "log2timeline/plaso for timeline analysis"
+        ],
+        "review": [
+          {
+            "key": "Stream Reconstruction",
+            "value": "Reassembling TCP streams from individual packets to reconstruct complete HTTP sessions, file transfers, and command sessions"
+          },
+          {
+            "key": "Super-Timeline",
+            "value": "Combining timestamps from all evidence sources (file system, registry, logs, memory) into a single chronological view of all system activity"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 7,
+      "date": "2024-02-05",
+      "topic": "Windows Artifact Analysis",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Extract forensic artifacts from the Windows registry",
+        "Analyze Windows event logs for evidence of compromise",
+        "Recover browser history, Prefetch, and SRUM data"
+      ],
+      "readings": [
+        "Windows Forensic Analysis Toolkit Ch. 3-6",
+        "SANS Windows Forensic Analysis Poster"
+      ],
+      "lecture_notes": {
+        "introduction": "Windows systems contain hundreds of forensic artifacts across the registry, event logs, and system databases that tell the story of what happened on the machine.",
+        "key_concepts": [
+          "Registry forensics: SAM, SYSTEM, SOFTWARE, NTUSER.DAT hives",
+          "UserAssist, ShimCache, Amcache for program execution evidence",
+          "Prefetch files: evidence of program execution with timestamps",
+          "Windows Event Logs: Security (4624, 4625, 4672), Sysmon",
+          "SRUM database: network usage, application resource consumption"
+        ],
+        "demonstration": "Analyzing a forensic image with RegRipper to extract user activity, correlating with event logs to build an evidence timeline",
+        "setup_requirements": [
+          "RegRipper and Registry Explorer",
+          "Eric Zimmerman's forensic tools",
+          "Windows forensic image with evidence"
+        ],
+        "review": [
+          {
+            "key": "ShimCache",
+            "value": "Application Compatibility Cache records executable path and last modification time for programs that were executed or present on the system. Persists across reboots."
+          },
+          {
+            "key": "Event ID 4624",
+            "value": "Successful logon event. Logon Type 2 (interactive), Type 3 (network), Type 10 (RDP). Combined with 4672 (special privileges assigned), reveals lateral movement."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 9,
+      "date": "2024-02-12",
+      "topic": "Mobile and Cloud Forensics",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Describe mobile device forensic acquisition methods",
+        "Analyze iOS and Android forensic artifacts",
+        "Understand cloud forensics challenges and techniques"
+      ],
+      "readings": [
+        "Practical Mobile Forensics Ch. 1-4",
+        "NIST SP 800-101 Mobile Device Forensics"
+      ],
+      "lecture_notes": {
+        "introduction": "Mobile devices and cloud services are increasingly the primary evidence sources in investigations. Their unique architectures present distinct forensic challenges.",
+        "key_concepts": [
+          "Mobile acquisition types: manual, logical, file system, physical",
+          "iOS forensic artifacts: keychain, SQLite databases, plists",
+          "Android forensic artifacts: SQLite databases, shared preferences, APK analysis",
+          "Cloud forensics: preservation requests, API-based collection",
+          "Legal challenges: encryption, jurisdiction, cross-border data"
+        ],
+        "demonstration": "Performing a logical acquisition of an Android test device and analyzing the SQLite databases for messaging and location artifacts",
+        "setup_requirements": [
+          "Android test device or emulator",
+          "ADB (Android Debug Bridge)",
+          "DB Browser for SQLite",
+          "Cellebrite UFED or equivalent (demo license)"
+        ],
+        "review": [
+          {
+            "key": "iOS Encryption",
+            "value": "iOS devices use hardware-backed encryption with a unique per-device key. Full physical acquisition requires either the passcode or exploitation of a bootrom vulnerability (e.g., checkm8)."
+          },
+          {
+            "key": "Cloud Forensics",
+            "value": "Data may exist only in cloud services. Requires legal process (subpoena/warrant) to the provider. Volatile evidence may be lost if not preserved quickly through legal hold requests."
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "Forensic Methodology, Disk, and Memory Forensics",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "You are investigating a suspected data theft. The employee's Windows laptop has been seized. Describe the exact sequence of forensic acquisition steps you would perform, from first touch to having a verified forensic image ready for analysis. Include specific tools and hash verification.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Step 1: Document the scene (photos of laptop state, connections, screen). Step 2: If powered on, acquire volatile memory first using WinPMEM (RAM is lost at power-off). Step 3: Perform a live triage if warranted (running processes, network connections). Step 4: Power down the laptop. Step 5: Remove the hard drive and connect it to the forensic workstation via a hardware write-blocker. Step 6: Create a forensic image using dc3dd (dd with hashing): dc3dd if=/dev/sdX of=evidence.dd hash=sha256 log=acquisition.log. Step 7: Verify the image hash matches the source hash. Step 8: Create a second copy and verify its hash. Step 9: Document everything in the chain of custody form: date, time, examiner, hash values, tools used.",
+            "rubric": [
+              {
+                "key": "Correct order with memory acquisition first",
+                "value": 4
+              },
+              {
+                "key": "Write-blocker and hashing verification",
+                "value": 3
+              },
+              {
+                "key": "Chain of custody documentation",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Using Volatility, you run psscan on a memory dump and find a process named 'svchost.exe' with PID 4812 that does NOT appear in the pslist output. What does this discrepancy indicate, and what three Volatility plugins would you run next to investigate?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "This indicates the process has been unlinked from the active process list (EPROCESS doubly-linked list), a technique used by rootkits and advanced malware to hide from task managers and pslist. Three investigative plugins: (1) malfind -p 4812: scan the process memory for injected code (executable, non-file-backed memory regions). (2) dlllist -p 4812: list loaded DLLs to identify suspicious libraries or anomalous load paths. (3) netscan or connections filtered to PID 4812: identify any network connections to C2 servers. Additional: cmdline -p 4812 to see the command-line arguments and handles -p 4812 to see open handles to files, registry keys, and mutexes.",
+            "rubric": [
+              {
+                "key": "Correctly explains DKOM/process unlinking",
+                "value": 4
+              },
+              {
+                "key": "Three appropriate investigative plugins",
+                "value": 4
+              },
+              {
+                "key": "Explains what each plugin reveals",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 4,
+        "topic": "Network Forensics and Windows Artifacts",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "You are analyzing Windows event logs from a compromised server. You see Event ID 4624 (Logon Type 3) from IP 10.0.1.50, followed by Event ID 4672 (Special Privileges Assigned), then Event ID 7045 (New Service Installed) with a service named 'WindowsUpdate' running 'C:\\temp\\payload.exe'. Reconstruct the attack sequence and explain the significance of each event.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Attack sequence: (1) Event 4624 Type 3 indicates a network logon from 10.0.1.50, likely using stolen credentials or pass-the-hash. (2) Event 4672 shows the account was granted administrative privileges (SeDebugPrivilege, SeImpersonatePrivilege, etc.), confirming the compromised account has admin rights. (3) Event 7045 shows the attacker installed a service as a persistence mechanism. The suspicious indicators: service name mimics a legitimate Windows service, the binary path is in C:\\temp\\ (non-standard location), and the sequence happened in rapid succession. The investigator should correlate: check 10.0.1.50 for compromise (it is likely an already-compromised lateral movement source), hash payload.exe for threat intel lookup, and check for similar service installations on other hosts.",
+            "rubric": [
+              {
+                "key": "Correct interpretation of each event ID",
+                "value": 4
+              },
+              {
+                "key": "Accurate attack sequence reconstruction",
+                "value": 3
+              },
+              {
+                "key": "Identifies suspicious indicators and next steps",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "During network forensic analysis of a packet capture, you discover a series of DNS TXT queries from an internal host to 'data.exfil-c2.com' where each query contains a base64-encoded subdomain. The responses contain base64-encoded TXT records. Explain the forensic significance and how you would extract and decode the exfiltrated data.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "This is DNS tunneling used for bidirectional C2 communication and data exfiltration. The base64 subdomains encode data being sent from the compromised host to the attacker's authoritative DNS server. The TXT responses encode commands from the attacker back to the malware. Extraction steps: (1) Use tshark to filter DNS queries to exfil-c2.com: tshark -r capture.pcap -Y 'dns.qry.name contains exfil-c2.com' -T fields -e dns.qry.name. (2) Extract the subdomain portions (everything before '.exfil-c2.com'). (3) Base64 decode each subdomain to recover the original exfiltrated data. (4) Similarly extract TXT record responses and base64 decode them to see attacker commands. (5) Reconstruct the complete communication timeline to understand what data was stolen and what commands were executed.",
+            "rubric": [
+              {
+                "key": "Identifies DNS tunneling for C2 and exfiltration",
+                "value": 3
+              },
+              {
+                "key": "Correct extraction methodology with tools",
+                "value": 4
+              },
+              {
+                "key": "Explains bidirectional communication",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Digital Forensic Investigation",
+        "week_assigned": 2,
+        "week_due": 5,
+        "points": 100,
+        "description": "Conduct a complete digital forensic investigation of a provided evidence set including a disk image, memory dump, and packet capture. Produce a court-ready forensic report.",
+        "objectives": [
+          "Perform forensic analysis across disk, memory, and network evidence",
+          "Construct a comprehensive timeline of events",
+          "Identify the attack vector, actions taken, and data compromised",
+          "Produce a professional forensic report suitable for legal proceedings"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Forensic report following standard template (15-20 pages)",
+          "Evidence timeline with all sources correlated",
+          "Hash verification log for all evidence handling",
+          "Executive summary with key findings for non-technical stakeholders"
+        ],
+        "grading_rubric": {
+          "evidence_handling": {
+            "points": 20,
+            "criteria": [
+              "Proper hash verification of all evidence",
+              "Chain of custody documentation maintained",
+              "Write-blocking procedures followed",
+              "Evidence integrity preserved throughout"
+            ]
+          },
+          "analysis_depth": {
+            "points": 35,
+            "criteria": [
+              "All key artifacts identified from disk, memory, and network evidence",
+              "Attack vector and entry point determined",
+              "Lateral movement and persistence identified",
+              "Data exfiltration scope documented"
+            ]
+          },
+          "timeline_construction": {
+            "points": 25,
+            "criteria": [
+              "Comprehensive timeline with all evidence sources",
+              "Timestamps correlated across different time zones",
+              "Key events clearly marked and explained",
+              "Gaps in timeline identified and noted"
+            ]
+          },
+          "report_quality": {
+            "points": 20,
+            "criteria": [
+              "Professional format suitable for legal proceedings",
+              "Clear separation of findings and opinions",
+              "All conclusions supported by evidence citations",
+              "Executive summary accessible to non-technical readers"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Thorough forensic analysis across all evidence types",
+                "Complete timeline reconstruction with correlated sources",
+                "Professional court-ready report with proper evidence citations",
+                "Clear and defensible conclusions supported by evidence"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 10,
+      "description": "Assessment of forensic concepts, methodology, and tool knowledge"
+    },
+    "lab_assignments": {
+      "percentage": 30,
+      "description": "Hands-on forensic analysis labs with disk, memory, and network evidence"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "Comprehensive forensic investigation with court-ready report"
+    },
+    "midterm_examination": {
+      "percentage": 10,
+      "description": "Practical exam: timed forensic analysis of provided evidence"
+    },
+    "final_project": {
+      "percentage": 20,
+      "description": "Complex multi-source forensic investigation"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is mandatory for all lab sessions. More than 2 unexcused absences may result in course failure.",
+    "late_submissions": "Late assignments are penalized 10% per day. No submissions accepted more than 5 days late without prior arrangement.",
+    "collaboration": "All forensic analysis and reports must be individual work. Discussion of methodology is permitted; sharing findings is not.",
+    "academic_integrity": "Evidence must be analyzed as provided. Fabricating or modifying forensic evidence is academic fraud and grounds for expulsion.",
+    "lab_safety": "All forensic tools must be used only on provided evidence within the lab environment. Unauthorized analysis of live systems or personal devices of others is prohibited."
+  }
+}
