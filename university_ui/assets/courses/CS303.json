@@ -1,0 +1,1469 @@
+{
+  "course_info": {
+    "course_id": "CS303",
+    "title": "Software Engineering",
+    "credit_hours": 4,
+    "duration": "15 weeks",
+    "meeting_schedule": "Monday, Wednesday, Friday - 4 hours per week",
+    "prerequisites": [
+      "CS201 - Data Structures and Algorithms"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "topic": "Software Process Models",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Understand why software engineering discipline is necessary for large systems",
+        "Compare process models: Waterfall, V-Model, Spiral, and iterative approaches",
+        "Identify the phases of the software development lifecycle and their outputs",
+        "Evaluate trade-offs between plan-driven and adaptive development processes"
+      ],
+      "readings": [
+        "Sommerville, Software Engineering, 10th Ed., Ch. 1-2",
+        "Brooks, The Mythical Man-Month, Ch. 1 (The Tar Pit)",
+        "Royce, 'Managing the Development of Large Software Systems' (1970 paper)"
+      ],
+      "lecture_notes": {
+        "introduction": "Writing code is the easy part of software engineering. The hard part is building systems that work reliably, can be maintained by teams of changing membership, and can be extended over years without collapsing under their own weight. The history of software is littered with catastrophic failures that were not caused by bad algorithms or incorrect syntax, but by failures of process: unclear requirements, untested assumptions, unmanaged complexity, and poor communication. The Waterfall model, introduced by Winston Royce in 1970 and frequently misunderstood, was never intended as a recommendation for sequential development. Royce actually argued for iterative refinement with feedback loops. The V-Model pairs each development phase with a corresponding testing phase, making verification explicit. The Spiral model adds risk analysis at each iteration. These models are not historical curiosities; understanding them reveals the recurring problems that every process model attempts to solve: how do we know we are building the right thing, how do we know we are building it correctly, and how do we manage the inevitable changes that occur during development? This course will equip you with the practices, tools, and judgment to navigate these questions on real projects.",
+        "key_concepts": [
+          "The software crisis: cost overruns, schedule delays, and defects that motivated SE as a discipline, starting from the 1968 NATO conference",
+          "Waterfall model: sequential phases (requirements, design, implementation, testing, maintenance) with document-driven handoffs between phases",
+          "V-Model: maps each development phase to a testing phase (unit test validates detailed design, integration test validates architectural design, acceptance test validates requirements)",
+          "Spiral model: iterative development with explicit risk analysis at each cycle, combining prototyping with systematic planning",
+          "Iterative and incremental development: delivering working software in short cycles, enabling feedback and course correction before the full system is built",
+          "Plan-driven vs adaptive: plan-driven approaches invest heavily in upfront specification (appropriate when requirements are stable and cost of change is high), adaptive approaches embrace change (appropriate when requirements are uncertain)",
+          "Technical debt: the accumulated cost of shortcuts, workarounds, and deferred quality work that compounds over time as new code builds on top of compromised foundations",
+          "Process maturity: CMMI levels as a framework for organizational process improvement, from ad-hoc (Level 1) to optimizing (Level 5)",
+          "The iron triangle: scope, time, and cost are interdependent constraints; fixing all three guarantees quality problems",
+          "Software entropy: without active maintenance and refactoring, software quality degrades with every change, a phenomenon Lehman's laws of software evolution describe formally"
+        ],
+        "demonstration": "Walk through a real-world project failure: the FBI Virtual Case File system ($170M abandoned). Analyze how sequential development without user feedback, scope creep without requirements management, and contractor misalignment led to complete project cancellation. Then contrast with the recovery project (Sentinel) that succeeded by switching to Agile with shorter feedback loops and incremental delivery.",
+        "setup_requirements": [
+          "Git installed and GitHub account configured with SSH keys",
+          "Project management tool access (GitHub Projects or Jira)",
+          "IDE of choice installed (IntelliJ, VS Code, or PyCharm)",
+          "Terminal/shell environment configured"
+        ],
+        "review": [
+          {
+            "key": "Technical Debt",
+            "value": "Every shortcut taken today costs more to fix tomorrow. Like financial debt, it compounds: new code is built on top of the shortcut, making future changes increasingly expensive. The interest rate depends on how central the affected code is to the system."
+          },
+          {
+            "key": "Waterfall vs Iterative",
+            "value": "Waterfall assumes requirements are known and stable upfront. Iterative development assumes requirements will change and delivers working software in short cycles to get feedback. For most software projects, requirements change, making iterative approaches the safer default."
+          },
+          {
+            "key": "The Iron Triangle",
+            "value": "You can fix at most two of scope, time, and cost. If the deadline and budget are fixed, scope must be negotiable. Attempting to fix all three forces the team to sacrifice quality, which creates technical debt that slows future development."
+          },
+          {
+            "key": "Process Models Are Tools",
+            "value": "No single process model is universally best. The right process depends on project size, requirement stability, team experience, regulatory environment, and risk tolerance. Choosing a process model is itself a design decision."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 2,
+      "topic": "Requirements Engineering",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Elicit and document software requirements using user stories and acceptance criteria",
+        "Distinguish between functional and non-functional requirements",
+        "Prioritize requirements using MoSCoW and value-effort matrices",
+        "Identify common requirements elicitation pitfalls and mitigation strategies"
+      ],
+      "readings": [
+        "Sommerville, Ch. 4 - Requirements Engineering",
+        "Cohn, User Stories Applied, Ch. 1-4",
+        "Robertson & Robertson, Mastering the Requirements Process, Ch. 5"
+      ],
+      "lecture_notes": {
+        "introduction": "The most expensive bugs are requirements bugs: building the wrong thing. Studies consistently show that fixing a requirements defect after deployment costs 50-200 times more than fixing it during requirements analysis. Requirements engineering is the systematic process of understanding what the customer actually needs, which is frequently different from what they initially say they want. Elicitation techniques such as interviews, workshops, observation, and prototyping are necessary because stakeholders often cannot articulate their needs in terms that translate directly into software specifications. Functional requirements describe what the system does: process a payment, send a notification, generate a report. Non-functional requirements describe how the system behaves: response time under 200ms, 99.9% availability, WCAG 2.1 AA accessibility compliance. Non-functional requirements are frequently overlooked during elicitation but dominate architectural decisions. A system that must handle 10,000 concurrent users requires a fundamentally different architecture than one serving 50. Requirements traceability, the ability to link each requirement to its implementation and tests, ensures that nothing is forgotten during development and that every line of code has a justifiable purpose. This session teaches you to extract, organize, validate, and manage requirements as living documents that evolve with the project.",
+        "key_concepts": [
+          "User stories: 'As a [role], I want [feature], so that [benefit]' format that captures who, what, and why in a concise, negotiable form",
+          "Acceptance criteria: Given/When/Then format (Gherkin syntax) that makes requirements testable and unambiguous",
+          "INVEST criteria: good user stories are Independent, Negotiable, Valuable, Estimable, Small, and Testable",
+          "Functional vs non-functional requirements: functional (what the system does) vs quality attributes (performance, security, scalability, usability, reliability)",
+          "MoSCoW prioritization: Must have, Should have, Could have, Won't have for this release — a negotiation framework between stakeholders and the development team",
+          "Requirements elicitation techniques: stakeholder interviews, workshops, observation, questionnaires, prototyping, and domain analysis",
+          "Requirements validation: reviews, walkthroughs, and prototyping to confirm requirements are correct, consistent, complete, and feasible before implementation begins",
+          "Traceability matrix: linking requirements to design elements, code modules, and test cases to ensure coverage and manage change impact",
+          "Scope creep: uncontrolled expansion of requirements without corresponding adjustments to schedule, budget, or staffing",
+          "Requirements volatility: measuring and planning for the rate at which requirements change, which varies by domain and project phase"
+        ],
+        "demonstration": "Take a vague customer request ('build me a scheduling app for a veterinary clinic') and decompose it through a live simulated stakeholder interview into 15 user stories with acceptance criteria. Demonstrate how probing questions reveal hidden non-functional requirements (appointment conflicts, HIPAA-like data privacy for pet medical records, SMS notification delivery within 30 seconds) that would otherwise surface as late-stage surprises.",
+        "setup_requirements": [
+          "Project management tool configured with backlog view",
+          "User story template and acceptance criteria template provided",
+          "Sample stakeholder interview script"
+        ],
+        "review": [
+          {
+            "key": "INVEST Criteria",
+            "value": "Good user stories are Independent (can be developed in any order), Negotiable (details are conversation starters, not contracts), Valuable (each delivers user value), Estimable (team can size the effort), Small (fits in one sprint), and Testable (has clear acceptance criteria)."
+          },
+          {
+            "key": "Acceptance Criteria",
+            "value": "Given/When/Then format makes requirements testable: Given [precondition], When [action], Then [expected result]. If you cannot write acceptance criteria for a requirement, the requirement is not sufficiently understood to implement."
+          },
+          {
+            "key": "Non-Functional Requirements",
+            "value": "Quality attributes like performance, security, and availability are often the primary drivers of architectural decisions. A system that must serve 10,000 concurrent users needs fundamentally different architecture than one serving 50 users."
+          },
+          {
+            "key": "Scope Creep",
+            "value": "Uncontrolled addition of features without adjusting schedule or resources. Managed through a change control process: every new requirement is evaluated for impact on scope, schedule, and budget before being accepted into the backlog."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 3,
+      "topic": "UML and System Modeling",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Create UML use case diagrams to capture system behavior from the user perspective",
+        "Design class diagrams that represent system structure with proper relationships",
+        "Model dynamic behavior using sequence diagrams and state machine diagrams",
+        "Evaluate when modeling adds value versus when it creates unnecessary overhead"
+      ],
+      "readings": [
+        "Sommerville, Ch. 5 - System Modeling",
+        "Fowler, UML Distilled, 3rd Ed., Ch. 3-6, 9-10",
+        "Martin, Agile Software Development, Ch. 13-14 (UML in Agile)"
+      ],
+      "lecture_notes": {
+        "introduction": "Models are abstractions that help us reason about complex systems before building them. The Unified Modeling Language (UML) provides a standardized notation for visualizing software architecture, behavior, and interactions. However, the value of modeling lies not in the diagrams themselves but in the conversations they provoke and the design decisions they make explicit. A class diagram that sits in a wiki unread by anyone is waste; a whiteboard sketch that aligns a team on a tricky interaction is invaluable. UML diagrams serve as communication tools during design, documentation artifacts for onboarding, and analysis aids for identifying structural problems before they become code problems. Use case diagrams capture the system boundary and actor interactions from the user perspective. Class diagrams show the static structure: classes, attributes, operations, and relationships (association, aggregation, composition, inheritance, dependency). Sequence diagrams model the dynamic interaction between objects over time, making the flow of messages and method calls explicit. State machine diagrams capture the lifecycle of objects that transition between well-defined states in response to events. The key skill is knowing which diagram type to use for a given design question and how much detail is appropriate for the audience and purpose.",
+        "key_concepts": [
+          "Use case diagrams: actors, use cases, system boundary, include and extend relationships for capturing functional requirements visually",
+          "Class diagrams: classes with attributes and operations, associations (multiplicity), aggregation (has-a, lifecycle independent), composition (has-a, lifecycle dependent), inheritance (is-a), and dependency",
+          "Sequence diagrams: objects as lifelines, synchronous and asynchronous messages, activation bars, return messages, and combined fragments (alt, loop, opt) for modeling method call sequences",
+          "State machine diagrams: states, transitions, events, guards, and actions for modeling object lifecycle behavior (e.g., order states: placed, paid, shipped, delivered, cancelled)",
+          "Activity diagrams: flowchart-like representation of workflows with decision nodes, fork/join for parallelism, and swimlanes for responsibility assignment",
+          "Modeling levels: conceptual (domain analysis, no implementation details), specification (interfaces and contracts), implementation (code-level detail) — match the level to the audience",
+          "Agile modeling: lightweight, just-enough modeling as a design tool rather than comprehensive upfront documentation; models are disposable conversation artifacts",
+          "Domain-driven design connection: ubiquitous language and bounded contexts expressed through UML class diagrams that become the shared vocabulary between developers and domain experts",
+          "Common modeling mistakes: over-modeling (diagramming every trivial class), under-modeling (skipping diagrams for genuinely complex interactions), and stale models (diagrams that diverge from the actual code)"
+        ],
+        "demonstration": "Model an e-commerce order processing system: start with a use case diagram showing customer, admin, and payment gateway actors; derive a class diagram with Order, OrderItem, Product, Customer, and Payment classes showing proper relationships and multiplicities; create a sequence diagram for the checkout flow showing the interaction between UI, OrderService, PaymentGateway, and InventoryService; build a state machine for Order lifecycle (created, payment_pending, paid, fulfilling, shipped, delivered, cancelled, refunded).",
+        "setup_requirements": [
+          "UML diagramming tool (draw.io, PlantUML, Lucidchart, or Mermaid)",
+          "PlantUML VS Code extension for text-based diagrams",
+          "E-commerce domain reference handout"
+        ],
+        "review": [
+          {
+            "key": "Aggregation vs Composition",
+            "value": "Aggregation: the part can exist independently of the whole (a Student belongs to a University but exists without it). Composition: the part cannot exist without the whole (an OrderItem cannot exist without its Order). This distinction affects lifecycle management and cascading deletes."
+          },
+          {
+            "key": "Sequence Diagram Value",
+            "value": "Sequence diagrams are most valuable for complex interactions involving multiple objects and conditional logic. They make the message flow explicit, revealing design problems like circular dependencies or god objects that orchestrate everything."
+          },
+          {
+            "key": "When to Model",
+            "value": "Model when the design is genuinely complex, when multiple people need to agree on an approach, or when the cost of getting the design wrong is high. Do not model simple CRUD operations or well-understood patterns that the team already knows."
+          },
+          {
+            "key": "State Machines",
+            "value": "State machine diagrams are essential for any object with a non-trivial lifecycle. They make valid state transitions explicit and reveal impossible transitions that code must prevent, reducing bugs caused by objects in unexpected states."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 4,
+      "topic": "Software Architecture Patterns",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Evaluate and select architectural patterns based on system requirements",
+        "Design systems using layered, microservices, event-driven, and pipe-and-filter architectures",
+        "Analyze quality attribute trade-offs between different architectural approaches",
+        "Document architectural decisions using Architecture Decision Records"
+      ],
+      "readings": [
+        "Sommerville, Ch. 6 - Architectural Design",
+        "Richards & Ford, Fundamentals of Software Architecture, Ch. 9-14",
+        "Bass, Clements & Kazman, Software Architecture in Practice, Ch. 4, 13"
+      ],
+      "lecture_notes": {
+        "introduction": "Architecture is the set of design decisions that are expensive to change. While individual lines of code can be refactored cheaply, the fundamental structure of a system — how it is decomposed into components, how those components communicate, and where data is stored — determines the system's quality attributes for its entire lifetime. A poor architecture constrains every future feature: adding a new capability to a tightly-coupled monolith may require changes in dozens of files, while the same feature in a well-designed modular system might require changes in one. The choice of architectural pattern is driven by quality attribute requirements. A system that must scale horizontally to handle millions of concurrent requests needs a different architecture than an internal tool used by twenty people. A system that must process financial transactions with strict consistency guarantees needs a different approach than a social media feed that tolerates eventual consistency. This lecture covers the major architectural patterns, the quality attributes they optimize for, and the trade-offs they impose. Architecture is not about choosing the most sophisticated pattern; it is about choosing the pattern whose trade-offs best align with the system's actual requirements.",
+        "key_concepts": [
+          "Layered architecture: presentation, business logic, data access layers with strict dependency direction; simple and well-understood but can lead to unnecessary coupling through layer-spanning changes",
+          "Model-View-Controller (MVC): separating data representation (Model), user interface (View), and request handling (Controller); widely used in web frameworks",
+          "Microservices architecture: independently deployable services organized around business capabilities, communicating via APIs; enables independent scaling and deployment but introduces distributed systems complexity",
+          "Event-driven architecture: components communicate through events (publish-subscribe), enabling loose coupling and asynchronous processing; essential for real-time systems and complex workflows",
+          "Pipe-and-filter architecture: data flows through a sequence of processing stages (filters) connected by channels (pipes); ideal for data transformation pipelines and stream processing",
+          "Client-server and n-tier architectures: separating concerns across network boundaries with clear API contracts between tiers",
+          "Quality attribute trade-offs: scalability vs simplicity, consistency vs availability (CAP theorem), performance vs maintainability, coupling vs cohesion",
+          "Architecture Decision Records (ADRs): documenting the context, decision, and consequences of architectural choices so future developers understand why the system is built the way it is",
+          "Conway's Law: the structure of a software system mirrors the communication structure of the organization that builds it; organizational design and architectural design are inseparable"
+        ],
+        "demonstration": "Design a ride-sharing application three ways: (1) as a monolithic layered architecture, (2) as microservices (rider service, driver service, matching service, payment service, notification service), and (3) as an event-driven system with a message broker. Compare each approach against the system's quality attribute requirements: real-time matching latency under 3 seconds, horizontal scaling during peak hours, independent deployment of payment processing for PCI compliance, and fault isolation so that a notification service failure does not prevent ride matching.",
+        "setup_requirements": [
+          "Architecture diagramming tool (draw.io, Mermaid, or C4 model tools)",
+          "ADR template (Nygard format)",
+          "Quality attribute requirements checklist"
+        ],
+        "review": [
+          {
+            "key": "Monolith vs Microservices",
+            "value": "Start with a monolith unless you have a specific, validated reason for microservices. Microservices add network latency, distributed transaction complexity, operational overhead, and debugging difficulty. A well-structured monolith is simpler to develop, test, and deploy."
+          },
+          {
+            "key": "Event-Driven Decoupling",
+            "value": "Events decouple producers from consumers: the order service publishes 'OrderPlaced' without knowing which services react to it. This enables adding new consumers (analytics, notifications, fraud detection) without modifying the producer."
+          },
+          {
+            "key": "Architecture Decision Records",
+            "value": "An ADR captures: the context (what situation prompted the decision), the decision (what was chosen), and the consequences (what trade-offs were accepted). Future developers can understand not just what was built, but why alternatives were rejected."
+          },
+          {
+            "key": "Quality Attribute Scenarios",
+            "value": "Architecture evaluation requires concrete scenarios: 'When 10,000 users simultaneously search for rides, the system returns matches within 3 seconds' is testable. 'The system should be scalable' is not. Quality attribute scenarios drive and validate architectural choices."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 5,
+      "topic": "Design Patterns (Gang of Four)",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Apply creational patterns (Factory Method, Abstract Factory, Singleton, Builder) to manage object creation complexity",
+        "Use structural patterns (Adapter, Decorator, Facade, Composite) to compose flexible class hierarchies",
+        "Implement behavioral patterns (Strategy, Observer, Command, State) to manage complex control flow",
+        "Recognize pattern applicability from problem characteristics rather than memorizing pattern catalogs"
+      ],
+      "readings": [
+        "Gamma, Helm, Johnson, Vlissides, Design Patterns, Ch. 1-2 and selected patterns",
+        "Freeman & Robson, Head First Design Patterns, Ch. 1-4",
+        "Fowler, 'Is Design Dead?' (article on patterns in Agile)"
+      ],
+      "lecture_notes": {
+        "introduction": "Design patterns are proven solutions to recurring software design problems. The seminal 'Gang of Four' book (Gamma, Helm, Johnson, Vlissides, 1994) cataloged 23 patterns organized into creational, structural, and behavioral categories. Patterns are not code templates to copy-paste; they are named abstractions that capture the essence of a design solution, its applicability conditions, and its consequences. Knowing patterns gives you a shared vocabulary with other developers: saying 'use the Observer pattern here' communicates more design intent in four words than a paragraph of implementation description. However, patterns are tools, not goals. Applying a pattern where it is not needed adds unnecessary complexity. The Strategy pattern is elegant when you genuinely need interchangeable algorithms at runtime, but over-engineering a simple conditional into a Strategy hierarchy is worse than the conditional. Each pattern has a problem context (when to use it), a solution structure (how to implement it), and consequences (what trade-offs it introduces). This lecture focuses on the most practically useful patterns, teaching you to recognize the problem context that signals a pattern is appropriate. We will implement several patterns in code, seeing how they simplify complex problems and how they interact with SOLID principles and dependency injection.",
+        "key_concepts": [
+          "Factory Method: define an interface for creating objects but let subclasses decide which class to instantiate; eliminates tight coupling between creator and concrete product classes",
+          "Abstract Factory: create families of related objects without specifying concrete classes; useful when a system must work with multiple product variants (e.g., UI toolkit for different platforms)",
+          "Builder: separate the construction of a complex object from its representation, allowing the same construction process to create different representations; prevents constructors with dozens of parameters",
+          "Strategy: define a family of algorithms, encapsulate each one, and make them interchangeable at runtime; replaces conditional logic with polymorphism",
+          "Observer: define a one-to-many dependency so that when one object changes state, all dependents are notified automatically; the foundation of event systems and reactive programming",
+          "Decorator: attach additional responsibilities to an object dynamically without modifying its class; an alternative to subclassing that supports composable behavior (e.g., Java I/O streams)",
+          "Adapter: convert the interface of a class into another interface clients expect; enables integration of incompatible third-party libraries without modifying their source code",
+          "Command: encapsulate a request as an object, enabling parameterization of clients, queuing of requests, and undo/redo functionality",
+          "SOLID principles as pattern foundations: Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion form the principles that patterns operationalize",
+          "Anti-patterns: recognizing when pattern application adds complexity without solving a real problem (pattern fever), and understanding common anti-patterns like God Object, Spaghetti Code, and Golden Hammer"
+        ],
+        "demonstration": "Refactor a tightly-coupled payment processing system: (1) Extract a PaymentStrategy interface with CreditCardPayment, PayPalPayment, and CryptoPayment implementations using the Strategy pattern. (2) Add logging and retry behavior using the Decorator pattern wrapping the payment strategies. (3) Implement an Observer to notify order service, analytics, and email service when payments complete. Show how each refactoring step improves testability by enabling mock injection.",
+        "setup_requirements": [
+          "IDE with refactoring support (IntelliJ, VS Code)",
+          "Design pattern reference card (GoF pattern catalog summary)",
+          "Sample payment processing codebase with tight coupling"
+        ],
+        "review": [
+          {
+            "key": "Strategy vs Conditional",
+            "value": "Use Strategy when new algorithm variants are likely (open/closed principle). Use a simple conditional when the set of alternatives is stable and small. Over-applying Strategy to a two-branch if statement adds complexity without benefit."
+          },
+          {
+            "key": "Observer Pattern",
+            "value": "Decouples the subject (event source) from observers (event handlers). The subject does not know what observers do, only that they implement an update interface. This enables adding new reactions to events without modifying the event source."
+          },
+          {
+            "key": "Decorator vs Inheritance",
+            "value": "Inheritance creates rigid hierarchies (a LoggingRetryingCreditCardPayment class for every combination). Decorators compose behaviors dynamically: wrap any payment in a LoggingDecorator, then a RetryDecorator, in any order."
+          },
+          {
+            "key": "Pattern Recognition",
+            "value": "Recognize patterns by the problem, not by the solution. If you have a family of interchangeable algorithms, think Strategy. If you need to notify multiple objects of state changes, think Observer. If you need to construct complex objects step by step, think Builder."
+          },
+          {
+            "key": "SOLID Connection",
+            "value": "Design patterns are concrete applications of SOLID principles. Strategy implements Open/Closed. Observer implements Dependency Inversion. Factory Method implements the Liskov Substitution Principle by returning subtypes through a common interface."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Implementation and Coding Standards",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Establish and enforce coding standards across a development team",
+        "Write clean, self-documenting code that minimizes the need for comments",
+        "Apply naming conventions, code organization, and documentation practices that scale to large codebases",
+        "Configure automated formatting and linting tools to enforce standards consistently"
+      ],
+      "readings": [
+        "Martin, Clean Code, Ch. 1-4 (Clean Code, Meaningful Names, Functions, Comments)",
+        "Google Style Guides (Java or Python) - selected sections",
+        "McConnell, Code Complete, Ch. 11 (Naming) and Ch. 31 (Layout and Style)"
+      ],
+      "lecture_notes": {
+        "introduction": "Code is read far more often than it is written. Over a typical software project's lifetime, developers spend roughly 10 times more time reading existing code than writing new code. This makes readability the single most important property of production code. Coding standards exist not to impose arbitrary aesthetic preferences but to reduce cognitive load: when every file in a project follows the same naming conventions, indentation, and organizational patterns, developers can focus on understanding logic rather than deciphering style. Self-documenting code uses meaningful names, small focused functions, and clear control flow to communicate intent directly. Comments should explain why, not what — the code itself should make the what obvious. A function named calculateMonthlyInterest is self-documenting; a function named calc needs a comment. Automated tools (formatters, linters, static analyzers) enforce standards consistently and remove style debates from code reviews, freeing reviewers to focus on logic and design. This session covers practical standards for naming, function design, code organization, error handling, and documentation, along with the tooling to enforce them automatically.",
+        "key_concepts": [
+          "Naming conventions: classes are PascalCase nouns, methods are camelCase verbs, constants are UPPER_SNAKE_CASE, booleans start with is/has/can/should",
+          "Function design: small (under 20 lines), single responsibility, descriptive name, minimal parameters (ideally 0-2, maximum 3), no side effects beyond the stated purpose",
+          "Code organization: group by feature (not by type), consistent file structure within each module, clear public API surface with private implementation details hidden",
+          "Comment discipline: explain why (business rules, non-obvious decisions), not what (the code shows what); delete commented-out code (version control preserves history)",
+          "Error handling: use exceptions for exceptional conditions, return values for expected outcomes; never swallow exceptions silently; include context in error messages",
+          "Linting and formatting: ESLint, Pylint, RuboCop, dart analyze — configure once and enforce via pre-commit hooks so style violations never reach code review",
+          "Static analysis: tools like SonarQube, CodeClimate, and language-specific analyzers that detect bugs, security vulnerabilities, and complexity issues automatically",
+          "Code complexity metrics: cyclomatic complexity (number of independent paths through a function), cognitive complexity (how hard the code is for a human to understand)"
+        ],
+        "demonstration": "Take a 150-line function with poor naming, deep nesting, magic numbers, commented-out code, and swallowed exceptions. Refactor it live into clean code: extract well-named helper functions, replace magic numbers with named constants, convert nested conditionals to early returns (guard clauses), add proper error handling with contextual messages, and configure a linter to prevent regression.",
+        "setup_requirements": [
+          "IDE with linting and formatting configured",
+          "Pre-commit hook framework (Husky for JS, pre-commit for Python)",
+          "Sample codebase with intentional style violations"
+        ],
+        "review": [
+          {
+            "key": "Self-Documenting Code",
+            "value": "A function named getUsersByActiveSubscription(planType) needs no comment. A function named get(type) needs a paragraph. Invest in names, not comments. The best comment is the one you did not need to write because the code was clear."
+          },
+          {
+            "key": "Guard Clauses",
+            "value": "Replace deeply nested conditionals with early returns at the top of the function. Each guard clause handles one invalid case and exits immediately, leaving the happy path at the base indentation level."
+          },
+          {
+            "key": "Automated Enforcement",
+            "value": "Style rules enforced by humans in code review create friction and inconsistency. Style rules enforced by automated tools (formatters, linters, pre-commit hooks) are consistent, fast, and remove style debates from code review entirely."
+          },
+          {
+            "key": "Cyclomatic Complexity",
+            "value": "A function with cyclomatic complexity over 10 has too many independent paths to test and reason about reliably. Refactor by extracting helper functions, each handling one specific case with its own unit test."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Version Control and CI/CD",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Use Git branching strategies effectively for team collaboration",
+        "Configure continuous integration pipelines with automated build, lint, test, and deploy stages",
+        "Implement continuous deployment with feature flags and canary releases",
+        "Design release management workflows that balance velocity with stability"
+      ],
+      "readings": [
+        "Chacon & Straub, Pro Git, Ch. 3 (Git Branching) and Ch. 5 (Distributed Git)",
+        "Humble & Farley, Continuous Delivery, Ch. 1-3, 5",
+        "Forsgren, Humble & Kim, Accelerate, Ch. 4 (Technical Practices)"
+      ],
+      "lecture_notes": {
+        "introduction": "Version control and CI/CD are non-negotiable practices in professional software development. They solve problems that every team encounters at scale: how do multiple developers work on the same codebase without stepping on each other's changes, how do we ensure that every code change is tested before it reaches users, and how do we deploy software frequently and reliably without manual intervention? Git is the universal version control system, but the branching strategy a team adopts determines whether Git helps or hinders their workflow. Git Flow, GitHub Flow, and trunk-based development represent different trade-offs between isolation (long-lived branches reduce risk of breaking main but create merge conflicts) and integration speed (short-lived branches merge frequently, catching integration issues early). Continuous Integration means every developer pushes to a shared branch at least daily, and each push triggers an automated build-and-test pipeline. Continuous Deployment extends CI by automatically deploying every passing build to production. Feature flags decouple deployment from release: code is deployed to production but hidden behind a flag that is enabled separately, allowing gradual rollout, A/B testing, and instant rollback without a new deployment.",
+        "key_concepts": [
+          "Git branching strategies: Git Flow (long-lived develop and release branches), GitHub Flow (short-lived feature branches off main), trunk-based development (everyone commits to main with feature flags)",
+          "Pull request workflow: create branch, make changes, push, open PR, automated checks run, human review, approve, merge, delete branch",
+          "Merge strategies: merge commit (preserves history), squash merge (clean history, loses granularity), rebase (linear history, rewrites commits)",
+          "CI pipeline stages: checkout code, install dependencies, lint/format check, unit tests, integration tests, build artifact, report results",
+          "CD pipeline: CI succeeds, deploy to staging automatically, run smoke tests, deploy to production (manually gated or automatically)",
+          "Feature flags: wrapping new features in runtime configuration toggles, enabling deployment without exposure; managed through feature flag services (LaunchDarkly, Unleash, or simple environment variables)",
+          "Canary releases: deploying to a small percentage of production traffic first, monitoring error rates and latency, then gradually increasing to full deployment",
+          "Infrastructure as Code: defining CI/CD pipelines, deployment environments, and infrastructure in version-controlled configuration files (GitHub Actions YAML, Terraform, Docker Compose)",
+          "Build reproducibility: pinning dependency versions, using lockfiles, containerizing builds so that the same commit always produces the same artifact"
+        ],
+        "demonstration": "Set up a complete GitHub Actions CI/CD pipeline from scratch: (1) create a workflow file that triggers on pull requests and pushes to main, (2) add lint, unit test, and integration test jobs running in parallel, (3) add a build step that produces a Docker image, (4) deploy to a staging environment on merge to main, (5) add a manual approval gate for production deployment. Show how a failing test blocks the PR merge and how a feature flag allows deploying code to production while keeping the feature hidden.",
+        "setup_requirements": [
+          "GitHub repository with GitHub Actions enabled",
+          "Sample project with existing test suite and Dockerfile",
+          "Docker installed for containerized testing",
+          "Feature flag library configured (e.g., unleash-client or environment variables)"
+        ],
+        "review": [
+          {
+            "key": "Trunk-Based Development",
+            "value": "All developers commit to main with short-lived feature branches (ideally less than a day). This minimizes merge conflicts and integration risk. Feature flags handle incomplete features so main is always deployable."
+          },
+          {
+            "key": "Feature Flags",
+            "value": "Wrapping new features in configuration flags decouples deployment from release. Code goes to production behind a disabled flag, is enabled gradually (canary), and can be instantly disabled if problems are discovered — without a new deployment."
+          },
+          {
+            "key": "Pipeline as Code",
+            "value": "CI/CD configuration lives in the repository alongside the application code (e.g., .github/workflows/). This means pipeline changes go through the same PR review process as application changes, and every commit has a corresponding pipeline definition."
+          },
+          {
+            "key": "Deployment Frequency",
+            "value": "Elite teams deploy multiple times per day with lead times under an hour (DORA metrics). This is only possible with automated testing, automated deployment, and feature flags. Manual processes create bottlenecks that reduce deployment frequency."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Testing Strategies",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Design a comprehensive test strategy covering unit, integration, and end-to-end testing",
+        "Write effective unit tests with proper isolation using mocks, stubs, and fakes",
+        "Understand the testing pyramid and invest test effort proportionally at each level",
+        "Evaluate test quality metrics beyond code coverage"
+      ],
+      "readings": [
+        "Sommerville, Ch. 8 - Software Testing",
+        "Meszaros, xUnit Test Patterns, Ch. 1-4 and Ch. 11",
+        "Fowler, 'TestPyramid' and 'UnitTest' (martinfowler.com articles)"
+      ],
+      "lecture_notes": {
+        "introduction": "Testing is not optional in professional software development. The question is not whether to test, but how much of each kind of testing provides the optimal balance of confidence, speed, and maintainability. The testing pyramid, introduced by Mike Cohn, provides the framework: a wide base of many fast unit tests, a middle layer of fewer integration tests, and a narrow top of even fewer end-to-end tests. This shape reflects the trade-offs at each level. Unit tests are fast (milliseconds), isolated (test one unit of behavior), and cheap to write and maintain, but they cannot catch integration bugs. Integration tests verify that components work together correctly — that the service layer actually communicates with the database correctly, that the API endpoint actually calls the service with the right parameters — but they are slower (seconds) and more complex to set up. End-to-end tests verify the entire system from the user's perspective, catching bugs that span multiple integration boundaries, but they are slow (minutes), brittle (break when any component changes), and expensive to maintain. Inverting the pyramid — relying primarily on E2E tests — leads to slow, unreliable test suites that developers stop trusting and stop running. Each test level catches defects that the others miss, and a balanced strategy invests effort at each level proportionally to the return on confidence it provides.",
+        "key_concepts": [
+          "Testing pyramid: many unit tests (fast, isolated, cheap), fewer integration tests (slower, test boundaries), few E2E tests (slowest, most brittle, highest confidence per test)",
+          "Unit tests: test one function or method in isolation from its dependencies; should run in milliseconds; use test doubles to replace external dependencies",
+          "Integration tests: test the interaction between two or more components (service + database, API + service); verify that interfaces and contracts work correctly at boundaries",
+          "End-to-end tests: test the entire system from the user's perspective (browser clicks button, API processes request, database stores data, UI shows confirmation)",
+          "Test doubles: stub (returns canned answers), mock (verifies interactions were called with expected arguments), fake (working lightweight implementation like in-memory database), spy (records calls for later assertion)",
+          "Test-Driven Development preview: write the test first (red), write minimal code to pass (green), refactor while keeping tests passing; TDD is covered in depth next week",
+          "Test quality metrics: mutation testing (injecting faults to verify tests catch them), assertion density (tests with no assertions provide no value), test execution speed, flakiness rate",
+          "Code coverage: measures which lines/branches are executed by tests; 100% coverage does not mean no bugs (a covered line with no assertion is tested in name only); useful as a lower bound, not a target"
+        ],
+        "demonstration": "Write unit tests with mocked dependencies for an OrderService (mocking PaymentGateway and InventoryService). Then write integration tests that use a real test database to verify OrderRepository behavior. Compare execution speed: unit tests complete in 50ms, integration tests in 2 seconds. Demonstrate mutation testing with a tool (Stryker or mutmut) showing that a test suite with 95% line coverage misses injected faults because assertions are too weak.",
+        "setup_requirements": [
+          "Testing framework configured (pytest, JUnit, Jest, or similar)",
+          "Mocking library (unittest.mock, Mockito, or jest.fn)",
+          "Sample service with database dependency",
+          "Mutation testing tool (Stryker, mutmut, or PITest)"
+        ],
+        "review": [
+          {
+            "key": "Testing Pyramid",
+            "value": "Many unit tests (fast, isolated, cheap), some integration tests (slower, test component boundaries), few E2E tests (slow, brittle, expensive). Inverting the pyramid leads to slow CI pipelines and flaky tests that developers ignore."
+          },
+          {
+            "key": "Test Double Types",
+            "value": "Stub: returns canned answers for the test scenario. Mock: verifies that specific methods were called with expected arguments. Fake: a working lightweight implementation (e.g., in-memory database). Spy: a real object that records interactions for later assertion."
+          },
+          {
+            "key": "Mutation Testing",
+            "value": "Mutation testing changes production code (mutates operators, deletes statements, changes return values) and checks if tests fail. Surviving mutants indicate weak tests. This is a more meaningful quality metric than line coverage."
+          },
+          {
+            "key": "Test Independence",
+            "value": "Each test must be independent: it sets up its own state, exercises the code, and verifies the result without relying on other tests having run first. Shared mutable state between tests causes flakiness and order-dependent failures."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "Test-Driven Development",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Practice the TDD cycle: red (write a failing test), green (write minimal code to pass), refactor (improve design while tests pass)",
+        "Use TDD to drive design decisions and discover interfaces organically",
+        "Apply TDD to both new feature development and bug fixing (regression-first development)",
+        "Evaluate when TDD provides the highest return on investment and when it may not be appropriate"
+      ],
+      "readings": [
+        "Beck, Test-Driven Development By Example, Ch. 1-17",
+        "Astels, Test-Driven Development: A Practical Guide, Ch. 3-5",
+        "Martin, Clean Code, Ch. 9 (Unit Tests)"
+      ],
+      "lecture_notes": {
+        "introduction": "Test-Driven Development inverts the conventional development workflow. Instead of writing code and then writing tests to verify it, TDD practitioners write the test first, watch it fail, then write the minimum code necessary to make it pass. This inversion has profound consequences for software design. Because you write the test before the implementation, you are forced to think about the interface (how the code will be called) before the implementation (how it works internally). This produces code with cleaner interfaces, fewer unnecessary features, and built-in test coverage. The TDD cycle is deceptively simple: Red (write a test that fails because the code does not exist yet), Green (write the simplest possible code to make the test pass, even if it is ugly), Refactor (improve the code structure while all tests remain green). The discipline of the Green step is critical: resist the urge to write the 'correct' implementation immediately. Writing the simplest passing code forces you to add complexity only when a new test demands it, preventing over-engineering. The Refactor step is where design patterns emerge organically: when you see duplication, you extract it. When you see a function doing too much, you split it. The tests protect you during refactoring, giving you confidence that behavior is preserved.",
+        "key_concepts": [
+          "Red-Green-Refactor cycle: (1) write a failing test that defines desired behavior, (2) write the simplest code that makes the test pass, (3) refactor to improve design while keeping all tests green",
+          "Test-first design: writing the test before the code forces you to define the interface first, producing code that is inherently testable and has minimal unnecessary API surface",
+          "Triangulation: when the simplest passing implementation is a hardcoded return value, write a second test with different input to force generalization of the implementation",
+          "Transformation Priority Premise: a ranked list of code transformations (constant → variable → conditional → iteration → recursion) that guides the Green step from simple to general",
+          "Regression-first development: when fixing a bug, write a test that reproduces the bug first (red), then fix the code (green); the test prevents the bug from recurring",
+          "TDD and design emergence: design patterns and abstractions emerge from the refactoring step rather than being planned upfront; the code tells you what abstractions it needs",
+          "Outside-in TDD (London school): start with an acceptance test for the feature, then TDD the inner components, using mocks for dependencies not yet implemented",
+          "Inside-out TDD (Detroit school): start with the innermost domain logic, TDD each layer, then compose them; less mocking, more focus on state verification",
+          "When TDD is most valuable: complex business logic, algorithmic code, code with many edge cases, critical-path features; less valuable for simple CRUD, UI layout, and exploratory prototyping"
+        ],
+        "demonstration": "Live-code a string calculator kata using strict TDD: (1) empty string returns 0 (write test, fail, implement), (2) single number returns itself, (3) two comma-separated numbers return sum, (4) handle arbitrary count of numbers, (5) support newline delimiter, (6) support custom delimiter syntax, (7) negative numbers throw an exception listing all negatives. Show how each test drives one small increment of functionality and how the refactoring step extracts parsing logic into a helper function when duplication appears.",
+        "setup_requirements": [
+          "Testing framework with fast test runner (pytest with --watch, Jest with --watch, or similar)",
+          "IDE with test runner integration for instant feedback",
+          "Kata starting template (empty project with test framework configured)"
+        ],
+        "review": [
+          {
+            "key": "The Green Step Discipline",
+            "value": "Write the simplest code that passes the test, even if it looks wrong (e.g., returning a hardcoded value). The next test will force you to generalize. This discipline prevents over-engineering and ensures every line of code is justified by a test."
+          },
+          {
+            "key": "Regression-First",
+            "value": "When fixing a bug, always write a failing test that reproduces the bug before writing the fix. This ensures (1) you understand the bug precisely, (2) the fix actually works, and (3) the bug cannot recur without breaking the test."
+          },
+          {
+            "key": "TDD and Refactoring",
+            "value": "TDD enables fearless refactoring: comprehensive test coverage means you can restructure code with confidence that behavior is preserved. Without tests, refactoring is risky and developers avoid it, allowing code to rot."
+          },
+          {
+            "key": "When Not to TDD",
+            "value": "TDD has overhead. For exploratory prototyping, throwaway scripts, and simple CRUD with no business logic, the cost of test-first development may exceed the benefit. Use judgment — TDD is a tool, not a religion."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "Code Review and Refactoring",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Conduct effective code reviews that improve quality without demoralizing authors",
+        "Identify code smells and apply systematic refactoring techniques",
+        "Use automated tools to catch common issues before human review",
+        "Build a code review culture that balances velocity with quality"
+      ],
+      "readings": [
+        "Fowler, Refactoring: Improving the Design of Existing Code, Ch. 1-3",
+        "Google Engineering Practices: Code Review Guide",
+        "Ousterhout, A Philosophy of Software Design, Ch. 1-4"
+      ],
+      "lecture_notes": {
+        "introduction": "Code quality is not about aesthetics. It directly affects defect rates, development speed, and team morale. Studies at Google and Microsoft have shown that code review catches 60-70% of defects before they reach testing, making it one of the most cost-effective quality practices available. But code review is only effective when done well. Large pull requests get rubber-stamped because reviewers cannot maintain attention through 500 lines of changes. Adversarial reviews that focus on nitpicking style create friction and discourage contribution. Effective code review requires small, focused pull requests (ideally under 200 lines), constructive feedback that explains the reasoning behind suggestions, and a culture where review comments are received as gifts rather than attacks. Refactoring complements code review: when a reviewer identifies a structural problem, the author refactors to address it. Refactoring is the systematic improvement of code structure without changing its external behavior. Martin Fowler's catalog identifies dozens of named refactorings (Extract Method, Extract Class, Rename, Move Method, Inline) that can be applied mechanically and safely when the code is covered by tests. Static analysis tools automate the detection of many code smells, freeing human reviewers to focus on design, logic, and business rule correctness.",
+        "key_concepts": [
+          "Code smells: long methods (>20 lines), god classes (>300 lines, multiple responsibilities), feature envy (method uses another class's data more than its own), duplicated code, primitive obsession, data clumps",
+          "Refactoring catalog: Extract Method, Extract Class, Rename, Move Method, Inline Method, Replace Conditional with Polymorphism, Introduce Parameter Object, Replace Magic Number with Named Constant",
+          "Refactoring safety: always refactor under test coverage; each step should keep all tests green; if a test breaks, the refactoring introduced a behavioral change (a bug)",
+          "Code review best practices: review PRs under 200 lines, focus comments on logic and design (not style — automate that), explain the 'why' behind suggestions, approve with minor comments rather than blocking",
+          "Review comment types: must-fix (blocking bugs, security issues), suggestion (design improvements), nit (style preferences that should be automated), question (seeking understanding, not demanding change)",
+          "Static analysis in review: configure tools to run automatically on PRs and report findings as inline comments, reducing the reviewer's burden for mechanical checks",
+          "Refactoring vs rewriting: refactoring preserves behavior while improving structure (small, safe steps); rewriting replaces code entirely (risky, often loses hidden bug fixes embedded in the old code)",
+          "Code review metrics: time to first review, review turnaround time, PR size distribution, defect detection rate — track these to improve the review process"
+        ],
+        "demonstration": "Take a 200-line function with multiple code smells (long method, deep nesting, duplicated logic, magic numbers, feature envy). Refactor it live in small steps: (1) extract a validation helper, (2) replace magic numbers with named constants, (3) convert nested conditionals to guard clauses, (4) extract a calculation method that belongs on another class (moving it reduces feature envy), (5) rename variables for clarity. Verify all tests pass after each step. Then conduct a mock code review of a classmate's pull request, demonstrating constructive feedback.",
+        "setup_requirements": [
+          "IDE with refactoring shortcuts configured (Shift+F6 rename, Ctrl+Alt+M extract method)",
+          "Linter and static analysis tool running on the sample codebase",
+          "Sample codebase with existing tests and intentional code smells",
+          "GitHub PR with review interface"
+        ],
+        "review": [
+          {
+            "key": "Refactoring Under Tests",
+            "value": "Never refactor without tests covering the code being changed. Each refactoring step should be a single change that keeps all tests green. If a test breaks, the refactoring introduced a bug. Undo and try a smaller step."
+          },
+          {
+            "key": "Small Pull Requests",
+            "value": "Code review effectiveness drops sharply for large PRs. Reviewers skim 500-line PRs but carefully read 50-line PRs. Split large changes into a series of small, focused PRs that each address one concern."
+          },
+          {
+            "key": "Constructive Feedback",
+            "value": "Frame suggestions as questions ('Have you considered X?') or explanations ('If we extract this, testing becomes easier because...'). Avoid commands ('Change this') and personal criticism ('You always do this wrong')."
+          },
+          {
+            "key": "Automate the Automatable",
+            "value": "Style, formatting, import order, and simple pattern violations should be caught by automated tools, not human reviewers. Every style comment in a code review represents a failure to configure the linter."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "Project Management: Agile and Scrum",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Plan and execute Scrum sprints with proper ceremonies (planning, daily standup, review, retrospective)",
+        "Estimate work using story points, planning poker, and velocity tracking",
+        "Manage a product backlog with prioritization, refinement, and acceptance criteria",
+        "Identify and address common Agile anti-patterns that undermine team effectiveness"
+      ],
+      "readings": [
+        "Schwaber & Sutherland, The Scrum Guide (2020 edition)",
+        "Cohn, Agile Estimating and Planning, Ch. 1-6",
+        "Forsgren, Humble & Kim, Accelerate, Ch. 1-3 (Measuring and Improving Delivery)"
+      ],
+      "lecture_notes": {
+        "introduction": "Agile software development is built on a simple premise: in most software projects, requirements change, and processes that embrace change outperform processes that resist it. The Agile Manifesto (2001) distilled this insight into four values and twelve principles that have transformed the software industry. Scrum, the most widely adopted Agile framework, provides a structured approach: fixed-length sprints (typically 2 weeks), defined roles (Product Owner who prioritizes the backlog, Scrum Master who facilitates the process, Development Team who delivers the work), and ceremonies (Sprint Planning where the team commits to sprint goals, Daily Standup for synchronization, Sprint Review for stakeholder feedback, Sprint Retrospective for process improvement). However, many organizations adopt Scrum mechanically without understanding its principles, creating 'cargo cult Agile' that has the rituals but not the benefits. Common anti-patterns include sprint planning without a refined backlog (leading to vague commitments), daily standups that become status reports to managers rather than team synchronization, sprint reviews without stakeholder feedback, and retrospectives without follow-through on action items. Effective Agile requires not just following the ceremonies but embodying the values: responding to change, delivering working software frequently, building projects around motivated individuals, and reflecting regularly on how to become more effective.",
+        "key_concepts": [
+          "Scrum roles: Product Owner (maximizes value by prioritizing the backlog), Scrum Master (facilitates the process and removes impediments), Development Team (self-organizing cross-functional group that delivers the increment)",
+          "Sprint ceremonies: Sprint Planning (what can we deliver and how?), Daily Standup (what did I do, what will I do, what blocks me? — 15 minutes max), Sprint Review (demonstrate working software to stakeholders), Sprint Retrospective (what went well, what did not, what will we change?)",
+          "Product backlog management: user stories ordered by value, INVEST criteria for story quality, regular refinement sessions to split and estimate upcoming stories",
+          "Estimation with story points: relative sizing (this story is twice as complex as that one), planning poker for team consensus, velocity (average points completed per sprint) for capacity planning",
+          "Definition of Done: a shared checklist that every story must satisfy (code reviewed, tests passing, documentation updated, deployed to staging) to prevent partially complete work from accumulating",
+          "Agile metrics: velocity (capacity), lead time (idea to production), cycle time (work started to work done), sprint burndown (remaining work over time), cumulative flow diagram",
+          "Kanban principles: visualize work, limit work-in-progress (WIP), manage flow, make process policies explicit; Kanban can complement or replace Scrum sprints",
+          "Common anti-patterns: sprinting without a refined backlog, story point inflation over time, retrospectives without action items, Scrum Master as project manager, skipping reviews because 'nothing is ready to show'",
+          "Scaling Agile: when multiple teams work on the same product, frameworks like SAFe, LeSS, and Spotify model provide coordination mechanisms, but they add overhead and should be adopted carefully"
+        ],
+        "demonstration": "Simulate a complete sprint cycle: (1) Refine a product backlog of 20 user stories for a task management application, splitting stories that are too large and adding acceptance criteria. (2) Conduct sprint planning: estimate stories using planning poker, select a sprint goal, and commit to a sprint backlog. (3) Run a simulated daily standup with three team members reporting blockers. (4) Conduct a sprint review presenting the completed increment. (5) Run a retrospective using the Start-Stop-Continue format, producing three concrete action items.",
+        "setup_requirements": [
+          "Project management tool (GitHub Projects, Jira, or Linear) configured with sprint board",
+          "Planning poker cards or online tool (planningpoker.com)",
+          "Task management app backlog with 20 pre-written user stories"
+        ],
+        "review": [
+          {
+            "key": "Velocity Is Descriptive",
+            "value": "Velocity measures what the team has historically delivered, not what they should deliver. Using velocity as a productivity target incentivizes story point inflation and discourages honest estimation. Velocity is for capacity planning, not performance evaluation."
+          },
+          {
+            "key": "Definition of Done",
+            "value": "Without a clear, shared Definition of Done, teams accumulate 'almost done' work that is not truly releasable. Every story must meet the DoD before it can be counted as complete: code reviewed, tests passing, documentation updated, deployed to staging."
+          },
+          {
+            "key": "Retrospective Action Items",
+            "value": "A retrospective without action items is just venting. Each retrospective should produce 1-3 specific, actionable improvements that the team commits to trying in the next sprint. Track follow-through on previous action items."
+          },
+          {
+            "key": "WIP Limits",
+            "value": "Limiting work-in-progress forces the team to finish work before starting new work. High WIP means frequent context-switching, longer cycle times, and more partially-done work. Lower WIP means faster delivery of each individual item."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "DevOps Practices",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Understand the DevOps philosophy and its impact on software delivery",
+        "Implement infrastructure as code using Docker and container orchestration",
+        "Design monitoring and observability systems for production applications",
+        "Apply the DORA metrics framework to measure and improve delivery performance"
+      ],
+      "readings": [
+        "Kim, Humble, Debois & Willis, The DevOps Handbook, Ch. 1-5",
+        "Forsgren, Humble & Kim, Accelerate, Ch. 2, 4 (Capabilities and Technical Practices)",
+        "Docker Documentation: Getting Started (official docs)"
+      ],
+      "lecture_notes": {
+        "introduction": "DevOps emerged from the recognition that the traditional wall between development teams (who write code and want to ship features fast) and operations teams (who run production and want stability) creates a dysfunctional incentive structure. Developers throw code over the wall; operations scrambles to deploy it; when production breaks, each side blames the other. DevOps dissolves this wall by making development teams responsible for the operational health of their code, using automation to make deployments safe and frequent, and treating infrastructure as code that is version-controlled, reviewed, and tested like application code. The DORA (DevOps Research and Assessment) metrics provide an empirical framework for measuring delivery performance: deployment frequency (how often code reaches production), lead time for changes (time from commit to production), change failure rate (percentage of deployments that cause incidents), and time to restore service (how quickly incidents are resolved). Elite-performing teams deploy multiple times per day with lead times under an hour, while low performers deploy monthly with lead times measured in months. The practices that enable elite performance are not secrets: automated testing, continuous integration, trunk-based development, infrastructure as code, monitoring and alerting, and a culture of shared responsibility. This session covers the technical practices and cultural principles that make DevOps work.",
+        "key_concepts": [
+          "DevOps culture: shared ownership of code and production, blameless post-mortems, learning from failure, breaking down silos between development and operations",
+          "Infrastructure as Code (IaC): defining servers, networks, databases, and deployment pipelines in version-controlled configuration files (Terraform, CloudFormation, Docker Compose)",
+          "Containerization with Docker: packaging applications with all dependencies into portable, reproducible containers that run identically in development, CI, and production",
+          "Container orchestration: Kubernetes fundamentals — pods, services, deployments, scaling, health checks, rolling updates",
+          "Monitoring and observability: the three pillars — metrics (numerical measurements over time), logs (discrete events with context), traces (request flow through distributed components)",
+          "Alerting: alert on symptoms (error rate, latency), not causes; page on user-facing impact, not internal metrics; avoid alert fatigue by tuning thresholds and suppressing noise",
+          "DORA metrics: deployment frequency, lead time for changes, change failure rate, mean time to restore — the four metrics that predict software delivery performance and organizational outcomes",
+          "Incident management: detection (monitoring), response (on-call), mitigation (rollback or fix-forward), resolution (root cause analysis), prevention (blameless post-mortem with action items)",
+          "GitOps: using Git as the single source of truth for both application code and infrastructure; changes to infrastructure are made via pull requests and automatically applied by a reconciliation controller"
+        ],
+        "demonstration": "Containerize a web application: (1) Write a multi-stage Dockerfile that builds the application in one stage and creates a minimal production image in the second. (2) Create a docker-compose.yml that runs the application, a PostgreSQL database, and a Redis cache. (3) Add a health check endpoint and configure Docker health checks. (4) Set up Prometheus for metrics collection and Grafana for visualization. (5) Simulate a deployment failure and demonstrate rollback using Docker Compose.",
+        "setup_requirements": [
+          "Docker and Docker Compose installed",
+          "Sample web application with health check endpoint",
+          "Prometheus and Grafana Docker images",
+          "kubectl configured with a local Kubernetes cluster (minikube or kind) — optional"
+        ],
+        "review": [
+          {
+            "key": "Containers vs VMs",
+            "value": "Containers share the host OS kernel (lightweight, start in seconds, minimal overhead). VMs include a full guest OS (heavier, start in minutes, stronger isolation). Containers are preferred for application deployment; VMs for strong security isolation between tenants."
+          },
+          {
+            "key": "DORA Metrics",
+            "value": "The four metrics — deployment frequency, lead time, change failure rate, time to restore — are the best predictors of software delivery performance. Improving these metrics correlates with improved organizational performance and employee satisfaction."
+          },
+          {
+            "key": "Blameless Post-Mortems",
+            "value": "When incidents occur, focus on what happened, why the system allowed it, and how to prevent recurrence — not who caused it. Blame discourages honesty and hides systemic issues. A blameless culture accelerates learning from failure."
+          },
+          {
+            "key": "Observability vs Monitoring",
+            "value": "Monitoring tells you when something is wrong (predefined checks). Observability lets you ask arbitrary questions about system behavior (using metrics, logs, and traces). Modern distributed systems need observability because you cannot predict what will break."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "Software Maintenance and Evolution",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Classify maintenance activities: corrective, adaptive, perfective, and preventive",
+        "Apply Lehman's laws of software evolution to predict maintenance challenges",
+        "Develop strategies for managing legacy code that lacks tests and documentation",
+        "Plan and execute incremental modernization of aging systems"
+      ],
+      "readings": [
+        "Sommerville, Ch. 9 - Software Evolution",
+        "Feathers, Working Effectively with Legacy Code, Ch. 1-4",
+        "Lehman, 'Programs, Life Cycles, and Laws of Software Evolution' (1980 paper)"
+      ],
+      "lecture_notes": {
+        "introduction": "Software maintenance consumes 60-80% of total software lifecycle costs, yet it receives a fraction of the attention given to initial development in most computer science curricula. Once a system is deployed, it enters a maintenance phase that may last decades. During this phase, the software must be corrected (fixing bugs discovered in production), adapted (updating for new operating systems, browsers, APIs, and regulations), perfected (adding features and improving performance based on user feedback), and prevented from degrading (refactoring to manage increasing complexity). Lehman's laws of software evolution, derived from empirical study of large software systems, describe the forces that shape long-lived software: continuing change (a system must adapt or become progressively less satisfactory), increasing complexity (as a system evolves, its complexity increases unless work is done to reduce it), and conservation of organizational stability (the rate of development is approximately constant and independent of resources allocated). These laws explain why adding more developers to a late project makes it later (Brooks's Law) and why legacy systems that receive no investment in structural improvement become progressively harder and riskier to change. Working with legacy code — code without tests, with unclear dependencies, and with tribal knowledge that left with former developers — is a core skill for professional software engineers, because most software engineering work is maintenance, not greenfield development.",
+        "key_concepts": [
+          "Maintenance categories: corrective (fixing bugs), adaptive (updating for environment changes), perfective (enhancing features and performance), preventive (refactoring to reduce future maintenance cost)",
+          "Lehman's laws: continuing change, increasing complexity, conservation of organizational stability, conservation of familiarity, continuing growth, declining quality, feedback system",
+          "Technical debt management: identifying debt (code smells, outdated dependencies, missing tests), quantifying it (estimated remediation time), prioritizing repayment (based on the code's change frequency and criticality)",
+          "Legacy code strategies: Michael Feathers' approach — find seams (points where behavior can be altered without editing), create characterization tests (tests that document current behavior, whether correct or not), then refactor safely",
+          "Strangler Fig pattern: incrementally replacing a legacy system by routing new functionality to a new system while the old system continues handling existing functionality; over time, the new system replaces the old one",
+          "Database migration strategies: expand-and-contract pattern (add new column, migrate data, update code to use new column, drop old column) for zero-downtime schema changes",
+          "Dependency management: keeping dependencies updated to avoid accumulating security vulnerabilities and compatibility issues; tools like Dependabot and Renovate automate this process",
+          "Documentation for maintenance: architecture decision records, runbooks for common operations, onboarding guides for new developers — documentation that enables others to maintain the system",
+          "Reverse engineering: understanding a legacy system's behavior through code reading, debugging, log analysis, and database schema analysis when documentation is absent or unreliable"
+        ],
+        "demonstration": "Work with a legacy Python application (500 lines, no tests, unclear dependencies): (1) Run it and observe behavior to create a mental model. (2) Identify seams where behavior can be intercepted. (3) Write characterization tests for the three most critical code paths. (4) Use the characterization tests as a safety net to extract a tangled function into two clean functions. (5) Introduce dependency injection to make a database call testable. Show how each step incrementally improves the code's maintainability without a risky full rewrite.",
+        "setup_requirements": [
+          "Legacy codebase sample (provided, 500 lines, no tests)",
+          "Testing framework for writing characterization tests",
+          "IDE with debugging support for stepping through unfamiliar code",
+          "Dependency analysis tool (pydeps, jdepend, or similar)"
+        ],
+        "review": [
+          {
+            "key": "Characterization Tests",
+            "value": "A characterization test documents what the code actually does, not what it should do. Write a test, run it, and use the actual output as the expected value. These tests create a safety net for refactoring even when the original intent is unclear."
+          },
+          {
+            "key": "Strangler Fig Pattern",
+            "value": "Instead of a risky big-bang rewrite, incrementally replace legacy functionality. Route new requests to the new system while the old system handles existing traffic. Over time, the old system has fewer responsibilities until it can be decommissioned."
+          },
+          {
+            "key": "Lehman's Law of Increasing Complexity",
+            "value": "As a system evolves, its complexity increases unless deliberate work is done to reduce it. This means every sprint should include some maintenance work (refactoring, updating dependencies, improving tests) alongside feature development."
+          },
+          {
+            "key": "Maintenance Cost",
+            "value": "60-80% of total software cost is maintenance. Every design decision during initial development either increases or decreases future maintenance cost. Clean architecture, comprehensive tests, and clear documentation are investments in lower maintenance cost."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "Ethics and Professionalism in Software Engineering",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Apply the ACM/IEEE Software Engineering Code of Ethics to real-world scenarios",
+        "Identify ethical implications of software design decisions including bias, privacy, and safety",
+        "Evaluate professional responsibility when asked to ship software known to be defective or harmful",
+        "Analyze case studies of ethical failures in software engineering and their consequences"
+      ],
+      "readings": [
+        "ACM/IEEE Software Engineering Code of Ethics and Professional Practice",
+        "Sommerville, Ch. 1.3 (Professional Responsibility and Ethics)",
+        "O'Neil, Weapons of Math Destruction, Ch. 1-3 (selected)"
+      ],
+      "lecture_notes": {
+        "introduction": "Software engineers build systems that affect millions of lives. Autonomous vehicles make life-and-death decisions. Recommendation algorithms shape what billions of people see and believe. Healthcare software determines treatment plans. Financial algorithms execute trades worth billions. The software engineering profession has not yet achieved the level of professional accountability found in civil engineering (where bridges that collapse lead to professional license revocation) or medicine (where malpractice has legal consequences), but the impact of software failures can be equally severe. The Therac-25 radiation therapy machine killed patients due to a race condition and inadequate testing. The Boeing 737 MAX MCAS system contributed to two crashes killing 346 people, partly due to inadequate software design review and insufficient pilot training about software behavior. Facebook's algorithm amplified divisive content to maximize engagement, contributing to real-world violence in Myanmar and elsewhere. These are not edge cases; they are the predictable consequences of prioritizing speed over safety, profit over user welfare, and technical cleverness over human impact. The ACM/IEEE Code of Ethics provides a framework for professional responsibility: act in the public interest, maintain integrity and independence of professional judgment, and ensure that the products you build meet the highest professional standards. This is not abstract philosophy; it is practical guidance for the decisions you will face in your career.",
+        "key_concepts": [
+          "ACM/IEEE Code of Ethics: eight principles covering public interest, client and employer obligations, product quality, professional judgment, management, professional development, collegial behavior, and self-improvement",
+          "Algorithmic bias: training data that reflects historical discrimination produces models that perpetuate and amplify that discrimination (e.g., hiring algorithms, criminal justice risk scores, loan approval systems)",
+          "Privacy by design: building privacy protections into the architecture from the beginning (data minimization, purpose limitation, encryption at rest and in transit) rather than bolting them on after deployment",
+          "Safety-critical software: systems where failure can cause physical harm (medical devices, automotive software, industrial control) require formal verification, extensive testing, and regulatory compliance",
+          "Dark patterns: user interface designs that trick users into actions they did not intend (e.g., making unsubscribe buttons hard to find, pre-checking consent boxes, confirmshaming); these are unethical regardless of legality",
+          "Whistleblowing: the ethical obligation to report dangerous or illegal practices when internal channels fail, and the legal protections (and practical risks) for software engineers who do so",
+          "Professional responsibility: the obligation to refuse to ship software known to be dangerous, to advocate for testing and quality, and to be honest about risks even when honesty is uncomfortable",
+          "Intellectual property: understanding copyright, licensing (MIT, GPL, Apache), patents, and the ethical and legal obligations when using open-source software in commercial products",
+          "Environmental impact: the energy cost of computation (data centers, cryptocurrency mining, model training) and the professional responsibility to consider efficiency and sustainability"
+        ],
+        "demonstration": "Analyze three case studies: (1) Volkswagen emissions scandal — software engineers wrote code that detected when the car was being emissions-tested and changed engine behavior to pass, while emitting 40x the legal limit during normal driving. Who was responsible? (2) Amazon's hiring algorithm that penalized resumes containing the word 'women's' because the training data reflected historical hiring bias. How should the team have responded when they discovered the bias? (3) A startup asks you to ship a medical appointment scheduling system without proper input validation because 'we need to launch next week.' What are your ethical obligations?",
+        "setup_requirements": [
+          "ACM/IEEE Code of Ethics printed or digital copy",
+          "Case study handouts with discussion questions",
+          "Ethics decision framework worksheet"
+        ],
+        "review": [
+          {
+            "key": "Public Interest Principle",
+            "value": "Software engineers shall act consistently with the public interest. When the interests of the client (ship faster) conflict with the public interest (software safety), the public interest takes precedence. This is not optional; it is the first principle."
+          },
+          {
+            "key": "Algorithmic Bias",
+            "value": "Bias in training data produces biased models. This is not a purely technical problem; it requires diverse teams, bias audits, fairness metrics, and ongoing monitoring. Claiming 'the algorithm decided' does not absolve the engineers who built it."
+          },
+          {
+            "key": "Professional Courage",
+            "value": "The most difficult ethical situations arise when doing the right thing has personal cost (pushback from management, career risk). Professional codes of ethics provide backing for refusing to participate in harmful practices."
+          },
+          {
+            "key": "Privacy as Default",
+            "value": "Collect the minimum data necessary, store it encrypted, delete it when no longer needed, and give users control over their data. These are not nice-to-haves; they are professional obligations under GDPR, CCPA, and ethical practice."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Capstone Review and Course Integration",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Synthesize all course topics into a coherent understanding of the software engineering discipline",
+        "Present and defend capstone project design decisions using SE principles",
+        "Evaluate peer projects against software engineering best practices",
+        "Prepare for professional software engineering practice with a personal development plan"
+      ],
+      "readings": [
+        "Review all course materials and lecture notes",
+        "McConnell, Professional Software Development, Ch. 1-3",
+        "Prepare capstone project presentation and written defense"
+      ],
+      "lecture_notes": {
+        "introduction": "This final session integrates everything we have covered across the semester into a coherent framework for professional software engineering practice. From process models that structure how we work, to requirements engineering that ensures we build the right thing, to architecture and design patterns that ensure we build it well, to testing and CI/CD that ensure we build it reliably, to DevOps practices that ensure we operate it effectively, to ethics that ensure we build it responsibly — these are not isolated topics but interconnected practices that reinforce each other. A team that practices TDD produces code that is inherently testable, which makes CI/CD pipelines reliable, which enables frequent deployment, which enables rapid feedback from users, which informs better requirements for the next iteration. A team that skips testing builds untestable code that breaks in deployment, creating fear of change that slows development, frustrating users who wait months for fixes. The capstone project presentations today are your opportunity to demonstrate not just technical skill but engineering judgment: the ability to make design decisions, defend them with reasoning, acknowledge trade-offs, and articulate what you would do differently with more time or different constraints.",
+        "key_concepts": [
+          "Full SDLC integration: requirements flow into architecture, architecture constrains implementation, implementation is verified by testing, testing gates CI/CD, CI/CD enables deployment, monitoring feeds back into requirements",
+          "Engineering judgment: choosing the right process, architecture, pattern, and level of testing for the specific project context rather than applying one-size-fits-all practices",
+          "Trade-off analysis: every engineering decision involves trade-offs; professional engineers articulate what they gained and what they sacrificed with each decision",
+          "Capstone project defense: presenting design decisions with technical justification, demonstrating working software, explaining testing strategy, and responding to technical questions from peers",
+          "Peer evaluation: reviewing peer projects using criteria from the course (architecture quality, test coverage, CI/CD pipeline, code review evidence, requirements traceability)",
+          "Continuous improvement: the retrospective mindset applied to your own professional practice — identifying skills to develop, areas of weakness to address, and emerging technologies to learn",
+          "Professional development plan: setting concrete goals for the next 6-12 months (contribute to open source, obtain certifications, learn new architectural patterns, practice system design interviews)",
+          "Industry landscape: current trends in software engineering (platform engineering, AI-assisted development, infrastructure as code maturity, observability-driven development) and how course foundations enable engaging with them",
+          "Career paths in SE: individual contributor (senior engineer, staff engineer, principal engineer), management (engineering manager, director, VP), specialized roles (SRE, DevOps engineer, security engineer, architect)"
+        ],
+        "demonstration": "Each team presents their capstone project (10 minutes): demonstrate working software, walk through architecture with diagram, show CI/CD pipeline in action, display test coverage report, and discuss the most challenging design decision and what they would change in hindsight. Instructor provides live feedback connecting project decisions to course concepts. Class votes on best architecture, best test suite, and best process adherence.",
+        "setup_requirements": [
+          "Presentation slides or live demo environment prepared",
+          "Capstone project deployed and accessible",
+          "CI/CD dashboard visible for demonstration",
+          "Peer evaluation rubric distributed"
+        ],
+        "review": [
+          {
+            "key": "Integration Principle",
+            "value": "Software engineering practices are not independent checkboxes. They form a reinforcing system: good requirements enable good architecture, good architecture enables good testing, good testing enables confident deployment, confident deployment enables rapid feedback."
+          },
+          {
+            "key": "Engineering Judgment",
+            "value": "There is no single correct architecture, process, or tool for every project. The mark of a professional engineer is the ability to evaluate context, choose appropriately, and articulate the reasoning behind the choice."
+          },
+          {
+            "key": "Continuous Learning",
+            "value": "Technology changes continuously, but fundamentals (testing, architecture, process discipline, ethics) are durable. Invest in fundamentals first, then layer specific technologies on top. A strong foundation enables rapid adaptation."
+          },
+          {
+            "key": "Hindsight Value",
+            "value": "The most valuable part of a project retrospective is identifying what you would do differently. This requires honest self-assessment and the humility to acknowledge mistakes. Every project teaches something; capture that knowledge."
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 3,
+        "topic": "Process Models, Requirements, and System Modeling",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Write three user stories with acceptance criteria for an online food ordering system. Each story should follow the 'As a [role], I want [feature], so that [benefit]' format with at least two Given/When/Then acceptance criteria.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "1. As a customer, I want to search restaurants by cuisine type, so that I can find food I enjoy.\n  - Given I am on the home page, When I select 'Italian' from the cuisine filter, Then only Italian restaurants are displayed.\n  - Given no restaurants match my filter, When the results load, Then I see 'No restaurants found' with a suggestion to broaden my search.\n\n2. As a customer, I want to add items to my cart from a restaurant menu, so that I can build my order.\n  - Given I am viewing a restaurant menu, When I click 'Add to Cart' on an item, Then the item appears in my cart with quantity 1.\n  - Given I add an item that is already in my cart, When the cart updates, Then the quantity increments by 1 rather than adding a duplicate.\n\n3. As a restaurant owner, I want to mark items as unavailable, so that customers do not order items I cannot prepare.\n  - Given I am in the menu management page, When I toggle an item to 'unavailable', Then the item appears greyed out on the customer-facing menu.\n  - Given an item in a customer's cart becomes unavailable, When the customer views their cart, Then a warning is displayed and the item is removed.",
+            "rubric": [
+              {
+                "key": "Three properly formatted user stories with role, feature, and benefit",
+                "value": 3
+              },
+              {
+                "key": "At least two Given/When/Then acceptance criteria per story",
+                "value": 4
+              },
+              {
+                "key": "Stories are testable, appropriately scoped, and satisfy INVEST criteria",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Draw a UML class diagram for a library management system with at least four classes. Show attributes, operations, and relationships (association with multiplicity, inheritance, or composition). Explain one design decision you made.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Classes: Library (1) --contains--> (*) Book, Book (1) --has--> (*) Copy, Member (1) --borrows--> (0..5) Copy, Librarian extends Member.\n\nLibrary: name, address | addBook(), removeMember()\nBook: isbn, title, author, publishedYear | getAvailableCopies()\nCopy: copyId, condition, status(available/borrowed/reserved) | checkout(), returnCopy()\nMember: memberId, name, email, memberSince | borrowCopy(copy), returnCopy(copy), getActiveBorrowings()\nLibrarian extends Member: employeeId, role | addBook(book), processReturn(copy)\n\nComposition between Library and Book (books cannot exist without the library). Association between Member and Copy for borrowings with 0..5 multiplicity (a member can borrow at most 5 copies). Inheritance: Librarian is-a Member with additional administrative operations.\n\nDesign decision: I separated Book (the bibliographic record) from Copy (a physical instance) because a library may have multiple copies of the same book, each with its own availability status. This avoids duplicating title/author/isbn for each physical copy.",
+            "rubric": [
+              {
+                "key": "At least four classes with attributes and operations",
+                "value": 3
+              },
+              {
+                "key": "Correct relationship types (association, composition, or inheritance) with multiplicities",
+                "value": 4
+              },
+              {
+                "key": "Clear explanation of a design decision with reasoning",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "What is the main advantage of Agile over Waterfall for a startup building a new product? What is one scenario where Waterfall might be more appropriate? Justify both answers.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Agile's main advantage for startups is the ability to incorporate customer feedback after each iteration, reducing the risk of building the wrong product. Requirements for new products are inherently uncertain, and Agile embraces this by delivering working software frequently and adjusting direction based on real user feedback. The cost of learning that a feature is wrong after a 2-week sprint is far less than learning after 6 months of Waterfall development.\n\nWaterfall may be more appropriate for safety-critical systems (medical devices, aviation software) where requirements are well-understood, regulatory documentation is mandatory at each phase, and changes after implementation are extremely costly. These domains benefit from the thorough upfront requirements and design phases of Waterfall because the cost of getting the design wrong (patient harm, regulatory rejection) vastly exceeds the cost of upfront analysis.",
+            "rubric": [
+              {
+                "key": "Explains Agile advantage with specific reasoning about feedback and uncertainty",
+                "value": 4
+              },
+              {
+                "key": "Valid Waterfall scenario with justification about requirements stability or regulatory needs",
+                "value": 4
+              },
+              {
+                "key": "Clear, well-articulated answer with concrete examples",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      },
+      {
+        "quiz": 2,
+        "week": 5,
+        "topic": "Architecture, Design Patterns, and SOLID Principles",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Explain the Dependency Inversion Principle and show how it improves testability with a concrete code example (pseudocode or any language).",
+            "type": "short_answer",
+            "points": 15,
+            "answer": "The Dependency Inversion Principle states that high-level modules should not depend on low-level modules; both should depend on abstractions. For testability, this means a service class depends on an interface (e.g., PaymentGateway interface) rather than a concrete implementation (e.g., StripeGateway). In tests, you inject a mock PaymentGateway that returns controlled responses, allowing you to test the service logic without making real API calls.\n\nExample:\n  # Bad: OrderService directly creates StripeGateway\n  class OrderService:\n    def __init__(self):\n      self.payment = StripeGateway()  # hard dependency, untestable\n\n  # Good: OrderService accepts any PaymentGateway\n  class OrderService:\n    def __init__(self, payment: PaymentGateway):\n      self.payment = payment  # injected dependency\n\n  # In tests: OrderService(MockPaymentGateway())\n  # In production: OrderService(StripeGateway())",
+            "rubric": [
+              {
+                "key": "Correctly defines DIP: high-level depends on abstractions, not concretions",
+                "value": 4
+              },
+              {
+                "key": "Explains testability benefit: mock injection replaces real dependencies",
+                "value": 5
+              },
+              {
+                "key": "Shows before/after code with clear contrast",
+                "value": 4
+              },
+              {
+                "key": "Demonstrates how mock is injected in test context",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A ride-sharing startup asks you to choose between a monolithic architecture and microservices. The team has 4 developers, the product has not launched yet, and requirements are changing weekly. What architecture do you recommend and why? What would change your recommendation?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "I recommend a well-structured monolith (modular monolith). With 4 developers, pre-launch, and rapidly changing requirements, the overhead of microservices (network latency, distributed transactions, service discovery, independent deployment pipelines, debugging across services) far exceeds the benefits. A monolith lets the small team move fast, refactor across module boundaries easily, and deploy a single artifact.\n\nThe key is to structure the monolith with clear module boundaries (rider module, driver module, matching module, payment module) so that extracting a service later is straightforward.\n\nI would change my recommendation when: (1) the team grows to 15+ developers and deployment contention becomes a bottleneck, (2) a specific module has dramatically different scaling requirements (e.g., the matching engine needs 100x the compute of the admin dashboard), or (3) a module needs independent deployment for compliance reasons (e.g., payment processing for PCI).",
+            "rubric": [
+              {
+                "key": "Recommends monolith with clear reasoning about team size and requirements volatility",
+                "value": 4
+              },
+              {
+                "key": "Addresses modular structure within the monolith for future extraction",
+                "value": 3
+              },
+              {
+                "key": "Identifies specific conditions that would change the recommendation",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Describe the Strategy design pattern. Give a concrete example of when you would use it instead of a simple if-else chain, and explain the advantage.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "The Strategy pattern defines a family of algorithms, encapsulates each in a separate class behind a common interface, and makes them interchangeable at runtime. The client holds a reference to the interface and delegates the algorithm call without knowing the concrete implementation.\n\nExample: A shipping cost calculator that supports FlatRateShipping, WeightBasedShipping, and FreeShipping. Instead of:\n  if (type == 'flat') cost = 5.99\n  elif (type == 'weight') cost = weight * 0.50\n  elif (type == 'free') cost = 0\n\nUse Strategy:\n  interface ShippingStrategy { calculateCost(order): number }\n  class FlatRate implements ShippingStrategy { calculateCost(order) { return 5.99 } }\n  class WeightBased implements ShippingStrategy { calculateCost(order) { return order.weight * 0.50 } }\n  class Free implements ShippingStrategy { calculateCost(order) { return 0 } }\n\nAdvantage: Adding a new shipping method (e.g., ZoneBasedShipping) requires creating a new class without modifying existing code (Open/Closed Principle). Each strategy can be independently unit-tested. The shipping method can be changed at runtime based on customer tier or promotion.",
+            "rubric": [
+              {
+                "key": "Correctly defines Strategy pattern with interface and interchangeable implementations",
+                "value": 3
+              },
+              {
+                "key": "Concrete example showing both if-else and Strategy approaches",
+                "value": 4
+              },
+              {
+                "key": "Explains advantage: Open/Closed principle, testability, or runtime flexibility",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 35
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "Testing, CI/CD, and Code Quality",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Describe the three stages of a CI pipeline and what each stage catches that the previous one does not. Give a specific example of a bug caught at each stage.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "1. Lint/Format: Catches style violations, unused imports, and simple errors (undefined variables, unreachable code). Runs in seconds. Example bug: a variable named 'reuslt' that passes syntax checking but is flagged by a spell-checking linter, revealing a typo that would cause a ReferenceError at runtime.\n\n2. Unit Tests: Catches logic bugs in individual functions and classes. Runs in seconds to minutes. Catches bugs that pass linting because they are syntactically valid but semantically wrong. Example bug: a discount calculation function that returns 0.1 instead of 10 (a percentage vs decimal error) — syntactically valid but logically incorrect.\n\n3. Integration Tests: Catches interface mismatches between components, database schema issues, and API contract violations. Runs in minutes. Catches bugs where each unit works correctly in isolation but fails when connected. Example bug: an API endpoint returns dates as ISO strings but the frontend parser expects Unix timestamps — each component's unit tests pass but integration fails.",
+            "rubric": [
+              {
+                "key": "Names three pipeline stages correctly with purpose",
+                "value": 3
+              },
+              {
+                "key": "Specific bug example for each stage",
+                "value": 4
+              },
+              {
+                "key": "Explains the incremental value of each stage over the previous",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain the TDD Red-Green-Refactor cycle. Write the first three test cases you would use to TDD a function that converts a Roman numeral string to an integer (e.g., 'XIV' -> 14). For each test, state what code change it forces.",
+            "type": "short_answer",
+            "points": 12,
+            "answer": "Red-Green-Refactor: (1) Red: write a test for behavior that does not exist yet — it fails. (2) Green: write the simplest code that makes the test pass, even if it is hardcoded. (3) Refactor: improve the code structure while keeping all tests green.\n\nTest 1: assert romanToInt('I') == 1\n  Forces: creating the function, returning 1. Simplest green: return 1.\n\nTest 2: assert romanToInt('V') == 5\n  Forces: handling a different character. Simplest green: if input == 'I' return 1, if input == 'V' return 5 (or a lookup map).\n\nTest 3: assert romanToInt('II') == 2\n  Forces: handling multi-character input by iterating and summing values. Simplest green: iterate through characters, look up each value in a map, sum them. This generalizes the solution from single-character lookup to iterative processing.",
+            "rubric": [
+              {
+                "key": "Correctly explains Red-Green-Refactor cycle",
+                "value": 3
+              },
+              {
+                "key": "Three valid test cases in logical progression",
+                "value": 4
+              },
+              {
+                "key": "Each test states the specific code change it forces",
+                "value": 3
+              },
+              {
+                "key": "Shows simplest-possible Green step for each test",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "You are reviewing a pull request that adds 450 lines of code in a single commit. The code works correctly. What feedback do you give, and what specific improvements do you suggest?",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Feedback: The code works, but a 450-line PR is too large for effective review. Research shows review effectiveness drops significantly above 200 lines because reviewers lose focus and start skimming. I would approve with the request to split future changes.\n\nSpecific suggestions:\n1. Split into smaller PRs: Separate the database migration, service layer, API endpoint, and tests into individual PRs that can be reviewed independently.\n2. Add intermediate commits: Even within a PR, each commit should represent one logical change (extract helper, add validation, implement core logic) so reviewers can follow the development progression.\n3. Write a PR description: Explain what the change does, why it is needed, and any design decisions. A 450-line PR without context forces the reviewer to reverse-engineer the intent from the code.\n4. For the current PR: I would review it but note that my confidence in catching all issues is lower due to the size, and suggest we pair-review the critical sections.",
+            "rubric": [
+              {
+                "key": "Identifies 450 lines as too large for effective review with reasoning",
+                "value": 3
+              },
+              {
+                "key": "Suggests splitting into smaller PRs with specific examples of how to split",
+                "value": 3
+              },
+              {
+                "key": "Professional and constructive tone that balances pragmatism with improvement",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "Agile, Scrum, and Project Management",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Your Scrum team's velocity has been 30 story points for the last 4 sprints. Management asks the team to commit to 45 points this sprint because of a deadline. As Scrum Master, how do you respond? Justify your answer using Agile principles.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "I would explain that velocity is a measurement of historical capacity, not a dial that can be turned up. Committing to 45 points when the team consistently delivers 30 would mean either: (1) the team cuts corners (no tests, no code review), accumulating technical debt that slows future sprints, or (2) the team fails to deliver, damaging trust and morale.\n\nInstead, I would facilitate a conversation about options:\n1. Reduce scope: Work with the Product Owner to identify which stories are Must Have for the deadline and defer the rest. If 30 points of the highest-value work ships on time, that is better than 45 points of incomplete work.\n2. Extend the deadline: If all 45 points are truly required, the honest forecast is two sprints, not one.\n3. Remove impediments: Are there blockers I can remove that would genuinely increase the team's throughput (waiting on dependencies, environment issues, unclear requirements)?\n\nThe Agile principle at stake is sustainable development: the team should maintain a constant pace indefinitely. Sprint commitments based on pressure rather than capacity lead to burnout, quality problems, and ultimately slower delivery.",
+            "rubric": [
+              {
+                "key": "Explains velocity as measurement, not target",
+                "value": 3
+              },
+              {
+                "key": "Proposes actionable alternatives (scope reduction, timeline adjustment, impediment removal)",
+                "value": 4
+              },
+              {
+                "key": "References Agile principles (sustainable pace, working software, honest forecasting)",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Define the 'Definition of Done' concept in Scrum. Write a realistic Definition of Done for a web application development team. Explain what happens when a team does not have a clear Definition of Done.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Definition of Done (DoD) is a shared checklist that every product backlog item must satisfy before it can be considered complete and potentially releasable. It creates a shared quality standard across the team.\n\nRealistic DoD for a web app team:\n- Code is peer-reviewed and approved by at least one other developer\n- All unit tests pass with at least 80% line coverage for new code\n- Integration tests pass for affected API endpoints\n- No lint errors or static analysis warnings\n- CI pipeline is green on the feature branch\n- Feature is deployed to the staging environment and manually verified\n- API documentation is updated for any new or changed endpoints\n- Database migrations are reversible\n- Product Owner has verified acceptance criteria are met on staging\n\nWithout a clear DoD, teams accumulate 'undone work' — stories that are 'done' in name but missing tests, documentation, or deployment. This creates a false sense of progress: the burndown chart looks good but the software is not releasable. Eventually, the team must do a 'hardening sprint' to finish the undone work, which is unpredictable and often reveals integration problems that should have been caught earlier.",
+            "rubric": [
+              {
+                "key": "Correctly defines DoD as a shared quality checklist for releasable increments",
+                "value": 3
+              },
+              {
+                "key": "Realistic DoD with at least 6 concrete, verifiable items",
+                "value": 4
+              },
+              {
+                "key": "Explains consequences of missing DoD (undone work, false progress, hardening sprints)",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Compare Scrum and Kanban. When would you choose Kanban over Scrum for a software team?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Scrum uses fixed-length sprints with committed scope, defined roles (PO, SM, Team), and ceremonies (planning, standup, review, retro). Work is planned in batches per sprint. Kanban uses a continuous flow model with WIP limits, no fixed iterations, and no prescribed roles or ceremonies.\n\nChoose Kanban over Scrum when:\n1. Work arrives unpredictably: Support teams, DevOps teams, and maintenance teams receive work continuously. Batching into sprints is artificial when interrupt-driven work dominates.\n2. The team needs maximum flexibility: Kanban allows reprioritization at any time, while Scrum protects the sprint scope. If priorities shift daily, sprint commitments are constantly broken.\n3. Delivery cadence is continuous: If the team deploys multiple times per day, sprint boundaries are meaningless for release planning.\n4. The overhead of Scrum ceremonies is not justified: Very small teams (2-3 people) or teams with well-established processes may find sprint planning and review ceremonies overhead-heavy.\n\nScrum is better when the team needs structure and predictability, when stakeholders want regular demo cadence, and when the team benefits from the reflection of sprint retrospectives.",
+            "rubric": [
+              {
+                "key": "Accurately contrasts Scrum (iterations, roles, ceremonies) and Kanban (flow, WIP limits, no iterations)",
+                "value": 3
+              },
+              {
+                "key": "At least two valid scenarios favoring Kanban with reasoning",
+                "value": 4
+              },
+              {
+                "key": "Acknowledges when Scrum is preferable",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "DevOps, Maintenance, and Ethics",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Explain the Strangler Fig pattern for legacy system modernization. Describe three specific steps to apply it when replacing a legacy monolithic order processing system with a new microservices-based system.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "The Strangler Fig pattern incrementally replaces a legacy system by routing new functionality to a new system while the old system continues handling existing functionality. Named after strangler figs that grow around a host tree and eventually replace it, this approach avoids the risk of a big-bang rewrite.\n\nThree steps for the order processing system:\n1. Add a routing layer (facade): Place an API gateway in front of the legacy system that forwards all requests unchanged. This establishes the interception point without changing any behavior. All traffic flows through the gateway to the legacy system.\n\n2. Extract the first capability: Build a new Order Validation microservice. Update the gateway to route validation requests to the new service while all other order processing continues through the legacy system. Run both in parallel initially, comparing results to verify the new service matches legacy behavior.\n\n3. Progressively extract remaining capabilities: Build Payment Processing service, Inventory Reservation service, and Notification service one at a time. After each extraction, update the gateway routing. The legacy system handles fewer requests with each extraction until it can be decommissioned entirely.",
+            "rubric": [
+              {
+                "key": "Correctly explains Strangler Fig as incremental replacement, not big-bang rewrite",
+                "value": 3
+              },
+              {
+                "key": "Three specific, ordered steps with concrete actions for the given scenario",
+                "value": 5
+              },
+              {
+                "key": "Mentions risk mitigation (parallel running, gateway routing, gradual migration)",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Your employer asks you to ship a patient appointment scheduling system without input validation because 'we need to launch this week.' Apply the ACM/IEEE Code of Ethics to this situation. What do you do?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "The ACM/IEEE Code of Ethics, Principle 1 (Public), states that software engineers shall act consistently with the public interest. A medical scheduling system without input validation poses risks: SQL injection could expose patient data (violating HIPAA), malformed inputs could cause scheduling errors that affect patient care, and lack of validation could allow appointment conflicts.\n\nMy response:\n1. Quantify the risk: Explain to my employer specifically what could go wrong — data breach fines ($50K-$1.5M per HIPAA violation), patient scheduling errors, and reputational damage — not just 'it might break.'\n\n2. Propose a middle ground: Implement critical input validation (SQL injection prevention, required field validation, date range validation) within the launch timeline. Defer cosmetic validation (phone number formatting, address normalization) to a fast follow-up release.\n\n3. Document the decision: If my employer insists on shipping without any validation, I put my objection in writing (email) explaining the specific risks. This protects patients (by creating a record that may prompt reconsideration) and protects me professionally.\n\n4. Escalation: If the employer overrides my objection and the risk involves patient safety or legal compliance, I escalate to the compliance officer or, in extreme cases, the relevant regulatory body. The Code of Ethics places public interest above employer loyalty.",
+            "rubric": [
+              {
+                "key": "References specific ACM/IEEE principle (public interest, product quality)",
+                "value": 3
+              },
+              {
+                "key": "Proposes actionable middle ground rather than just saying 'no'",
+                "value": 3
+              },
+              {
+                "key": "Addresses documentation and escalation as professional obligations",
+                "value": 2
+              },
+              {
+                "key": "Identifies specific risks (HIPAA, patient safety, SQL injection)",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "List the four DORA metrics and explain how improving deployment frequency is connected to improving the other three metrics.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "The four DORA metrics:\n1. Deployment Frequency: How often code is deployed to production\n2. Lead Time for Changes: Time from code commit to running in production\n3. Change Failure Rate: Percentage of deployments that cause a failure in production\n4. Mean Time to Restore (MTTR): How quickly service is restored after a failure\n\nImproving deployment frequency drives improvement in the other three:\n\n- Lead Time: Deploying frequently requires automating the deployment pipeline (CI/CD), which directly reduces lead time. Manual gates and approvals that slow deployment are replaced with automated testing.\n\n- Change Failure Rate: Frequent deployments mean smaller deployments. A deployment with 50 lines of changes is far easier to get right (and to debug if wrong) than a deployment with 5,000 lines. Smaller batches have lower failure rates because the blast radius of any single change is smaller.\n\n- MTTR: When deployments are small and frequent, restoring service after a failure is fast: either roll back to the previous deployment (which was minutes ago, not weeks ago) or fix forward with a small patch. Large, infrequent deployments make rollback painful because many changes are bundled together.",
+            "rubric": [
+              {
+                "key": "Correctly names all four DORA metrics",
+                "value": 3
+              },
+              {
+                "key": "Explains connection between frequency and lead time (automation)",
+                "value": 2
+              },
+              {
+                "key": "Explains connection between frequency and change failure rate (smaller batches)",
+                "value": 3
+              },
+              {
+                "key": "Explains connection between frequency and MTTR (easy rollback/fix-forward)",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Requirements and Architecture Specification",
+        "week_assigned": 2,
+        "week_due": 5,
+        "points": 150,
+        "description": "Select a real-world problem domain and produce a comprehensive requirements specification and architectural design document. Elicit requirements from at least two stakeholder perspectives, create UML models (use case, class, and sequence diagrams), select and justify an architectural pattern, and document three Architecture Decision Records. The deliverable is a professional-quality specification document that a development team could use to begin implementation.",
+        "objectives": [
+          "Practice systematic requirements elicitation and documentation using user stories with acceptance criteria",
+          "Create UML models that capture system structure (class diagram), behavior (sequence diagram), and scope (use case diagram)",
+          "Select and justify an architectural pattern based on quality attribute requirements",
+          "Write Architecture Decision Records that capture context, decision, and consequences"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Product backlog with at least 20 user stories prioritized using MoSCoW, each with acceptance criteria",
+          "UML use case diagram showing actors and system boundary",
+          "UML class diagram with at least 8 classes showing attributes, operations, and relationships with multiplicities",
+          "UML sequence diagram for the three most complex use cases",
+          "Architecture diagram showing component decomposition and communication patterns",
+          "Three Architecture Decision Records in Nygard format (context, decision, consequences)",
+          "Non-functional requirements specification with measurable quality attribute scenarios"
+        ],
+        "grading_rubric": {
+          "requirements_quality": {
+            "points": 40,
+            "criteria": [
+              "20+ user stories that are Independent, Negotiable, Valuable, Estimable, Small, and Testable",
+              "Each story has at least two Given/When/Then acceptance criteria",
+              "MoSCoW prioritization with clear rationale for Must-Have items",
+              "Non-functional requirements are measurable (specific numbers for performance, availability, scalability)"
+            ]
+          },
+          "modeling_quality": {
+            "points": 40,
+            "criteria": [
+              "Use case diagram correctly identifies actors, system boundary, and use case relationships",
+              "Class diagram shows proper relationship types with correct multiplicities",
+              "Sequence diagrams capture the message flow for complex interactions accurately",
+              "Diagrams are consistent with each other (classes in sequence diagrams match class diagram)"
+            ]
+          },
+          "architecture_quality": {
+            "points": 40,
+            "criteria": [
+              "Architectural pattern choice is justified by quality attribute requirements",
+              "Component decomposition shows clear separation of concerns",
+              "ADRs follow Nygard format and capture meaningful trade-off analysis",
+              "Architecture diagram is clear, consistent, and at an appropriate level of abstraction"
+            ]
+          },
+          "documentation": {
+            "points": 30,
+            "criteria": [
+              "Document is well-organized with a clear structure and table of contents",
+              "Writing is clear and professional with consistent terminology",
+              "All diagrams are properly labeled and referenced in the text",
+              "A development team could begin implementation from this specification"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Comprehensive requirements specification with 20+ user stories and acceptance criteria",
+                "Consistent UML models (use case, class, sequence) at an appropriate level of detail",
+                "Architecture selection justified by quality attribute analysis with ADRs",
+                "Professional-quality document suitable for a development team to implement from"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Team Agile Development Project",
+        "week_assigned": 6,
+        "week_due": 11,
+        "points": 200,
+        "description": "Work in a team of 4 to build a full-stack web application using Agile methodology over three 2-week sprints. Deliver working software with requirements documentation, architecture design, CI/CD pipeline, comprehensive tests, code reviews, and sprint retrospectives. The project must implement the specification from Assignment 1 (your own or assigned).",
+        "objectives": [
+          "Practice Agile development with sprint planning, daily standups, reviews, and retrospectives",
+          "Design and implement a full-stack application with proper architecture and design patterns",
+          "Set up and maintain a CI/CD pipeline with automated linting, testing, and deployment",
+          "Conduct meaningful code reviews and manage technical debt systematically"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Working web application deployed to a staging environment",
+          "GitHub repository with branch protection, PR reviews, and CI/CD pipeline",
+          "Product backlog with prioritized user stories and acceptance criteria in project management tool",
+          "Sprint retrospective reports for each of the three sprints with action items and follow-through",
+          "Architecture decision records documenting key design choices",
+          "Test suite with unit and integration tests achieving at least 70% line coverage on business logic",
+          "Individual contribution report (Git activity, PRs authored, PRs reviewed)"
+        ],
+        "grading_rubric": {
+          "process_adherence": {
+            "points": 50,
+            "criteria": [
+              "Sprint planning with properly estimated and prioritized stories for each sprint",
+              "Daily standup evidence (meeting notes or async updates) for the majority of working days",
+              "Sprint retrospectives with specific action items and evidence of follow-through",
+              "Consistent use of project management tool with story lifecycle tracking"
+            ]
+          },
+          "technical_quality": {
+            "points": 70,
+            "criteria": [
+              "Clean architecture with clear separation of concerns matching the specification",
+              "Design patterns applied appropriately (at least two GoF patterns with justification)",
+              "Code review evidence: every PR has at least one review before merge",
+              "CI pipeline runs lint, unit tests, and integration tests on every PR; all pass on main"
+            ]
+          },
+          "testing_quality": {
+            "points": 40,
+            "criteria": [
+              "Unit test coverage of core business logic at 70%+ line coverage",
+              "Integration tests for API endpoints covering happy path and error cases",
+              "Tests are meaningful (would fail if production code is broken, not just smoke tests)",
+              "All tests pass in CI and are not flaky (no known intermittent failures)"
+            ]
+          },
+          "team_contribution": {
+            "points": 40,
+            "criteria": [
+              "Git history shows meaningful commits from all team members across all sprints",
+              "Peer evaluation indicates equitable contribution (no free riders)",
+              "Code review participation from all team members (authored and reviewed PRs)",
+              "Sprint retrospective participation with individual contributions to action items"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 200,
+              "criteria": [
+                "Working application delivered through disciplined Agile process over three sprints",
+                "Clean architecture with CI/CD pipeline and comprehensive automated testing",
+                "Evidence of effective code review, design pattern usage, and quality practices",
+                "Equitable team contribution with meaningful retrospectives driving improvement"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Legacy Code Modernization",
+        "week_assigned": 12,
+        "week_due": 14,
+        "points": 120,
+        "description": "You are given a legacy Python application (approximately 800 lines) with no tests, poor documentation, and several known bugs. Your task is to stabilize it by writing characterization tests, refactoring for maintainability, fixing the known bugs using regression-first TDD, and documenting the architecture for future maintainers. You may not rewrite the application from scratch.",
+        "objectives": [
+          "Apply characterization testing to document the behavior of untested legacy code",
+          "Use Feathers' seam-finding technique to introduce testability into tightly-coupled code",
+          "Fix bugs using regression-first TDD (write failing test, then fix)",
+          "Practice incremental refactoring under test coverage without changing external behavior"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Characterization test suite covering the three most critical code paths",
+          "Refactored codebase with improved structure (extracted functions, reduced coupling, named constants)",
+          "Bug fix commits with corresponding regression tests (one commit per bug, each with a test that reproduces the bug)",
+          "Architecture overview document (2 pages) explaining the system structure for a new developer",
+          "Refactoring log documenting each refactoring step, the motivation, and the tests that protect it"
+        ],
+        "grading_rubric": {
+          "characterization_tests": {
+            "points": 30,
+            "criteria": [
+              "Characterization tests cover the three most critical code paths with meaningful assertions",
+              "Tests document actual behavior (not assumed behavior) by running code and capturing output",
+              "Tests serve as a safety net: breaking a covered code path fails at least one test",
+              "Test setup is clear and reproducible"
+            ]
+          },
+          "refactoring_quality": {
+            "points": 35,
+            "criteria": [
+              "Refactoring steps are small and incremental (each step keeps all tests green)",
+              "Extracted functions have clear names and single responsibilities",
+              "Magic numbers are replaced with named constants",
+              "Coupling is reduced through dependency injection or interface extraction"
+            ]
+          },
+          "bug_fixes": {
+            "points": 30,
+            "criteria": [
+              "Each bug fix has a corresponding regression test that fails before the fix and passes after",
+              "Bug fix commits are atomic (one fix per commit with its regression test)",
+              "Fixes address root causes, not symptoms",
+              "No new bugs are introduced by the fixes (all characterization tests still pass)"
+            ]
+          },
+          "documentation": {
+            "points": 25,
+            "criteria": [
+              "Architecture overview is accurate and useful for a new developer",
+              "Refactoring log documents motivation and test coverage for each step",
+              "Code comments explain non-obvious decisions (why, not what)",
+              "README includes setup instructions and known limitations"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 120,
+              "criteria": [
+                "Characterization tests that accurately document legacy behavior as a refactoring safety net",
+                "Incremental refactoring that improves structure without changing behavior",
+                "Bug fixes with regression tests that prevent recurrence",
+                "Clear documentation enabling future maintainers to understand and extend the system"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 20,
+      "description": "Five quizzes covering SE concepts, design, testing, project management, and ethics"
+    },
+    "lab_assignments": {
+      "percentage": 15,
+      "description": "Individual exercises in Git, testing, CI/CD, refactoring, and code review"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "Requirements specification, team Agile project, and legacy code modernization"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Written exam covering requirements, architecture, design patterns, and process models"
+    },
+    "final_project": {
+      "percentage": 20,
+      "description": "Capstone project presentation and defense demonstrating integration of all SE practices"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is mandatory for sprint planning, reviews, and retrospectives. More than 2 unexcused absences from team ceremonies may result in grade reduction. Lecture attendance is expected but not graded.",
+    "late_submissions": "Sprint deliverables have firm deadlines aligned with sprint boundaries and cannot be submitted late. Individual assignments lose 10% per day, up to 5 days. No submissions accepted after 5 days.",
+    "collaboration": "Team project requires and rewards collaboration. Individual assignments, quizzes, and exam answers must be your own work. Discussing concepts is encouraged; sharing solutions is not.",
+    "academic_integrity": "All code must be original team work or properly attributed open-source. Using code from other teams, previous semesters, or AI assistants without attribution constitutes plagiarism. AI tools may be used as learning aids but all submitted work must be understood and explained by the student.",
+    "technology_requirements": "Students need Git, GitHub account, a CI/CD platform (GitHub Actions), an IDE, Docker, and a deployment target (Render, Railway, or similar). Lab computers with all tools are available."
+  }
+}

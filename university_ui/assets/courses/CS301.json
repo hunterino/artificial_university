@@ -1,0 +1,1468 @@
+{
+  "course_info": {
+    "course_id": "CS301",
+    "title": "Database Management Systems",
+    "credit_hours": 3,
+    "duration": "15 weeks",
+    "meeting_schedule": "Tuesday, Thursday - 3 hours per week",
+    "prerequisites": [
+      "CS201 - Data Structures and Algorithms"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "topic": "DBMS Concepts and the Relational Model",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Explain the purpose and advantages of a DBMS over file-based storage systems",
+        "Identify the major components of a DBMS architecture: query processor, storage manager, transaction manager",
+        "Define the relational model's core concepts: relations, tuples, attributes, domains, and keys",
+        "Distinguish between the three levels of data abstraction: physical, logical, and view"
+      ],
+      "readings": [
+        "Silberschatz, Korth & Sudarshan, Database System Concepts (7th ed.), Ch. 1-2",
+        "Codd, 'A Relational Model of Data for Large Shared Data Banks' (1970) - foundational paper",
+        "Ramakrishnan & Gehrke, Database Management Systems, Ch. 1"
+      ],
+      "lecture_notes": {
+        "introduction": "Every application you use daily, from social media feeds and banking transactions to airline reservations and medical records, depends on a database management system to store, organize, retrieve, and protect its data. Before databases, applications used flat files with custom access code, leading to data redundancy, inconsistency, difficulty in accessing data, and no standard way to enforce integrity constraints. The relational model, proposed by Edgar Codd at IBM in 1970, revolutionized data management by providing a mathematically rigorous framework where data is organized into tables (relations), and a declarative query language (SQL) allows users to describe what data they want without specifying how to get it. Understanding the relational model is not optional for any software engineer: it is the foundation of data management in virtually every industry. This course takes you from the conceptual model through physical implementation, from simple queries through complex optimization, and from single-user databases through distributed systems. By the end, you will be able to design, implement, query, optimize, and administer production database systems.",
+        "key_concepts": [
+          "Data independence: physical data independence (storage can change without affecting applications) and logical data independence (schema can evolve without breaking existing queries)",
+          "DBMS architecture: query processor (parser, optimizer, executor), storage manager (buffer manager, file manager), transaction manager (concurrency control, recovery)",
+          "Relational model: a relation is a set of tuples, each tuple has attribute values from specified domains; relations are unordered sets, tuples within a relation are unordered, and attribute values are atomic (first normal form)",
+          "Keys: superkey (set of attributes that uniquely identifies a tuple), candidate key (minimal superkey), primary key (chosen candidate key), foreign key (references a primary key in another relation)",
+          "Three-level architecture: external level (user views), conceptual level (logical schema), internal level (physical storage); each level can change independently",
+          "Schema vs instance: schema is the structural description (table definitions), instance is the actual data at a point in time; analogous to type vs value in programming",
+          "Relational integrity constraints: entity integrity (primary key values cannot be NULL), referential integrity (every foreign key value must match an existing primary key or be NULL)",
+          "DBMS vs file system: DBMS provides data independence, query language, concurrency control, crash recovery, access control, and constraint enforcement that file systems do not",
+          "SQL as a declarative language: SQL describes what data you want, not how to retrieve it; the query optimizer decides the execution strategy, freeing programmers from manual data access planning"
+        ],
+        "demonstration": "Connect to a PostgreSQL database using psql. Explore an existing university database schema: \\dt to list tables, \\d students to see column types and constraints, \\d+ enrollments to see foreign key relationships. Run basic SELECT queries: all students, students in CS major, enrollment count per course using GROUP BY. Discuss how each query was expressed declaratively without specifying which index to use or how to join tables.",
+        "setup_requirements": [
+          "PostgreSQL 16 installed and running",
+          "pgAdmin 4 or DBeaver database client installed",
+          "Sample university database loaded (students, courses, enrollments, departments, instructors)"
+        ],
+        "review": [
+          {
+            "key": "Data Independence Value",
+            "value": "Physical data independence means you can add an index, change the storage engine, or migrate to a new disk without changing any application code; logical data independence means you can add columns or rename tables (with views) without breaking existing queries"
+          },
+          {
+            "key": "Declarative vs Imperative",
+            "value": "SQL describes WHAT data you want (SELECT name FROM students WHERE gpa > 3.5), not HOW to get it; the optimizer might use an index scan, a sequential scan, or a bitmap scan depending on data statistics, but the query is the same regardless"
+          },
+          {
+            "key": "Relational Model Simplicity",
+            "value": "The entire relational model rests on one data structure (the table) and one operation type (set operations on tables); this simplicity enables mathematical reasoning about queries, which is the foundation of query optimization"
+          },
+          {
+            "key": "Primary Key Importance",
+            "value": "Every table must have a primary key that uniquely identifies each row; without it, you cannot reliably update or delete specific rows, and foreign key relationships become impossible to enforce"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 2,
+      "topic": "Entity-Relationship Modeling",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Design conceptual database schemas using ER diagrams with entities, attributes, and relationships",
+        "Specify cardinality constraints (one-to-one, one-to-many, many-to-many) and participation constraints (total, partial)",
+        "Model complex scenarios using weak entities, multi-valued attributes, and specialization/generalization hierarchies",
+        "Convert ER diagrams to relational schemas following systematic mapping rules"
+      ],
+      "readings": [
+        "Silberschatz, Database System Concepts, Ch. 6 - Entity-Relationship Model",
+        "Elmasri & Navathe, Fundamentals of Database Systems, Ch. 3 - ER Modeling",
+        "Chen, 'The Entity-Relationship Model: Toward a Unified View of Data' (1976)"
+      ],
+      "lecture_notes": {
+        "introduction": "Before writing a single CREATE TABLE statement, you need a clear conceptual model of the data. Entity-Relationship modeling is the standard technique for capturing the structure of a real-world domain, from a simple address book to a complex healthcare system, in a visual diagram that all stakeholders can understand. The ER diagram serves as the blueprint for the database: entities become tables, attributes become columns, and relationships become foreign keys or junction tables. Getting the ER model wrong means building a database that cannot represent the data you need, leading to costly schema migrations, data corruption, and application rewrites. This session teaches you to analyze requirements, identify entities and their relationships, determine cardinality and participation constraints, and handle tricky modeling challenges like weak entities and specialization hierarchies. The systematic conversion from ER diagram to relational schema ensures that the resulting tables correctly capture all the semantics of the conceptual model. Mastering ER modeling is what separates a database designer who gets it right the first time from one who discovers fundamental problems during implementation.",
+        "key_concepts": [
+          "Entity: a distinguishable real-world object or concept that we want to store data about; represented as a rectangle in ER diagrams (e.g., Student, Course, Department)",
+          "Attribute: a property of an entity; simple (atomic), composite (sub-parts like name having first and last), multi-valued (can have multiple values like phone numbers), derived (computed from other attributes like age from birth date)",
+          "Relationship: an association among entities; represented as a diamond connecting entity rectangles; can have its own attributes (e.g., enrollment date on the Takes relationship between Student and Course)",
+          "Cardinality ratios: one-to-one (1:1), one-to-many (1:N), many-to-many (M:N); documented using crow's foot notation or (min,max) notation on relationship lines",
+          "Participation constraints: total participation (every entity instance must participate in at least one relationship instance, double line) vs partial participation (some instances may not participate, single line)",
+          "Weak entity: an entity that cannot be uniquely identified by its own attributes alone and depends on a related strong entity; identified by partial key plus the owner entity's key (e.g., Room identified by room_number plus Building)",
+          "Specialization/generalization: an entity can be specialized into sub-entities (ISA hierarchy) with inherited attributes; e.g., Person specialized into Student and Instructor with shared attributes (name, email) and specific ones (GPA, salary)",
+          "ER-to-relational mapping rules: strong entity becomes a table with all simple attributes as columns; M:N relationship becomes a junction table with foreign keys to both entities; 1:N relationship adds foreign key to the N-side table; weak entity table includes owner's primary key as part of its primary key",
+          "Common modeling pitfalls: using a relationship when an entity is needed (e.g., modeling Enrollment as an entity when it has its own attributes and lifecycle), confusing attributes with entities, incorrect cardinality due to misunderstanding business rules"
+        ],
+        "demonstration": "Design an ER diagram for a library system step by step. Identify entities: Book, Author, Member, Loan. Model the M:N relationship between Book and Author (a book can have multiple authors, an author can write multiple books). Model the 1:N relationship between Member and Loan with total participation on Loan (every loan must be by a member). Add a weak entity BookCopy (identified by copy_number plus Book's ISBN). Add a specialization: Member into Student and Faculty with different borrowing limits. Convert the complete ER diagram to relational tables, showing how each relationship type maps to foreign keys or junction tables.",
+        "setup_requirements": [
+          "ER diagramming tool: draw.io, pgModeler, or ERDPlus",
+          "ER-to-relational mapping rules reference sheet",
+          "Sample requirements document for the library system"
+        ],
+        "review": [
+          {
+            "key": "Cardinality Determines Table Structure",
+            "value": "M:N relationships always require a separate junction table; 1:N relationships add a foreign key to the N-side; 1:1 relationships add a foreign key to either side (preferably the side with total participation)"
+          },
+          {
+            "key": "Weak Entity Dependency",
+            "value": "A weak entity's primary key includes the owner entity's primary key; if the owner is deleted, all dependent weak entities must also be deleted (cascading delete), modeling the real-world dependency"
+          },
+          {
+            "key": "Total Participation Enforcement",
+            "value": "Total participation means every instance of the entity must participate in the relationship; in SQL, this can be enforced with NOT NULL foreign keys and application-level checks, since SQL cannot directly express total participation constraints"
+          },
+          {
+            "key": "ER Model as Communication Tool",
+            "value": "The ER diagram is a communication tool as much as a technical document; non-technical stakeholders can verify that the diagram correctly represents their domain, catching errors before a single table is created"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 3,
+      "topic": "Relational Algebra",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Express queries using the six fundamental relational algebra operations: select, project, union, set difference, Cartesian product, and rename",
+        "Compose complex queries by combining operations in relational algebra expression trees",
+        "Understand relational algebra as the formal foundation for SQL query optimization",
+        "Apply additional operations: natural join, theta join, division, and aggregation"
+      ],
+      "readings": [
+        "Silberschatz, Database System Concepts, Ch. 2 (section 2.6) and Ch. 6 - Relational Algebra",
+        "Ramakrishnan & Gehrke, Database Management Systems, Ch. 4 - Relational Algebra",
+        "Garcia-Molina, Ullman & Widom, Database Systems: The Complete Book, Ch. 2.4"
+      ],
+      "lecture_notes": {
+        "introduction": "Relational algebra is the mathematical language that defines what queries mean and how the database can transform them. While you will write queries in SQL, the database engine internally translates your SQL into relational algebra expressions and then optimizes those expressions using algebraic equivalence rules. Understanding relational algebra gives you insight into why some SQL queries perform better than others, how the optimizer rewrites your queries, and what the fundamental limits of relational query expressiveness are. Each relational algebra operation takes one or two relations as input and produces a new relation as output, enabling composition: the output of one operation feeds as input to another. This composability is what makes complex queries possible. The six fundamental operations (select, project, union, set difference, Cartesian product, rename) are theoretically complete, meaning any computable query over relations can be expressed using these six alone. Additional convenience operations like join, intersection, and division are defined in terms of the fundamentals but make query expression more readable. This session connects the theory of data manipulation to the practice of SQL query writing and optimization.",
+        "key_concepts": [
+          "Select (sigma): filters rows based on a predicate; sigma_{gpa > 3.5}(Students) returns only students with GPA above 3.5; analogous to SQL WHERE",
+          "Project (pi): selects specific columns and removes duplicates; pi_{name, major}(Students) returns just names and majors; analogous to SQL SELECT DISTINCT",
+          "Union: combines tuples from two union-compatible relations (same schema), removing duplicates; R union S; analogous to SQL UNION",
+          "Set difference: returns tuples in R that are not in S; R - S; analogous to SQL EXCEPT",
+          "Cartesian product: combines every tuple in R with every tuple in S; R x S produces |R| * |S| tuples; the basis for join operations",
+          "Rename (rho): gives a new name to a relation or its attributes; essential for self-joins and disambiguating attributes in Cartesian products",
+          "Natural join: combines Cartesian product with selection on equality of common attributes and projection to remove duplicate columns; the most common join in practice",
+          "Theta join: Cartesian product followed by selection on an arbitrary predicate; generalizes equijoin (equality predicate) and natural join",
+          "Division: finds tuples in R that are associated with ALL tuples in S; useful for 'for all' queries like 'students enrolled in every CS course'; expressible using difference and Cartesian product",
+          "Algebraic equivalence rules: sigma can be pushed down past joins (reducing intermediate result sizes), consecutive sigmas can be combined, pi can sometimes be pushed down; these rules are the basis of cost-based query optimization"
+        ],
+        "demonstration": "Express the following queries in relational algebra and then in SQL, showing the correspondence: (1) Names of CS students with GPA above 3.5: pi_{name}(sigma_{major='CS' AND gpa>3.5}(Students)). (2) Names of students enrolled in both CS101 and CS201: pi_{name}(Students join (pi_{student_id}(sigma_{course_id='CS101'}(Enrollments)) intersect pi_{student_id}(sigma_{course_id='CS201'}(Enrollments)))). (3) Draw the expression tree for query 2, showing how the optimizer might push selections down to reduce intermediate result sizes.",
+        "setup_requirements": [
+          "Relational algebra notation reference sheet",
+          "Expression tree drawing tool or whiteboard",
+          "PostgreSQL for verifying SQL equivalents of relational algebra expressions"
+        ],
+        "review": [
+          {
+            "key": "Selection Pushdown",
+            "value": "Moving selection (filtering) as close to the base tables as possible reduces the size of intermediate results, making joins faster; this is the single most important query optimization rule and is applied by every commercial database optimizer"
+          },
+          {
+            "key": "Join vs Cartesian Product",
+            "value": "A join is a Cartesian product followed by selection; a Cartesian product of two 1000-row tables produces 1,000,000 rows, but a join on a key typically produces far fewer. Never write a Cartesian product in SQL without a WHERE clause"
+          },
+          {
+            "key": "Closure Property",
+            "value": "Every relational algebra operation takes relations as input and produces a relation as output (closure); this enables composition and is why SQL subqueries work: the result of a subquery is a relation that can be used anywhere a table can"
+          },
+          {
+            "key": "Theoretical Completeness",
+            "value": "The six fundamental operations can express any query that depends on the data content of relations; SQL extends this with aggregation, sorting, and recursive queries that go beyond basic relational algebra"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 4,
+      "topic": "SQL Fundamentals",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Write DDL statements (CREATE TABLE, ALTER TABLE, DROP TABLE) with appropriate data types, constraints, and default values",
+        "Write DML statements: INSERT, UPDATE, DELETE with WHERE clauses and subqueries",
+        "Write SELECT queries using WHERE, ORDER BY, LIMIT, DISTINCT, and column aliasing",
+        "Use aggregate functions (COUNT, SUM, AVG, MIN, MAX) with GROUP BY and HAVING"
+      ],
+      "readings": [
+        "Silberschatz, Database System Concepts, Ch. 3 - Introduction to SQL",
+        "PostgreSQL Documentation: Data Types, CREATE TABLE, SELECT syntax",
+        "Ben Forta, SQL in 10 Minutes (4th ed.), Lessons 1-10"
+      ],
+      "lecture_notes": {
+        "introduction": "SQL is the universal language for relational databases, spoken by PostgreSQL, MySQL, Oracle, SQL Server, SQLite, and every other relational DBMS. It has been the standard since the 1970s and will remain relevant for your entire career because it solves a fundamental problem: how to describe precisely which data you want from a structured dataset. This session covers the two major components of SQL: the Data Definition Language (DDL) for creating and modifying database structures, and the Data Manipulation Language (DML) for inserting, querying, updating, and deleting data. Mastering the SELECT statement is the foundation of everything else: every report, every dashboard, every analytics query, and every API endpoint ultimately runs a SELECT. We start with single-table queries and progressively add complexity: filtering with WHERE, sorting with ORDER BY, limiting results, eliminating duplicates, computing aggregates, and grouping data. Each new clause is a tool in your toolkit, and by the end of this session you will be able to answer most single-table data questions that arise in practice. The distinction between WHERE (filters individual rows before grouping) and HAVING (filters groups after aggregation) is one of the most commonly tested and most commonly confused concepts in database education.",
+        "key_concepts": [
+          "CREATE TABLE: defines a new table with columns, data types (INTEGER, VARCHAR, NUMERIC, DATE, BOOLEAN, TEXT), and constraints (PRIMARY KEY, FOREIGN KEY, NOT NULL, UNIQUE, CHECK, DEFAULT)",
+          "ALTER TABLE: adds, removes, or modifies columns and constraints on an existing table; essential for schema evolution in production systems",
+          "INSERT INTO: adds new rows; can insert explicit values, use DEFAULT, or insert from a subquery (INSERT INTO ... SELECT)",
+          "UPDATE: modifies existing rows matching a WHERE condition; without WHERE, updates ALL rows (a common and dangerous mistake)",
+          "DELETE FROM: removes rows matching a WHERE condition; without WHERE, deletes ALL rows; TRUNCATE is faster for removing all rows but cannot be rolled back in some DBMS",
+          "SELECT: retrieves data; clauses execute in a specific logical order: FROM (source tables) -> WHERE (row filter) -> GROUP BY (grouping) -> HAVING (group filter) -> SELECT (column selection and expressions) -> ORDER BY (sorting) -> LIMIT (row count limit)",
+          "Aggregate functions: COUNT(*) counts all rows, COUNT(column) counts non-NULL values, SUM/AVG/MIN/MAX operate on numeric columns; aggregates collapse multiple rows into a single result",
+          "GROUP BY: partitions rows into groups based on one or more columns; each group is reduced to a single output row by aggregate functions; every non-aggregated column in SELECT must appear in GROUP BY",
+          "HAVING: filters groups after aggregation; used for conditions involving aggregate results (e.g., HAVING COUNT(*) > 5); cannot be replaced by WHERE because aggregate values do not exist at the WHERE stage",
+          "NULL semantics: NULL means unknown, not zero or empty string; any comparison with NULL yields NULL (not true or false); use IS NULL/IS NOT NULL for NULL checks; COALESCE(a, b) returns the first non-NULL argument"
+        ],
+        "demonstration": "Build a course enrollment analytics dashboard step by step using the university database. (1) CREATE TABLE with proper constraints: a new 'grades' table with student_id FK, course_id FK, semester, letter_grade with CHECK constraint, and numeric_grade. (2) INSERT sample data using INSERT INTO ... SELECT to generate enrollment records. (3) Write progressively complex queries: total enrollments per department (GROUP BY with COUNT), average GPA by major for students with at least 30 credits (WHERE, GROUP BY, HAVING), top 5 courses by enrollment (ORDER BY DESC, LIMIT), and students who have never received a grade below B (subquery with NOT EXISTS).",
+        "setup_requirements": [
+          "PostgreSQL with sample university database",
+          "SQL client (pgAdmin or DBeaver) configured",
+          "SQL quick reference card with syntax patterns"
+        ],
+        "review": [
+          {
+            "key": "WHERE vs HAVING",
+            "value": "WHERE filters individual rows BEFORE grouping and cannot use aggregate functions; HAVING filters groups AFTER aggregation and is the only place to use aggregate conditions. Writing COUNT(*) > 5 in WHERE is a syntax error"
+          },
+          {
+            "key": "SQL Logical Execution Order",
+            "value": "FROM -> WHERE -> GROUP BY -> HAVING -> SELECT -> ORDER BY -> LIMIT; this order explains why column aliases defined in SELECT cannot be used in WHERE (WHERE executes before SELECT) but can be used in ORDER BY"
+          },
+          {
+            "key": "NULL Traps",
+            "value": "WHERE x != 5 does NOT return rows where x is NULL, because NULL != 5 evaluates to NULL (unknown), which is not true; to include NULLs, write WHERE x != 5 OR x IS NULL"
+          },
+          {
+            "key": "UPDATE Without WHERE Danger",
+            "value": "UPDATE employees SET salary = 50000 without a WHERE clause sets EVERY employee's salary to 50000; in production, always verify your WHERE clause with a SELECT first, and use transactions for safety"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 5,
+      "topic": "Advanced SQL: Joins, Subqueries, and Window Functions",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Write INNER JOIN, LEFT/RIGHT/FULL OUTER JOIN, CROSS JOIN, and self-join queries",
+        "Use correlated and uncorrelated subqueries in WHERE, FROM, and SELECT clauses",
+        "Apply EXISTS, IN, ALL, and ANY operators with subqueries",
+        "Write window functions (ROW_NUMBER, RANK, DENSE_RANK, LAG, LEAD, running totals) using OVER and PARTITION BY"
+      ],
+      "readings": [
+        "Silberschatz, Database System Concepts, Ch. 3-4 - Advanced SQL",
+        "PostgreSQL Documentation: Joins Between Tables, Subqueries, Window Functions",
+        "Molinaro, SQL Cookbook (2nd ed.), Ch. 3-5 and Ch. 10 (Window Functions)"
+      ],
+      "lecture_notes": {
+        "introduction": "Real-world queries almost always span multiple tables, because normalization distributes data across related tables. Joins are the mechanism for recombining that data, and understanding which join type to use is essential for getting correct results. An INNER JOIN returns only matching rows, potentially losing data from either side. A LEFT JOIN preserves all rows from one table, filling NULLs where no match exists, which is critical for reports that must include items with no associated records (e.g., products with no sales). Subqueries let you embed one query inside another, enabling questions like 'find students whose GPA is above the average' where the average itself must be computed first. Window functions, introduced in SQL:2003, are perhaps the most powerful and underused feature of SQL: they perform calculations across a set of rows related to the current row without collapsing the result set, enabling running totals, rankings, comparisons with previous/next rows, and moving averages. Mastering these three features, joins, subqueries, and window functions, elevates your SQL from basic CRUD operations to sophisticated analytics capable of replacing many Excel or Python data processing tasks.",
+        "key_concepts": [
+          "INNER JOIN: returns only rows where both tables have matching values on the join condition; rows in either table without a match are excluded",
+          "LEFT OUTER JOIN: returns all rows from the left table plus matching rows from the right; unmatched right-side columns are NULL; essential for 'find all X including those with no Y' queries",
+          "RIGHT OUTER JOIN: symmetric to LEFT JOIN, preserving all right table rows; less commonly used since reordering tables with LEFT JOIN is equivalent",
+          "FULL OUTER JOIN: preserves all rows from both tables; unmatched rows on either side have NULLs; useful for reconciliation queries comparing two datasets",
+          "CROSS JOIN: produces the Cartesian product of two tables; every row in R paired with every row in S; used for generating combinations (e.g., all date-product pairs)",
+          "Self-join: joining a table to itself using different aliases; used for hierarchical data (employees and managers), graph relationships, or comparing rows within the same table",
+          "Uncorrelated subquery: a nested SELECT that can execute independently of the outer query; used with IN, comparison operators, or in FROM clause (derived table)",
+          "Correlated subquery: references a column from the outer query, causing re-evaluation for each outer row; used with EXISTS for existence checks; often can be rewritten as a JOIN for better performance",
+          "Window functions: OVER clause defines the window (partition and ordering); ROW_NUMBER assigns sequential numbers within partitions, RANK/DENSE_RANK handle ties, LAG/LEAD access previous/next rows, SUM/AVG OVER computes running or sliding aggregates",
+          "Common Table Expressions (CTEs): WITH clause defines temporary named result sets for readability and reuse within a single query; recursive CTEs enable hierarchical and graph queries"
+        ],
+        "demonstration": "Build a comprehensive student academic report. (1) LEFT JOIN students to enrollments to include students with no courses: SELECT s.name, COUNT(e.course_id) FROM students s LEFT JOIN enrollments e ON s.id = e.student_id GROUP BY s.id, s.name. (2) Correlated subquery to find students above their department average GPA: SELECT name FROM students s WHERE gpa > (SELECT AVG(gpa) FROM students WHERE department = s.department). (3) Window function to rank students by GPA within each department: SELECT name, department, gpa, RANK() OVER (PARTITION BY department ORDER BY gpa DESC) AS dept_rank FROM students. (4) Running cumulative GPA using SUM OVER with frame clause: SELECT semester, course, grade, AVG(grade) OVER (ORDER BY semester ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS cumulative_avg.",
+        "setup_requirements": [
+          "PostgreSQL with sample university database (at least 200 students, 50 courses, 1000 enrollments)",
+          "SQL client with query plan visualization",
+          "Window function syntax reference card"
+        ],
+        "review": [
+          {
+            "key": "LEFT JOIN vs INNER JOIN",
+            "value": "INNER JOIN returns only matching rows; LEFT JOIN returns ALL left-table rows with NULLs for non-matches. A report of 'all customers and their orders' using INNER JOIN silently drops customers with no orders, which is usually a bug"
+          },
+          {
+            "key": "Correlated Subquery Performance",
+            "value": "A correlated subquery re-executes for each outer row, giving O(N*M) behavior; rewriting as a JOIN with pre-aggregation often reduces this to O(N+M), yielding orders-of-magnitude speedup on large tables"
+          },
+          {
+            "key": "Window Function vs GROUP BY",
+            "value": "GROUP BY collapses rows into groups (one output row per group); window functions compute across related rows WITHOUT collapsing, preserving all original rows. Use GROUP BY for summary reports, window functions for detail reports with context"
+          },
+          {
+            "key": "CTE Readability",
+            "value": "CTEs (WITH clauses) break complex queries into named, readable steps; the optimizer may or may not materialize them. They are essential for self-documenting SQL in production codebases"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Normalization: 1NF through BCNF",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Identify functional dependencies in a relation and derive the closure of an attribute set",
+        "Determine candidate keys from a set of functional dependencies",
+        "Test whether a relation satisfies 1NF, 2NF, 3NF, or BCNF",
+        "Decompose relations into BCNF using the decomposition algorithm while preserving lossless joins"
+      ],
+      "readings": [
+        "Silberschatz, Database System Concepts, Ch. 7 - Relational Database Design",
+        "Elmasri & Navathe, Fundamentals of Database Systems, Ch. 15 - Normalization",
+        "Date, An Introduction to Database Systems, Ch. 12 - Further Normalization"
+      ],
+      "lecture_notes": {
+        "introduction": "A poorly designed database wastes storage, complicates queries, and worst of all, creates data anomalies: situations where inserting, updating, or deleting data leads to inconsistencies. Normalization is the systematic process for organizing database tables to eliminate redundancy and ensure data integrity. The theory of normalization, developed by Codd and others in the 1970s, is one of the most elegant and practical applications of mathematical logic in computer science. It provides a clear, step-by-step procedure for analyzing a table's structure and decomposing it into smaller, well-structured tables that avoid anomalies. The process is guided by functional dependencies: statements about which attributes determine other attributes. If knowing a student's ID uniquely determines their name, we write ID -> name. When a non-key attribute depends on only part of a composite key (partial dependency) or depends on another non-key attribute (transitive dependency), the table has redundancy that normalization eliminates. The normal forms, from 1NF through BCNF and beyond, represent progressively stricter criteria for table design. In practice, most databases should be normalized to at least 3NF, with strategic denormalization for performance-critical read patterns justified by measurement, not assumption.",
+        "key_concepts": [
+          "Functional dependency (FD): X -> Y means if two tuples agree on all attributes in X, they must agree on all attributes in Y; X functionally determines Y. Example: student_id -> student_name",
+          "Attribute closure: given a set of FDs, the closure of attribute set X (denoted X+) is the set of all attributes functionally determined by X; used to find candidate keys and test normalization levels",
+          "Candidate key: a minimal set of attributes whose closure is the entire relation; minimal means no proper subset is also a superkey. A relation may have multiple candidate keys",
+          "1NF (First Normal Form): all attribute values are atomic (no repeating groups, no multi-valued attributes, no nested tables); the baseline requirement for a relation",
+          "2NF (Second Normal Form): in 1NF, plus no non-prime attribute is partially dependent on any candidate key; violations only occur with composite candidate keys where a non-key attribute depends on just part of the key",
+          "3NF (Third Normal Form): in 2NF, plus no non-prime attribute is transitively dependent on any candidate key; equivalently, for every non-trivial FD X -> A, either X is a superkey or A is part of a candidate key",
+          "BCNF (Boyce-Codd Normal Form): for every non-trivial FD X -> Y, X must be a superkey; strictly stronger than 3NF, eliminating all redundancy from functional dependencies",
+          "Anomalies: update anomaly (changing one copy of a fact but not others), insertion anomaly (cannot insert a fact without unrelated data), deletion anomaly (deleting the last relationship removes an entity's data entirely)",
+          "Lossless-join decomposition: the decomposition must allow reconstructing the original relation exactly using natural joins; BCNF decomposition is always lossless-join but may not preserve all functional dependencies",
+          "Dependency preservation: the decomposition should allow checking all original FDs using only single-table checks; 3NF decomposition is always both lossless-join and dependency-preserving, making it the practical choice when BCNF sacrifices dependency preservation"
+        ],
+        "demonstration": "Take a denormalized 'Course Offerings' table with attributes {course_id, course_name, instructor_id, instructor_name, instructor_office, semester, room, capacity}. Identify FDs: course_id -> course_name; instructor_id -> instructor_name, instructor_office; (course_id, semester) -> instructor_id, room; room -> capacity. Identify the candidate key: {course_id, semester}. Check normal forms: instructor_name depends on instructor_id (transitive dependency through instructor_id), so not 3NF. Decompose to BCNF step by step, producing four tables: Courses(course_id, course_name), Instructors(instructor_id, instructor_name, instructor_office), Rooms(room, capacity), CourseOfferings(course_id, semester, instructor_id, room). Verify each table is in BCNF and the join is lossless.",
+        "setup_requirements": [
+          "Normalization worksheet with FD analysis template",
+          "ER diagramming tool for visualizing decomposition results",
+          "PostgreSQL for implementing and testing decomposed schemas"
+        ],
+        "review": [
+          {
+            "key": "The Normalization Mantra",
+            "value": "Every non-key attribute depends on the key (1NF), the whole key (2NF), and nothing but the key (3NF); this informal summary captures the essence of normalization through third normal form"
+          },
+          {
+            "key": "3NF vs BCNF Trade-off",
+            "value": "BCNF eliminates all functional dependency redundancy but may lose the ability to check some FDs with single-table constraints; 3NF always preserves dependencies but allows slight redundancy when a non-trivial FD's determinant is not a superkey but the dependent is a prime attribute"
+          },
+          {
+            "key": "Practical Normalization",
+            "value": "Normalize to 3NF or BCNF first, then selectively denormalize for measured performance needs; premature denormalization based on anticipated performance problems creates real data integrity problems to solve hypothetical speed problems"
+          },
+          {
+            "key": "Closure Algorithm Importance",
+            "value": "Computing attribute closures is the mechanical tool that makes normalization rigorous: to check if X is a candidate key, compute X+ and verify it contains all attributes. To check 3NF, verify every FD's determinant is a superkey or every dependent attribute is prime"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Physical Storage and Indexing",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Explain how databases store data on disk: pages, extents, heap files, and sorted files",
+        "Describe B-tree and B+ tree index structures and their O(log n) lookup properties",
+        "Compare hash indexes, bitmap indexes, and GIN/GiST indexes for different workloads",
+        "Create and analyze indexes in PostgreSQL using EXPLAIN to observe their impact"
+      ],
+      "readings": [
+        "Silberschatz, Database System Concepts, Ch. 10-11 - Storage and Indexing",
+        "Ramakrishnan & Gehrke, Database Management Systems, Ch. 8-10",
+        "PostgreSQL Documentation: Index Types, EXPLAIN, and the pg_stat_user_indexes view"
+      ],
+      "lecture_notes": {
+        "introduction": "Everything we have covered so far, ER modeling, normalization, SQL queries, operates at the logical level, describing what data looks like and what we want from it. Now we descend to the physical level: how data is actually stored on disk and how indexes make queries fast. This transition from logical to physical is where database performance is won or lost. A query that scans every row in a 100-million-row table takes minutes. The same query with an appropriate B+ tree index takes milliseconds. The difference is not algorithmic cleverness in the query itself but the physical data structures that support efficient access. The B+ tree is the workhorse of database indexing: a balanced tree where leaf nodes contain pointers to data records and are linked together for efficient range scans. Understanding B+ tree structure explains why equality lookups are O(log n) in disk I/O, why range queries are efficient (sequential leaf scan), and why the tree stays balanced through splits and merges during inserts and deletes. Hash indexes provide O(1) equality lookup but cannot support range queries. Bitmap indexes excel for low-cardinality columns in analytical workloads. Knowing which index type to create, which columns to include, and when NOT to create an index (because write overhead exceeds read benefit) is a core competency for any database practitioner.",
+        "key_concepts": [
+          "Disk storage hierarchy: data lives in pages (typically 8KB in PostgreSQL), pages are grouped in extents, extents form files; the fundamental I/O unit is the page, so minimizing page reads is the goal of physical optimization",
+          "Heap file: unsorted collection of pages; supports fast inserts (append to any page with free space) but requires full table scan for queries without an index",
+          "B+ tree index: balanced tree with high fan-out (hundreds of children per internal node); all data pointers are in leaf nodes, which are linked for range scans; height of 3-4 supports billions of rows with 3-4 disk I/O per lookup",
+          "B+ tree operations: lookup follows root to leaf using binary search at each node; insert may split a full leaf and propagate splits upward; delete may underflow and merge with siblings; all operations are O(log_f n) where f is the fan-out",
+          "Hash index: maps key values through a hash function to buckets; O(1) average lookup for equality; cannot support range queries, ORDER BY, or partial key matching",
+          "Composite index: index on (A, B, C); supports queries on A, on (A, B), and on (A, B, C) but NOT on B alone or C alone; column order matters and must match query filter patterns",
+          "Covering index: includes all columns needed by a query, allowing the query to be answered entirely from the index without accessing the table (index-only scan); dramatically reduces I/O for selective queries",
+          "Index trade-offs: indexes speed up reads but slow down writes (every INSERT/UPDATE/DELETE must also update every affected index); over-indexing wastes storage and write performance",
+          "EXPLAIN ANALYZE: PostgreSQL's tool for showing the query plan (sequential scan, index scan, bitmap scan, nested loop, hash join, merge join) with actual execution times and row counts; the primary tool for diagnosing and optimizing query performance",
+          "Statistics and the query planner: PostgreSQL maintains histograms of column value distributions; the planner uses these to estimate selectivity and choose between index scan and sequential scan; ANALYZE updates these statistics"
+        ],
+        "demonstration": "Create a 500,000-row orders table with random data. Run SELECT * FROM orders WHERE customer_id = 42 and observe a sequential scan taking 200ms via EXPLAIN ANALYZE. Create CREATE INDEX idx_orders_customer ON orders(customer_id) and re-run the query: now an index scan taking 0.5ms. Then run SELECT * FROM orders WHERE order_date BETWEEN '2024-01-01' AND '2024-03-31' ORDER BY order_date: without index, sort + sequential scan; with index on order_date, index scan with no explicit sort needed (the index provides ordering). Show a composite index: CREATE INDEX idx_orders_cust_date ON orders(customer_id, order_date) and demonstrate it serves both WHERE customer_id = 42 and WHERE customer_id = 42 AND order_date > '2024-01-01' efficiently.",
+        "setup_requirements": [
+          "PostgreSQL with large sample dataset (500K+ rows)",
+          "pgAdmin or psql configured for EXPLAIN ANALYZE",
+          "B+ tree structure diagram handout",
+          "Index design decision flowchart"
+        ],
+        "review": [
+          {
+            "key": "B+ Tree Fan-out",
+            "value": "With 8KB pages and 8-byte keys + 8-byte pointers, each internal node holds about 500 children; a 3-level B+ tree indexes 500^3 = 125 million rows with just 3 I/O operations per lookup, making it the ideal structure for database indexes"
+          },
+          {
+            "key": "Composite Index Column Ordering",
+            "value": "For index on (A, B): WHERE A = x AND B = y uses the full index; WHERE A = x uses the index for A only; WHERE B = y CANNOT use the index at all. Always put equality-filtered columns before range-filtered columns"
+          },
+          {
+            "key": "When Not to Index",
+            "value": "Tables under 1000 rows rarely benefit from indexes (sequential scan is fast enough); columns with very low selectivity (e.g., boolean gender on a large table) may not benefit because the index scan reads most pages anyway; write-heavy tables with rarely queried columns should not be indexed"
+          },
+          {
+            "key": "EXPLAIN ANALYZE as Diagnostic Tool",
+            "value": "Always check EXPLAIN ANALYZE before and after adding an index to verify the optimizer actually uses it; sometimes the optimizer correctly chooses a sequential scan over an index scan when selectivity is low"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Query Processing and Optimization",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Describe the stages of query processing: parsing, optimization, and execution",
+        "Explain how the cost-based optimizer estimates query plan costs using statistics and cardinality estimation",
+        "Compare join algorithms: nested loop, sort-merge, and hash join, with their cost formulas",
+        "Interpret PostgreSQL EXPLAIN output to identify performance bottlenecks and choose optimization strategies"
+      ],
+      "readings": [
+        "Silberschatz, Database System Concepts, Ch. 12-13 - Query Processing and Optimization",
+        "Ramakrishnan & Gehrke, Database Management Systems, Ch. 12-14",
+        "PostgreSQL Documentation: Using EXPLAIN, Planner/Optimizer Internals"
+      ],
+      "lecture_notes": {
+        "introduction": "When you submit a SQL query, the database does not simply execute it as written. It transforms your declarative request through a sophisticated optimization pipeline that explores potentially millions of alternative execution plans and selects the one with the lowest estimated cost. This process is the query optimizer, and it is the reason SQL databases can handle complex queries efficiently without requiring programmers to specify access paths manually. The optimizer's job is analogous to a GPS navigation system: you specify the destination (the query result), and the optimizer finds the fastest route (the execution plan) considering current conditions (data statistics, available indexes, memory, and I/O costs). Understanding query optimization is essential for two reasons. First, it enables you to write SQL that the optimizer can handle well, avoiding patterns that defeat optimization. Second, when performance is unsatisfactory, understanding the optimizer lets you diagnose the root cause: missing statistics, suboptimal join order, missing indexes, or inherent query complexity. The three major join algorithms, nested loop, sort-merge, and hash join, each excel in different scenarios, and the optimizer chooses among them based on estimated cardinalities, available indexes, and available memory. After this session, you will be able to read and interpret EXPLAIN ANALYZE output, understand why the optimizer chose a particular plan, and take targeted action to improve performance.",
+        "key_concepts": [
+          "Query processing stages: (1) parsing and syntax checking, (2) translation to relational algebra, (3) optimization to find the best execution plan, (4) execution of the chosen plan, (5) result delivery",
+          "Cost-based optimization: the optimizer estimates the cost of each candidate plan in terms of disk I/O, CPU time, and memory usage, then selects the cheapest; cost estimation relies on statistics about table sizes, column value distributions, and index availability",
+          "Cardinality estimation: predicting the number of rows each operation will produce; the optimizer uses histograms, most-common-values lists, and correlation statistics; estimation errors cascade through the plan and are the most common cause of poor plans",
+          "Nested loop join: for each row in the outer table, scan the inner table for matches; cost O(N*M) without index, O(N*log M) with index on inner; best when one table is small or an index exists on the join key",
+          "Sort-merge join: sort both tables on the join key, then merge in a single pass; cost O(N log N + M log M) for sorting plus O(N+M) for merging; best when both tables are large and result is needed in sorted order",
+          "Hash join: build a hash table on the smaller table, probe with the larger table; cost O(N+M) if the hash table fits in memory; best for large equi-joins without useful indexes",
+          "Join ordering: for N tables, there are O(N!) possible join orders; the optimizer uses dynamic programming (for small N) or greedy heuristics (for large N) to find the optimal order",
+          "Predicate pushdown: moving WHERE conditions as close to the base tables as possible, reducing the rows that flow into joins; the most impactful optimization rule",
+          "Materialized views and query rewriting: pre-computed results of expensive queries that the optimizer can substitute for the original query; useful for dashboards and reports with complex aggregations",
+          "PostgreSQL EXPLAIN output: nodes show operations (Seq Scan, Index Scan, Hash Join, Sort), each with estimated rows, width, cost range, and actual execution time; understanding this output is the primary tool for performance diagnosis"
+        ],
+        "demonstration": "Start with a 3-table join query: SELECT s.name, c.title, g.grade FROM students s JOIN enrollments e ON s.id = e.student_id JOIN courses c ON e.course_id = c.id WHERE s.department = 'CS' AND g.grade > 3.0. Run EXPLAIN ANALYZE and read the plan: observe nested loop vs hash join selection, filter application points, and row estimates vs actuals. Then deliberately create a scenario where cardinality estimation fails: a correlated column pair where the optimizer assumes independence and overestimates. Show how creating a multi-column statistics object (CREATE STATISTICS) corrects the estimate and changes the plan. Compare nested loop, sort-merge, and hash join on the same 2-table join by setting enable_hashjoin, enable_mergejoin, and enable_nestloop GUC variables, observing execution time differences.",
+        "setup_requirements": [
+          "PostgreSQL with university database (enough data for meaningful optimization differences)",
+          "psql with EXPLAIN ANALYZE configured",
+          "Query plan visualization tool (explain.depesz.com or pgAdmin graphical EXPLAIN)"
+        ],
+        "review": [
+          {
+            "key": "Optimizer is Not Magic",
+            "value": "The optimizer makes decisions based on statistics that may be stale or inaccurate; running ANALYZE after significant data changes ensures the optimizer has current information. A bad plan due to stale statistics is the most common performance problem"
+          },
+          {
+            "key": "Join Algorithm Selection",
+            "value": "Nested loop is best when one side is very small or an index exists; hash join is best for large equi-joins fitting in memory; sort-merge is best when sort order is needed anyway. The optimizer chooses based on estimated costs, not fixed rules"
+          },
+          {
+            "key": "Cardinality Estimation Cascading",
+            "value": "If the optimizer estimates 100 rows but the actual result is 100,000, every subsequent operation in the plan is sized incorrectly; this is why a single bad estimate can make an entire query plan catastrophically slow"
+          },
+          {
+            "key": "Reading EXPLAIN",
+            "value": "Focus on nodes where estimated rows diverge significantly from actual rows (estimate error), nodes with high 'actual time' relative to 'rows' (per-row cost too high), and sequential scans on large tables (missing index opportunity)"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "Transactions and Concurrency Control",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Define ACID properties and explain why each is necessary for reliable data management",
+        "Identify concurrency anomalies: dirty read, non-repeatable read, phantom read, and write skew",
+        "Explain how each SQL isolation level prevents specific anomalies and its performance trade-offs",
+        "Understand locking protocols: shared vs exclusive locks, two-phase locking, and deadlock detection"
+      ],
+      "readings": [
+        "Silberschatz, Database System Concepts, Ch. 14-15 - Transactions and Concurrency Control",
+        "Ramakrishnan & Gehrke, Database Management Systems, Ch. 16-17",
+        "PostgreSQL Documentation: Transaction Isolation, Explicit Locking"
+      ],
+      "lecture_notes": {
+        "introduction": "Databases serve many users simultaneously, and this concurrency is both essential for performance and dangerous for correctness. Without proper controls, concurrent transactions can interfere with each other in subtle ways: one transaction reads data that another is in the process of modifying (dirty read), two transactions read the same row and then both try to update it based on the old value (lost update), or a transaction reads a set of rows, then another transaction adds or removes rows that match the criteria (phantom read). The ACID properties define what correct transaction behavior means: Atomicity (all or nothing), Consistency (transactions move the database from one valid state to another), Isolation (concurrent transactions cannot interfere), and Durability (committed changes survive crashes). Implementing these guarantees requires concurrency control mechanisms, primarily locking and multi-version concurrency control (MVCC). The challenge is maximizing concurrency (allowing as many transactions to run simultaneously as possible) while maintaining correctness (preventing all anomalies). SQL provides four isolation levels that trade off between these goals: READ UNCOMMITTED offers maximum concurrency but allows dirty reads, SERIALIZABLE guarantees perfect isolation but may reject transactions. PostgreSQL's default, READ COMMITTED, is the sweet spot for most applications, preventing dirty reads while allowing non-repeatable reads. Understanding these trade-offs is essential for building applications that are both correct and performant.",
+        "key_concepts": [
+          "Atomicity: a transaction is all or nothing; if any part fails, all changes are rolled back. Implemented via undo logs that record previous values",
+          "Consistency: transactions must transform the database from one valid state to another, respecting all constraints (primary keys, foreign keys, check constraints, triggers)",
+          "Isolation: concurrent transactions must not see each other's intermediate states; the result must be equivalent to some serial (one-at-a-time) execution. Implemented via locking or MVCC",
+          "Durability: once a transaction commits, its changes survive any subsequent crash. Implemented via write-ahead logging (WAL): changes are recorded in a persistent log before being applied to data files",
+          "Dirty read: transaction T1 reads a value written by T2 before T2 commits; if T2 rolls back, T1 has read data that never existed",
+          "Non-repeatable read: T1 reads a row, T2 modifies or deletes that row and commits, T1 re-reads and gets a different result",
+          "Phantom read: T1 reads a set of rows matching a condition, T2 inserts or deletes rows matching that condition and commits, T1 re-executes the query and gets different rows",
+          "Isolation levels: READ UNCOMMITTED (allows dirty reads), READ COMMITTED (prevents dirty reads), REPEATABLE READ (prevents non-repeatable reads), SERIALIZABLE (prevents all anomalies including phantoms)",
+          "Two-phase locking (2PL): transactions acquire locks in a growing phase and release them in a shrinking phase; strict 2PL holds all locks until commit, guaranteeing serializability but potentially causing deadlocks",
+          "MVCC (Multi-Version Concurrency Control): each transaction sees a snapshot of the database at its start time; writers don't block readers and readers don't block writers; PostgreSQL's primary concurrency mechanism"
+        ],
+        "demonstration": "Open two psql terminal sessions. In session A: BEGIN; UPDATE accounts SET balance = balance - 100 WHERE id = 1; (do not commit). In session B: SELECT balance FROM accounts WHERE id = 1; This shows READ COMMITTED behavior: session B sees the old value because A has not committed. If we SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED (note: PostgreSQL treats this as READ COMMITTED), session B still sees the old value. Now commit in session A, and session B's next SELECT sees the new value. Next, demonstrate a deadlock: session A locks row 1, session B locks row 2, then A tries to lock row 2 (waits) and B tries to lock row 1 (PostgreSQL detects the deadlock and kills one transaction with ERROR: deadlock detected).",
+        "setup_requirements": [
+          "Two terminal windows with psql sessions to the same PostgreSQL database",
+          "Accounts table with sample data for transaction experiments",
+          "Isolation level comparison chart handout"
+        ],
+        "review": [
+          {
+            "key": "READ COMMITTED as Default",
+            "value": "READ COMMITTED prevents dirty reads and is sufficient for most web applications; it allows non-repeatable reads, which matters only if a transaction reads the same row twice and expects the same result both times"
+          },
+          {
+            "key": "SERIALIZABLE for Critical Operations",
+            "value": "Financial calculations, inventory management, and booking systems often need SERIALIZABLE to prevent anomalies like double-booking; the trade-off is that some transactions may be aborted and must be retried by the application"
+          },
+          {
+            "key": "MVCC Advantage",
+            "value": "MVCC lets readers see a consistent snapshot without acquiring locks, so a long-running reporting query never blocks short transaction writers; this is why PostgreSQL performs well under mixed read-write workloads"
+          },
+          {
+            "key": "Deadlock Prevention Strategy",
+            "value": "The most practical deadlock prevention is consistent lock ordering: all transactions that need to lock rows 1 and 2 always lock row 1 first. PostgreSQL also detects deadlocks automatically and aborts one transaction"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "Recovery and Backup Systems",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Explain write-ahead logging (WAL) and its role in crash recovery",
+        "Describe the ARIES recovery algorithm's three phases: analysis, redo, and undo",
+        "Design a backup strategy using full, incremental, and point-in-time recovery techniques",
+        "Understand checkpointing and its impact on recovery time"
+      ],
+      "readings": [
+        "Silberschatz, Database System Concepts, Ch. 16 - Recovery System",
+        "Ramakrishnan & Gehrke, Database Management Systems, Ch. 18 - Crash Recovery",
+        "PostgreSQL Documentation: WAL Configuration, Continuous Archiving and Point-in-Time Recovery"
+      ],
+      "lecture_notes": {
+        "introduction": "Databases must survive crashes. Power failures, hardware faults, operating system panics, and even accidentally killing the database process must not result in lost committed transactions or corrupted data. The write-ahead logging (WAL) protocol is the mechanism that makes this possible. The fundamental rule is simple: before any change to a data page is written to disk, the log record describing that change must be written to the log on disk first. This ensures that after a crash, the database can replay the log to reconstruct any committed changes that had not yet been flushed to data files (redo), and can reverse any uncommitted changes that had been partially written (undo). The ARIES recovery algorithm, developed at IBM, is the standard approach used by PostgreSQL, Oracle, SQL Server, and other major databases. Beyond crash recovery, a comprehensive data protection strategy requires regular backups and the ability to restore to any point in time. A complete backup taken monthly combined with continuous WAL archiving allows point-in-time recovery: restoring the database to its exact state at any second in the past. This capability is essential for recovering from human errors (someone accidentally dropped a table), data corruption, and disaster scenarios. Understanding recovery systems is critical because the consequences of data loss are severe: financial loss, legal liability, and irreparable damage to user trust.",
+        "key_concepts": [
+          "Write-ahead logging (WAL) protocol: every modification is first recorded in a sequential log on persistent storage before the corresponding data page is modified; the log record includes before-image (old value) and after-image (new value)",
+          "Log records: each record contains a log sequence number (LSN), transaction ID, page ID, offset, before-image, and after-image; the LSN provides a total order on all modifications",
+          "Steal/no-force policy: 'steal' means dirty pages can be written to disk before the transaction commits (requiring undo on abort); 'no-force' means dirty pages need not be written at commit (requiring redo on crash). This is the most efficient policy and is used by all major DBMS",
+          "ARIES recovery phases: (1) Analysis: scan the log forward from the last checkpoint to determine which transactions were active at crash time and which pages may be dirty; (2) Redo: replay all logged changes from the earliest unwritten change forward, restoring the database to its exact pre-crash state; (3) Undo: roll back all transactions that were active at crash time but had not committed",
+          "Checkpointing: periodically writing dirty pages to disk and recording a checkpoint in the log; reduces recovery time by limiting how far back the redo phase must scan; fuzzy checkpointing allows the database to continue serving requests during the checkpoint",
+          "Full backup: copies the entire database; provides a complete restore point but is time-consuming and storage-intensive for large databases",
+          "Incremental backup: copies only data changed since the last backup; faster and smaller but requires the full backup plus all incrementals for a complete restore",
+          "Point-in-time recovery (PITR): restoring a base backup and then replaying WAL segments up to a specified timestamp; allows recovery to any second in the past, essential for undoing human errors",
+          "Replication as disaster recovery: streaming replication sends WAL records to standby servers in real-time; if the primary fails, a standby can be promoted to take over, typically with seconds of data loss at most",
+          "Recovery time objective (RTO) and recovery point objective (RPO): RTO is the maximum acceptable downtime, RPO is the maximum acceptable data loss; these business requirements drive backup strategy decisions"
+        ],
+        "demonstration": "Demonstrate PostgreSQL WAL-based recovery. (1) Insert 10,000 rows in a transaction, commit. (2) Use pg_switch_wal() to force a WAL segment to be archived. (3) Simulate a crash by immediately stopping PostgreSQL with pg_ctl stop -m immediate (equivalent to a power failure). (4) Restart PostgreSQL and observe the recovery log: 'redo starts', 'redo done', 'database system is ready'. (5) Verify all 10,000 rows are present (durability). Then demonstrate point-in-time recovery: take a base backup, insert data, note the timestamp, insert more data, drop a table 'accidentally', then restore the base backup and replay WAL up to the timestamp just before the DROP, recovering the table.",
+        "setup_requirements": [
+          "PostgreSQL with WAL archiving configured (archive_mode = on)",
+          "Separate directory for WAL archives and base backups",
+          "pg_basebackup tool available",
+          "Recovery configuration reference handout"
+        ],
+        "review": [
+          {
+            "key": "WAL as Single Source of Truth",
+            "value": "The WAL log is the authoritative record of all database changes; data files are effectively a cache that can be reconstructed from the WAL. This is why WAL archiving to remote storage is the foundation of disaster recovery"
+          },
+          {
+            "key": "Checkpoint Trade-off",
+            "value": "More frequent checkpoints reduce recovery time (less log to replay) but increase I/O during normal operation (more dirty pages flushed); PostgreSQL's checkpoint_timeout (default 5 minutes) balances these concerns"
+          },
+          {
+            "key": "PITR Value",
+            "value": "Point-in-time recovery is the only defense against human error (accidental DROP TABLE, bad UPDATE without WHERE); regular backups alone only restore to backup time, not to the moment before the error"
+          },
+          {
+            "key": "Test Your Backups",
+            "value": "A backup that has never been tested is not a backup; regularly practice restoring from backups in a test environment to verify they are complete and the procedure is documented and reliable"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "NoSQL Databases",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Explain the CAP theorem and how it constrains distributed database design",
+        "Compare the four major NoSQL data models: document, key-value, column-family, and graph",
+        "Identify use cases where NoSQL databases offer advantages over relational databases",
+        "Design a data model in MongoDB (document) and Redis (key-value) for a given application"
+      ],
+      "readings": [
+        "Silberschatz, Database System Concepts, Ch. 22 - Big Data",
+        "Sadalage & Fowler, NoSQL Distilled, Ch. 1-5",
+        "MongoDB Documentation: Data Modeling Introduction; Redis Documentation: Data Types"
+      ],
+      "lecture_notes": {
+        "introduction": "For decades, relational databases were the only serious option for data management. Then the internet scaled to billions of users, and some applications discovered that relational databases could not easily distribute across hundreds or thousands of servers while maintaining strong consistency and high availability. The NoSQL movement emerged from this need, starting with Google's Bigtable paper (2006), Amazon's Dynamo paper (2007), and Facebook's Cassandra. The term 'NoSQL' is misleading: it does not mean 'no SQL' but rather 'not only SQL,' acknowledging that different data problems benefit from different data models. Document databases (MongoDB) store flexible JSON-like documents, ideal for content management and catalogs where schemas vary. Key-value stores (Redis, DynamoDB) provide sub-millisecond lookups by key, ideal for caching, session storage, and real-time leaderboards. Column-family stores (Cassandra, HBase) handle massive write throughput across distributed clusters, ideal for IoT sensor data and event logging. Graph databases (Neo4j) model relationships as first-class citizens, ideal for social networks, recommendation engines, and fraud detection. The key insight is that NoSQL databases do not replace relational databases; they complement them. Most production systems use both: a relational database for transactional data with strong consistency requirements, and one or more NoSQL databases for specific workloads where their trade-offs are acceptable.",
+        "key_concepts": [
+          "CAP theorem: a distributed system can provide at most two of three guarantees simultaneously: Consistency (every read returns the most recent write), Availability (every request receives a response), Partition tolerance (the system operates despite network partitions). Since network partitions are inevitable, the real choice is between CP (consistent but sometimes unavailable) and AP (available but sometimes inconsistent)",
+          "Document database (MongoDB): stores JSON/BSON documents in collections; schema-flexible (each document can have different fields); supports rich queries, secondary indexes, and aggregation pipeline; trades ACID transactions (available at document level, multi-document since 4.0) for schema flexibility and horizontal scaling",
+          "Key-value store (Redis, DynamoDB): maps keys to values with O(1) lookup; Redis supports rich data structures (strings, lists, sets, sorted sets, hashes, streams); ideal for caching, session management, rate limiting, and real-time counters",
+          "Column-family store (Cassandra, HBase): tables with rows and columns, but columns can vary per row and are grouped into column families; optimized for high write throughput across distributed nodes; eventual consistency by default",
+          "Graph database (Neo4j): stores nodes and relationships as first-class entities; Cypher query language traverses relationships efficiently; adjacency index makes relationship traversal O(1) per hop, unlike relational JOINs which degrade with data size",
+          "Denormalization in NoSQL: unlike relational databases, NoSQL often stores redundant data intentionally (embedding related data in documents, duplicating across collections) to avoid expensive joins; the trade-off is update complexity and storage",
+          "Horizontal scaling (sharding): distributing data across multiple servers; NoSQL databases are designed for this, using consistent hashing or range-based partitioning; relational databases can shard but it adds significant complexity",
+          "Eventual consistency: after an update, replicas may temporarily return stale data, but eventually all replicas converge to the latest value; acceptable for social media feeds, product catalogs, and analytics but unacceptable for financial transactions",
+          "Polyglot persistence: using different database technologies for different parts of an application based on each component's data model and consistency requirements"
+        ],
+        "demonstration": "Compare implementing a product catalog in PostgreSQL and MongoDB. In PostgreSQL: products table with fixed columns, product_attributes join table for variable attributes, product_reviews table with foreign key. In MongoDB: a single products collection with embedded attributes array and embedded reviews array, allowing each product to have different attributes without schema changes. Show a query for 'all electronics products with screen size > 55 inches and average rating > 4.0' in both SQL and MongoDB's aggregation pipeline. Then demonstrate Redis as a caching layer: cache the PostgreSQL query result in Redis with a 5-minute TTL, showing the latency difference (50ms PostgreSQL query vs 0.1ms Redis GET).",
+        "setup_requirements": [
+          "MongoDB Community Server installed or MongoDB Atlas free tier",
+          "Redis installed locally or Redis Cloud free tier",
+          "MongoDB Compass GUI and redis-cli",
+          "Sample product catalog dataset"
+        ],
+        "review": [
+          {
+            "key": "CAP Theorem in Practice",
+            "value": "PostgreSQL is CP: it prioritizes consistency and will become unavailable rather than serve stale data during a partition. Cassandra is AP: it prioritizes availability and will serve potentially stale data rather than become unavailable. MongoDB is CP by default but configurable"
+          },
+          {
+            "key": "When to Use NoSQL",
+            "value": "Use NoSQL when: schema varies significantly across records (document DB), sub-millisecond latency is required (key-value), write throughput exceeds what a single relational server can handle (column-family), or relationship traversal is the primary operation (graph)"
+          },
+          {
+            "key": "When to Stay Relational",
+            "value": "Stay relational when: data has complex relationships requiring multi-table transactions, strong consistency is non-negotiable (financial systems), the query patterns are diverse and unpredictable, or the data fits on a single server"
+          },
+          {
+            "key": "Denormalization Cost",
+            "value": "Embedding reviews inside product documents makes reading fast (one document fetch) but makes 'find all reviews by user X' expensive (scan every product); the data model must match the primary access patterns"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Distributed Databases",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Explain the motivation for distributing data across multiple servers: scalability, availability, and geographic proximity",
+        "Compare horizontal partitioning (sharding) strategies: hash-based, range-based, and directory-based",
+        "Understand distributed query processing and the challenges of distributed joins",
+        "Describe consensus protocols (two-phase commit, Paxos/Raft) for maintaining consistency across distributed nodes"
+      ],
+      "readings": [
+        "Silberschatz, Database System Concepts, Ch. 19-20 - Distributed Databases",
+        "Kleppmann, Designing Data-Intensive Applications, Ch. 5-9",
+        "Google Spanner paper (2012): Globally distributed, linearizable database"
+      ],
+      "lecture_notes": {
+        "introduction": "When a single database server cannot handle the load, the data must be distributed across multiple machines. This is the reality for any application serving millions of users: Facebook stores trillions of rows across thousands of servers, Google processes petabytes of data daily across global data centers, and even mid-size SaaS companies routinely outgrow single-server capacity. Distributing a database introduces fundamental challenges that do not exist on a single server. A single server can use locks and local transactions for consistency; a distributed system must coordinate across unreliable networks where messages can be delayed, reordered, or lost. Partitioning (sharding) data across servers improves throughput and capacity but means queries spanning multiple partitions are slower and more complex. Replicating data across servers improves availability and read throughput but creates the challenge of keeping replicas consistent. The two-phase commit protocol guarantees that distributed transactions either commit on all nodes or abort on all, but it blocks if the coordinator fails. Modern systems like Google Spanner use Paxos/Raft consensus and GPS-synchronized clocks to achieve both global distribution and strong consistency, but at significant complexity cost. This session covers the fundamental concepts and trade-offs of distributed databases, preparing you to make informed decisions about when and how to distribute data.",
+        "key_concepts": [
+          "Motivation for distribution: scalability (more data and queries than one server can handle), availability (survive server and data center failures), latency (serve users from geographically nearby replicas)",
+          "Partitioning (sharding): splitting data across servers so each server holds a subset; hash partitioning distributes evenly but makes range queries expensive; range partitioning supports range queries but can create hot spots",
+          "Replication: copying data to multiple servers; leader-follower replication (one writer, many readers), multi-leader (multiple writers for geographic distribution), and leaderless (quorum-based reads and writes like Dynamo)",
+          "Consistency models: linearizability (strongest, behaves as if single copy), sequential consistency (all operations appear in some serial order), eventual consistency (replicas converge eventually, weakest guarantee)",
+          "Two-phase commit (2PC): coordinator sends PREPARE to all participants, waits for votes, sends COMMIT or ABORT. Guarantees atomicity but blocks if coordinator fails while participants hold locks; not fault-tolerant",
+          "Paxos and Raft consensus: fault-tolerant protocols that allow a distributed system to agree on a value even if some nodes fail; used by Spanner, CockroachDB, and etcd for distributed transactions and leader election",
+          "Distributed joins: when data needed for a join spans multiple partitions, rows must be transferred over the network; strategies include broadcast join (send small table to all nodes) and repartition join (reshuffle both tables by join key)",
+          "Distributed transaction challenges: network partitions can split the cluster; clock skew between servers makes ordering events difficult; the CAP theorem limits what guarantees are possible during partitions",
+          "CockroachDB and Spanner: NewSQL databases that provide the SQL interface and ACID transactions of relational databases with the horizontal scalability of NoSQL, using Raft consensus and distributed transactions",
+          "Shard key selection: the most critical distributed database design decision; a good shard key distributes load evenly, keeps related data co-located (to minimize cross-shard queries), and has high cardinality"
+        ],
+        "demonstration": "Set up a conceptual sharding scenario for a social media application with users, posts, and follows tables. Discuss shard key options: (1) shard by user_id: user profile and posts are co-located (good), but queries for a user's timeline (posts by people they follow) span many shards (bad); (2) shard by geographic region: reduces latency for local users but creates hot spots in popular regions; (3) hash-based shard on user_id: even distribution but range queries on user_id are impossible. Then demonstrate a distributed transaction scenario: transferring money between accounts on different shards requires 2PC. Show what happens when the coordinator crashes after sending PREPARE but before sending COMMIT (participants hold locks indefinitely until coordinator recovers).",
+        "setup_requirements": [
+          "Whiteboard for diagramming distributed architectures",
+          "Sharding strategy comparison table handout",
+          "2PC and Raft protocol sequence diagram references",
+          "CockroachDB single-node demo (optional, for hands-on)"
+        ],
+        "review": [
+          {
+            "key": "Shard Key is Destiny",
+            "value": "Once you choose a shard key, changing it requires migrating all data; a bad shard key (e.g., timestamp for append-only data) creates hot spots where one shard handles most traffic while others are idle"
+          },
+          {
+            "key": "Replication Lag",
+            "value": "In leader-follower replication, reads from followers may return stale data; this is acceptable for many read-heavy workloads (product catalog, social media feed) but unacceptable for read-your-own-writes scenarios (user profile update)"
+          },
+          {
+            "key": "Cross-Shard Queries Are Expensive",
+            "value": "Any query that cannot be served by a single shard requires coordination across the network, adding latency and reducing throughput; data modeling for distributed databases must prioritize co-locating data that is queried together"
+          },
+          {
+            "key": "NewSQL Emergence",
+            "value": "CockroachDB, Spanner, YugabyteDB prove that strong consistency and horizontal scalability can coexist, but at the cost of higher per-query latency (consensus overhead) and operational complexity compared to single-server PostgreSQL"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "Database Security and Access Control",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Implement role-based access control using SQL GRANT and REVOKE statements",
+        "Identify and prevent SQL injection vulnerabilities using parameterized queries",
+        "Explain encryption at rest and in transit for database security",
+        "Design an audit logging strategy for compliance and forensic analysis"
+      ],
+      "readings": [
+        "Silberschatz, Database System Concepts, Ch. 9 - Application Design and Development (security sections)",
+        "PostgreSQL Documentation: Role-Based Access Control, Row-Level Security, SSL/TLS",
+        "OWASP: SQL Injection Prevention Cheat Sheet"
+      ],
+      "lecture_notes": {
+        "introduction": "Database security is not optional. Databases contain the most valuable and sensitive data in any organization: customer personal information, financial records, medical histories, and intellectual property. A single breach can cost millions in regulatory fines (GDPR fines can reach 4% of global revenue), destroy customer trust, and create legal liability for years. Database security operates at multiple layers. Authentication verifies who is connecting (passwords, certificates, SSO integration). Authorization controls what authenticated users can do (role-based access control, row-level security). SQL injection prevention ensures that malicious input cannot alter query meaning. Encryption protects data both at rest (on disk) and in transit (on the network). Auditing records who did what and when, providing accountability and forensic capability. Each layer addresses a different threat: authentication prevents unauthorized access, authorization limits damage from compromised accounts, SQL injection prevention blocks the most common application-level attack vector, encryption protects against physical theft and network eavesdropping, and auditing enables detection and investigation of security incidents. Neglecting any layer creates a vulnerability that attackers will eventually exploit.",
+        "key_concepts": [
+          "Authentication: verifying identity before allowing database access; methods include password (md5 or scram-sha-256 in PostgreSQL), certificate-based (client TLS certificates), LDAP/Kerberos integration, and connection filtering (pg_hba.conf)",
+          "Role-based access control (RBAC): create roles representing job functions (analyst, developer, admin), grant specific privileges to roles, assign users to roles; GRANT SELECT ON table TO role; REVOKE DELETE ON table FROM role",
+          "Principle of least privilege: every user and application should have only the minimum privileges necessary; a reporting application needs SELECT only, not INSERT/UPDATE/DELETE; a web application should connect as a restricted role, not as superuser",
+          "Row-level security (RLS): PostgreSQL policies that filter rows based on the current user; CREATE POLICY on patients FOR SELECT USING (doctor_id = current_user_id); ensures doctors can only see their own patients without application-level filtering",
+          "SQL injection: the most common database attack; occurs when user input is concatenated into SQL strings: query = 'SELECT * FROM users WHERE name = ' + user_input. If user_input is \"'; DROP TABLE users; --\", the table is dropped. Prevented by using parameterized queries (prepared statements) which separate code from data",
+          "Parameterized queries: query = 'SELECT * FROM users WHERE name = $1', params = [user_input]; the database treats the entire parameter as a literal value, making injection impossible regardless of input content",
+          "Encryption at rest: encrypting data files on disk using Transparent Data Encryption (TDE) or filesystem-level encryption (LUKS, BitLocker); protects against physical theft of drives or unauthorized file access",
+          "Encryption in transit: TLS/SSL between client and database server; prevents network eavesdropping and man-in-the-middle attacks; configured via ssl = on in PostgreSQL and requiring sslmode = verify-full on the client",
+          "Audit logging: recording all data access and modification events; PostgreSQL's pgaudit extension logs every SQL statement with the executing role, timestamp, and affected objects; essential for compliance (SOX, HIPAA, PCI-DSS) and incident investigation",
+          "Data masking and anonymization: showing partial data (e.g., credit card last 4 digits) in non-production environments; using views or column-level security to mask sensitive fields from unauthorized roles"
+        ],
+        "demonstration": "First, demonstrate SQL injection: create a simple web form that concatenates user input into a SQL query. Enter '; DROP TABLE temp_demo; -- as the username and observe the table being dropped. Then fix it with a parameterized query showing the input is treated as a literal string. Second, set up RBAC: create roles analyst_role and admin_role, grant SELECT on all tables to analyst_role, grant ALL to admin_role, create users and assign roles. Verify that the analyst user cannot INSERT or DELETE. Third, enable row-level security on a patients table so each doctor can only see their patients, and verify with different user sessions.",
+        "setup_requirements": [
+          "PostgreSQL with pgaudit extension installed",
+          "Sample application code (Python/Node) demonstrating SQL injection and parameterized queries",
+          "pg_hba.conf configured for demonstration authentication methods",
+          "OWASP SQL injection cheat sheet"
+        ],
+        "review": [
+          {
+            "key": "SQL Injection is Still #1",
+            "value": "SQL injection has been the #1 web application vulnerability for over 20 years (OWASP Top 10); it is completely preventable with parameterized queries, yet new vulnerabilities are discovered constantly because developers still concatenate user input into SQL strings"
+          },
+          {
+            "key": "Least Privilege in Practice",
+            "value": "Never connect your web application to the database as a superuser; create a dedicated role with only the privileges the application needs. If the application is compromised, the attacker can only do what that role permits"
+          },
+          {
+            "key": "Row-Level Security Power",
+            "value": "RLS enforces access control at the database level, meaning it cannot be bypassed by application bugs; even if a developer forgets to add a WHERE clause filtering by user, the RLS policy silently filters unauthorized rows"
+          },
+          {
+            "key": "Audit Logging for Compliance",
+            "value": "Regulations like HIPAA, GDPR, and SOX require proof that sensitive data access is tracked; pgaudit provides this proof by logging every query against protected tables with the executing user and timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "Data Warehousing and Analytical Processing",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Distinguish between OLTP (transactional) and OLAP (analytical) database workloads and their design requirements",
+        "Design a star schema with fact tables and dimension tables for a business analytics scenario",
+        "Write analytical queries using GROUP BY ROLLUP, CUBE, and window functions",
+        "Understand columnar storage and how it accelerates analytical queries"
+      ],
+      "readings": [
+        "Silberschatz, Database System Concepts, Ch. 21 - Data Warehousing and Mining",
+        "Kimball & Ross, The Data Warehouse Toolkit (3rd ed.), Ch. 1-3",
+        "PostgreSQL Documentation: GROUPING SETS, ROLLUP, CUBE"
+      ],
+      "lecture_notes": {
+        "introduction": "Transactional databases (OLTP) are optimized for many small, fast operations: inserting an order, updating a balance, looking up a customer. Analytical databases (OLAP) are optimized for few large, complex operations: computing total revenue by product category by quarter by region, finding trends in customer behavior, or generating executive dashboards. These workloads have fundamentally different requirements. OLTP needs low latency for individual transactions, row-oriented storage for fast single-row access, and normalized schemas to prevent update anomalies. OLAP needs high throughput for scanning millions of rows, columnar storage to read only needed columns, and denormalized schemas (star/snowflake) to minimize joins in complex aggregation queries. Attempting to run analytical queries on an OLTP database degrades transactional performance; running OLTP on an OLAP system gives poor transaction latency. This is why organizations build data warehouses: separate databases specifically designed for analytics, loaded from OLTP sources through ETL (Extract, Transform, Load) pipelines. The star schema is the standard data warehouse design pattern: a central fact table containing measurable business events (sales, page views, transactions) surrounded by dimension tables describing the who, what, when, where, and how of those events. Understanding data warehouse design is essential because data-driven decision making is central to modern business, and the ability to design schemas and write queries that answer business questions is a high-value skill.",
+        "key_concepts": [
+          "OLTP vs OLAP: OLTP processes many short transactions (INSERT, single-row SELECT) with low latency; OLAP processes few complex queries (aggregations over millions of rows) with high throughput. Different workloads require different database designs",
+          "Star schema: a fact table at the center (e.g., sales_fact with foreign keys to dimensions plus measures like quantity and revenue) surrounded by dimension tables (date_dim, product_dim, store_dim, customer_dim) with descriptive attributes for slicing and dicing",
+          "Fact table: contains quantitative measures (revenue, quantity, clicks) and foreign keys to dimension tables; each row represents a business event at the finest grain of measurement",
+          "Dimension table: contains descriptive attributes (product name, category, brand; date, month, quarter, year; store location, region); typically wide (many columns) and short (thousands to millions of rows vs billions in fact tables)",
+          "Snowflake schema: dimension tables are further normalized (e.g., product -> category -> department); reduces redundancy in dimensions but adds joins, making queries more complex; star schema is generally preferred",
+          "ETL pipeline: Extract data from source OLTP systems, Transform it (clean, standardize, aggregate), Load into the data warehouse; typically runs nightly or hourly; modern alternatives include ELT (load raw data, then transform in the warehouse)",
+          "ROLLUP and CUBE: SQL extensions for computing subtotals and grand totals; GROUP BY ROLLUP(year, quarter, month) produces monthly, quarterly, yearly, and grand total aggregates in a single query; CUBE produces all possible grouping combinations",
+          "Columnar storage: stores each column's values contiguously on disk rather than each row; scanning a single column of a billion-row table reads only that column's data (e.g., 4GB for an integer column) rather than the entire table (e.g., 500GB for a wide row); also enables compression since column values are often similar",
+          "Materialized views for OLAP: pre-computed aggregations stored as tables and refreshed periodically; trading storage and freshness for query speed; essential for dashboards that cannot afford to aggregate millions of rows on every page load",
+          "Modern data warehouse systems: Amazon Redshift, Google BigQuery, Snowflake, and DuckDB are purpose-built OLAP systems using columnar storage, massively parallel processing, and separate compute and storage for elastic scaling"
+        ],
+        "demonstration": "Design a star schema for an e-commerce analytics warehouse. Create fact_orders (order_id, customer_key, product_key, date_key, store_key, quantity, unit_price, discount, total_amount) and four dimension tables. Load sample data with 1 million order facts. Write analytical queries: (1) total revenue by product category by quarter using GROUP BY with joins across dimensions; (2) top 10 products by revenue with RANK() window function; (3) month-over-month revenue growth using LAG(); (4) revenue subtotals at product, category, and grand total levels using GROUP BY ROLLUP. Compare query performance on the star schema vs the equivalent normalized OLTP schema, showing the star schema is faster for analytics due to fewer joins and pre-joined dimensions.",
+        "setup_requirements": [
+          "PostgreSQL with sample data warehouse (1M+ fact rows)",
+          "Star schema ERD reference handout",
+          "ROLLUP/CUBE syntax reference",
+          "Query performance comparison worksheet"
+        ],
+        "review": [
+          {
+            "key": "Star Schema Simplicity",
+            "value": "The star schema deliberately denormalizes dimension tables to minimize joins in analytical queries; a product dimension containing category and department as columns means one join instead of three, trading storage redundancy for query simplicity"
+          },
+          {
+            "key": "Columnar Storage Advantage",
+            "value": "An analytical query computing SUM(revenue) on a 1-billion-row table with 100 columns reads only the revenue column (8GB) in a columnar store vs the entire table (800GB) in a row store; this 100x reduction in I/O directly translates to 100x faster queries"
+          },
+          {
+            "key": "ROLLUP for Subtotals",
+            "value": "GROUP BY ROLLUP(year, quarter, month) produces aggregates at month level, quarter level, year level, and grand total in a single query pass; without ROLLUP, this requires four separate queries UNIONed together"
+          },
+          {
+            "key": "ETL Freshness Trade-off",
+            "value": "Batch ETL (nightly loads) is simple but data is up to 24 hours stale; real-time ETL (change data capture with streaming) provides fresh data but adds complexity and infrastructure cost. The right choice depends on business requirements for data freshness"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Course Review and Database Design Synthesis",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Synthesize knowledge across all topics from relational model through distributed and analytical databases",
+        "Trace a complete database project lifecycle: requirements analysis, ER modeling, normalization, SQL implementation, indexing, optimization, security, and operations",
+        "Evaluate trade-offs between different database technologies and designs for given requirements",
+        "Prepare for the final examination by reviewing key concepts and problem-solving techniques"
+      ],
+      "readings": [
+        "Silberschatz, Database System Concepts - all chapter summaries",
+        "Course lecture notes and assignment solutions",
+        "Review sheet distributed in class"
+      ],
+      "lecture_notes": {
+        "introduction": "This final session synthesizes every topic into a unified framework for database system design and operation. A complete database project starts with understanding requirements and ends with a production system that is correct, performant, secure, recoverable, and scalable. We trace this lifecycle from beginning to end. Requirements analysis determines what data the system must manage and what queries it must support. ER modeling captures the conceptual structure. Normalization ensures the logical design is free of anomalies. SQL DDL creates the physical tables with proper constraints and data types. Indexing and query optimization ensure acceptable performance. Transaction design and isolation level selection ensure correctness under concurrency. Backup and recovery strategies ensure durability and disaster recovery. Security measures protect against unauthorized access and SQL injection. Finally, for systems that outgrow a single server, distribution and replication strategies scale capacity and availability. Understanding this complete lifecycle, and how decisions at each stage affect all subsequent stages, is what distinguishes a database engineer from someone who merely writes SQL queries. The course has given you the conceptual tools, practical skills, and theoretical foundations to design, implement, optimize, secure, and operate database systems at professional quality.",
+        "key_concepts": [
+          "Complete lifecycle: requirements -> ER model -> normalization -> SQL DDL -> indexing -> optimization -> transactions -> security -> backup -> distribution",
+          "Relational model foundations: relations, keys, integrity constraints, and the mathematical framework that makes query optimization possible",
+          "ER modeling to schema: systematic conversion from conceptual design to relational tables preserving all semantic information",
+          "Normalization: eliminating redundancy through functional dependency analysis, ensuring data integrity at the schema level",
+          "SQL mastery: DDL for schema definition, DML for data manipulation, joins for multi-table queries, window functions for analytics, CTEs for readability",
+          "Physical design: B+ tree indexes for range queries, hash indexes for equality, composite indexes for multi-column filters, EXPLAIN for plan analysis",
+          "Query optimization: cost-based optimizer, cardinality estimation, join algorithms, predicate pushdown, statistics maintenance",
+          "Transaction management: ACID properties, isolation levels, MVCC, deadlock prevention, and the trade-off between consistency and concurrency",
+          "Recovery and operations: WAL-based crash recovery, PITR, backup strategies, monitoring, and capacity planning",
+          "Beyond relational: NoSQL for specific workloads, distributed databases for scale, data warehouses for analytics, and polyglot persistence for complex systems"
+        ],
+        "demonstration": "Full lifecycle walkthrough for a real scenario: design a database for a ride-sharing application. (1) Requirements: riders, drivers, trips, payments, ratings, surge pricing. (2) ER model with entities and relationships. (3) Normalize to 3NF. (4) Create tables in PostgreSQL with constraints. (5) Add indexes for the critical query: find nearby available drivers. (6) Design transaction: atomic trip completion (update trip status, create payment, update driver availability). (7) Security: RLS so riders see only their trips, drivers see only their trips. (8) Discuss scaling: when the system grows to millions of trips per day, shard by city (geographic locality), replicate for read scaling, use Redis for real-time driver location caching.",
+        "setup_requirements": [
+          "Comprehensive review handout covering all topics",
+          "Practice problems with solutions for each topic area",
+          "Full database lifecycle worksheet",
+          "Office hours schedule for pre-exam questions"
+        ],
+        "review": [
+          {
+            "key": "Design Before Implementation",
+            "value": "Time spent on ER modeling and normalization before writing CREATE TABLE statements always pays off; fixing a schema design error after the application is built requires data migration, code changes, and downtime"
+          },
+          {
+            "key": "Measure Before Optimizing",
+            "value": "Never add an index or denormalize a table without first measuring the performance problem with EXPLAIN ANALYZE; premature optimization creates maintenance burden for speculative benefit"
+          },
+          {
+            "key": "Security is Not a Feature",
+            "value": "Security (parameterized queries, least privilege, encryption, auditing) must be built in from the start, not added later; retrofitting security is expensive, error-prone, and often triggered by a breach that has already caused damage"
+          },
+          {
+            "key": "The Right Database for the Job",
+            "value": "PostgreSQL is the right default choice for most applications due to its maturity, feature set, and ecosystem. Consider alternatives only when specific, measured requirements demand it: Redis for sub-millisecond caching, Elasticsearch for full-text search, Neo4j for graph traversal, BigQuery for petabyte analytics"
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 3,
+        "topic": "ER Modeling, Relational Algebra, and SQL Basics",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Given a university system with entities Student, Course, and Instructor, where a student can enroll in many courses, each course has exactly one instructor, and an instructor can teach many courses: (a) Draw the ER diagram with cardinality constraints and participation constraints. (b) Convert it to a relational schema, specifying primary keys and foreign keys for each table.",
+            "type": "analysis",
+            "points": 10,
+            "answer": "(a) ER Diagram:\nEntities: Student (student_id PK, name, gpa), Course (course_id PK, title, credits), Instructor (instructor_id PK, name, department).\nRelationships:\n- Enrolls: Student --M:N-- Course (many-to-many, partial participation both sides)\n- Teaches: Instructor --1:N-- Course (one instructor teaches many courses, total participation on Course since every course must have an instructor)\n\n(b) Relational Schema:\n- Students(student_id PK, name, gpa)\n- Instructors(instructor_id PK, name, department)\n- Courses(course_id PK, title, credits, instructor_id FK REFERENCES Instructors NOT NULL) -- FK on N-side for 1:N, NOT NULL for total participation\n- Enrollments(student_id FK REFERENCES Students, course_id FK REFERENCES Courses, PRIMARY KEY(student_id, course_id), enrollment_date, grade) -- junction table for M:N",
+            "rubric": [
+              {
+                "key": "Correct ER diagram with proper cardinality notation (M:N for enrolls, 1:N for teaches)",
+                "value": 4
+              },
+              {
+                "key": "Correct relational schema with junction table for M:N and FK on N-side for 1:N",
+                "value": 4
+              },
+              {
+                "key": "Total participation of Course in Teaches relationship enforced with NOT NULL FK",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Using relational algebra, express: 'Find the names of students who are enrolled in the course with course_id CS301 but are NOT enrolled in the course with course_id CS302.' Tables: Students(student_id, name, gpa), Enrollments(student_id, course_id, grade).",
+            "type": "analysis",
+            "points": 10,
+            "answer": "Step 1: Students enrolled in CS301:\nCS301_students = pi_{student_id}(sigma_{course_id='CS301'}(Enrollments))\n\nStep 2: Students enrolled in CS302:\nCS302_students = pi_{student_id}(sigma_{course_id='CS302'}(Enrollments))\n\nStep 3: Students in CS301 but not CS302:\nresult_ids = CS301_students - CS302_students\n\nStep 4: Get their names:\nresult = pi_{name}(result_ids join Students)\n\nComplete expression:\npi_{name}((pi_{student_id}(sigma_{course_id='CS301'}(Enrollments)) - pi_{student_id}(sigma_{course_id='CS302'}(Enrollments))) join Students)",
+            "rubric": [
+              {
+                "key": "Correct selection and projection for each course's student set",
+                "value": 3
+              },
+              {
+                "key": "Correct use of set difference to find CS301-only students",
+                "value": 4
+              },
+              {
+                "key": "Correct final join with Students to retrieve names",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Write a SQL query that returns each department's name and the number of students with GPA above 3.0, but only for departments with more than 10 such students. Sort by count descending. Tables: Students(student_id, name, gpa, department_id), Departments(department_id, department_name).",
+            "type": "code",
+            "points": 10,
+            "answer": "SELECT d.department_name, COUNT(*) AS high_gpa_count\nFROM Students s\nJOIN Departments d ON s.department_id = d.department_id\nWHERE s.gpa > 3.0\nGROUP BY d.department_id, d.department_name\nHAVING COUNT(*) > 10\nORDER BY high_gpa_count DESC;",
+            "rubric": [
+              {
+                "key": "Correct JOIN between Students and Departments",
+                "value": 2
+              },
+              {
+                "key": "WHERE clause filters by GPA before grouping (not in HAVING)",
+                "value": 3
+              },
+              {
+                "key": "Correct GROUP BY, HAVING, and ORDER BY",
+                "value": 3
+              },
+              {
+                "key": "Correct use of COUNT and column aliasing",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      },
+      {
+        "quiz": 2,
+        "week": 5,
+        "topic": "Advanced SQL, Joins, and Normalization",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Given tables: Employees(emp_id, name, dept_id, salary), Departments(dept_id, dept_name, manager_id FK -> Employees). Write a single SQL query that returns each department's name, the manager's name, the department's average salary, and a ranking of departments by average salary (highest first). Use window functions for the ranking.",
+            "type": "code",
+            "points": 12,
+            "answer": "SELECT \n    d.dept_name,\n    m.name AS manager_name,\n    AVG(e.salary) AS avg_salary,\n    RANK() OVER (ORDER BY AVG(e.salary) DESC) AS dept_rank\nFROM Departments d\nJOIN Employees m ON d.manager_id = m.emp_id\nJOIN Employees e ON e.dept_id = d.dept_id\nGROUP BY d.dept_id, d.dept_name, m.name\nORDER BY dept_rank;",
+            "rubric": [
+              {
+                "key": "Correct self-join pattern: Employees as both managers and department members",
+                "value": 4
+              },
+              {
+                "key": "Correct GROUP BY with AVG aggregate for department salary",
+                "value": 4
+              },
+              {
+                "key": "Correct RANK() window function over aggregated AVG",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "A table OrderDetails has attributes: {order_id, product_id, product_name, product_category, category_discount_pct, quantity, unit_price}. Functional dependencies: order_id, product_id -> quantity, unit_price; product_id -> product_name, product_category; product_category -> category_discount_pct. (a) What is the highest normal form of this table? (b) Decompose to BCNF, showing each step.",
+            "type": "analysis",
+            "points": 10,
+            "answer": "(a) Candidate key: {order_id, product_id} (its closure includes all attributes via the given FDs).\n\nCheck 1NF: all attributes are atomic. Yes, in 1NF.\nCheck 2NF: product_id -> product_name, product_category is a partial dependency (product_id is part of the composite key). NOT in 2NF.\n\nHighest normal form: 1NF.\n\n(b) BCNF Decomposition:\nStep 1: Violation: product_id -> product_name, product_category (product_id is not a superkey).\nDecompose: Products(product_id, product_name, product_category) and OrderDetails1(order_id, product_id, quantity, unit_price, category_discount_pct).\n\nStep 2: In OrderDetails1, check FDs. product_category is gone... wait, we need to check if category_discount_pct depends on something. product_category -> category_discount_pct, but product_category is in Products, not OrderDetails1. Actually, via product_id -> product_category -> category_discount_pct, we have a transitive dependency. But category_discount_pct is still in OrderDetails1 and depends on product_category which is no longer in OrderDetails1.\n\nLet me redo: product_id -> product_name, product_category AND product_category -> category_discount_pct.\n\nStep 1: Decompose on product_category -> category_discount_pct:\nCategories(product_category, category_discount_pct) and Remainder(order_id, product_id, product_name, product_category, quantity, unit_price).\n\nStep 2: In Remainder, product_id -> product_name, product_category. product_id is not a superkey (key is {order_id, product_id}).\nDecompose: Products(product_id, product_name, product_category) and OrderItems(order_id, product_id, quantity, unit_price).\n\nFinal BCNF tables:\n- Categories(product_category PK, category_discount_pct)\n- Products(product_id PK, product_name, product_category FK)\n- OrderItems(order_id, product_id, quantity, unit_price, PK(order_id, product_id))\n\nAll three tables are in BCNF: in each, every non-trivial FD has a superkey as determinant.",
+            "rubric": [
+              {
+                "key": "Correct identification of 1NF (not 2NF due to partial dependency)",
+                "value": 3
+              },
+              {
+                "key": "Correct identification of all FD violations of BCNF",
+                "value": 3
+              },
+              {
+                "key": "Correct final decomposition into three BCNF tables with proper keys and FKs",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "Explain why this query is incorrect for finding 'customers who have ordered every product in the Electronics category,' and write the correct version. Incorrect: SELECT c.name FROM Customers c JOIN Orders o ON c.id = o.customer_id JOIN Products p ON o.product_id = p.id WHERE p.category = 'Electronics' GROUP BY c.id, c.name HAVING COUNT(DISTINCT p.id) > 0;",
+            "type": "analysis",
+            "points": 8,
+            "answer": "The incorrect query finds customers who have ordered AT LEAST ONE electronics product (COUNT > 0), not customers who have ordered EVERY electronics product. It would need to compare the count of distinct products ordered against the total count of electronics products.\n\nCorrect query:\nSELECT c.name\nFROM Customers c\nJOIN Orders o ON c.id = o.customer_id\nJOIN Products p ON o.product_id = p.id\nWHERE p.category = 'Electronics'\nGROUP BY c.id, c.name\nHAVING COUNT(DISTINCT p.id) = (\n    SELECT COUNT(*) FROM Products WHERE category = 'Electronics'\n);\n\nThe HAVING clause now checks that the customer has ordered a number of distinct electronics products equal to the total number of electronics products, implementing the 'for all' (division) semantics.",
+            "rubric": [
+              {
+                "key": "Correctly identifies the error: COUNT > 0 means 'at least one' not 'every'",
+                "value": 3
+              },
+              {
+                "key": "Correct fix using COUNT(DISTINCT) = (SELECT COUNT(*))",
+                "value": 3
+              },
+              {
+                "key": "Explains the 'for all' / relational division semantics",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "Indexing, Query Optimization, and Transactions",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "A B+ tree index has order (max children) of 4, meaning internal nodes can hold up to 3 keys and 4 pointers, and leaf nodes can hold up to 3 key-pointer pairs. Starting from an empty tree, show the B+ tree structure after inserting keys: 10, 20, 5, 15, 25, 30, 12. Show any node splits that occur.",
+            "type": "analysis",
+            "points": 10,
+            "answer": "Insert 10: Root leaf: [10]\nInsert 20: Root leaf: [10, 20]\nInsert 5: Root leaf: [5, 10, 20] (full)\nInsert 15: Leaf overflow, split:\n  Left leaf: [5, 10], Right leaf: [15, 20]\n  New root internal node: [15] with pointers to left and right leaves.\n  Tree:\n       [15]\n      /    \\\n  [5,10] [15,20]\n\nInsert 25: Goes to right leaf: [15, 20, 25] (full but no overflow yet)\nInsert 30: Right leaf overflow [15,20,25,30], split:\n  Left leaf: [15, 20], Right leaf: [25, 30]\n  Promote 25 to root: Root becomes [15, 25]\n  Tree:\n       [15, 25]\n      /    |    \\\n  [5,10] [15,20] [25,30]\n\nInsert 12: Goes to left leaf: [5, 10, 12] (fits, no split needed)\nFinal tree:\n       [15, 25]\n      /    |    \\\n [5,10,12] [15,20] [25,30]\n\nLeaf nodes are linked left-to-right for range scans.",
+            "rubric": [
+              {
+                "key": "Correct insertions in sorted order within leaves",
+                "value": 3
+              },
+              {
+                "key": "Correct split when leaf overflows (split at midpoint, promote to parent)",
+                "value": 4
+              },
+              {
+                "key": "Correct final tree structure with proper keys in internal and leaf nodes",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Given this EXPLAIN ANALYZE output for a query, identify two performance problems and propose specific fixes:\n\nSort (cost=15234.12..15289.45 rows=22134 width=64) (actual time=850.234..862.112 rows=22134)\n  Sort Key: o.order_date\n  Sort Method: external merge Disk: 1832kB\n  -> Hash Join (cost=3456.00..12345.67 rows=22134 width=64) (actual time=245.678..678.901 rows=22134)\n        Hash Cond: (o.customer_id = c.customer_id)\n        -> Seq Scan on orders o (cost=0.00..8123.45 rows=22134 width=40) (actual time=0.012..423.456 rows=22134)\n              Filter: (status = 'shipped' AND order_date > '2024-01-01')\n              Rows Removed by Filter: 477866\n        -> Hash (cost=2345.00..2345.00 rows=5000 width=32) (actual time=23.456..23.456 rows=5000)\n              -> Seq Scan on customers c (cost=0.00..2345.00 rows=5000 width=32) (actual time=0.008..18.234 rows=5000)",
+            "type": "analysis",
+            "points": 12,
+            "answer": "Problem 1: Sequential Scan on orders with heavy filtering. The orders table has 500,000 rows (22,134 + 477,866 removed), but only 22,134 match the filter. The seq scan reads ALL 500,000 rows. Fix: CREATE INDEX idx_orders_status_date ON orders(status, order_date) WHERE status = 'shipped'; This partial index on shipped orders with order_date allows an index scan that reads only qualifying rows. The status equality should come first in the composite index.\n\nProblem 2: Sort spilling to disk. The sort is using 'external merge Disk: 1832kB', meaning it exceeded work_mem and spilled to disk, which is much slower than an in-memory sort. Two fixes: (a) Increase work_mem (SET work_mem = '4MB') to allow in-memory sorting, or (b) extend the index to include order_date for ordering: if the index provides rows in order_date order, the explicit sort is eliminated entirely. With the index idx_orders_status_date ON orders(status, order_date), rows come out already sorted by order_date for status='shipped', eliminating the sort node.",
+            "rubric": [
+              {
+                "key": "Identifies sequential scan on orders as problem with correct row count analysis",
+                "value": 3
+              },
+              {
+                "key": "Proposes correct composite or partial index to eliminate seq scan",
+                "value": 3
+              },
+              {
+                "key": "Identifies disk-based sort as problem",
+                "value": 3
+              },
+              {
+                "key": "Proposes either work_mem increase or index-based sort elimination",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Two transactions execute concurrently under READ COMMITTED isolation:\n\nT1: BEGIN;\nT1: SELECT balance FROM accounts WHERE id = 1; -- returns 1000\nT2: BEGIN;\nT2: UPDATE accounts SET balance = balance - 200 WHERE id = 1;\nT2: COMMIT;\nT1: SELECT balance FROM accounts WHERE id = 1; -- what does this return?\nT1: UPDATE accounts SET balance = balance + 500 WHERE id = 1;\nT1: COMMIT;\n\nWhat is the final balance? Would the result differ under REPEATABLE READ?",
+            "type": "analysis",
+            "points": 8,
+            "answer": "Under READ COMMITTED:\n- T1's first SELECT returns 1000 (current committed value).\n- T2 updates balance to 800 and commits.\n- T1's second SELECT returns 800 (T2 has committed, and READ COMMITTED sees latest committed data for each statement). This is a non-repeatable read.\n- T1's UPDATE: balance = 800 + 500 = 1300. (The UPDATE reads the latest committed value, which is 800).\n- Final balance: 1300.\n\nUnder REPEATABLE READ:\n- T1's first SELECT returns 1000 (snapshot taken at transaction start).\n- T2 updates to 800 and commits.\n- T1's second SELECT returns 1000 (REPEATABLE READ sees the snapshot from transaction start, so the same value as before -- no non-repeatable read).\n- T1's UPDATE: In PostgreSQL's REPEATABLE READ implementation, the UPDATE would detect that row id=1 was modified by a committed concurrent transaction since T1's snapshot. PostgreSQL would raise a serialization error: 'could not serialize access due to concurrent update.' T1 must retry.\n- If T1 retries, it gets a new snapshot where balance = 800, reads 800, adds 500, final balance = 1300.\n\nKey difference: READ COMMITTED allows T1 to proceed with potentially surprising values; REPEATABLE READ detects the conflict and forces a retry, providing stronger consistency at the cost of potential transaction aborts.",
+            "rubric": [
+              {
+                "key": "Correct READ COMMITTED behavior: second SELECT returns 800 (non-repeatable read)",
+                "value": 3
+              },
+              {
+                "key": "Correct final balance under READ COMMITTED (1300)",
+                "value": 2
+              },
+              {
+                "key": "Correct REPEATABLE READ behavior: serialization error on UPDATE due to concurrent modification",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "Recovery, NoSQL, and Distributed Databases",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "A database system uses WAL with the following log (LSN, Transaction, Operation, Before, After):\n1. T1, UPDATE A, 100, 150\n2. T2, UPDATE B, 200, 250\n3. T1, UPDATE C, 300, 350\n4. CHECKPOINT\n5. T2, UPDATE D, 400, 450\n6. T1, COMMIT\n7. T3, UPDATE A, 150, 175\n\nThe system crashes after log record 7. Which transactions need redo? Which need undo? What is the final value of each data item (A, B, C, D)?",
+            "type": "analysis",
+            "points": 10,
+            "answer": "At crash time:\n- T1: COMMITTED (log record 6). Needs REDO to ensure all changes are on disk.\n- T2: No commit record. Needs UNDO to reverse uncommitted changes.\n- T3: No commit record. Needs UNDO to reverse uncommitted changes.\n\nRecovery process (ARIES-style):\nAnalysis phase: Start from checkpoint (record 4). Active transactions at checkpoint: T1, T2. Scan forward: T2 updates D (record 5), T1 commits (record 6), T3 updates A (record 7). At crash: active = {T2, T3}.\n\nRedo phase (forward from checkpoint): Replay ALL logged changes to restore pre-crash state:\n- Record 5: D = 450 (T2's update)\n- Record 6: T1 commit (no data change)\n- Record 7: A = 175 (T3's update)\nNote: Records 1-3 are before checkpoint, but we also redo them if not yet flushed: A=150, B=250, C=350.\n\nUndo phase (backward from crash): Undo uncommitted transactions:\n- Record 7: T3 uncommitted, undo: A = 150 (restore before-image)\n- Record 5: T2 uncommitted, undo: D = 400 (restore before-image)\n- Record 2: T2 uncommitted, undo: B = 200 (restore before-image)\n\nFinal values:\nA = 150 (T1 committed 100->150, T3 undone 175->150)\nB = 200 (T2 undone 250->200)\nC = 350 (T1 committed 300->350)\nD = 400 (T2 undone 450->400)",
+            "rubric": [
+              {
+                "key": "Correct identification of which transactions need redo (T1) and undo (T2, T3)",
+                "value": 3
+              },
+              {
+                "key": "Correct redo phase: all changes replayed forward from checkpoint",
+                "value": 3
+              },
+              {
+                "key": "Correct undo phase: uncommitted changes reversed using before-images",
+                "value": 2
+              },
+              {
+                "key": "Correct final values: A=150, B=200, C=350, D=400",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A social media application needs to store user profiles, posts, and friendships. The system must support: (1) view a user's profile with their last 20 posts (latency < 10ms), (2) view a user's news feed (posts from friends, sorted by time), (3) full-text search on posts. Recommend a database architecture (which database technology for each use case) and justify each choice.",
+            "type": "analysis",
+            "points": 10,
+            "answer": "Recommended polyglot persistence architecture:\n\n1. User profiles + posts: MongoDB (document database).\nJustification: User profiles have varying fields (some users have bio, some have employer, etc.), making document model a natural fit. Embedding the last 20 posts within the user document allows a single document read for the profile page, achieving < 10ms latency. Posts beyond the last 20 can be in a separate posts collection indexed by user_id and timestamp.\n\n2. News feed: Redis (sorted sets) + pre-computation.\nJustification: Reading a user's news feed requires collecting posts from all friends and sorting by time. Doing this on-the-fly via JOINs or aggregation is too slow at scale. Instead, use a fan-out-on-write approach: when a user posts, push the post ID into each friend's news feed sorted set in Redis (ZADD by timestamp). Reading the feed is then a single ZREVRANGE command (O(log N + K) for K items), easily under 10ms.\n\n3. Full-text search on posts: Elasticsearch.\nJustification: Full-text search requires inverted indexes, tokenization, stemming, relevance scoring, and fuzzy matching. Elasticsearch is purpose-built for this, providing sub-second full-text search across billions of documents. Neither MongoDB's text search nor PostgreSQL's tsvector match Elasticsearch's performance and relevance tuning capabilities at scale.\n\n4. Friendship graph and friend recommendations: Neo4j (graph database) or PostgreSQL.\nJustification: 'Friends of friends' queries (for recommendations) require multi-hop graph traversals that are O(n^k) with JOINs but O(k) per traversal in a graph database. For moderate scale, PostgreSQL with recursive CTEs works; at large scale, Neo4j is more efficient.\n\nOverall: MongoDB as the primary data store, Redis for real-time feeds and caching, Elasticsearch for search, with PostgreSQL for transactional operations (payments, account management) requiring ACID guarantees.",
+            "rubric": [
+              {
+                "key": "Appropriate technology choice for each use case with correct justification",
+                "value": 4
+              },
+              {
+                "key": "Understanding of trade-offs: why not use one database for everything",
+                "value": 3
+              },
+              {
+                "key": "Practical architecture that addresses all three requirements within latency constraints",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "In a distributed database sharded by customer_id, explain why the query SELECT product_id, SUM(quantity) FROM orders GROUP BY product_id is expensive, and describe two strategies to make it efficient.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "The query is expensive because it groups by product_id, which is NOT the shard key. Since the data is sharded by customer_id, orders for the same product are scattered across ALL shards. The query must:\n1. Send the query to every shard.\n2. Each shard computes a partial GROUP BY for the products in its subset of orders.\n3. A coordinator node collects all partial results and merges them, re-aggregating groups that span multiple shards.\n\nThis requires network transfer of intermediate results from every shard, and the coordinator may become a bottleneck.\n\nStrategy 1: Materialized summary table. Maintain a pre-aggregated table product_order_summary(product_id, total_quantity) that is updated incrementally on each order insert (or refreshed periodically via batch job). The summary table can be replicated to all nodes or kept on a single analytics node. Queries against the summary table avoid the cross-shard aggregation entirely.\n\nStrategy 2: Parallel partial aggregation with two-phase approach. Each shard computes its local partial aggregation (product_id, local_sum) and sends only the aggregated results (not raw rows) to the coordinator. The coordinator merges by product_id, summing the local_sums. This reduces network transfer from millions of raw order rows to at most (number_of_products * number_of_shards) partial aggregation rows. This is how most distributed SQL engines (Presto, Spark SQL, CockroachDB) handle cross-shard aggregations.",
+            "rubric": [
+              {
+                "key": "Correctly explains why grouping by non-shard-key requires cross-shard coordination",
+                "value": 4
+              },
+              {
+                "key": "First strategy is practical and correctly described (materialized view or summary table)",
+                "value": 3
+              },
+              {
+                "key": "Second strategy is practical and correctly described (partial aggregation or data redistribution)",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "Database Security, Data Warehousing, and System Design",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "The following Python code builds a SQL query. Identify the vulnerability, show an exploit, and write the corrected version.\n\ndef search_users(conn, username):\n    query = f\"SELECT * FROM users WHERE username = '{username}'\"\n    cursor = conn.execute(query)\n    return cursor.fetchall()",
+            "type": "analysis",
+            "points": 10,
+            "answer": "Vulnerability: SQL injection. The username parameter is directly interpolated into the SQL string without sanitization or parameterization.\n\nExploit: If username = \"' OR '1'='1' --\", the query becomes:\nSELECT * FROM users WHERE username = '' OR '1'='1' --'\nThis returns ALL users because '1'='1' is always true, and the -- comments out the trailing quote.\n\nMore dangerous exploit: username = \"'; DROP TABLE users; --\" would execute:\nSELECT * FROM users WHERE username = ''; DROP TABLE users; --'\nThis drops the entire users table.\n\nCorrected version:\ndef search_users(conn, username):\n    query = \"SELECT * FROM users WHERE username = %s\"\n    cursor = conn.execute(query, (username,))\n    return cursor.fetchall()\n\nThe corrected version uses a parameterized query where %s is a placeholder. The database driver sends the query structure and the parameter value separately, ensuring the parameter is always treated as a literal string value, never as SQL code, regardless of its content.",
+            "rubric": [
+              {
+                "key": "Correctly identifies SQL injection vulnerability from string interpolation",
+                "value": 3
+              },
+              {
+                "key": "Provides a working exploit demonstrating data leakage or destruction",
+                "value": 3
+              },
+              {
+                "key": "Correct fix using parameterized query with proper placeholder syntax",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "Design a star schema for an airline analytics data warehouse. The fact table should support queries like: 'total revenue by route by month', 'average delay by airline by airport', and 'passenger count by fare class by quarter'. Specify the fact table with measures and foreign keys, and at least four dimension tables with key attributes.",
+            "type": "analysis",
+            "points": 10,
+            "answer": "Fact table: fact_flights\n- flight_key (surrogate PK)\n- date_key FK -> dim_date\n- route_key FK -> dim_route\n- airline_key FK -> dim_airline\n- aircraft_key FK -> dim_aircraft\n- Measures: passenger_count, revenue, departure_delay_minutes, arrival_delay_minutes, fare_class_revenue_economy, fare_class_revenue_business, fare_class_revenue_first, flight_duration_minutes\n\nDimension tables:\n\n1. dim_date: date_key PK, full_date, day_of_week, month, quarter, year, is_holiday, season\n\n2. dim_route: route_key PK, origin_airport_code, origin_city, origin_country, destination_airport_code, destination_city, destination_country, distance_miles, route_category (domestic/international)\n\n3. dim_airline: airline_key PK, airline_code, airline_name, alliance_name, hub_airports, country_of_origin\n\n4. dim_aircraft: aircraft_key PK, aircraft_model, manufacturer, seat_capacity_economy, seat_capacity_business, seat_capacity_first, range_miles, aircraft_age_years\n\nQuery support:\n- 'Total revenue by route by month': SELECT r.origin_city, r.destination_city, d.month, d.year, SUM(f.revenue) FROM fact_flights f JOIN dim_route r ... JOIN dim_date d ... GROUP BY ...\n- 'Average delay by airline by airport': SELECT a.airline_name, r.origin_airport_code, AVG(f.departure_delay_minutes) ... GROUP BY ...\n- 'Passenger count by fare class by quarter': SELECT d.quarter, SUM(f.passenger_count), SUM(f.fare_class_revenue_economy), ... GROUP BY d.quarter",
+            "rubric": [
+              {
+                "key": "Fact table with appropriate measures (revenue, delay, passengers) and foreign keys",
+                "value": 4
+              },
+              {
+                "key": "Four well-designed dimension tables with relevant descriptive attributes",
+                "value": 3
+              },
+              {
+                "key": "Schema correctly supports all three specified query patterns",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "A database team is debating whether to normalize or denormalize a reporting table. The table stores order data with customer information repeated on every order row. The system has 10 million orders, 100,000 customers, and the reporting query (joining orders with customers) runs 1,000 times per day, while order inserts happen 50,000 times per day. Argue both sides and make a recommendation.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Argument for normalization (separate orders and customers tables):\n- Eliminates redundancy: customer name, email, address stored once (100K rows) instead of repeated across 10M order rows. Saves significant storage.\n- Update consistency: changing a customer's address updates one row instead of thousands of order rows. No risk of partial updates creating inconsistent data.\n- Write performance: 50,000 inserts/day only write order data, not redundant customer data; each insert is smaller.\n- Data integrity: no possibility of orders referencing different versions of customer data.\n\nArgument for denormalization (combined table):\n- Read performance: 1,000 reporting queries/day avoid the JOIN entirely, reading from a single table. With 10M rows and proper indexes, this can be significantly faster than joining 10M orders with 100K customers.\n- Simpler queries: no JOIN syntax, no risk of incorrect join conditions.\n- Historical accuracy: if a customer changes their address, old orders retain the address at the time of the order (though this can also be achieved with a slowly-changing dimension approach).\n\nRecommendation: NORMALIZE the operational database (orders + customers) and create a materialized view or data warehouse table with the denormalized view for reporting. This gets the best of both worlds: clean operational data with referential integrity for the 50,000 daily writes, and a pre-joined denormalized table for the 1,000 daily reporting reads. Refresh the materialized view nightly or hourly depending on reporting freshness requirements.\n\nThis approach is justified because the write-to-read ratio is 50:1 (writes dominate), the storage savings from normalization are substantial (100x fewer customer data copies), and the materialized view eliminates the JOIN cost for reads without sacrificing operational data integrity.",
+            "rubric": [
+              {
+                "key": "Valid arguments for both normalization and denormalization with specific trade-offs",
+                "value": 4
+              },
+              {
+                "key": "Practical recommendation with clear justification based on workload characteristics",
+                "value": 3
+              },
+              {
+                "key": "Mention of materialized view or hybrid approach as best-of-both-worlds solution",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Database Design and Implementation: E-Commerce Platform",
+        "week_assigned": 3,
+        "week_due": 6,
+        "points": 150,
+        "description": "Design and implement a complete database for an e-commerce platform. Start from business requirements, produce an ER diagram, normalize to BCNF, implement in PostgreSQL with comprehensive constraints and indexes, populate with realistic data, and write a suite of complex queries demonstrating advanced SQL proficiency.",
+        "objectives": [
+          "Apply the full database design lifecycle from requirements analysis through physical implementation",
+          "Produce a normalized schema in BCNF with proper constraints, referential integrity, and appropriate data types",
+          "Write at least 15 complex SQL queries including multi-table joins, subqueries, window functions, CTEs, and aggregations",
+          "Optimize query performance using indexes, EXPLAIN ANALYZE, and query rewriting"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Requirements document (1 page) listing entities, relationships, and key business rules",
+          "ER diagram with all entities, attributes, relationships, cardinality, and participation constraints",
+          "Normalization analysis document showing functional dependencies, normal form testing, and decomposition steps",
+          "SQL DDL script creating all tables with constraints, indexes, and comments",
+          "Data population script generating at least 50,000 orders across 5,000 customers and 1,000 products",
+          "15 complex queries with EXPLAIN ANALYZE output, performance notes, and optimization applied to at least 3 queries"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 45,
+            "criteria": [
+              "ER diagram accurately models the e-commerce domain with correct cardinalities and participation constraints",
+              "Schema is in BCNF with normalization analysis showing all functional dependencies and decomposition steps",
+              "All constraints (PK, FK, NOT NULL, CHECK, UNIQUE, DEFAULT) are appropriate and comprehensive",
+              "Data types are chosen correctly: NUMERIC for money, TIMESTAMP for dates, VARCHAR with appropriate lengths"
+            ]
+          },
+          "visual_quality": {
+            "points": 30,
+            "criteria": [
+              "ER diagram is clear, professionally formatted, and uses standard notation",
+              "Query output is formatted for readability with meaningful column aliases",
+              "EXPLAIN ANALYZE output is annotated with interpretation notes",
+              "All deliverables have consistent formatting and professional presentation"
+            ]
+          },
+          "performance_optimization": {
+            "points": 45,
+            "criteria": [
+              "All 15 queries produce correct results verified against expected output",
+              "Queries demonstrate JOIN, subquery, window function, CTE, and aggregation proficiency",
+              "At least 3 queries are optimized with indexes and before/after EXPLAIN ANALYZE comparison",
+              "Performance analysis includes AMAT-style reasoning about index selectivity and I/O cost"
+            ]
+          },
+          "documentation": {
+            "points": 30,
+            "criteria": [
+              "Requirements document clearly specifies all entities and business rules",
+              "Normalization analysis is rigorous with explicit functional dependency identification",
+              "Design decisions are justified with rationale (why this data type, why this constraint)",
+              "Professional writing quality throughout all deliverables"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Complete BCNF schema with comprehensive constraints derived from ER model",
+                "15+ complex SQL queries demonstrating advanced SQL proficiency",
+                "Performance optimization with index design and EXPLAIN ANALYZE evidence",
+                "Thorough documentation of design process from requirements to implementation"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Transaction Processing and Recovery System Analysis",
+        "week_assigned": 8,
+        "week_due": 11,
+        "points": 150,
+        "description": "Build a concurrent transaction workload simulator that tests database isolation levels, demonstrates concurrency anomalies, measures performance under different isolation and locking configurations, and implements a WAL-based recovery scenario analysis. This project bridges theory and practice by making abstract concurrency concepts tangible through measurement.",
+        "objectives": [
+          "Implement a multi-threaded workload generator that simulates concurrent bank transfer transactions against PostgreSQL",
+          "Demonstrate and measure concurrency anomalies (dirty reads, non-repeatable reads, lost updates) under different isolation levels",
+          "Measure throughput (transactions per second) and latency under READ COMMITTED, REPEATABLE READ, and SERIALIZABLE",
+          "Analyze WAL log records for a sequence of transactions and simulate crash recovery scenarios on paper"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Workload simulator source code (Python or Java) with configurable thread count, isolation level, and transaction mix",
+          "Anomaly demonstration: test cases that reliably trigger each anomaly type under permissive isolation and prove prevention under stricter isolation",
+          "Performance benchmark report: throughput and latency graphs across isolation levels with 1, 2, 4, 8, and 16 concurrent threads",
+          "WAL recovery analysis (3 pages): given a provided transaction log, trace the ARIES recovery algorithm (analysis, redo, undo) showing the final database state"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 50,
+            "criteria": [
+              "Workload simulator correctly connects to PostgreSQL with configurable isolation levels",
+              "Multi-threaded execution with proper connection pooling (each thread gets its own connection and transaction)",
+              "Anomaly demonstrations are reproducible: test cases trigger anomalies reliably and prevention is verified",
+              "No race conditions in the simulator itself (measurement code is thread-safe)"
+            ]
+          },
+          "visual_quality": {
+            "points": 30,
+            "criteria": [
+              "Throughput and latency graphs are clear with proper axes, labels, error bars, and legends",
+              "Anomaly demonstrations include before/after screenshots or log output showing the anomaly and prevention",
+              "WAL recovery trace is presented step-by-step with clear state tables",
+              "All figures and tables are publication quality"
+            ]
+          },
+          "performance_optimization": {
+            "points": 40,
+            "criteria": [
+              "Benchmark methodology is sound: proper warm-up period, multiple runs, statistical summary",
+              "Performance differences between isolation levels are measured and explained in terms of lock contention and MVCC overhead",
+              "Deadlock rate is measured under SERIALIZABLE and retry strategy is implemented and documented",
+              "Trade-off analysis connects measured performance to theoretical understanding of concurrency control mechanisms"
+            ]
+          },
+          "documentation": {
+            "points": 30,
+            "criteria": [
+              "Benchmark report explains methodology, environment, and measurement procedures clearly enough for reproduction",
+              "Anomaly demonstrations include theoretical explanation of why each anomaly occurs and why the isolation level prevents it",
+              "WAL recovery analysis correctly applies ARIES algorithm with explicit analysis, redo, and undo phases",
+              "Professional writing quality throughout all deliverables"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Working multi-threaded transaction workload simulator with configurable isolation",
+                "Reproducible anomaly demonstrations with theoretical explanation",
+                "Rigorous performance benchmarks comparing isolation levels under varying concurrency",
+                "Correct WAL recovery analysis applying ARIES algorithm"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Polyglot Database Architecture: Design and Evaluation",
+        "week_assigned": 11,
+        "week_due": 14,
+        "points": 150,
+        "description": "Design, implement, and evaluate a polyglot persistence architecture for a real-time analytics application. Implement the same application using PostgreSQL alone and then using a combination of PostgreSQL, Redis, and MongoDB. Compare performance, development complexity, and operational characteristics. This project teaches practical database technology selection and the trade-offs of polyglot persistence.",
+        "objectives": [
+          "Design a data model for a real-time dashboard application in both relational and polyglot architectures",
+          "Implement the relational version in PostgreSQL with proper schema design and indexing",
+          "Implement the polyglot version using PostgreSQL for transactional data, Redis for caching and real-time counters, and MongoDB for flexible document storage",
+          "Benchmark both architectures on identical workloads and analyze the trade-offs"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Architecture design document (3 pages) describing both approaches with data flow diagrams",
+          "PostgreSQL-only implementation: schema, indexes, application code, and sample queries",
+          "Polyglot implementation: PostgreSQL schema, Redis data structures, MongoDB collections, and application code orchestrating all three",
+          "Benchmark report (3-4 pages): latency comparison for dashboard queries, throughput comparison for data ingestion, cache hit rate analysis, and operational complexity assessment"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 50,
+            "criteria": [
+              "PostgreSQL schema is properly normalized with appropriate indexes for the dashboard queries",
+              "Redis usage is appropriate: caching frequently-accessed data, sorted sets for leaderboards, pub/sub for real-time updates",
+              "MongoDB document model correctly represents flexible data (user preferences, event metadata with varying fields)",
+              "Application code correctly orchestrates reads and writes across all three databases with proper error handling"
+            ]
+          },
+          "visual_quality": {
+            "points": 25,
+            "criteria": [
+              "Architecture diagrams clearly show data flow between components",
+              "Benchmark results are presented in clear graphs comparing both architectures",
+              "Redis and MongoDB data structure choices are visualized",
+              "All deliverables are professionally formatted"
+            ]
+          },
+          "performance_optimization": {
+            "points": 50,
+            "criteria": [
+              "Benchmarks measure realistic workloads: mixed read-write, varying concurrency levels, dashboard query latency",
+              "Cache hit rate analysis demonstrates Redis effectiveness with measured latency reduction",
+              "Operational complexity is honestly assessed: deployment, monitoring, backup, failure modes for polyglot vs single-DB",
+              "Recommendations are data-driven: when the complexity of polyglot persistence is justified and when PostgreSQL alone is sufficient"
+            ]
+          },
+          "documentation": {
+            "points": 25,
+            "criteria": [
+              "Architecture document explains each technology choice with justification from CAP theorem and workload analysis",
+              "Benchmark methodology is reproducible with clear environment description and measurement procedures",
+              "Trade-off analysis is balanced, acknowledging both advantages and disadvantages of each approach",
+              "Professional writing quality throughout all deliverables"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Working implementations in both PostgreSQL-only and polyglot architectures",
+                "Appropriate technology selection with clear justification for each component",
+                "Rigorous benchmarks demonstrating measurable trade-offs",
+                "Balanced analysis with data-driven recommendations"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 20,
+      "description": "Five quizzes covering SQL, database design, optimization, transactions, and system architecture"
+    },
+    "lab_assignments": {
+      "percentage": 15,
+      "description": "Weekly SQL and database design exercises with hands-on PostgreSQL implementation"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "Three comprehensive projects spanning database design, transaction analysis, and polyglot architecture"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Written and SQL exam covering relational model, ER modeling, normalization, SQL queries, and indexing"
+    },
+    "final_project": {
+      "percentage": 20,
+      "description": "Comprehensive final project integrating database design, optimization, security, and technology selection"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is expected for all lectures and mandatory for lab sessions. More than 3 unexcused absences may result in a reduced participation grade.",
+    "late_submissions": "Late assignments lose 10% per day. No submissions accepted more than 5 days late.",
+    "collaboration": "Discussion of SQL approaches is encouraged. All queries, schemas, and written analysis must be individual work.",
+    "academic_integrity": "All submitted work must be your own. Copying SQL queries from the internet or other students without attribution constitutes plagiarism.",
+    "technology_requirements": "Students need PostgreSQL 16+, a database client (pgAdmin or DBeaver), and access to the course database server. Lab computers are available."
+  }
+}

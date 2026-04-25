@@ -1,0 +1,1482 @@
+{
+  "course_info": {
+    "course_id": "CY303",
+    "title": "Risk Assessment and Management",
+    "credit_hours": 3,
+    "duration": "15 weeks",
+    "meeting_schedule": "Tuesday, Thursday - 3 hours per week",
+    "prerequisites": [
+      "CY101 - Introduction to Cybersecurity",
+      "CY203 - Network Security"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "topic": "Risk Management Fundamentals",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Define risk, threat, vulnerability, impact, and likelihood and explain their interrelationships",
+        "Describe the risk management lifecycle from identification through monitoring",
+        "Compare risk appetite, risk tolerance, and risk acceptance criteria in organizational context",
+        "Explain why risk management is a business function, not purely a technical one"
+      ],
+      "readings": [
+        "NIST SP 800-30 Rev. 1: Guide for Conducting Risk Assessments Ch. 1-2",
+        "ISO 27005:2022 Information Security Risk Management overview",
+        "ISACA Risk IT Framework introduction"
+      ],
+      "lecture_notes": {
+        "introduction": "Risk management is the discipline that transforms cybersecurity from a cost center into a strategic business enabler. Rather than attempting to eliminate all risk (impossible and prohibitively expensive), risk management identifies the risks that matter most to the organization, quantifies their potential impact, and implements controls proportionate to the business value of what is being protected. The fundamental equation is deceptively simple: Risk equals the likelihood of a threat exploiting a vulnerability multiplied by the impact of that exploitation. In practice, every variable in this equation is difficult to measure, subject to uncertainty, and constantly changing. This course teaches the frameworks, methodologies, and practical skills needed to assess, communicate, and manage cybersecurity risk in real organizations. Students will conduct quantitative and qualitative risk analyses, apply multiple frameworks (NIST RMF, ISO 27005, FAIR), perform business impact analyses, evaluate compliance requirements, and manage vendor risk. The capstone project integrates all these skills into a comprehensive enterprise risk assessment.",
+        "key_concepts": [
+          "Risk definition: the potential for loss, damage, or destruction resulting from a threat exploiting a vulnerability",
+          "Risk equation: Risk = Likelihood x Impact (qualitative) or Risk = Threat Event Frequency x Loss Magnitude (FAIR)",
+          "Threat: any circumstance or event with the potential to adversely impact assets (natural disaster, human attacker, system failure)",
+          "Vulnerability: a weakness in a system, process, or control that can be exploited by a threat",
+          "Impact: the magnitude of harm resulting from a threat event (financial loss, operational disruption, reputational damage, regulatory penalty)",
+          "Likelihood: the probability that a specific threat will exploit a specific vulnerability within a given timeframe",
+          "Risk appetite: the amount and type of risk an organization is willing to accept in pursuit of its objectives (set by board/executives)",
+          "Risk tolerance: the acceptable variation from the risk appetite (operational boundaries)",
+          "Risk acceptance criteria: specific thresholds that determine when a risk requires treatment versus formal acceptance",
+          "Risk management lifecycle: identify, assess, treat, monitor, communicate — continuous and iterative"
+        ],
+        "demonstration": "Applying the risk equation to three scenarios in a retail e-commerce company: (1) a SQL injection vulnerability in the payment page (high likelihood, high impact), (2) a physical break-in at the data center (low likelihood, high impact), (3) an employee clicking a phishing link (high likelihood, low-to-medium impact per event). Discussing how risk appetite determines which receives immediate attention versus monitoring.",
+        "setup_requirements": [
+          "Risk register spreadsheet template",
+          "NIST SP 800-30 risk assessment tables",
+          "FAIR model overview diagram",
+          "Sample organizational risk appetite statement"
+        ],
+        "review": [
+          {
+            "key": "Risk Appetite vs Tolerance",
+            "value": "Risk appetite is a strategic statement set by the board: 'We accept moderate cybersecurity risk to enable rapid product development.' Risk tolerance is the operational boundary: 'No single system may have critical unpatched vulnerabilities for more than 14 days.' Tolerance enforces appetite at the operational level."
+          },
+          {
+            "key": "Risk Is Not Binary",
+            "value": "Risk is not simply 'secure' or 'insecure.' It exists on a spectrum and changes continuously. A system that was acceptably risky yesterday may be unacceptable today because a new exploit was published, the data it stores increased in sensitivity, or regulatory requirements changed."
+          },
+          {
+            "key": "Business Language of Risk",
+            "value": "Technical teams speak of vulnerabilities and CVEs. Executives speak of financial exposure, regulatory compliance, and competitive impact. Risk management provides the translation layer. A risk manager who cannot express a CVE as a dollar figure cannot influence executive decisions."
+          },
+          {
+            "key": "Continuous Process",
+            "value": "Risk management is not a point-in-time assessment. Threats evolve, vulnerabilities are discovered, business contexts change. An annual risk assessment is a minimum; continuous monitoring with regular reassessment (quarterly or triggered by significant changes) is the standard for mature organizations."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 2,
+      "topic": "Asset Identification and Classification",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Develop a comprehensive asset inventory covering hardware, software, data, and people assets",
+        "Apply data classification schemes to categorize information by sensitivity and business value",
+        "Determine asset criticality based on business process dependencies",
+        "Map data flows across systems to identify where sensitive data resides and moves"
+      ],
+      "readings": [
+        "NIST SP 800-60: Guide for Mapping Types of Information and Information Systems to Security Categories",
+        "ISO 27001:2022 Annex A.5: Information Security Policies (asset management controls)",
+        "CIS Controls v8: Control 1 (Enterprise Asset Inventory) and Control 2 (Software Asset Inventory)"
+      ],
+      "lecture_notes": {
+        "introduction": "You cannot protect what you do not know you have. Asset identification and classification is the foundation of risk management because risk exists only in relation to assets of value. An organization must know what assets it possesses, where they are located, how sensitive the data they contain is, and how critical they are to business operations. Asset inventories must cover not just hardware and software but also data assets (customer databases, intellectual property, financial records), people assets (employees with critical knowledge), and service dependencies (cloud services, third-party APIs). Data classification assigns sensitivity labels (public, internal, confidential, restricted) that drive security control requirements. Asset criticality ratings determine which systems receive priority protection and recovery. Together, classification and criticality enable risk-proportionate security: investing the most protection in the most valuable and sensitive assets rather than applying uniform controls that either over-protect low-value assets or under-protect high-value ones. Modern challenges include shadow IT (assets the organization does not know about), cloud sprawl, and the proliferation of data across SaaS applications that the IT team may not control.",
+        "key_concepts": [
+          "Asset categories: hardware (servers, endpoints, network devices), software (applications, operating systems), data (databases, files, backups), people (key personnel), services (cloud, third-party)",
+          "Asset inventory tools: CMDB, network scanning (Nmap, Qualys), endpoint agents, cloud asset APIs (AWS Config, Azure Resource Graph)",
+          "Data classification levels: Public (no restriction), Internal (business use only), Confidential (need-to-know, regulatory), Restricted (maximum protection, legal/contractual)",
+          "Classification criteria: regulatory requirements (PCI for cardholder data, HIPAA for PHI), business impact of disclosure, contractual obligations, intellectual property value",
+          "Asset criticality rating: Critical (business-stopping if unavailable), High (significant impact), Medium (degraded operations), Low (minimal operational impact)",
+          "Business process mapping: identifying which assets support which business processes to determine criticality from the business perspective",
+          "Data flow diagrams: mapping how sensitive data moves between systems, identifying storage locations, processing points, and transmission paths",
+          "Shadow IT discovery: identifying unauthorized cloud services, personal devices, and applications that store organizational data",
+          "Crown jewel analysis: identifying the small number of assets that, if compromised, would cause the greatest organizational harm",
+          "Asset lifecycle management: tracking assets from procurement through decommissioning, ensuring security controls follow the asset through its lifecycle"
+        ],
+        "demonstration": "Building an asset inventory for a fictional mid-sized financial services company: conducting a network scan to discover hardware assets, correlating with the software inventory, classifying the discovered data stores by sensitivity (customer PII as Confidential, financial records as Restricted, marketing materials as Internal), rating criticality based on business process dependencies, and creating a data flow diagram showing how customer data moves from the web application to the database to the analytics platform to the marketing team.",
+        "setup_requirements": [
+          "Asset inventory template (spreadsheet)",
+          "Data classification policy template",
+          "Data flow diagram tool (draw.io or Visio)",
+          "Sample network scan results",
+          "Business process dependency mapping template"
+        ],
+        "review": [
+          {
+            "key": "Crown Jewels",
+            "value": "Most organizations have a small number of assets that represent the majority of their risk: the customer database, intellectual property repository, financial systems, and Active Directory. Identifying these 'crown jewels' focuses risk management resources on what matters most rather than treating all assets equally."
+          },
+          {
+            "key": "Shadow IT Risk",
+            "value": "Employees using unauthorized SaaS applications (personal Dropbox, unauthorized Slack workspaces) create unmanaged data stores outside the organization's security controls. A CASB (Cloud Access Security Broker) or DNS analysis can discover shadow IT. Risk management must account for these unknown assets."
+          },
+          {
+            "key": "Data Classification Drives Controls",
+            "value": "Classification is not just labeling — it triggers specific security requirements. Restricted data may require encryption at rest and in transit, DLP monitoring, access logging, and annual access reviews. Internal data may only require basic access controls. Without classification, organizations cannot apply proportionate controls."
+          },
+          {
+            "key": "Asset Inventory Accuracy",
+            "value": "An asset inventory that is 80% accurate provides 80% of the value but 100% of the false confidence. The 20% of unknown assets may include the most vulnerable or most critical systems. Continuous discovery and reconciliation are required. Automated tools should reconcile against manual inventories regularly."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 3,
+      "topic": "Threat Assessment",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Identify and profile threat actors relevant to the organization's industry and assets",
+        "Apply STRIDE and PASTA threat modeling methodologies to information systems",
+        "Assess threat likelihood using historical data, threat intelligence, and environmental factors",
+        "Map threats to the MITRE ATT&CK framework for structured analysis"
+      ],
+      "readings": [
+        "Threat Modeling: Designing for Security Ch. 1-4 (Adam Shostack)",
+        "NIST SP 800-30 Rev. 1 Ch. 3: Threat Sources and Events",
+        "MITRE ATT&CK framework overview and threat group profiles"
+      ],
+      "lecture_notes": {
+        "introduction": "Threat assessment answers the question: who or what might cause harm to our assets, and how likely is it? Threats come from diverse sources: nation-state actors seeking intellectual property, organized criminal groups pursuing financial gain, hacktivists with ideological motivations, disgruntled insiders with privileged access, and natural events like fires or floods. Each threat actor has different capabilities, motivations, and targeting preferences. A financial services company faces different primary threats than a defense contractor or a healthcare provider. Threat modeling provides structured methodologies for systematically identifying threats to specific systems. STRIDE categorizes threats by their security impact (Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, Elevation of Privilege), while PASTA (Process for Attack Simulation and Threat Analysis) takes a risk-centric approach that connects business objectives to technical threat analysis. The MITRE ATT&CK framework provides a knowledge base of real-world adversary techniques that enables threat modeling grounded in actual attacker behavior rather than theoretical vulnerabilities.",
+        "key_concepts": [
+          "Threat sources: nation-state, organized crime, hacktivists, insiders (malicious and negligent), competitors, natural events, system failures",
+          "Threat actor profiling: capability (resources, expertise), intent (motivation, targeting), opportunity (access, timing)",
+          "Industry-specific threat landscapes: financial (fraud, ransomware), healthcare (PHI theft, ransomware), manufacturing (IP theft, OT disruption)",
+          "STRIDE threat modeling: Spoofing (Authentication), Tampering (Integrity), Repudiation (Non-repudiation), Information Disclosure (Confidentiality), DoS (Availability), EoP (Authorization)",
+          "PASTA seven-stage process: define objectives, define scope, decompose application, threat analysis, vulnerability analysis, attack modeling, risk/impact analysis",
+          "Data flow diagrams for threat modeling: trust boundaries, data flows, data stores, processes, external entities",
+          "MITRE ATT&CK for threat assessment: mapping known adversary groups to techniques likely targeting your sector",
+          "Threat intelligence sources: commercial (Mandiant, CrowdStrike), open source (OSINT), government (CISA advisories), sector-specific (ISACs)",
+          "Threat likelihood estimation: historical frequency, threat intelligence indicators, environmental factors, control posture",
+          "Emerging threats: AI-powered attacks, supply chain compromise, cloud-native threats, IoT vulnerabilities"
+        ],
+        "demonstration": "Conducting a STRIDE threat model for a web-based patient portal application: drawing the data flow diagram with trust boundaries between the internet, web server, application server, and database server. For each component and data flow, identifying STRIDE threats. Then mapping the identified threats to MITRE ATT&CK techniques and profiling the threat actors most likely to target a healthcare portal.",
+        "setup_requirements": [
+          "Microsoft Threat Modeling Tool or OWASP Threat Dragon",
+          "STRIDE reference card",
+          "MITRE ATT&CK Navigator",
+          "Threat intelligence reports for the healthcare sector",
+          "DFD drawing tools"
+        ],
+        "review": [
+          {
+            "key": "STRIDE Application",
+            "value": "Apply STRIDE to each element in the DFD. A data flow crossing a trust boundary is susceptible to Tampering and Information Disclosure. A data store is susceptible to Tampering, Information Disclosure, and DoS. A process is susceptible to all six categories. Systematic application ensures comprehensive threat identification."
+          },
+          {
+            "key": "Threat Actor Capability Spectrum",
+            "value": "Script kiddies use published tools with minimal customization. Organized crime invests in custom malware and social engineering infrastructure. Nation-states develop zero-day exploits and maintain persistent access for years. The relevant threat actor determines the sophistication of attacks you must defend against."
+          },
+          {
+            "key": "ATT&CK-Based Threat Assessment",
+            "value": "Search ATT&CK for threat groups targeting your sector (e.g., FIN7 for financial, APT41 for healthcare). List their commonly used techniques. Map your detection and prevention controls against those techniques. Gaps represent your highest-priority risks from the most relevant adversaries."
+          },
+          {
+            "key": "Threat Intelligence Operationalization",
+            "value": "Raw threat intelligence (indicators, reports) has no value until it is operationalized: IoCs deployed to detection tools, TTP analysis driving control improvements, strategic intelligence informing risk assessments. Unread threat reports are the same as no threat reports."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 4,
+      "topic": "Vulnerability Assessment",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Design and execute a vulnerability assessment program using automated scanning and manual analysis",
+        "Interpret CVSS v3.1 Base, Temporal, and Environmental scores for accurate risk prioritization",
+        "Prioritize vulnerabilities using risk context rather than raw CVSS scores alone",
+        "Integrate vulnerability assessment results into the overall risk management process"
+      ],
+      "readings": [
+        "NIST SP 800-115: Technical Guide to Information Security Testing and Assessment",
+        "CVSS v3.1 Specification Document",
+        "FIRST EPSS (Exploit Prediction Scoring System) documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Vulnerability assessment systematically identifies weaknesses in systems, applications, and processes that could be exploited by threats. While threat assessment asks 'who might attack?', vulnerability assessment asks 'where are the weaknesses?' The two combine to produce risk: a severe vulnerability facing a capable, motivated threat actor creates critical risk, while the same vulnerability facing no relevant threat may be acceptable. Modern vulnerability management relies heavily on automated scanning tools (Qualys, Nessus, Rapid7) that identify known software vulnerabilities by comparing installed versions against vulnerability databases. However, automated scanning captures only a fraction of the vulnerability landscape. Configuration weaknesses, architectural flaws, process gaps, and logic vulnerabilities require manual assessment. CVSS provides a standardized scoring system for comparing vulnerability severity, but raw CVSS scores without environmental context lead to poor prioritization. A CVSS 9.8 vulnerability on an air-gapped test server may be less urgent than a CVSS 7.5 vulnerability on an internet-facing payment system. EPSS (Exploit Prediction Scoring System) adds predictive capability by estimating the probability that a vulnerability will be exploited in the wild within 30 days.",
+        "key_concepts": [
+          "Vulnerability assessment types: automated scanning (network, application, configuration), manual testing (penetration testing, code review), architectural review",
+          "Scanning tools: Qualys, Nessus, Rapid7 InsightVM for infrastructure; Burp Suite, OWASP ZAP for web applications; Semgrep, SonarQube for code",
+          "CVSS v3.1 Base metrics: Attack Vector, Attack Complexity, Privileges Required, User Interaction, Scope, Confidentiality/Integrity/Availability impact",
+          "CVSS Temporal metrics: Exploit Code Maturity, Remediation Level, Report Confidence — adjust base score based on current threat landscape",
+          "CVSS Environmental metrics: Confidentiality/Integrity/Availability Requirements, Modified Base metrics — adjust score based on organizational context",
+          "EPSS (Exploit Prediction Scoring System): machine learning model predicting probability of exploitation within 30 days, published by FIRST",
+          "Risk-based prioritization: combining CVSS, EPSS, asset criticality, exposure (internet-facing vs internal), and compensating controls",
+          "Vulnerability lifecycle: discovery, triage, remediation/mitigation, verification, closure — with defined SLAs per severity",
+          "False positive management: validating scanner findings before remediation assignment, maintaining suppression lists with expiration dates",
+          "Vulnerability assessment frequency: continuous scanning (weekly minimum), triggered by major changes, aligned with threat intelligence updates"
+        ],
+        "demonstration": "Analyzing vulnerability scan results for a fictional network of 200 systems: triaging the 2,847 findings by combining CVSS Environmental scores (adjusting for asset criticality and network exposure), EPSS exploitation probability, and business context. Demonstrating how raw CVSS sorting produces a different priority list than risk-based prioritization. Creating a remediation plan with SLA-based timelines.",
+        "setup_requirements": [
+          "Vulnerability scan results dataset (anonymized)",
+          "CVSS v3.1 calculator",
+          "EPSS score lookup tool",
+          "Asset inventory with criticality ratings",
+          "Remediation SLA matrix template"
+        ],
+        "review": [
+          {
+            "key": "CVSS Environmental Adjustment",
+            "value": "A CVSS 9.8 vulnerability affecting a test server with no sensitive data (Confidentiality Requirement: Low) and no business dependency (Availability Requirement: Low) may adjust to an Environmental score of 5.0. The same vulnerability on a production payment system adjusts upward. Always calculate Environmental scores for accurate prioritization."
+          },
+          {
+            "key": "EPSS Value",
+            "value": "EPSS predicts the probability of exploitation within 30 days. A CVSS 7.0 vulnerability with 95% EPSS should be prioritized over a CVSS 9.5 vulnerability with 1% EPSS, because the former is almost certainly being exploited while the latter is not yet weaponized. Combine CVSS (impact) with EPSS (likelihood) for true risk."
+          },
+          {
+            "key": "Scanner Limitations",
+            "value": "Automated scanners identify known CVEs in installed software. They miss: business logic flaws, authentication bypass through workflow abuse, insecure direct object references, privilege escalation through misconfigured IAM policies, and supply chain vulnerabilities in dependencies. Manual assessment fills these gaps."
+          },
+          {
+            "key": "Remediation SLAs",
+            "value": "Define remediation timelines by risk level: Critical (internet-facing, active exploitation) = 24-48 hours. High = 7 days. Medium = 30 days. Low = 90 days. SLAs create accountability and provide measurable KPIs. Exceptions require documented risk acceptance by an authorized authority."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 5,
+      "topic": "Risk Analysis: Qualitative and Quantitative Methods",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Perform quantitative risk analysis using ALE, SLE, and ARO calculations",
+        "Conduct qualitative risk analysis using risk matrices and heat maps",
+        "Apply the FAIR model for quantitative risk analysis with financial outcomes",
+        "Calculate Return on Security Investment (ROSI) to justify control expenditures"
+      ],
+      "readings": [
+        "Measuring and Managing Information Risk: A FAIR Approach Ch. 1-6",
+        "NIST SP 800-30 Rev. 1 Appendix I: Risk Determination",
+        "ISACA FAIR model introduction whitepaper"
+      ],
+      "lecture_notes": {
+        "introduction": "Risk analysis translates the raw data from threat and vulnerability assessments into a form that supports decision-making. Qualitative analysis produces relative rankings (high/medium/low) that enable prioritization. Quantitative analysis produces financial estimates that enable cost-benefit analysis of security investments. Both methods have strengths and limitations, and mature risk management programs use both. Qualitative analysis is faster, requires less data, and is more intuitive for stakeholders, but it is subjective and does not directly support financial decision-making. Quantitative analysis (ALE method or FAIR model) produces dollar figures that executives can compare against security investment costs, but it requires data that may be estimated or uncertain. The Annualized Loss Expectancy (ALE) method, while simple, has been the foundation of information security risk quantification for decades. The Factor Analysis of Information Risk (FAIR) model provides a more rigorous quantitative framework that decomposes risk into defined factors and accounts for uncertainty through Monte Carlo simulation. This session teaches both approaches and when to apply each.",
+        "key_concepts": [
+          "Single Loss Expectancy (SLE): estimated cost of a single occurrence of a risk event. SLE = Asset Value x Exposure Factor",
+          "Annualized Rate of Occurrence (ARO): estimated frequency of a risk event per year (0.1 = once every 10 years, 2 = twice per year)",
+          "Annualized Loss Expectancy (ALE): expected annual cost of a risk. ALE = SLE x ARO",
+          "Return on Security Investment: ROSI = (ALE_before - ALE_after - Annual_Cost_of_Control) / Annual_Cost_of_Control",
+          "Qualitative risk matrix: 5x5 grid with Likelihood (1-5) on one axis and Impact (1-5) on the other, producing risk ratings",
+          "Risk heat map: visual representation of multiple risks plotted by likelihood and impact, enabling portfolio-level risk communication",
+          "FAIR model factors: Loss Event Frequency (Threat Event Frequency x Vulnerability), Loss Magnitude (Primary Loss + Secondary Loss)",
+          "FAIR's six loss forms: productivity loss, response cost, replacement cost, fines/judgments, competitive advantage loss, reputation damage",
+          "Monte Carlo simulation: running thousands of scenarios with variable inputs to produce probability distributions of loss outcomes",
+          "Uncertainty acknowledgment: expressing risk as ranges (95% confidence: loss between $100K and $2M) rather than false-precision point estimates"
+        ],
+        "demonstration": "Side-by-side analysis of the same risk scenario (data breach of customer PII database) using three methods: (1) Qualitative: placing on a risk matrix. (2) ALE: calculating SLE, ARO, and ALE. (3) FAIR: decomposing into factors and running a simplified Monte Carlo. Comparing the outputs and discussing when each method is appropriate for different audiences and decisions.",
+        "setup_requirements": [
+          "ALE calculation spreadsheet",
+          "FAIR model spreadsheet or RiskLens demo",
+          "Risk matrix template (5x5)",
+          "Monte Carlo simulation tool (Excel add-in or Python script)",
+          "Historical breach cost data (Ponemon/IBM Cost of a Data Breach report)"
+        ],
+        "review": [
+          {
+            "key": "ALE Calculation Example",
+            "value": "E-commerce site: 100,000 customer records valued at $150/record. Exposure factor for a SQL injection breach: 100% (full database). SLE = 100,000 x $150 = $15M. Historical ARO for SQL injection breaches in e-commerce: 0.05 (once every 20 years). ALE = $15M x 0.05 = $750K/year. A WAF costing $100K/year that reduces ARO to 0.01 gives ROSI = ($750K - $150K - $100K)/$100K = 500%."
+          },
+          {
+            "key": "Qualitative vs Quantitative Use Cases",
+            "value": "Use qualitative for: initial risk triage, communicating relative priority to technical teams, rapid assessments. Use quantitative for: justifying security budgets to executives, comparing control alternatives, insurance decisions, regulatory compliance demonstrations. Most organizations need both."
+          },
+          {
+            "key": "FAIR Advantage Over ALE",
+            "value": "ALE produces a single point estimate that implies false precision. FAIR produces probability distributions: 'There is a 90% probability that the annual loss will be between $200K and $3M.' This honestly represents the uncertainty inherent in risk estimation and enables better decision-making."
+          },
+          {
+            "key": "Garbage In Garbage Out",
+            "value": "The biggest weakness of quantitative analysis is the quality of input data. Estimating ARO and Exposure Factor requires data that often does not exist for specific organizations. Use industry benchmarks (Verizon DBIR, IBM Cost of a Data Breach), expert judgment calibration, and sensitivity analysis to understand which assumptions matter most."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Risk Frameworks: NIST RMF and ISO 27005",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Execute the six steps of the NIST Risk Management Framework with practical examples",
+        "Apply ISO 27005 risk management process to an information security management system",
+        "Map between NIST and ISO frameworks to support organizations using both",
+        "Understand NIST RMF requirements for U.S. federal systems and their influence on private sector"
+      ],
+      "readings": [
+        "NIST SP 800-37 Rev. 2: Risk Management Framework for Information Systems (complete)",
+        "ISO 27005:2022 Sections 6-10",
+        "NIST SP 800-53 Rev. 5 control families overview"
+      ],
+      "lecture_notes": {
+        "introduction": "Risk management frameworks provide the structured process for integrating risk assessment into organizational decision-making. The NIST Risk Management Framework (RMF) and ISO 27005 are the two most widely adopted frameworks globally. NIST RMF is mandatory for U.S. federal information systems and is widely adopted by defense contractors and organizations doing business with the government. It provides a six-step lifecycle (Prepare, Categorize, Select, Implement, Assess, Authorize, Monitor) that connects risk assessment to control implementation and continuous monitoring. ISO 27005 is the risk management component of the ISO 27001 Information Security Management System standard, used internationally across all sectors. It provides a flexible process (Context Establishment, Risk Assessment, Risk Treatment, Risk Acceptance, Risk Monitoring) that integrates with ISO 27001 certification requirements. While the frameworks use different terminology and organize steps differently, they share fundamental concepts and can be mapped to each other. Many organizations must comply with both (e.g., a multinational defense contractor with ISO 27001 certification doing U.S. government work under NIST RMF).",
+        "key_concepts": [
+          "NIST RMF Step 1 - Prepare: establish context, define roles, identify key stakeholders, determine risk tolerance",
+          "NIST RMF Step 2 - Categorize: assign security categories (low/moderate/high) based on potential impact using FIPS 199 and NIST SP 800-60",
+          "NIST RMF Step 3 - Select: choose security controls from NIST SP 800-53 based on security category, tailor and supplement as needed",
+          "NIST RMF Step 4 - Implement: deploy selected controls and document the implementation details in the System Security Plan",
+          "NIST RMF Step 5 - Assess: evaluate controls to determine if they are implemented correctly, operating as intended, and producing desired outcomes",
+          "NIST RMF Step 6 - Authorize: risk-based decision by the Authorizing Official to accept the residual risk and authorize system operation",
+          "NIST RMF Step 7 - Monitor: ongoing assessment of control effectiveness, system changes, and threat/vulnerability changes",
+          "ISO 27005 Context: defining the scope, criteria, and organizational context for risk management",
+          "ISO 27005 Risk Assessment: identification, analysis, and evaluation of risks against acceptance criteria",
+          "NIST/ISO mapping: NIST Categorize ≈ ISO Context, NIST Select ≈ ISO Risk Treatment, NIST Authorize ≈ ISO Risk Acceptance"
+        ],
+        "demonstration": "Walking through the NIST RMF for a new cloud-based HR system: (1) Categorize the system as Moderate (processes PII), (2) Select controls from NIST SP 800-53 Moderate baseline, (3) Tailor by adding additional controls for cloud environments and removing non-applicable physical controls, (4) Document in the System Security Plan. Simultaneously mapping these steps to the equivalent ISO 27005 process.",
+        "setup_requirements": [
+          "NIST RMF Quick Start Guide",
+          "NIST SP 800-53 Rev. 5 control catalog (searchable)",
+          "FIPS 199 security categorization guide",
+          "ISO 27005 process flowchart",
+          "System Security Plan template"
+        ],
+        "review": [
+          {
+            "key": "FIPS 199 Categorization",
+            "value": "Categorize each information type by potential impact on confidentiality, integrity, and availability. The system's overall category is the HIGH watermark across all information types and impact areas. A system processing both public data (Low) and PII (Moderate confidentiality) is categorized as Moderate overall."
+          },
+          {
+            "key": "Authorizing Official Role",
+            "value": "The AO is the senior official who formally accepts the residual risk of operating a system. This is a personal risk decision — the AO is accountable if the system is breached and the risk acceptance was not justified. The AO must understand the residual risk, compensating controls, and planned risk mitigations before signing."
+          },
+          {
+            "key": "Continuous Monitoring vs Point-in-Time",
+            "value": "The original RMF was a point-in-time process with periodic reauthorization. Modern RMF emphasizes continuous monitoring with automated control assessment, reducing the need for resource-intensive periodic re-assessments. Ongoing authorization (OA) replaces the traditional 3-year reauthorization cycle."
+          },
+          {
+            "key": "Framework Complementarity",
+            "value": "NIST RMF is prescriptive (specific controls, specific categories). ISO 27005 is flexible (defines the process but not specific controls). Organizations often use NIST for regulatory compliance and ISO for international certification. Mapping between them avoids duplicate effort."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Control Selection and Implementation",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Select appropriate security controls from NIST SP 800-53 and ISO 27001 Annex A based on identified risks",
+        "Design a defense-in-depth control architecture with preventive, detective, and corrective controls",
+        "Evaluate compensating controls when primary controls are infeasible",
+        "Document control implementation with traceability from risk to control to test"
+      ],
+      "readings": [
+        "NIST SP 800-53 Rev. 5: Security and Privacy Controls for Information Systems (selected families)",
+        "ISO 27001:2022 Annex A Controls overview",
+        "CIS Controls v8: Implementation Groups 1-3"
+      ],
+      "lecture_notes": {
+        "introduction": "Control selection is where risk assessment meets risk treatment. Having identified and analyzed risks, the risk manager must select the combination of controls that reduces risk to an acceptable level at an acceptable cost. This is not simply picking controls from a catalog — it requires understanding the risk being addressed, the control's effectiveness against that specific risk, the control's cost (both implementation and ongoing), and how it integrates with existing controls. Security controls are categorized as preventive (stop threats before they succeed), detective (identify threats that have occurred), and corrective (contain and recover from successful threats). A mature security architecture layers all three types: preventive controls reduce the frequency of incidents, detective controls minimize the dwell time of those that occur, and corrective controls limit the damage and enable recovery. NIST SP 800-53 provides a comprehensive catalog of 1,189 controls organized into 20 families, while CIS Controls provides a prioritized subset organized by implementation maturity. The art of control selection is balancing comprehensiveness with practicality — selecting the minimum set of controls that addresses the maximum risk.",
+        "key_concepts": [
+          "Control categories: preventive (firewall, MFA, encryption), detective (SIEM, IDS, audit logging), corrective (backup, incident response, disaster recovery)",
+          "NIST SP 800-53 control families: Access Control (AC), Audit (AU), Configuration Management (CM), Identification and Authentication (IA), Incident Response (IR), Risk Assessment (RA), System and Communications Protection (SC), etc.",
+          "Control baselines: NIST Low/Moderate/High baselines provide starting control sets based on system categorization",
+          "Control tailoring: adding, removing, or modifying baseline controls based on the specific system and environment",
+          "Compensating controls: alternative measures providing equivalent protection when a standard control is infeasible (documented justification required)",
+          "Defense in depth: layering controls so that failure of one control does not result in a complete security breach",
+          "CIS Controls Implementation Groups: IG1 (essential cyber hygiene, 56 controls), IG2 (all of IG1 plus 74 more), IG3 (all 153 controls)",
+          "Control effectiveness metrics: how to measure whether a control is actually reducing the risk it was selected to address",
+          "Cost-benefit analysis: comparing control cost against risk reduction (ROSI), considering both implementation and operational costs",
+          "Control traceability: documenting the chain from identified risk to selected control to implementation evidence to test result"
+        ],
+        "demonstration": "For three identified risks from previous weeks' threat and vulnerability assessments, selecting controls from NIST SP 800-53: (1) For the SQL injection risk: selecting SI-10 (Information Input Validation), SC-7 (Boundary Protection/WAF), and AU-6 (Audit Review, Analysis, and Reporting). (2) Designing a compensating control when MFA is infeasible for a legacy system. (3) Mapping all selected controls to CIS Controls to identify any gaps.",
+        "setup_requirements": [
+          "NIST SP 800-53 Rev. 5 control catalog (searchable)",
+          "CIS Controls v8 mapping spreadsheet",
+          "Control selection worksheet with cost-benefit fields",
+          "Compensating control documentation template",
+          "Risk-to-control traceability matrix template"
+        ],
+        "review": [
+          {
+            "key": "Defense in Depth Example",
+            "value": "For email-borne malware: Layer 1 (Preventive) - email security gateway blocks known malicious attachments. Layer 2 (Preventive) - endpoint AV scans attachments on download. Layer 3 (Detective) - EDR detects malicious behavior if executed. Layer 4 (Corrective) - IR procedures contain and eradicate. No single layer is perfect; together they provide resilient protection."
+          },
+          {
+            "key": "Compensating Control Requirements",
+            "value": "A compensating control must: (1) Address the same risk as the original control. (2) Provide a comparable level of protection. (3) Be documented with justification for why the primary control is infeasible. (4) Be approved by the risk owner. Example: if MFA is infeasible for a legacy system, compensating controls might include network segmentation, privileged access workstations, and enhanced logging."
+          },
+          {
+            "key": "CIS IG1 Priority",
+            "value": "CIS IG1 (56 controls) addresses the most common attack vectors and provides essential cyber hygiene. Organizations that fully implement IG1 are defended against the majority of commodity attacks. Prioritize IG1 completion before advancing to IG2/IG3. Many organizations invest in advanced controls while IG1 gaps remain."
+          },
+          {
+            "key": "Control Effectiveness Measurement",
+            "value": "A deployed control that is not measured may not be working. Example: if you deploy MFA, measure the percentage of logins using MFA (should be 100%), the number of MFA bypass attempts, and the reduction in credential-based compromises. Controls without metrics are controls without accountability."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Risk Treatment Strategies",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Evaluate and select appropriate risk treatment options: mitigate, transfer, accept, and avoid",
+        "Develop a risk treatment plan with prioritized actions, owners, and timelines",
+        "Document residual risk after treatment and obtain formal risk acceptance from appropriate authorities",
+        "Assess cyber insurance as a risk transfer mechanism"
+      ],
+      "readings": [
+        "ISO 27005:2022 Section 8: Information Security Risk Treatment",
+        "NIST SP 800-39: Managing Information Security Risk Ch. 3",
+        "Cyber insurance market overview and policy analysis resources"
+      ],
+      "lecture_notes": {
+        "introduction": "Risk treatment is the process of selecting and implementing measures to modify risk. For each identified risk, the organization must choose from four fundamental treatment options: mitigate (reduce likelihood or impact through controls), transfer (shift financial impact to a third party, typically through insurance), accept (acknowledge the risk and continue operations without additional controls), or avoid (eliminate the risk by ceasing the activity that creates it). The choice depends on the risk level, available treatment options, cost-effectiveness, and organizational risk appetite. Most risks are mitigated through security controls, but mitigation rarely eliminates risk entirely — it reduces it to a residual level that must be formally documented and accepted. Risk transfer through cyber insurance has become a significant market, but insurance does not reduce the operational or reputational impact of an incident; it only offsets financial losses. Risk acceptance must be a conscious, documented decision by an appropriate authority, not a default state of inaction. Risk avoidance is appropriate when the risk exceeds the business benefit of the activity. The risk treatment plan documents all decisions and creates accountability for implementation.",
+        "key_concepts": [
+          "Risk mitigation: implementing controls to reduce likelihood (preventive) or impact (detective, corrective). Most common treatment option.",
+          "Risk transfer: shifting financial impact via cyber insurance, contractual indemnification, or outsourcing to a provider with better controls",
+          "Risk acceptance: formal documentation that the residual risk is within risk appetite. Requires authority-level approval (not analyst-level default)",
+          "Risk avoidance: eliminating the risk by discontinuing the activity. Example: not collecting certain data types eliminates the breach risk for that data",
+          "Residual risk: the risk remaining after treatment. Inherent risk - control effectiveness = residual risk. Must be below risk acceptance threshold",
+          "Risk treatment plan: documents each risk, selected treatment, specific actions, responsible owner, implementation timeline, success metrics",
+          "Cyber insurance coverage types: first-party (own losses), third-party (liability to others), ransomware-specific riders",
+          "Cyber insurance limitations: exclusions (acts of war, known vulnerabilities, nation-state attacks), sublimits, retroactive dates, notification requirements",
+          "Risk acceptance authority: defined by organizational policy — typically CISO for technical risks, CRO for enterprise risks, board for strategic risks",
+          "Treatment prioritization: highest residual risk and most cost-effective treatments first, balanced against implementation dependencies"
+        ],
+        "demonstration": "Developing a risk treatment plan for the top 10 risks from the semester risk register: selecting treatment options for each (mitigate 7, transfer 2, accept 1), calculating the cost of treatment versus the risk reduction, documenting residual risk, and preparing the risk acceptance memo for the single accepted risk with business justification.",
+        "setup_requirements": [
+          "Risk register from previous exercises with analyzed risks",
+          "Risk treatment plan template",
+          "Cyber insurance policy sample (anonymized)",
+          "Risk acceptance memo template",
+          "Cost-benefit analysis spreadsheet"
+        ],
+        "review": [
+          {
+            "key": "Insurance Is Not a Control",
+            "value": "Cyber insurance transfers financial loss but does not prevent or detect incidents. An insured organization still suffers operational disruption, reputational damage, and regulatory scrutiny. Insurance is a financial safety net, not a security measure. Never use insurance as a substitute for controls."
+          },
+          {
+            "key": "Formal Risk Acceptance",
+            "value": "Risks must be accepted by someone with the authority and accountability to make that decision. A system administrator should not accept risk on behalf of the business. Risk acceptance must be documented with: the risk description, residual risk level, business justification, accepting authority signature, and review date."
+          },
+          {
+            "key": "Residual Risk Monitoring",
+            "value": "Accepted residual risk must be monitored for changes. A risk accepted as 'Medium' may become 'High' due to: new threat intelligence, discovery of additional vulnerabilities, increased asset criticality, or changes in the threat landscape. Periodic review (at least annual) ensures accepted risks remain within appetite."
+          },
+          {
+            "key": "Treatment Cost vs Risk",
+            "value": "If a control costs $200K/year to reduce a $100K/year risk, the control is not cost-effective (negative ROSI). However, qualitative factors may justify it: regulatory requirements, customer expectations, or strategic risk appetite. Quantitative analysis informs the decision; it does not make it automatically."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "Business Impact Analysis",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Conduct a Business Impact Analysis identifying critical business functions and their dependencies",
+        "Determine Recovery Time Objectives and Recovery Point Objectives for each critical function",
+        "Assess the financial, operational, regulatory, and reputational impact of disruption to each function",
+        "Integrate BIA results into the overall risk management and business continuity programs"
+      ],
+      "readings": [
+        "NIST SP 800-34 Rev. 1: Contingency Planning Guide for Federal Information Systems Ch. 3",
+        "ISO 22301: Business Continuity Management Systems overview",
+        "BCI Good Practice Guidelines for Business Impact Analysis"
+      ],
+      "lecture_notes": {
+        "introduction": "A Business Impact Analysis determines the consequences of disruption to critical business functions and the time-sensitivity of recovery. While risk assessment asks 'what could go wrong?', BIA asks 'what happens when it does go wrong, and how quickly must we recover?' BIA identifies the organization's critical business functions, determines their dependencies on IT systems, data, and other resources, and quantifies the impact of disruption over time. The key outputs are Recovery Time Objectives (RTO) — the maximum acceptable downtime before business impact becomes unacceptable — and Recovery Point Objectives (RPO) — the maximum acceptable data loss measured in time. These objectives drive infrastructure investment decisions: an RTO of 4 hours requires a different architecture than an RTO of 48 hours. BIA is essential for risk management because it determines the true business impact of threats materializing, which is the 'Impact' variable in the risk equation. It also drives business continuity planning, disaster recovery architecture, and incident response prioritization. Organizations that have not conducted a BIA discover their true impact tolerance during a crisis, when it is too late to adjust.",
+        "key_concepts": [
+          "Critical business functions: processes essential to revenue generation, customer service, regulatory compliance, and organizational survival",
+          "IT dependency mapping: which systems, applications, and data each business function requires to operate",
+          "Recovery Time Objective (RTO): maximum acceptable duration of service disruption before unacceptable business impact",
+          "Recovery Point Objective (RPO): maximum acceptable amount of data loss, measured in time (RPO of 1 hour means max 1 hour of data loss)",
+          "Maximum Tolerable Period of Disruption (MTPD): absolute maximum before the business function cannot recover (beyond MTPD = permanent damage)",
+          "Impact quantification over time: impact increases non-linearly — first hour may cost $10K, first day $100K, first week $5M due to cascading effects",
+          "Impact categories: financial (lost revenue, penalties), operational (manual workarounds, backlog), regulatory (compliance violations, reporting failures), reputational (customer trust)",
+          "Dependency chain analysis: Function A depends on System B, which depends on Database C, which depends on Network D — any link failure cascades",
+          "BIA interview methodology: structured interviews with business process owners, not just IT — business owners understand the true impact of disruption",
+          "BIA outputs: prioritized function list, RTO/RPO for each, impact curves, dependency maps, resource requirements for recovery"
+        ],
+        "demonstration": "Conducting a BIA for a fictional online banking platform: interviewing the (simulated) business process owners for account management, payment processing, loan origination, and customer support. Determining that payment processing has RTO of 4 hours and RPO of zero (no transaction loss acceptable), while loan origination can tolerate 48-hour disruption. Mapping technology dependencies and identifying the single points of failure.",
+        "setup_requirements": [
+          "BIA questionnaire template",
+          "Impact assessment matrix (financial, operational, regulatory, reputational by time period)",
+          "Dependency mapping tool",
+          "RTO/RPO determination worksheet",
+          "Sample BIA report for reference"
+        ],
+        "review": [
+          {
+            "key": "RTO Drives Architecture",
+            "value": "RTO of 0 (no downtime) requires active-active redundancy. RTO of 4 hours requires warm standby with automated failover. RTO of 24 hours allows for cold standby restoration from backups. RTO of 1 week allows for equipment procurement and rebuild. Each step down in RTO significantly increases infrastructure cost."
+          },
+          {
+            "key": "RPO Drives Backup Strategy",
+            "value": "RPO of 0 requires synchronous replication (every write duplicated in real-time). RPO of 15 minutes requires asynchronous replication with short intervals. RPO of 24 hours is achievable with daily backups. RPO of 1 week requires only weekly backups. Cost increases exponentially as RPO approaches zero."
+          },
+          {
+            "key": "Cascading Impact",
+            "value": "Impact is rarely linear. A 1-hour email outage is an inconvenience. A 1-day email outage causes missed deadlines and customer complaints. A 1-week email outage disrupts all business processes, causes regulatory violations, and damages customer relationships. BIA must assess impact at multiple time intervals."
+          },
+          {
+            "key": "Business Owner Interviews",
+            "value": "IT teams often underestimate or overestimate business impact. The business process owner knows that payment processing generates $50K/hour in revenue and a 4-hour outage triggers regulatory reporting requirements. BIA must interview business owners, not just IT administrators, to accurately quantify impact."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "Security Auditing",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Differentiate between internal and external security audits and their respective purposes",
+        "Plan and execute a security audit against a defined control framework",
+        "Assess control effectiveness through evidence collection, testing, and interviews",
+        "Write audit findings and recommendations that drive organizational improvement"
+      ],
+      "readings": [
+        "ISACA IT Audit Framework overview",
+        "NIST SP 800-53A Rev. 5: Assessing Security and Privacy Controls",
+        "ISO 19011: Guidelines for Auditing Management Systems"
+      ],
+      "lecture_notes": {
+        "introduction": "Security auditing provides independent assurance that security controls are implemented correctly and operating effectively. While risk assessment identifies what controls are needed, auditing verifies that those controls actually exist and work as intended. Without auditing, organizations operate on the assumption that their controls are effective — an assumption that is frequently wrong. Internal audits are conducted by the organization's own audit team to identify and remediate control weaknesses before they are found by external auditors or exploited by attackers. External audits are conducted by independent third parties to provide assurance to customers, regulators, and business partners. Audit findings range from critical control failures requiring immediate remediation to low-priority observations for improvement. The audit process follows a structured methodology: planning (defining scope, objectives, and criteria), fieldwork (evidence collection, control testing, interviews), reporting (findings, risk ratings, recommendations), and follow-up (verifying remediation of findings). Effective auditors understand both the control framework being assessed and the business context of the organization, enabling them to provide findings that are not just technically accurate but also operationally relevant.",
+        "key_concepts": [
+          "Internal audit: conducted by the organization's audit team, focuses on control improvement, reports to audit committee/board",
+          "External audit: conducted by independent third party, provides assurance to stakeholders, may be required by regulation or contract",
+          "Audit standards: ISACA ITAF for IT auditing, AICPA SSAE 18 for SOC reports, ISO 19011 for management system audits",
+          "Audit planning: defining scope, objectives, criteria (which framework/controls), timing, and audit team composition",
+          "Evidence types: documentation review (policies, procedures), observation (watching processes), inquiry (interviews), re-performance (independently testing controls)",
+          "Control testing: design effectiveness (is the control designed to address the risk?) and operating effectiveness (does it work consistently over time?)",
+          "Finding severity levels: Critical (immediate risk), High (significant control failure), Medium (control weakness), Low (improvement opportunity)",
+          "Audit report components: executive summary, scope, methodology, findings with evidence, risk ratings, recommendations, management response",
+          "Management response: audit findings require a formal management response: accept with remediation plan and timeline, or formally disagree with justification",
+          "Audit follow-up: verifying that remediation actions were completed as committed, re-testing controls after remediation"
+        ],
+        "demonstration": "Conducting a mini security audit of access control practices: reviewing the access management policy (documentation), interviewing the IT administrator about the provisioning process (inquiry), testing a sample of user accounts for least privilege compliance (re-performance), and writing audit findings for any control deficiencies identified.",
+        "setup_requirements": [
+          "Audit program template",
+          "Evidence collection checklist",
+          "Control testing worksheet",
+          "Audit finding template with severity ratings",
+          "Sample access management policy to audit against"
+        ],
+        "review": [
+          {
+            "key": "Design vs Operating Effectiveness",
+            "value": "A password policy requiring 12-character passwords has good design effectiveness. But if the technical enforcement allows 8-character passwords because the policy was not applied to all systems, operating effectiveness fails. Auditors must test both: is the control designed correctly AND is it working in practice?"
+          },
+          {
+            "key": "Sampling in Audits",
+            "value": "Auditors cannot test every transaction or every user account. Statistical sampling provides confidence that the sample represents the population. For a population of 1000 user accounts, testing 25-60 accounts (depending on risk) provides reasonable assurance. Document the sampling methodology and rationale."
+          },
+          {
+            "key": "Audit Independence",
+            "value": "External audit value comes from independence. The auditor must not have designed, implemented, or operated the controls being audited. Internal auditors should be organizationally independent of the functions they audit (reporting to the audit committee, not the CISO)."
+          },
+          {
+            "key": "Finding Remediation Tracking",
+            "value": "An audit that identifies findings but does not track remediation provides information without improvement. Maintain a finding tracker with: finding description, severity, owner, remediation plan, target date, and current status. Review the tracker regularly with management."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "Compliance Frameworks: SOC 2, PCI DSS, and HIPAA",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Explain the requirements and audit processes for SOC 2, PCI DSS, and HIPAA Security Rule compliance",
+        "Map technical security controls to specific compliance framework requirements",
+        "Develop a compliance assessment methodology that efficiently addresses multiple frameworks",
+        "Identify common control mappings across frameworks to reduce duplicate effort"
+      ],
+      "readings": [
+        "AICPA SOC 2 Trust Services Criteria overview",
+        "PCI DSS v4.0 Requirements summary",
+        "HHS HIPAA Security Rule administrative, physical, and technical safeguards"
+      ],
+      "lecture_notes": {
+        "introduction": "Compliance frameworks translate broad security principles into specific, auditable requirements that organizations must meet. While risk management asks 'what should we do?', compliance asks 'what must we do?' SOC 2 (Service Organization Control) provides assurance to customers of cloud and SaaS providers that their data is protected according to the Trust Services Criteria. PCI DSS (Payment Card Industry Data Security Standard) protects cardholder data with 12 requirements and 300+ sub-requirements. HIPAA's Security Rule protects electronic Protected Health Information in healthcare with administrative, physical, and technical safeguards. Each framework has different origins (AICPA, PCI SSC, HHS), different assessment processes (independent audit, QSA assessment, self-assessment), and different consequences for non-compliance (contract loss, fines, enforcement actions). Many organizations must comply with multiple frameworks simultaneously, creating efficiency opportunities through common control mapping. A single MFA implementation can satisfy SOC 2 CC6.1, PCI DSS 8.3, and HIPAA 164.312(d). Understanding these mappings enables organizations to achieve comprehensive compliance without redundant control implementations.",
+        "key_concepts": [
+          "SOC 2 Trust Services Criteria: Security (CC), Availability, Processing Integrity, Confidentiality, Privacy — Security is required, others optional",
+          "SOC 2 Type I vs Type II: Type I evaluates control design at a point in time; Type II evaluates design and operating effectiveness over a period (6-12 months)",
+          "PCI DSS 12 requirements: covering network security, data protection, vulnerability management, access control, monitoring, and security policy",
+          "PCI DSS compliance levels: Level 1 (>6M transactions, requires QSA assessment), Levels 2-4 (self-assessment questionnaires)",
+          "HIPAA Security Rule safeguards: Administrative (policies, training, risk assessment), Physical (facility controls, device management), Technical (access control, audit controls, encryption)",
+          "HIPAA required vs addressable: required specifications must be implemented; addressable must be implemented OR a documented alternative must be justified",
+          "Cross-framework control mapping: encryption at rest satisfies SOC 2 CC6.7, PCI DSS 3.4, and HIPAA 164.312(a)(2)(iv)",
+          "Compliance automation: GRC platforms that map controls to multiple frameworks, track evidence, and automate continuous monitoring",
+          "Compliance as a floor: meeting compliance requirements does not mean being secure. Compliance is the minimum standard; risk management determines the appropriate level above compliance",
+          "Regulatory penalties: PCI DSS fines up to $100K/month for non-compliance, HIPAA penalties up to $1.9M per violation category per year, SOC 2 failure means customer loss"
+        ],
+        "demonstration": "Mapping a set of 20 security controls to three frameworks simultaneously: showing how a single password policy implementation maps to SOC 2 CC6.1, PCI DSS 8.2, and HIPAA 164.312(d). Building a compliance matrix that tracks each control's evidence across all applicable frameworks, identifying gaps where controls are implemented for one framework but not mapped to others.",
+        "setup_requirements": [
+          "SOC 2 Trust Services Criteria reference",
+          "PCI DSS v4.0 requirements matrix",
+          "HIPAA Security Rule requirements checklist",
+          "Cross-framework control mapping spreadsheet",
+          "GRC platform demonstration (if available)"
+        ],
+        "review": [
+          {
+            "key": "SOC 2 Type II Value",
+            "value": "Type II reports evaluate control effectiveness over a period (typically 12 months), providing assurance that controls work consistently, not just that they exist on paper. Sophisticated customers and partners require Type II reports because a control that existed during the audit but fails the next day provides no real protection."
+          },
+          {
+            "key": "PCI DSS Scope Reduction",
+            "value": "PCI DSS applies to all systems that store, process, or transmit cardholder data. Reducing scope by segmenting the cardholder data environment (CDE) from the rest of the network reduces the number of systems subject to PCI requirements. Network segmentation is the most effective cost reduction strategy for PCI compliance."
+          },
+          {
+            "key": "HIPAA Addressable vs Required",
+            "value": "Addressable does not mean optional. If an addressable specification is not implemented, the organization must document: (1) why it is not reasonable and appropriate, (2) what alternative safeguard provides equivalent protection, and (3) the risk assessment supporting the decision. Simply stating 'not applicable' without analysis violates HIPAA."
+          },
+          {
+            "key": "Compliance Is Not Security",
+            "value": "Target, Equifax, and Capital One were all compliant with applicable frameworks at the time of their breaches. Compliance frameworks set minimum standards based on known threats. They lag behind evolving attack techniques. Risk management must go beyond compliance to address emerging threats and organization-specific risks."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Vendor Risk Management",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Design and implement a third-party vendor risk assessment program with tiered requirements",
+        "Evaluate vendor security posture using questionnaires, SOC 2 reports, and security ratings",
+        "Manage vendor risk throughout the relationship lifecycle from onboarding to termination",
+        "Address supply chain security risks including software dependencies and service provider chains"
+      ],
+      "readings": [
+        "NIST SP 800-161 Rev. 1: Cybersecurity Supply Chain Risk Management Practices",
+        "Shared Assessments SIG questionnaire overview",
+        "CISA Defending Against Software Supply Chain Attacks"
+      ],
+      "lecture_notes": {
+        "introduction": "Organizations are only as secure as their least-secure vendor. Major breaches increasingly originate through third-party access: the Target breach through an HVAC contractor, the SolarWinds attack through a software supply chain compromise, the Kaseya attack through a managed services provider. Third-party risk management (TPRM) programs assess and monitor the security posture of vendors, partners, and service providers that have access to the organization's data or systems. A mature TPRM program tiers vendors by risk level based on the sensitivity of data they access and the criticality of the services they provide. Critical vendors (those with access to sensitive data or providing essential services) receive the most rigorous assessment: security questionnaires, SOC 2 report review, penetration test results, and possibly on-site audits. Standard vendors receive questionnaire-based assessment. Low-risk vendors may require only basic due diligence. Software supply chain risk has become particularly acute: modern applications depend on hundreds of open-source libraries, each a potential attack vector. Software Bills of Materials (SBOMs) provide visibility into these dependencies, enabling organizations to assess their exposure when a library vulnerability is disclosed.",
+        "key_concepts": [
+          "Vendor tiering: Critical (sensitive data access, essential service), High (significant data or operational dependency), Medium (limited access, moderate dependency), Low (minimal risk)",
+          "Assessment methods: security questionnaires (SIG, CAIQ), SOC 2 Type II report review, penetration test results, security rating services (BitSight, SecurityScorecard)",
+          "Vendor risk assessment lifecycle: pre-contract due diligence, onboarding assessment, periodic reassessment, continuous monitoring, termination/offboarding",
+          "SOC 2 report analysis: evaluating exceptions, testing scope, management response to findings, complementary user entity controls (CUECs)",
+          "Security rating services: automated outside-in assessment of vendor security posture based on observable data (open ports, DNS configuration, email security, patching)",
+          "Contractual security requirements: security exhibit in contracts, right-to-audit clauses, breach notification requirements, data handling and return/destruction",
+          "Software supply chain: SBOM (Software Bill of Materials), dependency scanning, build integrity verification, provenance attestation",
+          "Fourth-party risk: your vendor's vendors — a breach at a subcontractor affects you. Contractual requirements should address subcontractor security",
+          "Vendor incident response: pre-agreed notification timelines, cooperation requirements, forensic access, liability allocation",
+          "Concentration risk: over-dependence on a single vendor or technology platform. If AWS goes down, how many of your vendors are also affected?"
+        ],
+        "demonstration": "Evaluating a fictional SaaS vendor: reviewing their SOC 2 Type II report (identifying two exceptions in access control and backup testing), analyzing their SIG questionnaire responses (identifying gaps in encryption and incident response), checking their BitSight security rating, and writing the vendor risk assessment report with a risk-based recommendation (approve with conditions, requiring remediation of the SOC 2 exceptions within 90 days).",
+        "setup_requirements": [
+          "Sample SOC 2 Type II report (sanitized)",
+          "SIG Lite questionnaire template",
+          "Security rating service demo access",
+          "Vendor risk assessment report template",
+          "Contract security exhibit template"
+        ],
+        "review": [
+          {
+            "key": "SOC 2 Exception Analysis",
+            "value": "Not all SOC 2 exceptions are equal. An exception in 'access reviews were not performed quarterly for 2 of 12 quarters' is concerning but manageable. An exception in 'encryption at rest was not enabled for the production database' is critical. Evaluate exceptions based on the risk they represent to your data, not just their existence."
+          },
+          {
+            "key": "SBOM Operationalization",
+            "value": "An SBOM lists every component in a software product. When Log4Shell was disclosed, organizations with SBOMs could immediately identify which of their applications contained Log4j. Without SBOMs, they spent weeks manually checking every application. Require SBOMs from software vendors in procurement contracts."
+          },
+          {
+            "key": "Continuous Monitoring vs Point-in-Time",
+            "value": "A vendor's SOC 2 report covers a specific period. Security ratings provide continuous monitoring between audits. A vendor with a clean SOC 2 but a declining security rating may be deteriorating. Use both for a complete picture: SOC 2 for in-depth assessment, ratings for continuous monitoring."
+          },
+          {
+            "key": "Vendor Offboarding Risk",
+            "value": "When a vendor relationship ends, ensure: all organizational data is returned and destroyed (with certification), all access credentials are revoked, all integration points are disconnected, and the vendor's data retention obligations are documented. More breaches occur through forgotten vendor access than through active vendor relationships."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "Continuous Monitoring and Risk Reporting",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Design a continuous risk monitoring program with automated and manual components",
+        "Define Key Risk Indicators (KRIs) and Key Performance Indicators (KPIs) for security programs",
+        "Build executive risk dashboards that communicate risk posture in business terms",
+        "Integrate risk monitoring with GRC platforms and security operations"
+      ],
+      "readings": [
+        "NIST SP 800-137: Information Security Continuous Monitoring for Federal Information Systems",
+        "FAIR reporting and visualization best practices",
+        "GRC platform capabilities comparison (Archer, ServiceNow, OneTrust)"
+      ],
+      "lecture_notes": {
+        "introduction": "Risk management is not a project with a completion date — it is a continuous process. The threat landscape changes daily, new vulnerabilities are discovered constantly, business contexts shift, and the effectiveness of controls degrades over time without monitoring and maintenance. Continuous monitoring provides ongoing awareness of the organization's risk posture, enabling timely identification of new risks and degradation of existing controls. The monitoring program combines automated data collection (vulnerability scan results, compliance checks, security event telemetry) with manual processes (risk reassessment, control testing, threat intelligence analysis). Key Risk Indicators (KRIs) provide early warning of increasing risk, while Key Performance Indicators (KPIs) measure the effectiveness of security controls and processes. Together, they enable data-driven risk management and provide the metrics executives need to make informed investment decisions. Executive risk dashboards translate technical security data into business-relevant risk communication: not 'we have 2,847 vulnerabilities' but 'our exposure to data breach has increased by 15% this quarter due to delayed patching in the payments environment.'",
+        "key_concepts": [
+          "Continuous monitoring program components: automated vulnerability scanning, configuration compliance checks, security event monitoring, control effectiveness testing",
+          "KRI design: leading indicators of increasing risk — should trigger investigation or action before a risk materializes",
+          "KPI design: lagging indicators measuring control effectiveness — should demonstrate that security investments are producing results",
+          "Example KRIs: average age of critical vulnerabilities, percentage of systems with outdated antivirus signatures, number of privileged accounts without MFA",
+          "Example KPIs: mean time to patch critical vulnerabilities, percentage of employees completing security training, SIEM alert-to-investigation ratio",
+          "Executive dashboard design: traffic-light status (red/amber/green), trend arrows, financial risk exposure, compliance status, key metrics",
+          "Risk reporting frequency: real-time dashboards for SOC, weekly reports for security leadership, monthly for CISO, quarterly for board",
+          "GRC platform capabilities: risk register management, control mapping, evidence collection, compliance tracking, workflow automation",
+          "Threat intelligence integration: feeding threat intelligence into risk reassessment when relevant threats emerge",
+          "Risk communication: adapting detail level and language to the audience — technical for security teams, business-impact for executives, strategic for board"
+        ],
+        "demonstration": "Building an executive risk dashboard: selecting 8 KRIs and KPIs, defining data sources and collection methods, setting threshold values for red/amber/green status, creating the dashboard layout with trend analysis, and presenting the dashboard to a simulated board of directors with business-impact narrative.",
+        "setup_requirements": [
+          "Dashboard creation tool (Excel, Tableau, or GRC platform)",
+          "Sample security metrics data for trend analysis",
+          "KRI/KPI definition template",
+          "Executive reporting template",
+          "Board presentation format guidelines"
+        ],
+        "review": [
+          {
+            "key": "KRI Design Principles",
+            "value": "Effective KRIs are: (1) Leading — they increase before risk materializes. (2) Measurable — objective data, not subjective opinion. (3) Actionable — when triggered, there is a clear response. (4) Relevant — meaningful to the audience. 'Number of phishing emails received' is noise. 'Phishing click rate after training' is an actionable KRI."
+          },
+          {
+            "key": "Dashboard Anti-Patterns",
+            "value": "Common dashboard failures: too many metrics (more than 8-10 overwhelms), all green (either the thresholds are too lenient or the data is cherry-picked), no trend data (a snapshot without history provides no context), and technical jargon (executives should not need a cybersecurity degree to understand the dashboard)."
+          },
+          {
+            "key": "Board-Level Reporting",
+            "value": "Board members need to understand: (1) What is our current risk posture? (2) How has it changed since last quarter? (3) Are our security investments producing results? (4) What decisions do we need to make? Present financial risk exposure, compliance status, major incidents, and budget requests. Avoid CVE numbers and technical details."
+          },
+          {
+            "key": "Metrics Gaming",
+            "value": "When metrics drive behavior, people optimize for the metric rather than the underlying goal. If you measure 'number of vulnerabilities remediated,' teams may prioritize easy low-risk fixes over difficult critical fixes. Design metrics that align with risk reduction, and use multiple complementary metrics to prevent gaming."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "Risk Reporting and Dashboards",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Create risk reports and presentations tailored for technical, management, and board-level audiences",
+        "Visualize risk data effectively using heat maps, trend charts, and financial exposure graphs",
+        "Present risk assessment findings with actionable recommendations and investment justifications",
+        "Practice communicating technical risk concepts to non-technical executives"
+      ],
+      "readings": [
+        "How to Measure Anything in Cybersecurity Risk Ch. 10-12 (Hubbard & Seiersen)",
+        "NACD Cyber Risk Oversight handbook (board governance perspective)",
+        "Data visualization best practices for risk communication"
+      ],
+      "lecture_notes": {
+        "introduction": "The final value of risk management is realized through effective communication. A brilliant risk assessment that sits unread in a file share provides no organizational value. Risk reporting translates analytical findings into decision-enabling communication for different audiences. Technical teams need detailed findings with remediation guidance. Security leadership needs trend analysis and resource allocation data. Executive management needs financial exposure and investment justification. Board members need strategic risk posture and governance oversight information. Each audience requires different levels of detail, different terminology, and different visualization approaches. This session teaches the communication skills that bridge the gap between technical risk analysis and organizational decision-making. Students will practice creating risk reports for multiple audiences, designing effective visualizations, and presenting risk findings in a way that drives action rather than merely informing. The ability to communicate risk effectively is often the difference between a risk management program that drives improvement and one that produces reports nobody reads.",
+        "key_concepts": [
+          "Audience-adapted reporting: technical (detailed findings, tool output), management (prioritized risks, resource needs), executive (financial exposure, strategic risk), board (governance status, trend direction)",
+          "Risk heat map design: 5x5 likelihood vs impact matrix with color coding, plotting multiple risks for portfolio view",
+          "Trend analysis: showing risk posture changes over time to demonstrate improvement or deterioration",
+          "Financial exposure communication: presenting risk in dollar terms (annual expected loss, worst-case scenario, 95th percentile) rather than severity ratings",
+          "Investment justification: using ROSI and risk reduction analysis to support security budget requests",
+          "Visualization best practices: clarity over complexity, consistent color coding, trend arrows, comparison against benchmarks",
+          "Risk register maintenance: keeping the risk register current as a living document, not a one-time assessment output",
+          "Storytelling with data: connecting individual risks to business scenarios that executives understand",
+          "Benchmark comparison: comparing organizational risk posture against industry benchmarks to provide context",
+          "Actionable recommendations: every risk report should answer 'so what?' — what specific actions should be taken, by whom, by when"
+        ],
+        "demonstration": "Students prepare and deliver three versions of a risk report based on their capstone risk assessment: (1) a technical findings brief for the security team, (2) a management summary for the CISO, and (3) a board-level presentation. The class evaluates each presentation for audience appropriateness, clarity, and actionability.",
+        "setup_requirements": [
+          "Risk assessment data from capstone project",
+          "Presentation software (PowerPoint/Google Slides)",
+          "Risk visualization templates (heat maps, trend charts)",
+          "Board presentation format example",
+          "Peer evaluation rubric for presentations"
+        ],
+        "review": [
+          {
+            "key": "Board Presentation Essentials",
+            "value": "A board risk presentation should answer five questions in 10-15 minutes: (1) What is our overall risk posture? (2) What changed since last quarter? (3) What are our top 3-5 risks? (4) Are we compliant with relevant regulations? (5) What decisions or approvals do you need from us? Everything else is detail that can be provided in an appendix."
+          },
+          {
+            "key": "Risk Heat Map Pitfalls",
+            "value": "Heat maps are intuitive but lose information. Two risks both rated 'High likelihood, High impact' may have very different financial exposures ($500K vs $50M). Use heat maps for portfolio overview but supplement with financial data for decision-making. Never rely solely on ordinal scales for investment decisions."
+          },
+          {
+            "key": "Benchmark Context",
+            "value": "Telling a board 'our MTTD is 12 days' means nothing without context. 'Our MTTD is 12 days compared to the industry average of 21 days and the best-in-class of 3 days' provides context. 'We have reduced MTTD from 30 days to 12 days over the past year through our detection engineering investment' tells a story of improvement."
+          },
+          {
+            "key": "The So-What Test",
+            "value": "Every risk report slide should pass the 'so what?' test. If a slide presents a finding without implications or actions, it fails. 'We have 2,847 vulnerabilities' — so what? '47 critical vulnerabilities on internet-facing payment systems require $150K in emergency patching to prevent an estimated $5M annual exposure' — that drives action."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Risk Assessment Capstone",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Present the comprehensive enterprise risk assessment capstone project to a panel of evaluators",
+        "Defend risk analysis methodology, assumptions, and conclusions under questioning",
+        "Demonstrate the ability to communicate risk findings to multiple audience types",
+        "Integrate all course concepts into a cohesive, professional risk management deliverable"
+      ],
+      "readings": [
+        "Review all course materials and capstone project",
+        "Prepare for questions on methodology, assumptions, and alternative approaches",
+        "Practice executive presentation delivery"
+      ],
+      "lecture_notes": {
+        "introduction": "The capstone session brings together all semester learning in the presentation and defense of each student's comprehensive enterprise risk assessment. Over the course of the semester, students have built an asset inventory, conducted threat and vulnerability assessments, performed quantitative and qualitative risk analysis, selected controls, evaluated compliance requirements, and assessed vendor risks for a provided organization profile. The capstone presentation synthesizes these components into a coherent risk management deliverable: the risk assessment report, risk register, treatment plan, compliance mapping, and executive dashboard. Students present their findings in two formats: a 15-minute executive presentation summarizing the risk posture, top risks, and recommended investments, followed by a 10-minute question period where evaluators challenge the methodology, assumptions, and conclusions. This mirrors the real-world experience of presenting risk assessments to leadership: the risk manager must be able to both communicate clearly and defend their analysis under scrutiny. The evaluation focuses on analytical rigor, practical applicability, professional communication, and the ability to connect technical risk findings to business decision-making.",
+        "key_concepts": [
+          "Capstone integration: combining all semester analyses into a cohesive risk management framework",
+          "Executive presentation skills: concise communication, business-impact focus, clear recommendations",
+          "Methodology defense: articulating and justifying analytical choices under questioning",
+          "Assumption transparency: clearly stating assumptions and their sensitivity impact on conclusions",
+          "Practical applicability: recommendations that are implementable given the organization's resources and constraints",
+          "Risk register as a living document: demonstrating how the risk register would be maintained and updated",
+          "Treatment plan realism: implementation timelines, resource requirements, and success metrics that are achievable",
+          "Peer evaluation: providing constructive feedback on classmates' analyses and presentations"
+        ],
+        "demonstration": "Each student delivers a 15-minute executive risk assessment presentation followed by 10 minutes of evaluator questions. Presentations must include: organization overview, methodology summary, top 5 risks with financial analysis, risk treatment plan with ROSI, compliance status, vendor risk highlights, executive dashboard, and specific investment recommendations. The evaluator panel includes the instructor and (optionally) industry guest evaluators.",
+        "setup_requirements": [
+          "Completed capstone risk assessment reports",
+          "Executive presentation materials",
+          "Presentation timer (15-minute limit enforced)",
+          "Evaluator scoring rubric",
+          "Peer evaluation forms"
+        ],
+        "review": [
+          {
+            "key": "Presentation Best Practice",
+            "value": "Start with the conclusion: 'Our overall risk posture is Moderate with three areas requiring immediate investment totaling $450K.' Then provide the supporting evidence. Executives want the bottom line first, then the justification. Do not build to a conclusion — state it upfront and defend it."
+          },
+          {
+            "key": "Handling Challenges",
+            "value": "When an evaluator challenges an assumption, do not become defensive. Acknowledge the limitation, explain your reasoning, and describe the sensitivity: 'If the ARO is 0.2 instead of 0.1, the ALE doubles to $1.5M, which would move this from a Medium to a High priority risk. The conclusion does not change: this risk requires treatment.'"
+          },
+          {
+            "key": "Actionable Recommendations",
+            "value": "Every recommendation must include: what to do, who should do it, when it should be completed, how much it will cost, and what risk it reduces. 'Improve patching' is not a recommendation. 'Deploy automated patch management for the 47 critical internet-facing systems at a cost of $85K, reducing the payment system breach ALE from $750K to $150K (ROSI: 653%)' is a recommendation."
+          },
+          {
+            "key": "Connecting the Dots",
+            "value": "The capstone must demonstrate how each analysis component connects: asset classification determines scope, threat assessment identifies adversaries, vulnerability assessment finds weaknesses, risk analysis quantifies exposure, control selection addresses risks, compliance maps to regulatory requirements, and monitoring ensures ongoing effectiveness. A disconnected analysis fails the integration test."
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 3,
+        "topic": "Risk Fundamentals, Asset Classification, and Threat Assessment",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "A hospital's patient portal application stores PHI for 500,000 patients. Using STRIDE, identify one specific, realistic threat for each of the six categories that applies to this system, and for each threat, name the corresponding security property at risk.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Spoofing (Authentication): An attacker uses credentials obtained from a phishing email to access another patient's medical records through the portal login page. Tampering (Integrity): An attacker exploits a broken access control vulnerability to modify prescription data in the database, changing dosage amounts. Repudiation (Non-repudiation): A malicious insider accesses celebrity patient records but the audit log does not capture which specific records were viewed, preventing accountability. Information Disclosure (Confidentiality): A SQL injection vulnerability in the search function exposes the entire patient database including SSNs, diagnoses, and treatment records. Denial of Service (Availability): An attacker sends a flood of API requests to the appointment scheduling endpoint, preventing patients from booking or accessing telehealth appointments during a health crisis. Elevation of Privilege (Authorization): A patient exploits an Insecure Direct Object Reference (IDOR) vulnerability in the API to access administrative functions, viewing all patient records instead of only their own.",
+            "rubric": [
+              {
+                "key": "All six STRIDE categories addressed with specific threats",
+                "value": 3
+              },
+              {
+                "key": "Threats are realistic for a healthcare patient portal",
+                "value": 3
+              },
+              {
+                "key": "Correct security property mapped to each category",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between risk appetite and risk tolerance. Provide an example of each for a financial services company, and describe what happens when risk tolerance is exceeded.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Risk appetite is a strategic statement set by the board defining the amount and type of risk the organization is willing to accept in pursuit of its objectives. It is broad and qualitative. Example: 'We accept moderate cybersecurity risk to enable competitive digital banking innovation, but we accept zero risk of non-compliance with banking regulations.' Risk tolerance is the specific, measurable boundary that operationalizes the risk appetite. It defines the acceptable variation. Example: 'No critical vulnerability on internet-facing banking systems may remain unpatched for more than 72 hours. Regulatory audit findings must be remediated within 30 days.' When risk tolerance is exceeded: (1) The risk event is escalated to the appropriate authority (CISO, CRO, or board depending on severity). (2) The authority must either authorize additional resources for immediate remediation, implement compensating controls, or formally accept the elevated risk with documented justification. (3) If the risk is regulatory in nature and tolerance is exceeded, the organization may also need to file a regulatory notification. Risk tolerance breaches should be rare; frequent breaches indicate the tolerance was set unrealistically or the security program is underfunded.",
+            "rubric": [
+              {
+                "key": "Clear distinction between appetite and tolerance",
+                "value": 3
+              },
+              {
+                "key": "Realistic examples for financial services",
+                "value": 2
+              },
+              {
+                "key": "Correct escalation process when tolerance exceeded",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Why is an asset inventory considered the foundation of risk management? What risks does an organization face if its asset inventory is 80% complete?",
+            "type": "short_answer",
+            "points": 5,
+            "answer": "An asset inventory is foundational because risk exists only in relation to assets of value. Without knowing what assets exist, the organization cannot: identify which assets face threats, assess the impact of compromise, apply appropriate controls, or monitor for vulnerabilities. You cannot protect what you do not know you have. With an 80% complete inventory, the missing 20% represents unmanaged risk: (1) Unknown assets are not scanned for vulnerabilities, so critical patches are missed. (2) Unknown data stores may contain sensitive data without appropriate controls, creating regulatory compliance violations. (3) Shadow IT systems may provide attacker entry points that are not monitored by the SOC. (4) Risk assessments understate the true organizational risk because they do not account for unknown assets. The 20% gap often includes the most dangerous assets: shadow IT, legacy systems, developer test environments, and recently provisioned cloud resources — all of which are common attacker targets precisely because they are unmanaged.",
+            "rubric": [
+              {
+                "key": "Explains why inventory is foundational",
+                "value": 2
+              },
+              {
+                "key": "Specific risks from incomplete inventory",
+                "value": 2
+              },
+              {
+                "key": "Recognition that unknown assets are often the most vulnerable",
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 5,
+        "topic": "Vulnerability Assessment, Risk Analysis, and Risk Frameworks",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "A company's e-commerce platform generates $10M annually. A vulnerability scan reveals a CVSS 9.8 SQL injection in the payment processing application. Historical data suggests one successful SQL injection attack every 3 years for similar e-commerce platforms, with an average exposure of the full customer database (200,000 records at $150/record). Calculate ALE before and after implementing a WAF ($120K/year) that reduces ARO to once every 20 years. Is the WAF justified using ROSI?",
+            "type": "calculation",
+            "points": 8,
+            "answer": "Before WAF: SLE = 200,000 records x $150/record = $30,000,000. ARO = 1/3 = 0.333. ALE_before = $30,000,000 x 0.333 = $9,990,000/year. After WAF: ARO_new = 1/20 = 0.05. ALE_after = $30,000,000 x 0.05 = $1,500,000/year. WAF annual cost = $120,000. ROSI = (ALE_before - ALE_after - Cost) / Cost = ($9,990,000 - $1,500,000 - $120,000) / $120,000 = $8,370,000 / $120,000 = 6,975% (69.75:1 return). The WAF is overwhelmingly justified. Even if the ARO estimates are off by an order of magnitude, the investment remains positive. This is a case where quantitative analysis makes the business case unambiguous. Note: the ALE analysis only captures direct breach costs. Additional costs (regulatory fines, legal fees, business disruption, reputation damage) would increase the true ALE further.",
+            "rubric": [
+              {
+                "key": "Correct SLE and ALE calculations for both scenarios",
+                "value": 3
+              },
+              {
+                "key": "Correct ROSI calculation with clear recommendation",
+                "value": 3
+              },
+              {
+                "key": "Acknowledges limitations or additional cost factors",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain why a vulnerability with CVSS Base score of 7.0 and EPSS score of 92% should be prioritized over a vulnerability with CVSS Base score of 9.5 and EPSS score of 2%. What does each metric measure, and how do they complement each other?",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "CVSS measures the severity of a vulnerability: the potential impact if exploited. It considers attack vector, complexity, privileges required, and CIA impact. A CVSS 9.5 has higher potential severity than a 7.0. EPSS measures the probability of a vulnerability being exploited in the wild within 30 days. An EPSS of 92% means the vulnerability is almost certainly being actively exploited; 2% means it is currently theoretical with no observed exploitation. The CVSS 7.0 / EPSS 92% vulnerability should be prioritized because: (1) It is actively being exploited — the threat is current and real, not theoretical. (2) Risk = Likelihood x Impact. Even though impact is lower (7.0), the near-certain likelihood (92%) produces higher actual risk. (3) The CVSS 9.5 / EPSS 2% vulnerability has higher potential severity but the threat is not yet materialized. It should be remediated but is less urgent. The complementary approach: CVSS tells you 'how bad would it be?' and EPSS tells you 'how likely is it right now?' Together they estimate risk better than either alone. A triage matrix using both (e.g., Critical priority when CVSS >= 7.0 AND EPSS >= 50%) produces better prioritization than CVSS alone.",
+            "rubric": [
+              {
+                "key": "Correct definitions of CVSS and EPSS",
+                "value": 2
+              },
+              {
+                "key": "Sound risk-based justification for prioritization",
+                "value": 3
+              },
+              {
+                "key": "Explains how the metrics complement each other",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Describe two limitations of qualitative risk analysis (risk matrix) and explain how quantitative analysis (FAIR model) addresses each limitation.",
+            "type": "short_answer",
+            "points": 5,
+            "answer": "Limitation 1: Qualitative analysis loses precision — two risks both rated 'High' may have vastly different financial impacts ($500K vs $50M). FAIR addresses this by producing dollar-value estimates with probability distributions. Instead of 'High' risk, FAIR says 'annual expected loss between $2M and $15M with 90% confidence,' enabling executives to make proportionate investment decisions. Limitation 2: Qualitative analysis is subjective — two analysts may rate the same risk differently (one says Medium, another says High) because the rating criteria are interpretive. FAIR addresses this by decomposing risk into defined, quantifiable factors (Threat Event Frequency, Vulnerability, Primary Loss, Secondary Loss) with each factor estimated using calibrated data and structured methodology. Two FAIR analysts may still differ, but the structured decomposition makes the sources of disagreement explicit and resolvable.",
+            "rubric": [
+              {
+                "key": "Two valid limitations of qualitative analysis",
+                "value": 2
+              },
+              {
+                "key": "Correct explanation of how FAIR addresses each",
+                "value": 2
+              },
+              {
+                "key": "Specific examples demonstrating the differences",
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "Control Selection, Risk Treatment, and Business Impact Analysis",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Your organization cannot implement MFA for a critical legacy mainframe system that processes financial transactions. Design a compensating control strategy that provides equivalent protection. Include at least three compensating controls and explain how each addresses the MFA risk.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Compensating controls for MFA on the legacy mainframe: (1) Network segmentation: Place the mainframe in a restricted network segment accessible only from designated Privileged Access Workstations (PAWs). This limits the attack surface to a small number of controlled access points, reducing the risk of credential theft from being exploitable from any network location. (2) Enhanced authentication monitoring: Deploy real-time alerting on all mainframe authentication events, with automatic account lockout after 3 failed attempts and immediate SOC notification for any off-hours logon or logon from a non-PAW IP address. This provides detective controls that compensate for the lack of a second authentication factor. (3) Session recording and behavioral analysis: Record all mainframe sessions with keystroke logging and deploy User Behavior Analytics (UBA) that baselines normal user activity and alerts on deviations (unusual commands, bulk data access, access to unusual datasets). This detects compromised credential usage through behavioral anomalies. (4) Privileged account management: Implement password vaulting with automatic rotation (every 24 hours) for all mainframe accounts. Users check out credentials from the vault, ensuring unique per-session passwords that are not stored on user workstations. Documentation must include: the business justification for why MFA is infeasible (legacy mainframe TN3270 protocol does not support modern authentication), the compensating controls listed above, the residual risk assessment, and approval by the risk owner.",
+            "rubric": [
+              {
+                "key": "Three or more valid compensating controls",
+                "value": 3
+              },
+              {
+                "key": "Each control specifically addresses the MFA risk",
+                "value": 3
+              },
+              {
+                "key": "Documentation requirements acknowledged",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain why 'risk acceptance' is not the same as 'ignoring risk.' Describe the requirements for formal risk acceptance and provide an example of when acceptance is the appropriate treatment.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Ignoring risk means being unaware of or choosing not to address a risk without analysis. Formal risk acceptance is a deliberate, documented decision that the residual risk is within the organization's risk appetite after informed analysis. Requirements for formal risk acceptance: (1) The risk must be identified and analyzed (quantitative or qualitative assessment completed). (2) Treatment alternatives must be evaluated and documented, with reasons why they are not being pursued (cost exceeds benefit, technical infeasibility, etc.). (3) The residual risk level must be clearly stated. (4) The risk must be accepted by an authority with appropriate organizational level (not the analyst who identified it — typically CISO, CRO, or executive depending on severity). (5) Acceptance must have an expiration date requiring re-evaluation (typically annual). (6) The accepted risk must be entered into the risk register and monitored for changes. Example of appropriate acceptance: A vulnerability in an end-of-life application scheduled for decommission in 90 days. The cost to patch ($50K in development and testing) exceeds the expected loss given the limited remaining exposure window. The CISO accepts the risk for 90 days with enhanced monitoring as a compensating measure, documented in the risk register with an automatic review trigger at the decommission date.",
+            "rubric": [
+              {
+                "key": "Clear distinction between acceptance and ignoring",
+                "value": 2
+              },
+              {
+                "key": "Complete formal acceptance requirements",
+                "value": 3
+              },
+              {
+                "key": "Realistic example with proper justification",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A BIA reveals that the payment processing system has an RTO of 4 hours and RPO of 15 minutes. What infrastructure architecture does this require, and approximately what cost tier does this represent compared to RTO of 24 hours?",
+            "type": "short_answer",
+            "points": 5,
+            "answer": "RTO of 4 hours requires: warm standby infrastructure with automated or semi-automated failover. The secondary site must have pre-configured servers, loaded operating systems, and recent data. Failover must be tested regularly. This typically means: active-passive database replication, pre-provisioned application servers (or auto-scaling cloud infrastructure), and automated health checking with failover triggers. RPO of 15 minutes requires: asynchronous data replication running at 15-minute intervals or less. This means database transaction log shipping every 15 minutes, or near-synchronous replication. Full synchronous replication is not needed for 15-minute RPO but is needed for zero RPO. Cost comparison: RTO 4h/RPO 15m is approximately 3-5x the cost of RTO 24h/RPO 24h. The 24-hour tier allows cold standby (offline servers started manually) with daily backups. The 4-hour tier requires always-running secondary infrastructure, more frequent replication, and automated failover components. The primary cost drivers are: secondary compute infrastructure (always running vs cold), storage replication infrastructure, network connectivity between sites, and testing/maintenance effort.",
+            "rubric": [
+              {
+                "key": "Correct infrastructure architecture for RTO/RPO",
+                "value": 2
+              },
+              {
+                "key": "Reasonable cost comparison with justification",
+                "value": 2
+              },
+              {
+                "key": "Identifies key cost drivers",
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "Security Auditing, Compliance, and Vendor Risk",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Your organization's SaaS payroll provider's SOC 2 Type II report contains two exceptions: (1) quarterly access reviews were not performed for Q2 and Q3, and (2) backup restoration testing was not completed for 4 of 12 months. As the risk manager, assess the severity of each exception and recommend specific actions.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Exception 1 (Access review gaps): Severity: HIGH. Access reviews ensure that terminated employees and role-changed users do not retain unauthorized access. Missing two consecutive quarters means 6 months of potential unauthorized access accumulation to payroll data including salary information, SSNs, and bank account details. Action: (1) Request immediate evidence that access reviews have resumed and the Q2/Q3 gaps have been remediated retroactively. (2) Request a list of all access changes during the gap period to verify no unauthorized access occurred. (3) Set a conditional approval: vendor must provide quarterly access review evidence going forward or face re-evaluation. Exception 2 (Backup restoration gaps): Severity: MEDIUM. Backup restoration testing verifies that backups are actually recoverable. 4 of 12 months untested means 33% gap in recovery assurance. If a disaster occurred during an untested month, payroll data recovery is uncertain. Action: (1) Request remediation plan with commitment to monthly testing. (2) Verify that the 8 successful tests demonstrated full recovery capability. (3) Include backup testing as a specific monitoring item in the next contract renewal. Overall: Both exceptions together indicate a pattern of operational discipline lapses. Escalate to vendor account management. Consider whether the vendor's risk rating should be increased and monitoring frequency enhanced.",
+            "rubric": [
+              {
+                "key": "Correct severity assessment with reasoning",
+                "value": 3
+              },
+              {
+                "key": "Specific, actionable remediation requests",
+                "value": 3
+              },
+              {
+                "key": "Recognizes the pattern and recommends enhanced monitoring",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain why 'compliance is not security' using a specific example. Then explain why compliance is still important even though it does not guarantee security.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Compliance is not security: Target was PCI DSS compliant at the time of its 2013 breach that exposed 40 million credit card numbers. The PCI DSS requirements were met: network segmentation existed, firewalls were configured, encryption was used. However, the attacker entered through a vendor (HVAC contractor) with network access and moved laterally to the payment environment through a segmentation gap that PCI assessment did not identify. Compliance frameworks define minimum standards based on known threats at the time of the framework's last update. They cannot anticipate novel attack techniques, organization-specific risks, or emerging threats. Why compliance is still important: (1) Regulatory obligation: non-compliance carries penalties (PCI fines up to $100K/month, HIPAA penalties up to $1.9M/year). (2) Baseline protection: compliance frameworks represent collective industry wisdom about minimum necessary controls. An organization that cannot meet compliance minimums almost certainly has severe security deficiencies. (3) Customer and partner trust: SOC 2 reports and PCI compliance attestations are table stakes for doing business. Without them, customers choose competitors. (4) Legal defense: demonstrating compliance efforts provides a defense in post-breach litigation ('we followed industry-accepted standards'). The right approach: compliance as the floor, risk management determining how far above the floor to build.",
+            "rubric": [
+              {
+                "key": "Specific real-world example of compliance failure",
+                "value": 2
+              },
+              {
+                "key": "Multiple valid reasons why compliance remains important",
+                "value": 3
+              },
+              {
+                "key": "Articulates the compliance-as-floor concept",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Design two Key Risk Indicators (KRIs) for monitoring third-party vendor risk. For each, specify what it measures, the data source, the escalation threshold, and the executive action it should trigger.",
+            "type": "short_answer",
+            "points": 5,
+            "answer": "KRI 1: 'Critical vendor security rating decline.' Measures: the external security rating (BitSight/SecurityScorecard) of vendors classified as Critical tier. Data source: automated security rating platform API, checked weekly. Threshold: any Critical vendor's score dropping below 650 (on a 300-900 scale) or declining more than 50 points in 30 days triggers escalation. Executive action: CISO initiates contact with vendor's security leadership, requests explanation and remediation plan, and begins contingency assessment for potential vendor transition. KRI 2: 'Vendor assessment overdue count.' Measures: the number of vendors whose periodic risk reassessment is overdue relative to their required assessment frequency (Critical: annual, High: biennial). Data source: GRC platform vendor risk module. Threshold: any Critical vendor overdue by more than 30 days, or more than 3 High vendors overdue by more than 60 days triggers escalation. Executive action: CRO reviews the overdue assessments, authorizes additional assessment resources if staffing is the bottleneck, and considers contract enforcement (right-to-audit clause) for vendors that are not responsive to assessment requests.",
+            "rubric": [
+              {
+                "key": "Two distinct, measurable KRIs",
+                "value": 2
+              },
+              {
+                "key": "Specific thresholds and data sources",
+                "value": 2
+              },
+              {
+                "key": "Actionable executive responses",
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "Continuous Monitoring, Risk Reporting, and Program Management",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "You are presenting the quarterly risk report to the board. The overall risk posture has shifted from 'Moderate' to 'High' due to three factors: a 40% increase in critical unpatched vulnerabilities, a major vendor's SOC 2 report with significant exceptions, and a new regulatory requirement (SEC cybersecurity disclosure rule) that the organization is not yet compliant with. Draft the key talking points for a 5-minute board presentation.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Opening (30 seconds): 'Our cybersecurity risk posture has increased from Moderate to High this quarter due to three converging factors. I will explain each, the business impact, and the specific investments needed to return to Moderate within the next quarter.' Factor 1 - Patching (90 seconds): 'Critical unpatched vulnerabilities increased 40% due to the IT team's focus on a major system migration. This creates an estimated additional $2.1M in annual data breach exposure. We need board approval for $175K in temporary contractor support to clear the patching backlog within 60 days.' Factor 2 - Vendor Risk (90 seconds): 'Our payroll vendor's SOC 2 audit revealed access control and backup testing failures. This creates risk to 5,000 employee records including SSNs and bank accounts. We have issued a 90-day remediation requirement. If unresolved, we recommend migrating to an alternative provider, which we are evaluating in parallel.' Factor 3 - Regulatory (90 seconds): 'The SEC now requires material cybersecurity incident disclosure within 4 business days. We currently lack the process to determine materiality within that timeframe. A $95K engagement with outside counsel and process development will close this gap within 90 days.' Closing (30 seconds): 'Total investment requested: $270K. Expected timeline to return to Moderate: one quarter. Without action, we accept increased risk of regulatory penalties, data breach, and vendor-related exposure. I recommend approval of all three investments.'",
+            "rubric": [
+              {
+                "key": "Clear structure with business-impact focus",
+                "value": 3
+              },
+              {
+                "key": "Specific investment amounts and timelines",
+                "value": 3
+              },
+              {
+                "key": "Actionable ask with clear consequences of inaction",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain three common failures in risk dashboard design that reduce their effectiveness for executive decision-making, and describe how to avoid each.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Failure 1: 'All Green' Dashboard. When every metric shows green, executives conclude security is perfect and reduce investment. This usually means thresholds are set too lenient. A dashboard that has never shown red has never prompted action and provides false assurance. Avoidance: calibrate thresholds so that 1-2 metrics are typically amber (needing attention), reflecting the reality that security is never perfect. Red should be rare but not impossible. Failure 2: Too Many Metrics. Dashboards with 20+ metrics overwhelm executives who have 10 minutes for security discussion. Information overload causes executives to glance and move on without absorbing anything. Avoidance: limit to 6-8 KRIs/KPIs maximum. Select metrics that are most actionable and relevant to current business priorities. Provide a detailed appendix for those who want to drill down, but the main dashboard must be scannable in 60 seconds. Failure 3: Technical Metrics Without Business Context. '2,847 vulnerabilities found this month' means nothing to a board member. They cannot assess whether this is good, bad, or normal, and they have no actionable response. Avoidance: translate to business terms: 'Payment system breach exposure increased to $4.2M annually due to 47 unpatched critical vulnerabilities in internet-facing systems. Industry benchmark is $1.5M. Recommended investment: $85K for automated patching to reduce exposure to $800K.'",
+            "rubric": [
+              {
+                "key": "Three distinct, valid dashboard failures",
+                "value": 3
+              },
+              {
+                "key": "Specific avoidance strategies for each",
+                "value": 2
+              },
+              {
+                "key": "Business-context orientation",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "What is the difference between a KRI and a KPI in cybersecurity risk management? Provide one example of each and explain whether it is leading or lagging.",
+            "type": "short_answer",
+            "points": 5,
+            "answer": "A Key Risk Indicator (KRI) measures the level of risk exposure, typically as a leading indicator that warns of increasing risk before an incident occurs. A Key Performance Indicator (KPI) measures the effectiveness of security controls and processes, typically as a lagging indicator that shows whether security investments are producing results. KRI example: 'Average age of critical vulnerabilities on internet-facing systems.' This is a leading indicator because as the average age increases, the probability of exploitation increases before any breach actually occurs. A rising trend warns that the patching process is degrading and risk is growing. KPI example: 'Percentage of phishing simulation emails reported by employees.' This is a lagging indicator because it measures the result of security awareness training investments. A rising reporting percentage demonstrates that training is effective. A declining percentage indicates training is not working and the organization is increasingly vulnerable to phishing — but this measurement comes after the training has (or has not) been delivered.",
+            "rubric": [
+              {
+                "key": "Correct definitions of KRI and KPI",
+                "value": 2
+              },
+              {
+                "key": "Valid examples with leading/lagging classification",
+                "value": 2
+              },
+              {
+                "key": "Explains the practical significance",
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Threat and Vulnerability Risk Assessment",
+        "week_assigned": 3,
+        "week_due": 6,
+        "points": 150,
+        "description": "Conduct a comprehensive threat and vulnerability risk assessment for a provided fictional organization profile (a mid-sized SaaS company with 800 employees, multi-cloud infrastructure, and a customer base of 50,000 businesses). Deliver a threat model, vulnerability analysis, quantitative risk calculations, and prioritized risk register.",
+        "objectives": [
+          "Build a complete asset inventory and data classification scheme for the organization",
+          "Conduct STRIDE threat modeling for the organization's primary customer-facing application",
+          "Perform quantitative risk analysis using both ALE and FAIR methodologies for the top risks",
+          "Deliver a prioritized risk register with risk ratings and treatment recommendations"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Asset inventory and data classification document with crown jewel identification",
+          "STRIDE threat model with data flow diagrams and trust boundaries",
+          "Quantitative risk analysis report with ALE and FAIR calculations for top 10 risks",
+          "Prioritized risk register with risk ratings, owners, and preliminary treatment recommendations",
+          "Executive risk summary (2 pages) with top risks and financial exposure estimates"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 45,
+            "criteria": [
+              "Asset inventory is comprehensive covering hardware, software, data, and services",
+              "Data classification is consistent and aligned with regulatory requirements",
+              "STRIDE threat model is systematic and covers all DFD elements",
+              "ALE and FAIR calculations are correct with documented assumptions"
+            ]
+          },
+          "visual_quality": {
+            "points": 35,
+            "criteria": [
+              "Data flow diagrams are clear and accurately represent the system architecture",
+              "Risk register is well-organized with consistent rating criteria",
+              "Quantitative analysis clearly shows methodology and sensitivity",
+              "Visualizations (heat maps, charts) effectively communicate risk distribution"
+            ]
+          },
+          "performance_optimization": {
+            "points": 35,
+            "criteria": [
+              "Threat actors are relevant to the organization's industry and asset profile",
+              "Vulnerability assessment considers both technical and process weaknesses",
+              "Risk prioritization balances CVSS, EPSS, business context, and financial analysis",
+              "Assumptions are clearly stated and sensitivity analysis is performed"
+            ]
+          },
+          "documentation": {
+            "points": 35,
+            "criteria": [
+              "Report follows professional risk assessment standards",
+              "Executive summary is accessible and actionable for non-technical leadership",
+              "Methodology is documented for reproducibility",
+              "All calculations show work with sourced data"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Comprehensive asset inventory and threat model demonstrating systematic analysis",
+                "Rigorous quantitative risk analysis with defensible assumptions",
+                "Well-prioritized risk register aligned with business objectives",
+                "Professional deliverables suitable for organizational adoption"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Risk Treatment and Compliance Assessment",
+        "week_assigned": 7,
+        "week_due": 11,
+        "points": 150,
+        "description": "Develop a risk treatment plan for the top risks identified in Assignment 1, map controls to SOC 2 and one additional compliance framework, assess a critical vendor's security posture, and create the organization's risk monitoring dashboard with KRIs and KPIs.",
+        "objectives": [
+          "Select and justify security controls from NIST SP 800-53 for each prioritized risk",
+          "Map implemented controls to SOC 2 Trust Services Criteria and PCI DSS or HIPAA requirements",
+          "Conduct a vendor risk assessment of a provided SOC 2 report and security questionnaire",
+          "Design a risk monitoring dashboard with KRIs, KPIs, thresholds, and escalation procedures"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Risk treatment plan with control selection, ROSI analysis, and implementation timeline",
+          "Compliance control mapping matrix (NIST 800-53 to SOC 2 to PCI DSS or HIPAA)",
+          "Vendor risk assessment report with findings, risk rating, and recommendations",
+          "Risk monitoring dashboard design with 6-8 KRIs/KPIs including data sources and thresholds",
+          "Risk acceptance memos for any risks formally accepted with business justification"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 45,
+            "criteria": [
+              "Control selection is appropriate for each identified risk with ROSI justification",
+              "Compliance mapping is accurate across all three frameworks",
+              "Vendor risk assessment correctly identifies and rates findings from SOC 2 report",
+              "Dashboard KRIs/KPIs are measurable, relevant, and actionable"
+            ]
+          },
+          "visual_quality": {
+            "points": 35,
+            "criteria": [
+              "Treatment plan is clearly organized with timelines and dependencies",
+              "Compliance matrix effectively shows cross-framework coverage",
+              "Dashboard design is scannable and uses appropriate visualizations",
+              "Vendor assessment report is professional and well-structured"
+            ]
+          },
+          "performance_optimization": {
+            "points": 35,
+            "criteria": [
+              "Control selection balances effectiveness with cost and feasibility",
+              "Compensating controls are properly documented and justified where used",
+              "Dashboard thresholds are calibrated realistically",
+              "Risk acceptance is properly documented with authority-level approval"
+            ]
+          },
+          "documentation": {
+            "points": 35,
+            "criteria": [
+              "All deliverables meet professional standards",
+              "ROSI calculations show work with sourced cost data",
+              "Vendor assessment methodology is documented",
+              "Implementation timelines are realistic with identified dependencies"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Practical risk treatment plan with justified control selection",
+                "Accurate multi-framework compliance mapping reducing duplicate effort",
+                "Thorough vendor risk assessment with actionable findings",
+                "Effective risk monitoring dashboard design ready for implementation"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Enterprise Risk Assessment Capstone",
+        "week_assigned": 12,
+        "week_due": 15,
+        "points": 200,
+        "description": "Integrate all semester work into a comprehensive enterprise risk assessment deliverable and present findings to a panel. The capstone combines the threat/vulnerability assessment, risk treatment plan, compliance mapping, vendor risk assessment, and risk dashboard into a unified risk management framework with executive-ready deliverables.",
+        "objectives": [
+          "Synthesize all risk management components into a cohesive enterprise risk assessment",
+          "Produce a board-level risk report with financial exposure analysis and investment recommendations",
+          "Deliver a 15-minute executive presentation defending the risk assessment methodology and findings",
+          "Demonstrate mastery of risk communication across technical, management, and board audiences"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Comprehensive enterprise risk assessment report (30-40 pages) integrating all semester analyses",
+          "Executive risk dashboard with current risk posture and trend analysis",
+          "Board-level presentation (15 minutes) with investment recommendations and risk forecasts",
+          "Risk management program charter: ongoing monitoring, reassessment schedule, governance structure",
+          "BIA summary with RTO/RPO for critical business functions"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 65,
+            "criteria": [
+              "All risk management components are integrated into a cohesive framework",
+              "Quantitative analysis is rigorous with sensitivity testing",
+              "Compliance assessment is complete and accurately mapped",
+              "Vendor risk and supply chain considerations are incorporated",
+              "BIA results drive recovery planning and risk prioritization"
+            ]
+          },
+          "visual_quality": {
+            "points": 50,
+            "criteria": [
+              "Executive dashboard effectively communicates risk posture",
+              "Risk heat maps and trend charts provide clear portfolio views",
+              "Financial exposure analysis is presented compellingly",
+              "Board presentation is professionally delivered and audience-appropriate"
+            ]
+          },
+          "performance_optimization": {
+            "points": 45,
+            "criteria": [
+              "Recommendations are practical and implementable given organizational constraints",
+              "Investment recommendations include ROSI and are prioritized by risk reduction",
+              "Risk management program charter ensures sustainability beyond the initial assessment",
+              "Methodology is defensible under questioning"
+            ]
+          },
+          "documentation": {
+            "points": 40,
+            "criteria": [
+              "Report meets professional risk assessment standards",
+              "All conclusions are supported by evidence and analysis",
+              "Executive summary passes the 'so what?' test with clear action items",
+              "Program charter defines governance, roles, and sustainability processes"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 200,
+              "criteria": [
+                "Comprehensive, integrated enterprise risk assessment demonstrating mastery of all course concepts",
+                "Professional executive deliverables suitable for board presentation",
+                "Defensible methodology with transparent assumptions",
+                "Practical risk management program design ensuring ongoing organizational value"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 20,
+      "description": "Five quizzes assessing risk management concepts, frameworks, calculations, and applied analysis"
+    },
+    "lab_assignments": {
+      "percentage": 15,
+      "description": "Weekly hands-on exercises with threat modeling, risk analysis calculations, vendor assessments, and dashboard design"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "Three major deliverables building a progressive enterprise risk assessment from analysis through treatment and presentation"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Practical midterm: timed risk assessment of a provided scenario with quantitative analysis and treatment recommendations"
+    },
+    "final_project": {
+      "percentage": 20,
+      "description": "Enterprise risk assessment capstone with board-level presentation and comprehensive risk management program design"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is mandatory for all class sessions. Case study discussions and exercises require participation. More than 2 unexcused absences may result in a grade reduction.",
+    "late_submissions": "Late assignments are penalized 10% per day. No submissions accepted more than 5 days late without prior arrangement. Quantitative analysis worksheets must be submitted on time regardless of report completion status.",
+    "collaboration": "Case study discussions may be collaborative. All risk assessments, calculations, and reports must be individual work. Sharing risk register data, ROSI calculations, or report content between students is prohibited.",
+    "academic_integrity": "All risk analysis must be original work with properly cited sources. Risk calculations must show complete methodology. Using AI tools to generate risk assessments without performing the underlying analysis is academic dishonesty.",
+    "technology_requirements": "Students must have access to spreadsheet software (Excel recommended) for quantitative analysis, a diagramming tool for data flow diagrams, and presentation software. Access to the NIST SP 800-53 control catalog and CVSS calculator is required."
+  }
+}

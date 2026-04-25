@@ -1,0 +1,425 @@
+{
+  "course_info": {
+    "course_id": "UX405",
+    "title": "Design Systems and Guidelines",
+    "credit_hours": 3,
+    "duration": "15 weeks",
+    "meeting_schedule": "Monday, Wednesday - 1.5 hours per session",
+    "prerequisites": [
+      "UX103 - Visual Design Fundamentals",
+      "UX301 - Interaction Design"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "topic": "What Are Design Systems and Why They Matter",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Define design systems and distinguish them from style guides and pattern libraries",
+        "Analyze existing design systems (Material Design, Apple HIG, Polaris) for structure and scope",
+        "Articulate the business case for investing in a design system"
+      ],
+      "readings": [
+        "Design Systems by Alla Kholmatova, Ch. 1-3",
+        "Atomic Design by Brad Frost, Ch. 1-2"
+      ],
+      "lecture_notes": {
+        "introduction": "A design system is a collection of reusable components, guided by clear standards, that can be assembled to build any number of applications. It is the single source of truth for product design and development.",
+        "key_concepts": [
+          "Design system components: foundations, tokens, components, patterns, documentation",
+          "Style guide vs. pattern library vs. design system: the maturity spectrum",
+          "Atomic design: atoms, molecules, organisms, templates, pages",
+          "The ROI of design systems: faster development, fewer inconsistencies, easier onboarding",
+          "Governance: who owns the system and how decisions are made"
+        ],
+        "demonstration": "Exploring three production design systems — Material Design, Shopify Polaris, and Atlassian — comparing their structure, documentation, and governance models",
+        "setup_requirements": [
+          "Figma with component features",
+          "Access to public design system documentation sites"
+        ],
+        "review": [
+          {
+            "key": "Design System Maturity",
+            "value": "Style guide (visual standards only) < Pattern library (reusable UI patterns) < Design system (components + tokens + guidelines + governance + tooling) — each level adds consistency and scale."
+          },
+          {
+            "key": "Atomic Design",
+            "value": "Hierarchy from atoms (button) to molecules (search bar) to organisms (header) to templates (page layout) to pages (final implementation) — provides a shared vocabulary for component complexity."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 3,
+      "topic": "Design Tokens and Foundations",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Create design tokens for color, typography, spacing, and elevation",
+        "Implement token naming conventions that scale across themes and platforms",
+        "Build a token architecture that supports dark mode, white-labeling, and responsive scaling"
+      ],
+      "readings": [
+        "Design Tokens W3C Community Group specification",
+        "Figma documentation: Variables and Styles"
+      ],
+      "lecture_notes": {
+        "introduction": "Design tokens are the atoms of a design system — named values that store visual design decisions. They are the bridge between design files and code, enabling consistent implementation across platforms.",
+        "key_concepts": [
+          "Token types: color, typography, spacing, elevation, border-radius, opacity",
+          "Token hierarchy: global tokens > alias tokens > component tokens",
+          "Naming conventions: semantic naming (color-primary) vs. scale naming (blue-500)",
+          "Multi-theme support: light mode, dark mode, high contrast through token swapping",
+          "Token formats: Figma variables, JSON, CSS custom properties, platform-native"
+        ],
+        "demonstration": "Building a complete token system in Figma Variables — defining global color palette, creating semantic aliases, and switching between light and dark themes",
+        "setup_requirements": [
+          "Figma with Variables feature",
+          "Token naming convention reference"
+        ],
+        "review": [
+          {
+            "key": "Token Hierarchy",
+            "value": "Global (blue-500: #2563EB) > Alias (color-primary: blue-500) > Component (button-bg: color-primary) — three levels enable theme switching by only changing alias mappings."
+          },
+          {
+            "key": "Semantic Naming",
+            "value": "Name tokens by their purpose, not their value: color-success not green-500, spacing-md not 16px — semantic names survive redesigns where values change but purposes remain."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 5,
+      "topic": "Component Architecture and API Design",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Design components with clear APIs: props, variants, slots, and states",
+        "Build component variants that cover all necessary states and sizes",
+        "Create compound components from smaller atomic parts"
+      ],
+      "readings": [
+        "Component-Driven User Interfaces by Brad Frost (article)",
+        "Figma documentation: Component properties and variants"
+      ],
+      "lecture_notes": {
+        "introduction": "Components are the building blocks of a design system. Their API — what can be configured and how — determines whether they are flexible enough to cover real use cases without becoming unmanageably complex.",
+        "key_concepts": [
+          "Component API: properties that consumers can configure",
+          "Variant management: boolean, enum, and instance-swap properties",
+          "State coverage: default, hover, focus, active, disabled, error, loading",
+          "Compound components: assembling larger patterns from smaller components",
+          "Component boundaries: when to create a new component vs. add a variant"
+        ],
+        "demonstration": "Designing a Button component in Figma with full API: size (sm/md/lg), variant (primary/secondary/ghost), icon position (left/right/none), loading state, and disabled state",
+        "setup_requirements": [
+          "Figma with component properties",
+          "Component spec template"
+        ],
+        "review": [
+          {
+            "key": "Component API Design",
+            "value": "A component's API is like a function signature — it defines what consumers can configure. Good APIs are minimal (few required props), flexible (cover real use cases), and constrained (prevent misuse)."
+          },
+          {
+            "key": "State Coverage",
+            "value": "Every interactive component needs at minimum: default, hover, focus (keyboard), active (pressed), disabled, and loading states. Missing states create accessibility gaps and inconsistent behavior."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 7,
+      "topic": "Documentation and Contribution Models",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Write component documentation that serves both designers and developers",
+        "Design contribution workflows for adding and modifying system components",
+        "Create governance models that balance consistency with team autonomy"
+      ],
+      "readings": [
+        "Design Systems by Alla Kholmatova, Ch. 7-8",
+        "InVision Design Better: Design System Governance"
+      ],
+      "lecture_notes": {
+        "introduction": "A design system is only as good as its documentation. If people cannot find, understand, and correctly use components, the system fails regardless of how well-designed the components are.",
+        "key_concepts": [
+          "Documentation anatomy: usage guidelines, do/don't examples, code snippets, accessibility notes",
+          "Contribution models: centralized, federated, and hybrid governance",
+          "Versioning and change management: breaking vs. non-breaking changes",
+          "Adoption metrics: how to measure design system usage and impact",
+          "Deprecation workflows: retiring components without breaking products"
+        ],
+        "demonstration": "Writing complete documentation for a Card component — usage guidelines, anatomy diagram, variant table, do/don't examples, accessibility requirements, and code implementation notes",
+        "setup_requirements": [
+          "Documentation platform (Storybook, Zeroheight, or custom site)",
+          "Component documentation template"
+        ],
+        "review": [
+          {
+            "key": "Federated Governance",
+            "value": "Product teams contribute components back to the system through a review process — balances team autonomy with system consistency. Works best when clear contribution guidelines exist."
+          },
+          {
+            "key": "Do/Don't Examples",
+            "value": "Visual examples showing correct and incorrect component usage are more effective than written rules alone — designers remember examples better than instructions."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 9,
+      "topic": "Design System Adoption and Evolution",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Develop strategies for driving design system adoption across an organization",
+        "Measure design system health and impact using appropriate metrics",
+        "Plan for design system evolution including major version upgrades"
+      ],
+      "readings": [
+        "Design System Handbook by InVision, Ch. on Adoption",
+        "Measuring Design System Success (article by Sparkbox)"
+      ],
+      "lecture_notes": {
+        "introduction": "Building a design system is the easy part. Getting teams to adopt it, maintaining it over time, and evolving it as the product grows are the real challenges.",
+        "key_concepts": [
+          "Adoption strategies: evangelism, training, migration support, quick wins",
+          "Adoption metrics: component coverage, design-to-code consistency, team satisfaction",
+          "Health metrics: contribution rate, issue resolution time, documentation currency",
+          "Migration planning: moving existing products to the design system incrementally",
+          "Major version upgrades: handling breaking changes without breaking products"
+        ],
+        "demonstration": "Creating an adoption dashboard — tracking design system usage metrics across multiple product teams and identifying adoption barriers",
+        "setup_requirements": [
+          "Analytics tracking for Figma library usage",
+          "Adoption survey template"
+        ],
+        "review": [
+          {
+            "key": "Adoption Barriers",
+            "value": "Common barriers: components don't fit real use cases, documentation is outdated, contribution process is too slow, teams don't know the system exists. Each requires a different strategy."
+          },
+          {
+            "key": "Component Coverage",
+            "value": "Percentage of UI elements in production that use design system components vs. custom implementations — the primary metric for design system adoption."
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "Design System Foundations and Tokens",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "Explain the three-level token hierarchy (global, alias, component) and demonstrate how it enables theme switching with a color example.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Three levels: Global tokens define raw values (blue-500: #2563EB, blue-800: #1E40AF). Alias tokens map semantic purposes to global values (color-primary: blue-500). Component tokens reference aliases (button-bg: color-primary). Theme switching works by only changing alias mappings: in dark mode, color-primary maps to blue-300 instead of blue-500. All components referencing color-primary automatically update because the alias changed — no component modifications needed.",
+            "rubric": [
+              {
+                "key": "Correctly defines all three token levels",
+                "value": 4
+              },
+              {
+                "key": "Demonstrates theme switching mechanism",
+                "value": 4
+              },
+              {
+                "key": "Example is concrete and accurate",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A team names their spacing tokens spacing-4, spacing-8, spacing-16, spacing-24. Another team uses spacing-xs, spacing-sm, spacing-md, spacing-lg. Compare these approaches and recommend which is better for a design system.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Numeric naming (spacing-4, spacing-8) ties the name to the value, which means if the spacing scale changes, the names become misleading (spacing-8 might map to 10px after a redesign). Semantic/t-shirt naming (spacing-xs, spacing-sm) describes relative purpose, surviving value changes. However, numeric names are more precise when designers need to reason about exact values. Recommendation: use semantic names as the primary API (spacing-sm, spacing-md) because they survive redesigns, but document the current pixel values clearly. This matches how color tokens work — color-primary is better than blue-500 for the same reason.",
+            "rubric": [
+              {
+                "key": "Correctly identifies the fragility of numeric naming",
+                "value": 3
+              },
+              {
+                "key": "Correctly identifies the resilience of semantic naming",
+                "value": 3
+              },
+              {
+                "key": "Provides a clear recommendation with reasoning",
+                "value": 4
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 4,
+        "topic": "Component Design and Governance",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "A product team needs a 'UserCard' component that shows a user avatar, name, role, and an action button. Should this be a new component in the design system, or assembled from existing atoms? Explain your reasoning.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "It should be assembled from existing atoms: Avatar component + Text atoms (name, role) + Button component, composed into a molecule-level layout. Adding UserCard as a design system component is premature because: (1) It is product-specific — not all products need user cards. (2) It can be composed from existing system components without new design system code. (3) Design systems should provide building blocks, not every possible assembly. Exception: if 3+ product teams independently build similar user cards, promoting it to the system reduces duplication. The decision criterion is reuse count, not complexity.",
+            "rubric": [
+              {
+                "key": "Recommends composition over new system component",
+                "value": 3
+              },
+              {
+                "key": "Explains why product-specific patterns stay outside the system",
+                "value": 3
+              },
+              {
+                "key": "Identifies the reuse threshold for system promotion",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "Describe the difference between centralized and federated design system governance. What are the trade-offs of each, and when is each appropriate?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Centralized: a dedicated design system team owns all components and makes all decisions. Trade-offs: high consistency and quality, but slow response to product team needs, bottleneck risk, and components may not fit edge cases. Appropriate for: organizations with a small number of products and a need for strict brand consistency. Federated: product teams contribute components through a shared review process. Trade-offs: faster response to needs and broader ownership, but risk of inconsistency and quality variation. Appropriate for: large organizations with many product teams and diverse needs. Most mature systems use a hybrid: core team maintains foundations and governance, product teams contribute components through a defined process.",
+            "rubric": [
+              {
+                "key": "Correct definition of centralized with trade-offs",
+                "value": 3
+              },
+              {
+                "key": "Correct definition of federated with trade-offs",
+                "value": 3
+              },
+              {
+                "key": "Identifies when each is appropriate",
+                "value": 2
+              },
+              {
+                "key": "Mentions hybrid as practical solution",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Design System Creation Project",
+        "week_assigned": 2,
+        "week_due": 5,
+        "points": 100,
+        "description": "Build a production-quality design system for a real or hypothetical multi-product organization. Deliver a complete token system, a component library with at least 15 components, comprehensive documentation, and a governance proposal.",
+        "objectives": [
+          "Create a scalable design token architecture with theme support",
+          "Build a component library covering foundational through complex components",
+          "Write documentation that serves both designers and developers",
+          "Propose a governance model for maintaining and evolving the system"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Token system: color, typography, spacing, elevation with light and dark themes",
+          "Component library: 15+ components with full state and variant coverage in Figma",
+          "Documentation site or document: usage guidelines, examples, and accessibility notes",
+          "Governance proposal: contribution process, versioning, and adoption strategy",
+          "Demo: two sample screens built entirely from system components"
+        ],
+        "grading_rubric": {
+          "token_system": {
+            "points": 25,
+            "criteria": [
+              "Complete token architecture with global, alias, and component levels",
+              "Theme support (light/dark) through token swapping",
+              "Naming conventions are semantic and consistent",
+              "Token documentation is clear and developer-friendly"
+            ]
+          },
+          "component_library": {
+            "points": 30,
+            "criteria": [
+              "15+ components covering atoms through organisms",
+              "Full state coverage: default, hover, focus, active, disabled, error, loading",
+              "Component APIs are well-designed with appropriate props and variants",
+              "Components compose correctly into larger patterns"
+            ]
+          },
+          "documentation": {
+            "points": 25,
+            "criteria": [
+              "Every component has usage guidelines with do/don't examples",
+              "Accessibility requirements documented for each component",
+              "Documentation format is clear and navigable",
+              "Code implementation guidance included"
+            ]
+          },
+          "governance": {
+            "points": 20,
+            "criteria": [
+              "Contribution process is clear and realistic",
+              "Versioning and change management strategy defined",
+              "Adoption metrics and measurement plan included",
+              "Evolution roadmap addresses future needs"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Scalable token architecture with theme support",
+                "Comprehensive component library with full state coverage",
+                "Professional documentation serving designers and developers",
+                "Realistic governance proposal with adoption strategy"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 15,
+      "description": "Quizzes on design system architecture, token systems, and governance models"
+    },
+    "system_labs": {
+      "percentage": 20,
+      "description": "Weekly labs building design system components with increasing complexity"
+    },
+    "design_system_project": {
+      "percentage": 35,
+      "description": "Complete design system with tokens, components, documentation, and governance"
+    },
+    "system_critiques": {
+      "percentage": 10,
+      "description": "Peer review and critique of classmates' design system components"
+    },
+    "final_presentation": {
+      "percentage": 20,
+      "description": "Presentation of design system to a panel of design and engineering professionals"
+    }
+  },
+  "course_policies": {
+    "attendance": "Lab sessions involve collaborative component building and review. Attendance expected for all sessions. More than 3 absences affect participation grade.",
+    "late_submissions": "Component deliverables build sequentially. Late submissions penalized 10% per day and miss peer review opportunities.",
+    "collaboration": "Peer review is required. All design system work must be individual. Sharing Figma component libraries is prohibited for graded work.",
+    "academic_integrity": "Design systems may reference existing public systems for patterns and inspiration. Direct copying of component implementations without attribution is academic dishonesty.",
+    "technology_requirements": "Figma with Variables and component features, documentation platform access (Zeroheight free tier or custom), and browser for testing component usage."
+  }
+}

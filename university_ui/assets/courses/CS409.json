@@ -1,0 +1,1503 @@
+{
+  "course_info": {
+    "course_id": "CS409",
+    "title": "Advanced Programming Concepts",
+    "credit_hours": 4,
+    "duration": "15 weeks",
+    "meeting_schedule": "Monday, Wednesday, Friday - 4 hours per week",
+    "prerequisites": [
+      "CS201 - Data Structures and Algorithms"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "topic": "Functional Programming Paradigm",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Understand pure functions, immutability, and referential transparency",
+        "Apply higher-order functions: map, filter, reduce, and flatMap",
+        "Write programs using functional composition and pipelines",
+        "Contrast imperative and functional approaches to the same problem"
+      ],
+      "readings": [
+        "Abelson & Sussman, SICP, Ch. 1",
+        "Hutton, Programming in Haskell, Ch. 1-3",
+        "Hughes, 'Why Functional Programming Matters'"
+      ],
+      "lecture_notes": {
+        "introduction": "Most professional codebases mix paradigms, but few programmers are fluent in more than one. This course expands your programming toolkit beyond object-oriented programming to include functional, concurrent, generic, and metaprogramming paradigms. Each paradigm offers different strengths for different problems, and the best engineers choose the right tool for each job. Functional programming, our first topic, treats computation as the evaluation of mathematical functions. By eliminating mutable state and side effects, functional code becomes easier to reason about, test, and parallelize. Languages like Haskell enforce purity; languages like Python, Scala, and Rust support functional idioms within a multi-paradigm framework. Over the next two weeks we will build fluency in functional thinking, starting with core concepts and progressing to advanced patterns like monads and algebraic data types. The goal is not to abandon OOP but to recognize when functional abstractions produce cleaner, more reliable code.",
+        "key_concepts": [
+          "Pure functions: same input always produces same output, no side effects; enables memoization and safe parallelism",
+          "Immutability: data cannot be changed after creation; new values are derived through transformation",
+          "Higher-order functions: functions that take functions as arguments or return functions as results",
+          "Function composition: building complex operations from simple, reusable building blocks using compose and pipe",
+          "Closures: functions that capture variables from their enclosing lexical scope",
+          "Referential transparency: any expression can be replaced by its value without changing program behavior",
+          "Lazy evaluation: deferring computation until the result is actually needed, enabling infinite data structures",
+          "Algebraic data types: sum types (tagged unions) and product types (records) for precise data modeling",
+          "Pattern matching: destructuring data by shape, enabling exhaustive case handling",
+          "Currying and partial application: transforming multi-argument functions into chains of single-argument functions"
+        ],
+        "demonstration": "Rewrite an imperative data processing pipeline using functional style: replace for-loops with map/filter/reduce, replace mutation with immutable transformations using Python's functools and itertools. Then implement the same pipeline in Haskell to show how the type system enforces purity. Compare readability, testability, and the ability to parallelize each version.",
+        "setup_requirements": [
+          "Python 3.12+ with functools, itertools, and typing modules",
+          "Haskell GHC 9.x installed and configured",
+          "VS Code with Haskell Language Server extension"
+        ],
+        "review": [
+          {
+            "key": "Referential Transparency",
+            "value": "An expression is referentially transparent if it can be replaced with its value without changing program behavior. This property enables equational reasoning (substituting equals for equals), memoization (caching return values), and safe parallelization (no shared mutable state means no race conditions)."
+          },
+          {
+            "key": "Immutability and Concurrency",
+            "value": "Immutable data cannot have race conditions because no thread can modify it. This eliminates the need for locks and mutexes, making concurrent programming dramatically simpler and safer. Languages like Erlang exploit this for building highly concurrent telecom systems."
+          },
+          {
+            "key": "Higher-Order Functions vs Loops",
+            "value": "Map, filter, and reduce abstract common iteration patterns. Instead of writing loop boilerplate, you declare the transformation. This raises the abstraction level and makes the programmer's intent clearer to both humans and compilers."
+          },
+          {
+            "key": "Closures as Lightweight Objects",
+            "value": "A closure captures its environment, effectively bundling data with behavior. In many cases, a closure replaces what would be a single-method class in OOP, with less syntactic overhead. The Strategy pattern, for instance, reduces to passing a function."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 2,
+      "topic": "Lambda Calculus and Closures",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Understand lambda calculus as the theoretical foundation of functional programming",
+        "Implement closures and understand their memory model",
+        "Apply currying, partial application, and function composition in real code",
+        "Recognize how closures replace common OOP patterns"
+      ],
+      "readings": [
+        "Michaelson, An Introduction to Functional Programming Through Lambda Calculus, Ch. 1-4",
+        "Abelson & Sussman, SICP, Ch. 1.3",
+        "Python Documentation: Closures and Decorators"
+      ],
+      "lecture_notes": {
+        "introduction": "Lambda calculus, invented by Alonzo Church in the 1930s, is a formal system for expressing computation using function abstraction and application. It predates digital computers and provides the theoretical underpinning for every functional programming language. Understanding lambda calculus clarifies why closures work the way they do, why currying is natural, and how computation itself can be modeled with nothing but functions. In this session we bridge the gap between the abstract theory and practical programming. We will see that closures are the runtime manifestation of lambda expressions with free variables, that currying is simply nested lambda abstractions, and that Church encodings demonstrate that functions alone can represent numbers, booleans, and data structures. This mathematical perspective deepens your understanding of language design and empowers you to write more expressive, composable code in any language that supports first-class functions.",
+        "key_concepts": [
+          "Lambda calculus syntax: variables, abstraction (lambda x. body), and application (f x)",
+          "Beta reduction: substituting arguments into function bodies, the core computation step",
+          "Free and bound variables: a variable is free if not captured by any enclosing lambda",
+          "Closures: runtime representation of a lambda that captures free variables from its environment",
+          "Currying: converting f(a, b) into f(a)(b), a chain of single-argument functions",
+          "Partial application: fixing some arguments of a function to produce a more specialized function",
+          "Church encodings: representing numbers, booleans, and pairs using only lambda expressions",
+          "Fixed-point combinators: the Y combinator enables recursion in pure lambda calculus",
+          "Closure memory model: captured variables live on the heap, not the stack, extending their lifetime",
+          "Practical closures: event handlers, callbacks, factory functions, and memoization caches"
+        ],
+        "demonstration": "Build a memoization decorator using closures that caches function results in a captured dictionary. Then implement Church numerals in Python: zero = lambda f: lambda x: x, succ = lambda n: lambda f: lambda x: f(n(f)(x)), and define addition and multiplication. Show how these pure-function encodings compute without any data types.",
+        "setup_requirements": [
+          "Python 3.12+ REPL for interactive exploration",
+          "Haskell GHCi for typed lambda calculus examples",
+          "Whiteboard or diagramming tool for reduction steps"
+        ],
+        "review": [
+          {
+            "key": "Beta Reduction",
+            "value": "Beta reduction is the fundamental computation rule: (lambda x. body)(arg) reduces to body[x := arg]. Every function call in every programming language is a form of beta reduction. Understanding this connects programming to mathematical logic."
+          },
+          {
+            "key": "Closure Memory Semantics",
+            "value": "When a closure captures a variable, the variable's lifetime extends beyond the scope where it was defined. In languages with garbage collection, the captured environment lives on the heap until the closure is collected. In Rust, the borrow checker statically verifies that closures do not outlive their captured references."
+          },
+          {
+            "key": "Currying in Practice",
+            "value": "Currying transforms a function of multiple arguments into a sequence of functions each taking one argument. This enables partial application: configure a general function with some arguments now, apply the rest later. Haskell curries all functions by default."
+          },
+          {
+            "key": "Y Combinator",
+            "value": "The Y combinator Y = lambda f. (lambda x. f(x x))(lambda x. f(x x)) enables recursion without named functions. It demonstrates that recursion is not a primitive concept but can be derived from lambda calculus. This is foundational to the theory of computation."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 3,
+      "topic": "Type Systems and Type Safety",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Classify type systems: static vs dynamic, strong vs weak, nominal vs structural",
+        "Understand type inference algorithms and how compilers deduce types",
+        "Use algebraic data types and pattern matching for precise domain modeling",
+        "Compare type safety guarantees across languages"
+      ],
+      "readings": [
+        "Pierce, Types and Programming Languages, Ch. 1-5",
+        "Rust Documentation: The Type System",
+        "Cardelli, 'Type Systems' (survey paper)"
+      ],
+      "lecture_notes": {
+        "introduction": "A type system is a tractable syntactic method for proving the absence of certain program behaviors by classifying phrases according to the kinds of values they compute. In simpler terms, types catch bugs at compile time rather than runtime. This session explores the spectrum of type systems across programming languages. At one extreme, Haskell and Rust use rich static type systems with algebraic data types, generics, and trait bounds to eliminate entire categories of errors before the program runs. At the other extreme, Python and JavaScript rely on runtime type checking, trading compile-time safety for development speed and flexibility. Most modern languages fall somewhere in between: TypeScript adds static types to JavaScript, Kotlin adds null safety to the JVM, and Swift combines protocols with algebraic data types. Understanding the tradeoffs helps you choose the right language for a project and use any language's type system to its fullest advantage. We will also examine type inference, where the compiler deduces types from usage without explicit annotations, and algebraic data types, which let you model domains so precisely that illegal states become unrepresentable.",
+        "key_concepts": [
+          "Static typing: types checked at compile time, errors caught before execution (Java, Rust, Haskell)",
+          "Dynamic typing: types checked at runtime, more flexible but errors surface only during execution (Python, JS)",
+          "Type inference: Hindley-Milner algorithm deduces types from usage without explicit annotations",
+          "Algebraic data types: sum types (enums with data) model alternatives, product types (structs) model combinations",
+          "Pattern matching: destructure algebraic data types with exhaustiveness checking enforced by the compiler",
+          "Nominal vs structural typing: Java checks type names, TypeScript checks type shapes",
+          "Null safety: Option/Maybe types replace null, making absence explicit and compiler-checked",
+          "Type soundness: a sound type system guarantees that well-typed programs do not produce type errors at runtime",
+          "Gradual typing: adding optional type annotations to dynamic languages (TypeScript, Python mypy)",
+          "Dependent types: types that depend on values, enabling specifications as types (Idris, Agda)"
+        ],
+        "demonstration": "Model a payment processing domain in Rust using algebraic data types: define Payment as an enum with CreditCard, BankTransfer, and Crypto variants, each carrying different data. Use pattern matching to handle all cases, and show that the compiler forces you to handle every variant. Then contrast with a Python version using dictionaries, demonstrating how a missing case causes a runtime error.",
+        "setup_requirements": [
+          "Rust toolchain with cargo",
+          "TypeScript environment for structural typing examples",
+          "Python with mypy for gradual typing demonstration"
+        ],
+        "review": [
+          {
+            "key": "Algebraic Data Types",
+            "value": "Sum types (enums with data) and product types (structs/tuples) together form algebraic data types. They enable exhaustive pattern matching, making it impossible to forget a case when handling variants. This eliminates an entire class of bugs that plague languages without them."
+          },
+          {
+            "key": "Type Inference Trade-offs",
+            "value": "Hindley-Milner inference can deduce types for entire programs without annotations. However, inference errors produce confusing messages far from the actual mistake. Most languages compromise: require annotations on function signatures, infer within function bodies."
+          },
+          {
+            "key": "Making Illegal States Unrepresentable",
+            "value": "If your type system can express 'a connection is either Open(socket) or Closed', you cannot accidentally send data on a closed connection. The compiler rejects it. This design philosophy, popularized by Yaron Minsky, leverages types as a correctness tool."
+          },
+          {
+            "key": "Gradual Typing Success",
+            "value": "TypeScript's adoption shows that gradual typing works: teams can add types incrementally to existing JavaScript codebases, getting increasing safety without rewriting everything. Python's mypy follows the same model, and both have significantly reduced production bugs in large codebases."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 4,
+      "topic": "Generics and Templates",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Implement generic data structures and algorithms parameterized by type",
+        "Use bounded type parameters (trait bounds, type constraints) for safe generics",
+        "Compare monomorphization vs type erasure as generic implementation strategies",
+        "Apply variance (covariance, contravariance) in generic type hierarchies"
+      ],
+      "readings": [
+        "Rust Documentation: Generics and Traits",
+        "Stroustrup, The C++ Programming Language, Ch. 23-25 (Templates)",
+        "Bloch, Effective Java, Item 26-33 (Generics)"
+      ],
+      "lecture_notes": {
+        "introduction": "Generic programming lets you write code that works with any type satisfying specified constraints, maximizing reuse without sacrificing type safety. Without generics, you either duplicate code for each type or abandon type checking with casts and void pointers. Every major language now supports generics: Java since 2004, C# since 2005, Go since 2022, and Rust from the beginning. This session dives deep into how generics work and how different languages implement them. C++ templates use monomorphization, generating specialized code for each concrete type used, which gives zero-cost abstraction but can bloat binary size and produce notoriously bad error messages. Java generics use type erasure, compiling generic code once and inserting casts at call sites, which limits runtime type information but keeps binary size small. Rust combines monomorphization for static dispatch with trait objects for dynamic dispatch, letting the programmer choose. Understanding these trade-offs helps you write generic code that is both correct and efficient in your language of choice.",
+        "key_concepts": [
+          "Type parameters: parameterizing functions and types over types, e.g., Vec<T>, fn sort<T>(list: &[T])",
+          "Bounded generics: constraining type parameters with trait bounds, e.g., T: Ord + Clone",
+          "Monomorphization: compiler generates specialized code for each concrete type (C++, Rust)",
+          "Type erasure: generic types compiled once, type information erased at runtime (Java, Kotlin)",
+          "Variance: covariance (Cat[] is Animal[]), contravariance, and invariance in generic types",
+          "Associated types: types defined within traits that depend on the implementing type",
+          "Higher-kinded types: types parameterized over type constructors, not just types (Haskell, Scala)",
+          "SFINAE and concepts: C++ template metaprogramming for constraining templates",
+          "Generic specialization: providing optimized implementations for specific type arguments",
+          "Phantom types: type parameters used only at compile time to enforce constraints, carrying no runtime data"
+        ],
+        "demonstration": "Implement a generic binary search tree in Rust with trait bounds: T: Ord for ordering and T: Display for printing. Show how the compiler generates separate code for BinaryTree<i32> and BinaryTree<String>. Then implement the same structure in Java and demonstrate how type erasure prevents runtime type checks on the generic parameter.",
+        "setup_requirements": [
+          "Rust toolchain for monomorphization examples",
+          "Java 17+ for type erasure demonstration",
+          "C++ compiler for template comparison"
+        ],
+        "review": [
+          {
+            "key": "Monomorphization vs Type Erasure",
+            "value": "Monomorphization (Rust, C++) generates specialized machine code for each concrete type: Vec<i32> and Vec<String> are different compiled functions. Type erasure (Java) compiles generic code once, using Object and runtime casts. Monomorphization is faster but increases binary size."
+          },
+          {
+            "key": "Trait Bounds as Contracts",
+            "value": "A trait bound T: Ord + Display is a contract: the caller must provide a type that supports comparison and string formatting, and the function can use only those operations. This makes generic code self-documenting and gives the compiler enough information to check correctness."
+          },
+          {
+            "key": "Variance Pitfalls",
+            "value": "Java arrays are covariant: String[] is-a Object[]. This is unsound: you can store an Integer in a String[] via an Object[] reference, causing ArrayStoreException at runtime. Java generics are invariant by default, fixing this with wildcards (? extends T, ? super T)."
+          },
+          {
+            "key": "Zero-Cost Abstraction",
+            "value": "Rust's generics with monomorphization achieve zero-cost abstraction: the generic code compiles to the same machine code you would write by hand for each concrete type. You pay nothing at runtime for the generality, only at compile time."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 5,
+      "topic": "Metaprogramming",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Distinguish compile-time and runtime metaprogramming techniques",
+        "Write Python decorators and metaclasses for code generation",
+        "Implement Rust procedural macros for compile-time code generation",
+        "Evaluate when metaprogramming improves vs degrades code quality"
+      ],
+      "readings": [
+        "Lopes, Exercises in Programming Style, Ch. 27-33",
+        "Python Documentation: Decorators and Metaclasses",
+        "Rust Reference: Procedural Macros"
+      ],
+      "lecture_notes": {
+        "introduction": "Metaprogramming is writing code that writes, modifies, or inspects other code. It is one of the most powerful tools in a programmer's arsenal and one of the most dangerous. Used judiciously, metaprogramming eliminates boilerplate, enforces invariants, and enables domain-specific abstractions that make complex codebases manageable. Used carelessly, it creates unmaintainable magic that confuses every developer who encounters it, including the original author six months later. This session teaches you the major metaprogramming techniques across languages: Python decorators for wrapping functions, Python metaclasses for customizing class creation, Rust procedural macros for compile-time code generation, and reflection for runtime type inspection. We will also study real-world examples from popular frameworks: Django uses metaclasses for its ORM model definitions, Rust's serde uses derive macros for serialization, and Spring uses runtime proxies for dependency injection. The key lesson is restraint: metaprogramming should be a last resort for eliminating genuine repetitive boilerplate, not a first choice for demonstrating cleverness.",
+        "key_concepts": [
+          "Python decorators: wrapping functions to add cross-cutting behavior (logging, caching, auth)",
+          "Parameterized decorators: decorators that accept configuration arguments via nested closures",
+          "Python metaclasses: customizing class creation by overriding __new__ and __init_subclass__",
+          "Rust derive macros: automatically implementing traits at compile time from struct definitions",
+          "Rust procedural macros: arbitrary code transformation at compile time using token streams",
+          "Reflection: inspecting types, methods, and fields at runtime (Java, Python, C#)",
+          "Code generation: producing source code from schemas, IDL files, or annotations",
+          "AST manipulation: parsing and transforming abstract syntax trees for language tooling",
+          "Template metaprogramming: C++ compile-time computation using template specialization",
+          "Trade-offs: power vs readability, implicit vs explicit behavior, compile time vs runtime cost"
+        ],
+        "demonstration": "Build three metaprogramming tools: (1) a Python decorator @validate that checks function arguments against type annotations at runtime, (2) a Python metaclass that automatically registers all subclasses of a base class into a registry dict, and (3) a Rust derive macro that generates a builder pattern implementation from a struct definition.",
+        "setup_requirements": [
+          "Python 3.12+ with typing and inspect modules",
+          "Rust with syn, quote, and proc-macro2 crates",
+          "Java for reflection examples"
+        ],
+        "review": [
+          {
+            "key": "Decorator Pattern",
+            "value": "Decorators wrap a function to add behavior without modifying the function's source code. They are the most common and most readable form of metaprogramming in Python. Use functools.wraps to preserve the original function's metadata (name, docstring, signature)."
+          },
+          {
+            "key": "When Not to Use Metaprogramming",
+            "value": "If a simple function, class, or generic achieves the same goal, prefer it. Metaprogramming should eliminate genuine repetitive boilerplate, not replace straightforward code with clever abstractions. Every layer of indirection has a comprehension cost."
+          },
+          {
+            "key": "Compile-Time vs Runtime Metaprogramming",
+            "value": "Rust macros run at compile time and produce zero runtime overhead. Python decorators and metaclasses run at import time or call time, adding runtime cost. Choose compile-time metaprogramming when performance matters; choose runtime when flexibility matters."
+          },
+          {
+            "key": "Real-World Metaprogramming",
+            "value": "Django ORM uses metaclasses to turn Python classes into database table definitions. Rust serde uses derive macros to generate serialization code. SQLAlchemy uses descriptors and metaclasses for column mapping. These are justified uses: the boilerplate they eliminate is massive and repetitive."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Concurrent Programming Foundations",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Distinguish between concurrency and parallelism at the hardware and software levels",
+        "Implement concurrent programs using threads and shared memory with proper synchronization",
+        "Identify and prevent race conditions, deadlocks, and livelocks",
+        "Understand memory models and happens-before relationships"
+      ],
+      "readings": [
+        "Goetz, Java Concurrency in Practice, Ch. 1-5",
+        "Herlihy & Shavit, The Art of Multiprocessor Programming, Ch. 1-3",
+        "Rust Documentation: Fearless Concurrency"
+      ],
+      "lecture_notes": {
+        "introduction": "Concurrency is about dealing with multiple things at once; parallelism is about doing multiple things at once. Modern software must handle both: responsive UIs that do not freeze during network I/O, web servers handling thousands of simultaneous connections, and data pipelines distributing computation across many CPU cores. Concurrent programming is notoriously difficult because shared mutable state introduces race conditions, and the bugs are non-deterministic, appearing sporadically and resisting reproduction. This session covers the foundational concepts: threads, locks, atomic operations, and the memory model that governs their interactions. We will examine why concurrent bugs are hard to find, what tools and techniques detect them, and how different languages approach the problem. Java uses locks and synchronized blocks. Go uses goroutines and channels. Rust uses the ownership system to prevent data races at compile time. Understanding the trade-offs between these approaches is essential for writing correct concurrent code in any language.",
+        "key_concepts": [
+          "Concurrency vs parallelism: structure (interleaving tasks) vs execution (simultaneous computation)",
+          "Threads: OS-managed units of execution sharing a process's memory space",
+          "Race conditions: two threads accessing shared data with at least one writing, outcome depends on timing",
+          "Mutexes and locks: ensuring mutual exclusion for critical sections of code",
+          "Deadlock: two threads each waiting for a lock held by the other, neither can proceed",
+          "Atomic operations: hardware-supported indivisible read-modify-write operations",
+          "Memory model: rules governing when writes by one thread become visible to other threads",
+          "Happens-before: a partial ordering that defines when one operation is guaranteed to observe another's effects",
+          "Lock-free data structures: using atomic compare-and-swap instead of locks for concurrent access",
+          "Thread safety: designing APIs so they can be called from multiple threads without external synchronization"
+        ],
+        "demonstration": "Demonstrate a race condition in a shared counter: two threads incrementing a shared integer produce incorrect results. Fix it three ways: with a mutex, with an atomic integer, and with thread-local accumulators merged at the end. Measure the performance of each approach under high contention.",
+        "setup_requirements": [
+          "Python with threading and multiprocessing modules",
+          "Rust for ownership-based concurrency",
+          "Thread sanitizer (TSan) configured for detecting data races"
+        ],
+        "review": [
+          {
+            "key": "Race Condition Nondeterminism",
+            "value": "Race conditions produce different results on different runs depending on thread scheduling. They may pass all tests and fail in production. Thread sanitizers (TSan) detect races by monitoring memory accesses, and should be part of your CI pipeline for concurrent code."
+          },
+          {
+            "key": "Deadlock Prevention",
+            "value": "Deadlocks require four conditions: mutual exclusion, hold-and-wait, no preemption, and circular wait. Breaking any one prevents deadlocks. The simplest strategy: always acquire locks in the same global order, eliminating the circular wait condition."
+          },
+          {
+            "key": "Rust Ownership Prevents Data Races",
+            "value": "Rust's type system enforces that data is either shared immutably (multiple &T references) or owned mutably by one thread (one &mut T). This prevents data races at compile time, without runtime overhead. The Send and Sync traits mark types safe to transfer between or share across threads."
+          },
+          {
+            "key": "Amdahl's Law",
+            "value": "If a fraction p of a program can be parallelized, the maximum speedup with n processors is 1 / ((1-p) + p/n). Even with infinite processors, the serial portion limits speedup. This means parallelizing the wrong part of the code wastes effort."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Async/Await Patterns and Event-Driven Programming",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Implement asynchronous I/O using async/await in Python, Rust, and JavaScript",
+        "Understand the event loop model and cooperative multitasking",
+        "Design concurrent systems using the actor model and communicating sequential processes",
+        "Choose between threads, async/await, and message passing for different workloads"
+      ],
+      "readings": [
+        "Go Documentation: Concurrency Patterns",
+        "Python Documentation: asyncio",
+        "Rust async book (async-std/tokio documentation)"
+      ],
+      "lecture_notes": {
+        "introduction": "Threads are expensive: each consumes memory for its stack, and context switching between thousands of threads degrades performance. For I/O-bound workloads like web servers and network clients, async/await provides a more efficient model. Instead of blocking a thread while waiting for a network response, an async function yields control back to an event loop, which can run other tasks until the I/O completes. A single thread can handle thousands of concurrent connections this way. This session covers three concurrency models beyond raw threads. Async/await uses cooperative multitasking within an event loop, ideal for I/O-bound work. The Communicating Sequential Processes (CSP) model, used by Go's goroutines and channels, structures concurrency around message passing rather than shared memory. The Actor model, used by Erlang and Akka, isolates state within actors that communicate only through asynchronous messages. Each model has different strengths, and understanding all three lets you choose the right one for each situation.",
+        "key_concepts": [
+          "Event loop: a single-threaded loop that dispatches I/O completions to registered callbacks or coroutines",
+          "Coroutines: functions that can suspend execution at await points and resume later",
+          "async/await: syntactic sugar for writing coroutines that read like sequential code",
+          "Futures and promises: handles to values that will be available in the future",
+          "CSP model: goroutines (lightweight threads) communicating through typed channels",
+          "Actor model: isolated state with asynchronous message passing, no shared memory",
+          "Structured concurrency: task trees where parent tasks manage child task lifetimes",
+          "Backpressure: mechanisms to slow producers when consumers cannot keep up",
+          "Cancellation: cooperative cancellation of async tasks via cancellation tokens or timeouts",
+          "Choosing a model: async for I/O-bound, threads for CPU-bound, actors for fault tolerance"
+        ],
+        "demonstration": "Build a web scraper three ways: (1) sequential requests taking 30 seconds for 100 URLs, (2) async/await with aiohttp handling all 100 concurrently in 2 seconds, and (3) Go goroutines with channels for pipeline processing. Compare throughput, memory usage, and code complexity.",
+        "setup_requirements": [
+          "Python with asyncio, aiohttp, and uvloop",
+          "Go 1.21+ for goroutine and channel examples",
+          "Rust with tokio async runtime"
+        ],
+        "review": [
+          {
+            "key": "Share Memory by Communicating",
+            "value": "Instead of communicating by sharing memory (with locks), share memory by communicating (with channels). This Go proverb captures the CSP approach: send data through channels rather than protecting shared data with mutexes. This eliminates race conditions by design."
+          },
+          {
+            "key": "Async/Await vs Threads",
+            "value": "Async/await uses a single thread with cooperative scheduling: no context switch overhead, limited to I/O-bound work. Threads use OS scheduling: real parallelism, higher overhead per thread, requires synchronization for shared state. A web server handling 10,000 connections needs async; a video encoder needs threads."
+          },
+          {
+            "key": "Structured Concurrency",
+            "value": "Structured concurrency ensures that spawned tasks are always joined before the parent scope exits, preventing orphaned tasks and resource leaks. Python's asyncio.TaskGroup and Kotlin's coroutineScope enforce this. It is the concurrent equivalent of structured programming (no goto)."
+          },
+          {
+            "key": "Color Problem",
+            "value": "Async functions can only be called from other async functions, creating a 'function coloring' problem where async infects the entire call stack. This is a real drawback of async/await. Go avoids this by making all I/O implicitly async via its runtime scheduler."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Memory Management: Garbage Collection vs Manual Control",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Understand stack vs heap allocation and their performance characteristics",
+        "Compare garbage collection strategies: mark-and-sweep, generational, concurrent",
+        "Explain Rust's ownership and borrowing model as compile-time memory management",
+        "Profile memory usage and identify leaks in garbage-collected and manually managed programs"
+      ],
+      "readings": [
+        "Godbolt, 'What Every Programmer Should Know About Memory'",
+        "Rust Documentation: Ownership and Borrowing",
+        "Jones & Lins, Garbage Collection, Ch. 1-4"
+      ],
+      "lecture_notes": {
+        "introduction": "Every value in a running program occupies memory, and that memory must eventually be freed. How a language manages this lifecycle profoundly affects both correctness and performance. C and C++ give programmers manual control: you allocate with malloc/new and free with free/delete. Get it wrong and you have use-after-free vulnerabilities, double-free crashes, or memory leaks. Java, Python, and Go use garbage collection: a runtime process periodically identifies and frees unreachable objects. This eliminates manual memory bugs but introduces GC pauses that can disrupt latency-sensitive applications. Rust takes a third path: the ownership system manages memory at compile time using rules about ownership, borrowing, and lifetimes. The compiler inserts deallocation calls automatically, with zero runtime overhead and no GC pauses. This session compares these three approaches in depth, examining the trade-offs in correctness, performance, latency, and developer productivity. You will learn to profile memory usage, detect leaks, and make informed language choices based on memory management requirements.",
+        "key_concepts": [
+          "Stack allocation: fast (pointer bump), automatic deallocation, fixed size, limited to function scope",
+          "Heap allocation: flexible size and lifetime, slower (allocator overhead), requires explicit or automatic freeing",
+          "Manual management: C/C++ malloc/free, prone to use-after-free, double-free, and leaks",
+          "Reference counting: deterministic deallocation when count reaches zero, fails on circular references",
+          "Mark-and-sweep GC: traces reachable objects from roots, frees unreachable ones in a sweep phase",
+          "Generational GC: exploits the generational hypothesis (most objects die young) for efficiency",
+          "GC pauses: stop-the-world events where the application freezes for garbage collection",
+          "Rust ownership: each value has exactly one owner; the value is dropped when the owner goes out of scope",
+          "Borrowing: temporary read-only (&T) or exclusive mutable (&mut T) access without transferring ownership",
+          "Lifetimes: Rust annotations that tell the compiler how long references are valid, preventing dangling references"
+        ],
+        "demonstration": "Profile a Python program with memory_profiler to find a memory leak caused by a growing cache, fix it with a weak reference cache. Then implement the same data structure in Rust, showing how the ownership system prevents the leak at compile time. Compare the memory profile of both solutions under sustained load.",
+        "setup_requirements": [
+          "Python with memory_profiler and tracemalloc",
+          "Rust with cargo and the standard library",
+          "Valgrind or AddressSanitizer for C/C++ memory analysis",
+          "Visualization tool for memory profiles"
+        ],
+        "review": [
+          {
+            "key": "Rust Ownership Rules",
+            "value": "Each value has exactly one owner. When the owner goes out of scope, the value is dropped (freed). Borrowing allows temporary references without ownership transfer. Mutable borrows are exclusive: only one &mut at a time. This prevents use-after-free, double-free, and data races at compile time."
+          },
+          {
+            "key": "Generational Hypothesis",
+            "value": "Most objects die young: they are created, used briefly, and become garbage. Generational GC exploits this by collecting the young generation frequently (cheap, small) and the old generation rarely (expensive, large). Java's G1 and ZGC are generational."
+          },
+          {
+            "key": "GC Pauses in Practice",
+            "value": "GC pauses range from microseconds (Go) to hundreds of milliseconds (older Java GCs). For latency-sensitive applications (games, trading systems, real-time audio), GC pauses are unacceptable. This is why Rust (no GC) and C++ (manual) dominate these domains."
+          },
+          {
+            "key": "RAII Pattern",
+            "value": "Resource Acquisition Is Initialization: tie resource lifetimes to object lifetimes. When the object is destroyed, the resource is released. C++ destructors, Rust Drop trait, and Python context managers (with statements) all implement RAII. It prevents resource leaks by construction."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "Advanced Design Patterns Across Paradigms",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Apply design patterns from OOP, functional, and concurrent paradigms",
+        "Recognize when a pattern from one paradigm simplifies a problem typically solved in another",
+        "Implement the same pattern in multiple paradigms and compare trade-offs",
+        "Evaluate when patterns are necessary vs when they add unnecessary complexity"
+      ],
+      "readings": [
+        "Gamma et al., Design Patterns, selected: Strategy, Observer, Iterator, Visitor",
+        "Gabriel, Patterns of Software, Ch. 1-3",
+        "Norvig, 'Design Patterns in Dynamic Languages' (presentation)"
+      ],
+      "lecture_notes": {
+        "introduction": "Design patterns are not language-specific; they are solutions to recurring problems in software design. However, the implementation of a pattern varies dramatically across paradigms. The Strategy pattern in Java requires an interface, concrete classes, and a context object with dependency injection. In Python, it is just passing a function. In Haskell, it is a type class instance. Peter Norvig observed that 16 of the 23 Gang of Four patterns are simplified or eliminated by language features in dynamic or functional languages. First-class functions eliminate Strategy and Command. Closures eliminate Factory Method. Algebraic data types and pattern matching eliminate Visitor. This does not make patterns obsolete; it means the same design problem has different optimal solutions in different languages. This session compares implementations across paradigms, helping you choose the simplest solution for your language and context. We will also cover concurrent patterns: producer-consumer, fan-out/fan-in, and circuit breaker, which address problems unique to distributed and concurrent systems.",
+        "key_concepts": [
+          "Strategy pattern: OOP (interface + classes) vs functional (pass a function) vs type class",
+          "Observer pattern: OOP (callbacks) vs reactive (streams and subscribers) vs channels",
+          "Iterator pattern: OOP (interface) vs generators and lazy sequences vs Rust iterators",
+          "Builder pattern: OOP (method chaining) vs functional (pipeline composition)",
+          "Visitor pattern: OOP (double dispatch) vs algebraic data types with pattern matching",
+          "Producer-consumer: buffered channel or queue between producers and consumers",
+          "Fan-out/fan-in: distribute work across workers, merge results",
+          "Circuit breaker: prevent cascading failures by stopping calls to failing services",
+          "Patterns as language gaps: many OOP patterns compensate for missing language features",
+          "Anti-patterns: when design patterns add complexity without solving a real problem"
+        ],
+        "demonstration": "Implement a configurable data processing pipeline three ways: (1) OOP Strategy pattern with interfaces and concrete classes in Java, (2) functional style using higher-order functions in Python, (3) Rust traits with static dispatch. Compare lines of code, flexibility, type safety, and performance.",
+        "setup_requirements": [
+          "Multi-language environment: Python, Rust, Java",
+          "Design pattern reference materials",
+          "Profiling tools for performance comparison"
+        ],
+        "review": [
+          {
+            "key": "Patterns as Language Gaps",
+            "value": "Peter Norvig observed that many GoF patterns are workarounds for language limitations. First-class functions eliminate Strategy, closures eliminate Command, algebraic data types eliminate Visitor. Choose languages that make your patterns unnecessary."
+          },
+          {
+            "key": "Composition Over Inheritance",
+            "value": "Prefer composing behaviors from small, focused components over deep inheritance hierarchies. Composition is more flexible (swap behaviors at runtime), more testable (mock individual components), and avoids the fragile base class problem."
+          },
+          {
+            "key": "Circuit Breaker Pattern",
+            "value": "When a remote service fails, the circuit breaker stops sending requests (open state), waits a timeout, then allows a trial request (half-open). If it succeeds, the circuit closes. This prevents cascading failures and allows failing services to recover."
+          },
+          {
+            "key": "YAGNI for Patterns",
+            "value": "Do not add a pattern because you might need it later. Add it when you actually need it. Premature abstraction (like wrapping everything in a Strategy interface when there is only one implementation) adds complexity without benefit."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "Domain-Specific Languages",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Distinguish internal DSLs (embedded in a host language) from external DSLs (with their own parser)",
+        "Design and implement an internal DSL using fluent APIs and operator overloading",
+        "Understand how popular DSLs work: SQL, regular expressions, build systems, CSS selectors",
+        "Evaluate when building a DSL is justified vs when a library or API suffices"
+      ],
+      "readings": [
+        "Fowler, Domain-Specific Languages, Ch. 1-5",
+        "Ghosh, DSLs in Action, Ch. 1-3",
+        "Kotlin Documentation: Type-Safe Builders"
+      ],
+      "lecture_notes": {
+        "introduction": "A domain-specific language is a programming language tailored to a particular application domain. You use DSLs every day: SQL for database queries, regular expressions for text patterns, CSS for styling, HTML for document structure, Make for build systems, and Terraform for infrastructure. DSLs trade generality for expressiveness: they cannot do everything a general-purpose language can, but they describe their domain more concisely and clearly. Internal DSLs are embedded within a host language, leveraging its syntax through method chaining, operator overloading, and closures. Kotlin's type-safe builders, Ruby's RSpec, and Python's SQLAlchemy query API are internal DSLs. External DSLs have their own syntax and parser: SQL, regex, and GraphQL are examples. This session teaches you to recognize when a DSL would simplify your domain, how to design one that is intuitive and hard to misuse, and the implementation techniques for both internal and external DSLs. The key insight is that DSL design is language design: the same principles of clarity, consistency, and composability apply.",
+        "key_concepts": [
+          "Internal DSL: embedded in a host language using its syntax (method chaining, lambdas, operator overloading)",
+          "External DSL: separate language with its own lexer, parser, and interpreter or compiler",
+          "Fluent API: method chaining that reads like natural language, e.g., query.where(age > 18).orderBy(name)",
+          "Builder pattern for DSLs: Kotlin type-safe builders, Groovy closures for Gradle",
+          "Operator overloading: redefining +, *, [] to create mathematical or query DSLs",
+          "Parser combinators: composable parsing functions for building external DSL parsers",
+          "Abstract syntax tree: the internal representation of parsed DSL programs",
+          "DSL design principles: consistency, composability, error messages, documentation",
+          "Popular DSLs analyzed: SQL (relational algebra), regex (finite automata), CSS (selector specificity)",
+          "When to build a DSL: repeated complex configuration, domain experts as users, stable domain model"
+        ],
+        "demonstration": "Build an internal DSL in Python for defining data validation rules: schema = Schema().field('name').string().required().field('age').integer().min(0).max(150). Implement the fluent API, then use it to validate JSON payloads. Show how the DSL is more readable than equivalent if-else validation code.",
+        "setup_requirements": [
+          "Python 3.12+ for internal DSL implementation",
+          "Kotlin for type-safe builder examples",
+          "ANTLR or PLY for external DSL parsing demonstration"
+        ],
+        "review": [
+          {
+            "key": "Internal vs External DSL Trade-offs",
+            "value": "Internal DSLs are easy to implement (just library design) and get IDE support for free from the host language. External DSLs can have better syntax and error messages but require building a parser, an interpreter, and tooling. Choose internal unless the domain demands novel syntax."
+          },
+          {
+            "key": "Lisp and DSLs",
+            "value": "Lisp's macro system makes it uniquely suited for internal DSLs because macros can transform arbitrary syntax at compile time. This is why Lisp is called a 'programmable programming language.' Languages without macros rely on method chaining and operator overloading, which are more limited."
+          },
+          {
+            "key": "SQL as a DSL Success Story",
+            "value": "SQL has endured for 50 years because it matches the relational domain perfectly. Its declarative nature lets users specify what data they want without how to get it. The optimizer handles execution strategy. This separation of concerns is the ideal DSL property."
+          },
+          {
+            "key": "DSL Design Pitfall: Inner Platform Effect",
+            "value": "The inner platform effect occurs when a DSL grows so complex that it becomes a poorly-designed general-purpose language. If users need loops, variables, and conditionals in your DSL, you have gone too far. Keep DSLs focused on their domain."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "Compiler Basics: Lexing and Parsing",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Implement a lexer that tokenizes source code into a stream of classified tokens",
+        "Build a recursive descent parser that produces an abstract syntax tree",
+        "Understand formal grammars: regular expressions for lexing, context-free grammars for parsing",
+        "Recognize how compiler concepts apply to config file parsers, template engines, and linters"
+      ],
+      "readings": [
+        "Nystrom, Crafting Interpreters, Ch. 4-8",
+        "Aho et al., Compilers: Principles, Techniques, and Tools, Ch. 2-4",
+        "Cooper & Torczon, Engineering a Compiler, Ch. 2-3"
+      ],
+      "lecture_notes": {
+        "introduction": "Compilers and interpreters are among the most elegant programs ever written. They transform human-readable source code into executable instructions through a pipeline of well-defined stages: lexing breaks source text into tokens, parsing organizes tokens into a tree structure, semantic analysis checks types and scopes, and code generation produces output. Even if you never build a production compiler, understanding these stages makes you a better programmer. JSON parsers, configuration file readers, template engines, SQL query processors, syntax highlighters, and linters all use compiler techniques. This session covers the front end: lexing and parsing. You will implement a lexer using regular expressions to classify input characters into tokens like NUMBER, IDENTIFIER, PLUS, and SEMICOLON. Then you will build a recursive descent parser that consumes the token stream and produces an abstract syntax tree according to a context-free grammar. By the end, you will have a working interpreter for a simple expression language, and you will understand how every programming language you use is processed under the hood.",
+        "key_concepts": [
+          "Lexer (tokenizer): converts character stream into token stream using regular expressions",
+          "Token types: keywords, identifiers, literals, operators, delimiters, whitespace, comments",
+          "Regular expressions and finite automata: the formal basis of lexical analysis",
+          "Context-free grammars: BNF/EBNF notation for defining syntactic structure",
+          "Recursive descent parsing: one function per grammar rule, mutual recursion for nested structures",
+          "Abstract syntax tree (AST): a tree representation of program structure, stripping syntactic sugar",
+          "Operator precedence and associativity: parsing 2 + 3 * 4 correctly as 2 + (3 * 4)",
+          "Error recovery: reporting meaningful error messages with source location information",
+          "Pratt parsing: a top-down operator precedence technique that handles complex expression grammars elegantly",
+          "Parse tree vs AST: parse trees mirror grammar rules, ASTs simplify to essential structure"
+        ],
+        "demonstration": "Build a calculator language from scratch in Python: (1) write a lexer that produces tokens for numbers, operators, and parentheses, (2) write a recursive descent parser that respects operator precedence, (3) evaluate the AST to compute results. Test with '2 + 3 * (4 - 1)' and verify the result is 11.",
+        "setup_requirements": [
+          "Python 3.12+ for lexer and parser implementation",
+          "No external dependencies required (build from scratch)",
+          "Test cases with expected parse trees"
+        ],
+        "review": [
+          {
+            "key": "Why Compiler Knowledge Matters",
+            "value": "Even if you never build a compiler, you will build parsers. Config files, command-line arguments, template languages, query languages, validation rules, and wire protocols all need parsing. Compiler techniques give you the right tools for these common tasks."
+          },
+          {
+            "key": "Recursive Descent Simplicity",
+            "value": "Recursive descent parsers are simple to implement: one function per grammar rule. For 'expr = term (('+' | '-') term)*', write a function expr() that calls term(), then loops consuming '+' or '-' tokens and calling term() again. Most hand-written parsers use this technique."
+          },
+          {
+            "key": "Operator Precedence",
+            "value": "Precedence is encoded in the grammar by nesting: expr contains terms (+ and -), terms contain factors (* and /), factors contain atoms (numbers and parenthesized expressions). Higher-precedence operators are deeper in the grammar, binding tighter."
+          },
+          {
+            "key": "Error Messages Matter",
+            "value": "A parser that says 'syntax error' is useless. Good error messages include the source location, what was expected, what was found, and ideally a suggestion. Rust and Elm are praised for their error messages because the compiler writers invested heavily in this."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Code Generation and Interpretation",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Implement a tree-walking interpreter that evaluates an AST directly",
+        "Generate bytecode for a virtual machine and implement the VM execution loop",
+        "Understand the difference between interpretation, compilation, and JIT compilation",
+        "Apply code generation techniques to practical problems: transpilers, template engines"
+      ],
+      "readings": [
+        "Nystrom, Crafting Interpreters, Ch. 14-17",
+        "Aho et al., Ch. 6-8",
+        "LLVM Tutorial: Kaleidoscope Language"
+      ],
+      "lecture_notes": {
+        "introduction": "Once you have an AST, you need to make it do something. The simplest approach is a tree-walking interpreter: recursively visit each AST node and execute the corresponding operation. This is how early Python and Ruby worked, and how many DSL interpreters work today. For better performance, you can compile the AST to bytecode: a sequence of simple instructions for a virtual machine. The JVM, CPython, and Lua all use bytecode VMs. The VM is a loop that reads an instruction, executes it, and advances to the next. Bytecode VMs are 5-20 times faster than tree-walking interpreters because they avoid the overhead of tree traversal and virtual dispatch. JIT (Just-In-Time) compilation takes this further: at runtime, the VM detects hot code paths and compiles them to native machine code. The JVM's HotSpot and JavaScript's V8 use JIT compilation to achieve near-native performance. This session covers all three approaches, giving you the tools to build interpreters for DSLs, configuration languages, and even simple programming languages.",
+        "key_concepts": [
+          "Tree-walking interpretation: recursively visit AST nodes, evaluate in place",
+          "Environments: mapping variable names to values, with scoping via environment chains",
+          "Bytecode: compact instruction encoding (opcode + operands) for a virtual machine",
+          "Virtual machine: a fetch-decode-execute loop that processes bytecode instructions",
+          "Stack-based VMs: operands pushed/popped from a stack (JVM, Python, Lua)",
+          "Register-based VMs: operands in numbered registers (Lua 5, Dalvik)",
+          "JIT compilation: compiling hot bytecode paths to native machine code at runtime",
+          "Transpilation: translating one high-level language to another (TypeScript to JavaScript)",
+          "Constant folding: evaluating constant expressions at compile time",
+          "Garbage collection in VMs: managing memory for dynamically allocated objects"
+        ],
+        "demonstration": "Extend the calculator from the previous session: (1) add variables and assignment to the grammar, (2) implement a tree-walking interpreter with an environment for variable bindings, (3) compile the same AST to stack-based bytecode, (4) implement a simple bytecode VM. Compare execution speed of tree-walking vs bytecode for 10,000 iterations of a loop.",
+        "setup_requirements": [
+          "Python 3.12+ for interpreter and VM implementation",
+          "The calculator lexer and parser from the previous session",
+          "Benchmarking setup for performance comparison"
+        ],
+        "review": [
+          {
+            "key": "Tree-Walking vs Bytecode Performance",
+            "value": "Tree-walking interpreters are 5-20x slower than bytecode VMs because traversing a tree involves pointer chasing (cache-unfriendly), virtual dispatch (branch prediction misses), and deep recursion (stack overhead). Bytecode is a flat array: sequential, cache-friendly, and branch-predictor-friendly."
+          },
+          {
+            "key": "JIT Compilation Strategy",
+            "value": "JIT compilers profile running code to find hot paths (frequently executed code), then compile those paths to optimized native code. Cold code stays in bytecode. This adaptive approach gives near-native speed for hot loops while keeping startup time fast."
+          },
+          {
+            "key": "Transpilers in Practice",
+            "value": "TypeScript transpiles to JavaScript. Babel transpiles modern JS to older JS. Kotlin compiles to JVM bytecode or JavaScript. These are all code generators that target existing runtimes. Understanding ASTs and code generation makes building such tools straightforward."
+          },
+          {
+            "key": "Stack Machine Elegance",
+            "value": "A stack-based VM needs only a few instructions: PUSH, POP, ADD, SUB, MUL, DIV, LOAD, STORE, JUMP, JUMP_IF. Expressions compile by emitting operands as PUSH and operators as arithmetic instructions. No register allocation needed, which dramatically simplifies the compiler."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "Performance Profiling and Optimization",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Profile programs using CPU profilers, memory profilers, and flame graphs",
+        "Identify performance bottlenecks using data rather than intuition",
+        "Apply algorithmic, data structure, and systems-level optimizations",
+        "Understand when to optimize and when optimization is premature"
+      ],
+      "readings": [
+        "Gregg, Systems Performance, Ch. 2 and 6",
+        "Godbolt, 'What Every Programmer Should Know About Memory'",
+        "Rust Performance Book (online)"
+      ],
+      "lecture_notes": {
+        "introduction": "Performance matters, but premature optimization is the root of all evil. The resolution of this paradox is measurement: always profile before optimizing, and only optimize the parts that actually matter. Programmers' intuition about where time is spent is consistently wrong. Profiling reveals the truth: a program that appears CPU-bound may actually be waiting on network I/O, a function that looks expensive may be called rarely, and a line that looks innocent may trigger millions of cache misses. This session teaches the discipline of evidence-based optimization. We cover CPU profiling to find where time is spent, memory profiling to find where allocations happen, flame graphs to visualize call stacks, and benchmarking to measure the effect of changes. We then study optimization techniques at three levels: algorithmic (choosing O(n log n) over O(n^2)), data structure (choosing a hash map over a tree for random access), and systems (improving cache locality, reducing allocations, avoiding branch mispredictions). The most important optimization is often the simplest: choosing the right algorithm and data structure from the start.",
+        "key_concepts": [
+          "CPU profiling: sampling or instrumenting function calls to find hot spots",
+          "Flame graphs: visualizing where CPU time is spent across the entire call stack",
+          "Memory profiling: tracking allocations, identifying leaks, measuring peak usage",
+          "Benchmarking: micro-benchmarks for individual functions, macro-benchmarks for end-to-end",
+          "Algorithmic optimization: reducing time complexity (O(n^2) to O(n log n))",
+          "Cache locality: arranging data so sequential accesses hit the CPU cache (struct-of-arrays vs array-of-structs)",
+          "Allocation reduction: reusing buffers, arena allocation, avoiding unnecessary copies",
+          "Inlining: the compiler replaces function calls with the function body, eliminating call overhead",
+          "Branch prediction: CPUs predict branch outcomes; unpredictable branches cause pipeline stalls"
+        ],
+        "demonstration": "Profile a real Python program with cProfile and visualize the results as a flame graph. Identify the bottleneck (a function called 100,000 times with O(n) lookup inside it), replace the list lookup with a dictionary (O(1)), measure the speedup (20x). Then rewrite the hot path in Rust using PyO3 for an additional 50x improvement.",
+        "setup_requirements": [
+          "Python with cProfile, memory_profiler, and py-spy",
+          "Rust with criterion benchmarking library and PyO3",
+          "Flame graph visualization tool (speedscope or flamegraph.pl)"
+        ],
+        "review": [
+          {
+            "key": "Profile Before Optimizing",
+            "value": "Never guess where bottlenecks are. Measure first with a profiler, identify the hot path (the code responsible for most of the execution time), optimize that specific code, and measure again to verify improvement. Optimization without measurement is speculation."
+          },
+          {
+            "key": "Cache Misses Cost",
+            "value": "Accessing L1 cache takes ~1ns, main memory takes ~100ns. A cache miss is 100x slower than a cache hit. Data layout matters enormously: iterating through an array (cache-friendly) is dramatically faster than chasing pointers in a linked list (cache-unfriendly)."
+          },
+          {
+            "key": "Benchmark Methodology",
+            "value": "Micro-benchmarks are tricky: the JIT may optimize away dead code, the OS may throttle CPU frequency, and variance between runs may be high. Use a benchmarking framework (criterion, JMH) that handles warmup, statistical analysis, and outlier detection."
+          },
+          {
+            "key": "Amdahl's Law Revisited",
+            "value": "Optimizing a function that accounts for 1% of runtime by 100x yields less than 1% overall improvement. Focus optimization effort on the dominant costs. If I/O is 90% of your runtime, no amount of CPU optimization will make a meaningful difference."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "Language Interoperability and Foreign Function Interfaces",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Call C/Rust libraries from Python using ctypes, cffi, and PyO3",
+        "Understand ABI compatibility, calling conventions, and data layout across languages",
+        "Design safe wrappers around unsafe foreign function calls",
+        "Evaluate polyglot architectures: when to use multiple languages in a single system"
+      ],
+      "readings": [
+        "Python Documentation: ctypes and cffi",
+        "PyO3 User Guide",
+        "Rust Nomicon: Foreign Function Interface"
+      ],
+      "lecture_notes": {
+        "introduction": "No single programming language is the best tool for every job. Python excels at rapid prototyping and glue code but is too slow for numerical inner loops. Rust provides memory safety and performance but has a steep learning curve and slow compile times. C has the widest ABI compatibility but lacks safety guarantees. The best real-world systems combine languages: Python for the high-level API, Rust or C for performance-critical internals, JavaScript for the web frontend. This combination is everywhere: NumPy is Python wrapping C/Fortran, TensorFlow is Python wrapping C++, and Firefox is Rust integrated into a C++ codebase. Foreign function interfaces (FFIs) enable this polyglot approach by defining how functions and data are shared across language boundaries. This session covers the practical mechanics of language interoperability: calling conventions (how arguments are passed), data layout (how structs are arranged in memory), ABI compatibility (which languages can call which), and safety wrappers (how to prevent unsafe foreign calls from corrupting your program). You will build a Rust library called from Python and learn the patterns that make cross-language integration robust and maintainable.",
+        "key_concepts": [
+          "FFI (Foreign Function Interface): mechanism for calling functions defined in a different language",
+          "C ABI: the de facto standard for cross-language interoperability; most FFIs go through C",
+          "Calling conventions: how function arguments and return values are passed (registers, stack)",
+          "Data layout: how struct fields are arranged in memory, including alignment and padding",
+          "ctypes and cffi: Python libraries for calling C-ABI functions in shared libraries",
+          "PyO3: Rust framework for writing Python extensions with automatic type conversion",
+          "Safety wrappers: validating arguments and catching panics at the FFI boundary",
+          "Marshaling: converting data between language representations (Python objects to C structs)",
+          "Polyglot architectures: using multiple languages in a system, connected via FFI or IPC",
+          "WebAssembly as a universal FFI: language-independent bytecode for sandboxed interop"
+        ],
+        "demonstration": "Build a high-performance text search function in Rust, expose it through PyO3 as a Python module, and benchmark it against the pure Python equivalent. Show the complete workflow: Rust library with #[pyfunction], maturin build tool, Python import and usage. Measure a 30-100x speedup on a realistic dataset.",
+        "setup_requirements": [
+          "Rust with PyO3 and maturin",
+          "Python 3.12+ with a virtual environment",
+          "C compiler for basic FFI examples",
+          "Benchmarking setup for cross-language comparison"
+        ],
+        "review": [
+          {
+            "key": "C ABI as Lingua Franca",
+            "value": "Almost every language can call C functions and be called by C. This makes the C ABI the universal interoperability layer. When building a library intended for use from multiple languages, expose a C-compatible interface even if the library is written in Rust, C++, or Go."
+          },
+          {
+            "key": "Safety at the FFI Boundary",
+            "value": "FFI calls bypass the host language's safety guarantees. A Rust function called from Python via FFI can crash the entire process if it panics. Always catch panics at the FFI boundary, validate arguments, and return error codes rather than throwing exceptions."
+          },
+          {
+            "key": "PyO3 Ergonomics",
+            "value": "PyO3 automatically converts between Python and Rust types: Python str becomes &str, Python list becomes Vec<T>, and Python exceptions become Rust Results. This makes writing Python extensions in Rust almost as ergonomic as writing pure Python, with dramatically better performance."
+          },
+          {
+            "key": "When to Go Polyglot",
+            "value": "Use multiple languages when: the performance difference justifies the integration complexity, the domain expertise exists in different language ecosystems, or regulatory requirements mandate specific implementations. Do not go polyglot just because you can; the complexity cost is real."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Capstone: Multi-Paradigm Language Implementation",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Synthesize all course concepts into a complete language implementation",
+        "Present and defend design decisions for paradigm choices in a real system",
+        "Evaluate trade-offs between expressiveness, performance, and safety",
+        "Reflect on when to use each paradigm and programming language in practice"
+      ],
+      "readings": [
+        "Nystrom, Crafting Interpreters, Ch. 24-30 (review)",
+        "Stroustrup, 'Evolving a Language in and for the Real World' (keynote)",
+        "Course notes review: all previous sessions"
+      ],
+      "lecture_notes": {
+        "introduction": "This final session is both a capstone presentation and a comprehensive review. Students present their multi-paradigm language interpreters, which combine functional programming (first-class functions, closures), type checking (static or dynamic), concurrent features (async/await or channels), and at least one metaprogramming capability (macros or reflection). Each presentation includes a live demo of the interpreter, a walkthrough of the key implementation choices, and a defense of the paradigm trade-offs. The class discussion draws connections across all 15 weeks: how closures from Week 2 enable the Strategy pattern from Week 9, how type systems from Week 3 prevent bugs that would require testing from a QA course, how memory management from Week 8 affects the performance profiled in Week 13, and how the compiler techniques from Weeks 11-12 make all the other features possible. The goal is not just to build an interpreter but to demonstrate mastery of the conceptual framework: knowing when to use functional vs OOP, when to use static vs dynamic types, when to optimize and when to keep things simple. This integrative understanding is what separates a programmer who knows languages from an engineer who understands programming.",
+        "key_concepts": [
+          "Language design trade-offs: expressiveness vs simplicity, safety vs flexibility, performance vs portability",
+          "Paradigm integration: how functional, OOP, and concurrent features interact within a single language",
+          "Implementation choices: tree-walking vs bytecode, static vs dynamic types, GC vs ownership",
+          "Feature interaction: closures + concurrency = potential for captured reference data races",
+          "Error handling design: exceptions vs Result types vs error codes, and their impact on API design",
+          "Standard library design: what primitives to provide, what to leave to user libraries",
+          "Tooling: REPL, debugger, formatter, linter as parts of the language ecosystem",
+          "Language evolution: how to add features to an existing language without breaking backward compatibility",
+          "Real-world language survey: comparing how Python, Rust, Go, and Haskell make different trade-offs"
+        ],
+        "demonstration": "Live student presentations of capstone interpreters, each demonstrating: parsing source code into an AST, type checking (if static), interpreting or compiling to bytecode, executing with output. Followed by Q&A where the class probes design decisions and suggests improvements.",
+        "setup_requirements": [
+          "Student capstone projects prepared and tested",
+          "Presentation setup with live coding capability",
+          "Evaluation rubrics distributed to peer reviewers"
+        ],
+        "review": [
+          {
+            "key": "Course Synthesis",
+            "value": "Every major concept connects: closures are the runtime of lambda calculus, generics need a type system, async/await needs an event loop (a simple interpreter), DSLs need a parser, performance optimization needs profiling tools built with compiler techniques. Programming language theory is deeply interconnected."
+          },
+          {
+            "key": "Paradigm Selection Guide",
+            "value": "Use functional programming for data transformation pipelines. Use OOP for systems with complex state and identity. Use concurrent patterns for I/O-bound and CPU-bound parallelism. Use metaprogramming for eliminating genuine boilerplate. Use the right tool for the job, not the one you know best."
+          },
+          {
+            "key": "Continuing Growth",
+            "value": "This course covered breadth; depth comes from building real systems. Implement a compiler for a toy language. Contribute to an open-source language runtime. Write a concurrent data structure. Each project deepens understanding in ways that lectures cannot."
+          },
+          {
+            "key": "The Blub Paradox",
+            "value": "Paul Graham's observation: programmers think in the features of their primary language. Features below their language seem unnecessary (why would anyone not have garbage collection?), features above seem unnecessary too (why would anyone need algebraic data types?). Learning multiple paradigms breaks this ceiling."
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 3,
+        "topic": "Functional Programming, Lambda Calculus, and Type Systems",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Rewrite the following imperative code in purely functional style using only map, filter, and reduce (no loops, no mutation, no variable reassignment):\n\nnumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\nresult = 0\nfor n in numbers:\n    if n % 2 == 0:\n        result += n * n",
+            "type": "code",
+            "points": 10,
+            "answer": "from functools import reduce\nresult = reduce(lambda acc, x: acc + x, map(lambda n: n * n, filter(lambda n: n % 2 == 0, numbers)))\n\n# Or more readably:\nevens = filter(lambda n: n % 2 == 0, numbers)\nsquared = map(lambda n: n * n, evens)\nresult = reduce(lambda acc, x: acc + x, squared)\n\n# Result: 4 + 16 + 36 + 64 + 100 = 220",
+            "rubric": [
+              {
+                "key": "Correct use of filter for even numbers",
+                "value": 3
+              },
+              {
+                "key": "Correct use of map for squaring",
+                "value": 3
+              },
+              {
+                "key": "Correct use of reduce for summation",
+                "value": 3
+              },
+              {
+                "key": "No loops or mutation present",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between nominal typing and structural typing with concrete examples. Then explain which approach TypeScript uses and why that choice benefits JavaScript interoperability.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Nominal typing checks type identity by name: in Java, class Dog and class Cat are different types even if they have identical fields. Structural typing checks type identity by shape: in TypeScript, any object with a 'name: string' and 'bark(): void' satisfies the Dog interface, regardless of what it is called. TypeScript uses structural typing because JavaScript has no class-based type system: objects are created ad hoc with object literals. Requiring nominal type declarations would break compatibility with existing JavaScript code that creates objects without class definitions.",
+            "rubric": [
+              {
+                "key": "Correct definition and example of nominal typing",
+                "value": 2
+              },
+              {
+                "key": "Correct definition and example of structural typing",
+                "value": 2
+              },
+              {
+                "key": "Identifies TypeScript as structural",
+                "value": 2
+              },
+              {
+                "key": "Explains JavaScript interoperability benefit",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Write a Python closure that creates a counter. The closure should return a function that, when called, increments and returns the next integer starting from a given initial value. Demonstrate that two independent counters maintain separate state.",
+            "type": "code",
+            "points": 7,
+            "answer": "def make_counter(start=0):\n    count = [start]  # list for mutability in closure\n    def next_value():\n        val = count[0]\n        count[0] += 1\n        return val\n    return next_value\n\n# Or using nonlocal:\ndef make_counter(start=0):\n    count = start\n    def next_value():\n        nonlocal count\n        val = count\n        count += 1\n        return val\n    return next_value\n\nc1 = make_counter(0)\nc2 = make_counter(100)\nprint(c1(), c1(), c1())  # 0, 1, 2\nprint(c2(), c2())        # 100, 101\nprint(c1())              # 3 (independent state)",
+            "rubric": [
+              {
+                "key": "Correct closure capturing mutable state",
+                "value": 3
+              },
+              {
+                "key": "Returns incrementing values",
+                "value": 2
+              },
+              {
+                "key": "Demonstrates independent state with two counters",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 25
+      },
+      {
+        "quiz": 2,
+        "week": 5,
+        "topic": "Generics, Templates, and Metaprogramming",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Write a generic function in Rust (or typed pseudocode) that finds the maximum element in a slice. Explain what trait bound is required, why it is necessary, and what happens at compile time (monomorphization).",
+            "type": "code",
+            "points": 12,
+            "answer": "fn find_max<T: PartialOrd>(slice: &[T]) -> Option<&T> {\n    if slice.is_empty() {\n        return None;\n    }\n    let mut max = &slice[0];\n    for item in &slice[1..] {\n        if item > max {\n            max = item;\n        }\n    }\n    Some(max)\n}\n\nThe PartialOrd trait bound is required because the > comparison operator is defined by this trait. Without it, the compiler cannot guarantee that type T supports comparison. At compile time, Rust monomorphizes: if the code calls find_max::<i32>() and find_max::<String>(), the compiler generates two separate functions with specialized machine code for each type.",
+            "rubric": [
+              {
+                "key": "Correct generic function signature with trait bound",
+                "value": 3
+              },
+              {
+                "key": "Handles empty slice edge case with Option",
+                "value": 2
+              },
+              {
+                "key": "Correct iteration and comparison logic",
+                "value": 3
+              },
+              {
+                "key": "Explains why the trait bound is necessary",
+                "value": 2
+              },
+              {
+                "key": "Explains monomorphization correctly",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Write a Python decorator called @retry(max_attempts=3, delay=1) that retries a function up to max_attempts times if it raises an exception, waiting delay seconds between attempts. The decorator must re-raise the last exception if all attempts fail.",
+            "type": "code",
+            "points": 8,
+            "answer": "import time\nfrom functools import wraps\n\ndef retry(max_attempts=3, delay=1):\n    def decorator(func):\n        @wraps(func)\n        def wrapper(*args, **kwargs):\n            last_exception = None\n            for attempt in range(max_attempts):\n                try:\n                    return func(*args, **kwargs)\n                except Exception as e:\n                    last_exception = e\n                    if attempt < max_attempts - 1:\n                        time.sleep(delay)\n            raise last_exception\n        return wrapper\n    return decorator",
+            "rubric": [
+              {
+                "key": "Correct three-level nesting for parameterized decorator",
+                "value": 3
+              },
+              {
+                "key": "Correct retry loop with attempt counting",
+                "value": 2
+              },
+              {
+                "key": "Preserves function metadata with @wraps",
+                "value": 1
+              },
+              {
+                "key": "Re-raises last exception after all attempts fail",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between monomorphization (Rust/C++) and type erasure (Java) as generic implementation strategies. Give one advantage and one disadvantage of each approach.",
+            "type": "short_answer",
+            "points": 5,
+            "answer": "Monomorphization: the compiler generates a separate copy of the generic code for each concrete type used. Advantage: zero runtime overhead because each copy is specialized (same as hand-written code). Disadvantage: code bloat because each instantiation produces separate machine code, increasing binary size and compile time.\n\nType erasure: the compiler compiles generic code once, replacing type parameters with the erasure bound (usually Object in Java). Advantage: single compiled copy regardless of how many types are used, keeping binary size small. Disadvantage: runtime overhead from boxing/unboxing primitives and inability to inspect generic types at runtime (e.g., cannot write 'if (x instanceof List<String>)' in Java).",
+            "rubric": [
+              {
+                "key": "Correct explanation of monomorphization",
+                "value": 1
+              },
+              {
+                "key": "Correct explanation of type erasure",
+                "value": 1
+              },
+              {
+                "key": "Valid advantage and disadvantage of monomorphization",
+                "value": 1.5
+              },
+              {
+                "key": "Valid advantage and disadvantage of type erasure",
+                "value": 1.5
+              }
+            ]
+          }
+        ],
+        "total_points": 25
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "Concurrency, Async/Await, and Memory Management",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Explain the difference between concurrency and parallelism with a real-world analogy and a programming example of each. Then describe a scenario where async/await is the right choice and one where threads are the right choice.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Concurrency is about managing multiple tasks that can overlap in time (structure). Parallelism is about executing multiple tasks simultaneously on multiple cores (execution). Analogy: A single cook preparing two dishes by switching between them is concurrent but not parallel. Two cooks each preparing one dish simultaneously is parallel.\n\nProgramming: async/await handling 1000 HTTP requests on one thread is concurrent (switches tasks during I/O waits). Four threads each running a matrix multiplication on separate CPU cores is parallel.\n\nAsync/await is right for: a web scraper fetching 500 URLs, because the bottleneck is network I/O, not CPU. One thread can manage all connections. Threads are right for: a video transcoder processing frames, because each frame requires significant CPU computation that benefits from using multiple cores simultaneously.",
+            "rubric": [
+              {
+                "key": "Correct definitions distinguishing concurrency from parallelism",
+                "value": 3
+              },
+              {
+                "key": "Clear real-world analogy",
+                "value": 2
+              },
+              {
+                "key": "Correct programming examples for each",
+                "value": 2
+              },
+              {
+                "key": "Appropriate scenarios for async vs threads with reasoning",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "In Rust, explain the three ownership rules and how they prevent use-after-free bugs without a garbage collector. Give a code example that would compile in C but be rejected by the Rust compiler.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Rust's three ownership rules: (1) Each value has exactly one owner at a time. (2) When the owner goes out of scope, the value is dropped (freed). (3) Ownership can be transferred (moved) or temporarily borrowed (& for read, &mut for write), but not duplicated for non-Copy types.\n\nC code that compiles but has use-after-free:\nchar* str = malloc(10);\nstrcpy(str, \"hello\");\nfree(str);\nprintf(\"%s\", str);  // use-after-free: undefined behavior\n\nIn Rust, the equivalent would be:\nlet s = String::from(\"hello\");\ndrop(s);  // explicit free\nprintln!(\"{}\", s);  // COMPILER ERROR: value used after move\n\nThe compiler rejects this because after drop(s), ownership has been consumed and s cannot be used.",
+            "rubric": [
+              {
+                "key": "All three ownership rules stated correctly",
+                "value": 3
+              },
+              {
+                "key": "Explains how ownership prevents use-after-free",
+                "value": 2
+              },
+              {
+                "key": "Valid C example with use-after-free",
+                "value": 1.5
+              },
+              {
+                "key": "Corresponding Rust code that compiler rejects",
+                "value": 1.5
+              }
+            ]
+          },
+          {
+            "question": "Describe the generational hypothesis in garbage collection. Why does it improve GC performance, and what is a pathological case where it hurts?",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "The generational hypothesis states that most objects die young: they are allocated, used briefly, and become unreachable. Generational GC exploits this by dividing the heap into generations (young, old). The young generation is small and collected frequently (minor GC) with low cost, since most young objects are already dead. Surviving objects are promoted to the old generation, which is collected rarely (major GC).\n\nThis improves performance because minor GCs are fast (small heap, most objects dead) and major GCs are rare. Pathological case: a program that allocates many long-lived objects that survive multiple young-gen collections causes frequent premature promotion. If the old generation fills up, the GC must perform expensive full collections. Caching systems often exhibit this pattern: cached objects live for minutes or hours, filling the old generation.",
+            "rubric": [
+              {
+                "key": "Correct statement of the generational hypothesis",
+                "value": 2
+              },
+              {
+                "key": "Explains young/old generation collection strategy",
+                "value": 2
+              },
+              {
+                "key": "Explains why it improves performance",
+                "value": 1.5
+              },
+              {
+                "key": "Valid pathological case with explanation",
+                "value": 1.5
+              }
+            ]
+          }
+        ],
+        "total_points": 25
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "Design Patterns, DSLs, and Compiler Basics",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Peter Norvig observed that many Gang of Four design patterns are simplified or eliminated in languages with first-class functions. For each of the following patterns, explain how first-class functions or closures provide a simpler alternative: (a) Strategy, (b) Command, (c) Factory Method.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "(a) Strategy: In OOP, requires an interface and separate classes for each strategy. With first-class functions, a strategy is just a function parameter. Instead of sort(list, new DescendingComparator()), write sort(list, lambda a, b: b - a). The function IS the strategy.\n\n(b) Command: In OOP, requires a Command interface with execute(), and separate classes for each command, plus an invoker. With closures, a command is a closure that captures its parameters: command = lambda: document.paste(clipboard_content). The closure bundles data and behavior.\n\n(c) Factory Method: In OOP, requires an abstract creator class with subclasses overriding the factory method. With first-class functions, pass a constructor function: def process(items, make_container=list). The function parameter IS the factory.",
+            "rubric": [
+              {
+                "key": "Correct OOP description and functional alternative for Strategy",
+                "value": 3
+              },
+              {
+                "key": "Correct OOP description and functional alternative for Command",
+                "value": 3
+              },
+              {
+                "key": "Correct OOP description and functional alternative for Factory Method",
+                "value": 3
+              },
+              {
+                "key": "Overall clarity and conciseness",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "question": "Write a tokenizer (lexer) in Python for a simple expression language that supports integers, the four arithmetic operators (+, -, *, /), and parentheses. The lexer should produce a list of (token_type, value) tuples. Handle whitespace and invalid characters with an error.",
+            "type": "code",
+            "points": 10,
+            "answer": "def tokenize(source):\n    tokens = []\n    i = 0\n    while i < len(source):\n        ch = source[i]\n        if ch.isspace():\n            i += 1\n        elif ch.isdigit():\n            start = i\n            while i < len(source) and source[i].isdigit():\n                i += 1\n            tokens.append(('NUMBER', int(source[start:i])))\n        elif ch in '+-*/':\n            tokens.append(('OP', ch))\n            i += 1\n        elif ch == '(':\n            tokens.append(('LPAREN', ch))\n            i += 1\n        elif ch == ')':\n            tokens.append(('RPAREN', ch))\n            i += 1\n        else:\n            raise ValueError(f'Unexpected character: {ch!r} at position {i}')\n    return tokens\n\n# Example: tokenize('2 + 3 * (4 - 1)')\n# [('NUMBER', 2), ('OP', '+'), ('NUMBER', 3), ('OP', '*'),\n#  ('LPAREN', '('), ('NUMBER', 4), ('OP', '-'), ('NUMBER', 1), ('RPAREN', ')')]",
+            "rubric": [
+              {
+                "key": "Correctly tokenizes integers (multi-digit)",
+                "value": 3
+              },
+              {
+                "key": "Correctly tokenizes operators and parentheses",
+                "value": 3
+              },
+              {
+                "key": "Skips whitespace properly",
+                "value": 2
+              },
+              {
+                "key": "Raises error on invalid characters",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between an internal DSL and an external DSL. Give one real-world example of each and explain why that approach was chosen.",
+            "type": "short_answer",
+            "points": 5,
+            "answer": "An internal DSL is embedded within a host language, using its syntax creatively (method chaining, operator overloading, closures). Example: RSpec in Ruby - 'describe User do; it \"validates email\" do; expect(user.email).to be_valid; end; end'. Ruby's flexible syntax allows natural English-like test descriptions. This was chosen because Ruby developers get IDE support, debugging, and the full Ruby ecosystem for free.\n\nAn external DSL has its own syntax and requires a separate parser/interpreter. Example: SQL - 'SELECT name FROM users WHERE age > 18 ORDER BY name'. SQL has a completely custom syntax optimized for relational queries. This was chosen because database queries need to be optimized by a query planner, which requires parsing into a query plan, not executing as host-language code.",
+            "rubric": [
+              {
+                "key": "Correct definitions distinguishing internal and external DSLs",
+                "value": 2
+              },
+              {
+                "key": "Valid real-world example of each",
+                "value": 2
+              },
+              {
+                "key": "Explains why each approach was chosen",
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "total_points": 25
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "Code Generation, Optimization, and Interoperability",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Explain the difference between a tree-walking interpreter and a bytecode virtual machine. Why are bytecode VMs typically 5-20x faster? Describe one advantage that tree-walking interpreters retain.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "A tree-walking interpreter traverses the AST recursively, executing each node as it visits it. A bytecode VM compiles the AST into a flat sequence of simple instructions, then executes them in a tight fetch-decode-execute loop.\n\nBytecode VMs are 5-20x faster because: (1) bytecode is a flat array, so instruction dispatch is cache-friendly (sequential memory access), unlike tree traversal which chases pointers across memory. (2) A switch statement on an opcode byte is highly predictable for the CPU's branch predictor, while virtual method dispatch on AST node types is not. (3) Bytecode avoids the overhead of recursive function calls for every AST node.\n\nAdvantage of tree-walking: simplicity. A tree-walking interpreter can be implemented in a few hundred lines and is easy to debug because the execution flow directly mirrors the AST structure. This makes them ideal for prototyping languages and for DSLs where performance is not critical.",
+            "rubric": [
+              {
+                "key": "Correct description of both approaches",
+                "value": 2
+              },
+              {
+                "key": "Explains cache locality advantage of bytecode",
+                "value": 2
+              },
+              {
+                "key": "Explains branch prediction or dispatch overhead difference",
+                "value": 2
+              },
+              {
+                "key": "Valid advantage of tree-walking interpreters",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "You have a Python application where profiling shows that 80% of execution time is spent in a single function that performs numerical computation on large arrays. Describe a concrete plan to optimize this function, including at least three approaches in order of increasing effort.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Approach 1 (Low effort): Replace Python loops with NumPy vectorized operations. NumPy operations are implemented in C and operate on entire arrays at once, avoiding Python's per-element interpreter overhead. Expected speedup: 10-100x.\n\nApproach 2 (Medium effort): Use Numba's @jit decorator to JIT-compile the function to LLVM machine code. Numba compiles Python numerical code to native code at first call, with near-C performance for subsequent calls. Expected speedup: 50-200x over pure Python.\n\nApproach 3 (Higher effort): Rewrite the function in Rust using PyO3 and expose it as a Python extension module. This gives full control over memory layout, SIMD instructions, and parallelism. Use maturin for the build system. Expected speedup: 50-500x over pure Python, depending on how much the algorithm benefits from cache optimization and SIMD.\n\nAlways verify speedups by benchmarking before and after each change. If Approach 1 gives sufficient improvement, stop there.",
+            "rubric": [
+              {
+                "key": "NumPy vectorization as first approach with reasoning",
+                "value": 3
+              },
+              {
+                "key": "JIT compilation (Numba or similar) as second approach",
+                "value": 3
+              },
+              {
+                "key": "Rewrite in compiled language via FFI as third approach",
+                "value": 3
+              },
+              {
+                "key": "Mentions benchmarking to verify each improvement",
+                "value": 1
+              }
+            ]
+          },
+          {
+            "question": "What is the C ABI and why is it important for cross-language interoperability? Explain what can go wrong when calling a C function from Python if the struct layouts do not match.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "The C ABI (Application Binary Interface) defines the low-level conventions for function calls: how arguments are passed (registers vs stack), how return values are delivered, how structs are laid out in memory (field order, alignment, padding), and how names are mangled. It is important because virtually every language can interface with C, making it the universal lingua franca for cross-language calls.\n\nIf struct layouts do not match: suppose C defines struct Point { int x; int y; double z; } with 4 bytes padding between y and z for alignment. If Python's ctypes definition specifies fields without matching alignment, reading field z would read from the wrong memory offset, returning garbage data. Worse, writing to the wrong offset could corrupt adjacent memory, causing crashes or security vulnerabilities. This is why FFI code must precisely match the C struct layout, including compiler-specific padding rules.",
+            "rubric": [
+              {
+                "key": "Correct definition of C ABI covering calling conventions and data layout",
+                "value": 3
+              },
+              {
+                "key": "Explains why C ABI is the universal interop standard",
+                "value": 2
+              },
+              {
+                "key": "Concrete explanation of struct layout mismatch consequences",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 25
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Multi-Paradigm Data Processing Pipeline",
+        "week_assigned": 3,
+        "week_due": 6,
+        "points": 150,
+        "description": "Design and implement a concurrent data processing system that combines functional, object-oriented, and concurrent programming paradigms. The system must process a stream of events (e.g., web server logs, financial transactions, or sensor readings) using a configurable pipeline of transformation and aggregation stages, with concurrent execution for I/O and computation. Students must profile the system, identify bottlenecks, and optimize based on measured data.",
+        "objectives": [
+          "Apply functional programming for stateless data transformation stages",
+          "Use OOP for system structure, configuration, and lifecycle management",
+          "Implement concurrency using async/await for I/O and thread pools for computation",
+          "Profile and optimize the system based on measured performance data"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Source code implementing the multi-paradigm pipeline with at least 5 transformation stages",
+          "Benchmark results comparing sequential, async, and parallel execution on 100K+ records",
+          "Profiling report with flame graphs identifying bottlenecks before and after optimization",
+          "Design document (4-5 pages) explaining paradigm choices for each component with rationale"
+        ],
+        "grading_rubric": {
+          "functional_design": {
+            "points": 40,
+            "criteria": [
+              "Transformation stages are pure functions with no side effects",
+              "Pipeline is composable: stages can be added, removed, or reordered without code changes",
+              "Higher-order functions used appropriately for configuration and stage composition",
+              "Immutable data flows between stages with no shared mutable state"
+            ]
+          },
+          "concurrent_implementation": {
+            "points": 45,
+            "criteria": [
+              "I/O-bound work uses async/await with proper error handling",
+              "CPU-bound work uses thread or process parallelism",
+              "No race conditions or deadlocks (verified by thread sanitizer or equivalent)",
+              "Graceful shutdown and error propagation in concurrent contexts"
+            ]
+          },
+          "architecture": {
+            "points": 35,
+            "criteria": [
+              "Clear separation between paradigms with justified boundaries",
+              "Code is modular: each module independently testable with unit tests provided",
+              "Configuration is data-driven (YAML/JSON) not hardcoded",
+              "Error handling surfaces failures to the user with context"
+            ]
+          },
+          "analysis": {
+            "points": 30,
+            "criteria": [
+              "Profiling identifies actual bottlenecks with flame graph evidence",
+              "Concurrent version shows measurable speedup with statistical significance",
+              "Design document explains paradigm choices with concrete rationale",
+              "Performance analysis is honest about trade-offs and overhead"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Effective combination of functional, OOP, and concurrent paradigms",
+                "Correct concurrent execution with measured performance improvement",
+                "Clean architecture with justified paradigm boundaries",
+                "Thorough profiling and honest performance analysis"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Generic Library with Type-Safe API",
+        "week_assigned": 6,
+        "week_due": 9,
+        "points": 150,
+        "description": "Design and implement a generic, reusable library in Rust (or an approved alternative with comparable type system) that solves a real problem: a type-safe query builder, a generic collection with custom iterators, a concurrent data structure, or a serialization framework. The library must make extensive use of generics with trait bounds, demonstrate zero-cost abstraction, and include comprehensive documentation and tests.",
+        "objectives": [
+          "Design a generic API with trait bounds that prevents misuse at compile time",
+          "Implement at least three generic types or functions with meaningful type constraints",
+          "Write comprehensive tests including property-based tests for generic invariants",
+          "Produce documentation that explains the type-level design decisions"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Library source code with full implementation (not stubs)",
+          "Test suite with unit tests, integration tests, and at least 5 property-based tests",
+          "API documentation generated from doc comments (rustdoc or equivalent)",
+          "Design rationale document (3-4 pages) explaining type-level design choices"
+        ],
+        "grading_rubric": {
+          "generic_design": {
+            "points": 45,
+            "criteria": [
+              "Generic types and functions use appropriate trait bounds",
+              "API prevents misuse at compile time (illegal states are unrepresentable)",
+              "At least three non-trivial generic components with meaningful constraints",
+              "Type parameters are well-chosen and documented"
+            ]
+          },
+          "implementation_quality": {
+            "points": 40,
+            "criteria": [
+              "Code compiles without warnings and passes clippy/equivalent linter",
+              "Error handling uses Result types, not panics, for recoverable errors",
+              "Performance-sensitive paths avoid unnecessary allocations",
+              "Code is idiomatic for the chosen language"
+            ]
+          },
+          "testing": {
+            "points": 35,
+            "criteria": [
+              "Unit tests cover all public API functions and edge cases",
+              "Property-based tests verify generic invariants hold for arbitrary types",
+              "Integration tests demonstrate realistic usage scenarios",
+              "Test coverage exceeds 85% of library code"
+            ]
+          },
+          "documentation": {
+            "points": 30,
+            "criteria": [
+              "All public types and functions have doc comments with examples",
+              "Design rationale explains why specific trait bounds were chosen",
+              "README provides quick-start usage examples",
+              "Comparison with alternative designs that were considered and rejected"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Well-designed generic API with compile-time safety guarantees",
+                "High-quality implementation following language idioms",
+                "Comprehensive test suite including property-based tests",
+                "Clear documentation of type-level design decisions"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Language Interpreter: Multi-Paradigm Mini-Language",
+        "week_assigned": 10,
+        "week_due": 14,
+        "points": 200,
+        "description": "Design and implement an interpreter for a small programming language that supports at least three paradigms: first-class functions with closures, basic type checking (static or dynamic), and one concurrency primitive (async/await or channels). The interpreter must include a lexer, parser, AST representation, and evaluator. Students choose the language features but must justify their design trade-offs in a written report.",
+        "objectives": [
+          "Build a complete lexer and recursive descent parser for a custom grammar",
+          "Implement an environment-based evaluator supporting closures and lexical scoping",
+          "Add type checking (static or dynamic) that catches type errors before or during execution",
+          "Implement at least one concurrency feature and demonstrate it in example programs"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Complete interpreter source code: lexer, parser, type checker, and evaluator",
+          "Formal grammar specification in BNF/EBNF for the language",
+          "Test suite with at least 30 test programs covering all language features",
+          "Example programs demonstrating closures, type safety, and concurrency",
+          "Design report (5-6 pages) explaining language design trade-offs and implementation choices"
+        ],
+        "grading_rubric": {
+          "lexer_parser": {
+            "points": 50,
+            "criteria": [
+              "Lexer correctly tokenizes all language constructs",
+              "Parser produces correct AST for all valid programs",
+              "Error messages include source location and helpful context",
+              "Grammar handles operator precedence and associativity correctly"
+            ]
+          },
+          "evaluator": {
+            "points": 60,
+            "criteria": [
+              "Closures correctly capture lexical scope",
+              "Variable scoping follows lexical (not dynamic) rules",
+              "Recursion works correctly including mutual recursion",
+              "Type checker catches type errors with clear messages"
+            ]
+          },
+          "concurrency": {
+            "points": 40,
+            "criteria": [
+              "At least one concurrency primitive is fully functional",
+              "Example program demonstrates concurrent execution",
+              "Concurrency does not introduce crashes or data corruption",
+              "Design justifies the chosen concurrency model"
+            ]
+          },
+          "design_report": {
+            "points": 50,
+            "criteria": [
+              "Grammar is formally specified and consistent",
+              "Design trade-offs are discussed with reference to course concepts",
+              "Alternative designs considered and rejected with rationale",
+              "Example programs are non-trivial and demonstrate language expressiveness"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 200,
+              "criteria": [
+                "Complete working interpreter with lexer, parser, and evaluator",
+                "Closures, type checking, and concurrency all functional",
+                "Comprehensive test suite covering all features",
+                "Thoughtful design report connecting to course concepts"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 20,
+      "description": "Five quizzes (weeks 3, 5, 8, 11, 14) testing conceptual understanding and coding ability"
+    },
+    "lab_assignments": {
+      "percentage": 15,
+      "description": "Weekly lab exercises applying each paradigm in focused programming tasks"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "Three major projects: multi-paradigm pipeline, generic library, language interpreter"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Written and coding exam on functional programming, type systems, generics, and concurrency"
+    },
+    "final_project": {
+      "percentage": 20,
+      "description": "Language interpreter capstone project presented in Week 15 with peer review"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is expected for lectures and mandatory for lab sessions. More than 3 unexcused absences may result in a reduced participation grade.",
+    "late_submissions": "Late assignments lose 10% per day. No submissions accepted more than 5 days late. Extensions granted only for documented emergencies.",
+    "collaboration": "Discussion of paradigm concepts and design approaches is encouraged. All code, analysis, and written work must be individual unless explicitly designated as group work.",
+    "academic_integrity": "All submitted code must be your own. Using code from external sources requires attribution and is limited to utility functions, not core assignment logic. AI-generated code must be disclosed and understood.",
+    "technology_requirements": "Students need Python 3.12+, Rust toolchain (rustup, cargo), and Go 1.21+ installed. Lab computers are available with all environments configured. A personal laptop is recommended."
+  }
+}

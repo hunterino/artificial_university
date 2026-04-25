@@ -1,0 +1,1523 @@
+{
+  "course_info": {
+    "course_id": "CS402",
+    "title": "Artificial Intelligence Fundamentals",
+    "credit_hours": 4,
+    "duration": "15 weeks",
+    "meeting_schedule": "Monday, Wednesday, Friday - 4 hours per week",
+    "prerequisites": [
+      "CS201 - Data Structures and Algorithms"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "topic": "Introduction to Artificial Intelligence and Intelligent Agents",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Define AI and distinguish between narrow AI and general AI",
+        "Classify agent types: simple reflex, model-based, goal-based, utility-based, and learning agents",
+        "Characterize task environments using the PEAS framework (Performance, Environment, Actuators, Sensors)",
+        "Trace the historical arc of AI from Turing through expert systems to deep learning"
+      ],
+      "readings": [
+        "Russell & Norvig, Artificial Intelligence: A Modern Approach (AIMA), 4th Ed., Ch. 1-2",
+        "Turing, 'Computing Machinery and Intelligence' (1950)",
+        "McCarthy et al., 'A Proposal for the Dartmouth Summer Research Project on AI' (1955)"
+      ],
+      "lecture_notes": {
+        "introduction": "Artificial intelligence is the study of agents that perceive their environment and take actions to maximize their chance of achieving goals. Since the term was coined at Dartmouth in 1956, the field has experienced cycles of hype and disillusionment, from the early promise of symbolic reasoning and expert systems through two AI winters, to the current revolution driven by deep learning and massive compute. This course covers the foundational algorithms and reasoning techniques that power modern AI systems, giving you the conceptual toolkit to understand how machines can search, reason, learn, and perceive. We begin with the most fundamental question: what does it mean for an agent to behave rationally, and how do we measure success? The PEAS framework provides a structured way to specify any AI problem, and the agent typology shows how increasingly sophisticated internal models enable increasingly capable behavior. By the end of this session, you will be able to classify any AI system by its agent type and environment characteristics, setting the stage for the specific algorithms we study throughout the semester.",
+        "key_concepts": [
+          "Rational agents: entities that perceive their environment through sensors and act through actuators to maximize expected utility given their percept sequence and built-in knowledge",
+          "PEAS framework: Performance measure, Environment characteristics, Actuators available to the agent, and Sensors providing percept information — the standard way to specify an AI task",
+          "Agent typology: simple reflex (condition-action rules), model-based reflex (internal state tracks unobservable aspects), goal-based (searches for action sequences achieving goals), utility-based (maximizes a utility function over outcomes), learning (improves performance over time)",
+          "Environment properties: fully observable vs partially observable, deterministic vs stochastic, episodic vs sequential, static vs dynamic, discrete vs continuous, single-agent vs multi-agent",
+          "Historical milestones: Turing Test (1950), Dartmouth Workshop (1956), ELIZA (1966), expert systems boom (1980s), first AI winter (1974), second AI winter (1987), Deep Blue (1997), ImageNet breakthrough (2012), AlphaGo (2016), GPT and large language models (2018-present)",
+          "The Chinese Room argument and the distinction between strong AI (genuine understanding) and weak AI (behavioral simulation of intelligence)",
+          "Bounded rationality: real agents cannot compute optimal decisions; satisficing and heuristic approaches are necessary for tractable intelligence",
+          "AI subfields overview: search and planning, knowledge representation, machine learning, natural language processing, computer vision, robotics",
+          "The frame problem: representing what does not change when an action is taken, a fundamental challenge in knowledge representation",
+          "Current AI capabilities and limitations: superhuman performance on narrow tasks, but lacking common sense reasoning, transfer learning across domains, and causal understanding"
+        ],
+        "demonstration": "Build three agents for a 10x10 grid-world navigation problem: a simple reflex agent that moves toward the goal only when it can see it, a model-based agent that tracks visited cells to avoid loops, and a goal-based agent that uses BFS to plan a complete path. Run all three on the same maze and compare their success rates, path lengths, and number of actions taken to illustrate how internal models enable better performance.",
+        "setup_requirements": [
+          "Python 3.12+ with NumPy installed",
+          "Jupyter Notebook configured",
+          "AIMA Python code repository cloned (github.com/aimacode/aima-python)",
+          "matplotlib for visualization"
+        ],
+        "review": [
+          {
+            "key": "Rational Agent",
+            "value": "An agent that, for each percept sequence, selects the action expected to maximize its performance measure, given the evidence provided by the percept sequence and whatever built-in knowledge the agent has. Rationality is not omniscience — a rational agent does the best it can with available information."
+          },
+          {
+            "key": "Narrow vs General AI",
+            "value": "Narrow AI excels at a specific task (chess, image recognition, language translation); general AI would match human cognitive ability across all domains including novel situations. All current AI systems are narrow, though large language models blur the boundary by performing well across many tasks."
+          },
+          {
+            "key": "PEAS Specification",
+            "value": "For a self-driving car: Performance = safety, time, comfort, fuel; Environment = roads, traffic, pedestrians, weather; Actuators = steering, brakes, accelerator, signals; Sensors = cameras, LIDAR, GPS, speedometer. This framework ensures you fully specify the AI problem before choosing algorithms."
+          },
+          {
+            "key": "Environment Classification",
+            "value": "Chess is fully observable, deterministic, sequential, static, discrete, and two-agent. Autonomous driving is partially observable, stochastic, sequential, dynamic, continuous, and multi-agent. More complex environments require more sophisticated agent architectures."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 2,
+      "topic": "Uninformed Search Algorithms",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Formulate real-world problems as search problems with states, actions, transitions, goal tests, and path costs",
+        "Implement breadth-first search, depth-first search, uniform-cost search, and iterative deepening",
+        "Analyze each algorithm for completeness, optimality, time complexity, and space complexity",
+        "Select the appropriate uninformed search strategy based on problem characteristics"
+      ],
+      "readings": [
+        "AIMA, Ch. 3.1-3.4 — Solving Problems by Searching",
+        "Korf, 'Depth-First Iterative Deepening: An Optimal Admissible Tree Search' (1985)"
+      ],
+      "lecture_notes": {
+        "introduction": "Many AI problems can be formulated as search: find a sequence of actions leading from an initial state to a goal state. This abstraction applies to route planning, puzzle solving, robot motion planning, and even theorem proving. The choice of search strategy determines whether you find a solution at all, whether it is optimal, and how much time and memory it requires. Uninformed search strategies use only the information available in the problem definition — they have no knowledge of how close a state is to the goal. Despite this limitation, these algorithms form the baseline against which all informed search methods are compared. Breadth-first search guarantees finding the shallowest solution but may exhaust memory; depth-first search is memory-efficient but may wander into infinite branches; uniform-cost search finds the cheapest solution but expands many nodes; iterative deepening combines the completeness of BFS with the memory efficiency of DFS. Understanding the trade-offs among these strategies is essential for choosing the right algorithm for a given problem and for appreciating the improvements that heuristic search provides.",
+        "key_concepts": [
+          "Problem formulation: defining the state space, initial state, actions (or successor function), transition model, goal test, and path cost function for any search problem",
+          "Search tree vs search graph: the tree is the exploration structure; the graph is the state space. Graph search uses a closed list to avoid revisiting states, reducing exponential trees to polynomial graphs",
+          "Breadth-first search (BFS): explores all nodes at depth d before depth d+1; complete and optimal for uniform step costs; time and space complexity O(b^d) where b is branching factor and d is solution depth",
+          "Depth-first search (DFS): explores deepest unexpanded node first; incomplete in infinite or cyclic spaces without cycle checking; O(bm) space where m is maximum depth, but time still O(b^m)",
+          "Uniform-cost search (UCS): expands the node with lowest path cost g(n); optimal for any non-negative step costs; equivalent to Dijkstra's algorithm on the search graph",
+          "Iterative deepening depth-first search (IDDFS): runs DFS with increasing depth limits; combines BFS completeness and optimality with DFS space efficiency O(bd); overhead from re-expansion is only O(b/(b-1))",
+          "Bidirectional search: searches forward from start and backward from goal simultaneously; reduces time from O(b^d) to O(b^(d/2)) when applicable, but requires a reversible successor function",
+          "Comparison criteria: completeness (will it find a solution?), optimality (will it find the best?), time complexity (how many nodes expanded?), space complexity (how many nodes stored?)",
+          "Practical considerations: memory is usually the bottleneck, not time; for large state spaces, DFS variants are often the only feasible choice despite sacrificing optimality"
+        ],
+        "demonstration": "Formulate the 8-puzzle as a search problem (state = tile configuration, actions = slide blank, goal = tiles in order). Solve an instance with BFS, DFS, UCS, and IDDFS. Display a table comparing nodes expanded, solution depth, solution cost, memory used, and wall-clock time for each algorithm. Visualize the search trees to show how BFS explores level by level while DFS dives deep.",
+        "setup_requirements": [
+          "Python environment with AIMA search library",
+          "Search tree visualization tool (graphviz or custom matplotlib renderer)",
+          "8-puzzle problem implementation"
+        ],
+        "review": [
+          {
+            "key": "Completeness vs Optimality",
+            "value": "Complete means the algorithm will find a solution if one exists. Optimal means it finds the least-cost solution. BFS is both for uniform step costs. DFS is neither in general (may loop forever or find a suboptimal deep solution). UCS is both for non-negative costs. IDDFS is both for uniform costs."
+          },
+          {
+            "key": "Branching Factor Impact",
+            "value": "The average number of successors per state determines how quickly the search tree grows. With branching factor 10 and solution at depth 6, BFS must explore up to 10^6 = 1 million nodes. This exponential growth is why uninformed search becomes impractical for large problems and motivates heuristic search."
+          },
+          {
+            "key": "Graph Search vs Tree Search",
+            "value": "Tree search can revisit the same state via different paths, wasting time exponentially. Graph search maintains a closed set of visited states, trading space for time. For problems with many redundant paths (like grid navigation), graph search is essential."
+          },
+          {
+            "key": "Iterative Deepening Efficiency",
+            "value": "IDDFS appears wasteful because it re-explores shallow nodes at each depth limit. However, the overhead factor is b/(b-1), which is only 1.11 for b=10. The vast majority of nodes are at the deepest level, so re-expanding shallower levels costs very little relative to the total work."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 3,
+      "topic": "Heuristic Search: A* and Greedy Best-First Search",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Implement A* search with admissible and consistent heuristics",
+        "Design effective heuristics using relaxed problems and pattern databases",
+        "Prove heuristic admissibility and consistency mathematically",
+        "Compare greedy best-first search with A* in terms of performance guarantees"
+      ],
+      "readings": [
+        "AIMA, Ch. 3.5-3.6 — Informed (Heuristic) Search Strategies",
+        "Hart, Nilsson, Raphael, 'A Formal Basis for the Heuristic Determination of Minimum Cost Paths' (1968)",
+        "Korf, 'Depth-First Iterative Deepening A*: An Optimal Admissible Tree Search' (1985)"
+      ],
+      "lecture_notes": {
+        "introduction": "Uninformed search is often impractical for real problems because the search space grows exponentially. Heuristic search uses domain-specific knowledge to guide exploration toward the goal, dramatically reducing the number of nodes expanded. The key insight is that if you can estimate how far a state is from the goal, you can prioritize exploring states that seem more promising. Greedy best-first search uses only the heuristic estimate, which is fast but not optimal. A* search combines the actual cost so far with the heuristic estimate, and with an admissible heuristic, it is guaranteed to find the optimal solution while expanding the minimum number of nodes for any algorithm using the same heuristic. A* is arguably the most important algorithm in AI — it appears in route planning, game pathfinding, robotics, natural language parsing, and any domain where you need optimal solutions efficiently. The quality of the heuristic determines A*'s practical performance: a perfect heuristic leads straight to the goal, while h(n) = 0 reduces A* to uniform-cost search. Learning to design good heuristics is one of the most valuable skills in AI engineering.",
+        "key_concepts": [
+          "Heuristic function h(n): an estimate of the cost from state n to the nearest goal state, encoding domain knowledge that guides the search",
+          "Greedy best-first search: expands the node with smallest h(n); fast but incomplete and suboptimal — can be led astray by heuristic errors into infinite loops",
+          "A* search: f(n) = g(n) + h(n) where g(n) is the actual cost from start to n; expands the node with smallest f value, combining actual cost with estimated remaining cost",
+          "Admissibility: h(n) never overestimates the true cost to the goal; guarantees A* finds the optimal solution on tree search",
+          "Consistency (monotonicity): h(n) <= c(n,a,n') + h(n') for every successor n' of n; guarantees optimality on graph search and that A* never needs to re-expand a node",
+          "Heuristic design via relaxed problems: remove constraints from the original problem; the optimal solution cost for the relaxed problem is an admissible heuristic for the original",
+          "Pattern databases: precompute exact solution costs for subproblems; combine via max (admissible) or additive for disjoint patterns (admissible and often much tighter)",
+          "Heuristic dominance: h2 dominates h1 if h2(n) >= h1(n) for all n; a dominating heuristic expands strictly fewer nodes, so always prefer the more informed heuristic",
+          "IDA* (Iterative Deepening A*): uses f-value as the depth limit instead of depth; achieves A* optimality with DFS memory requirements O(bd), essential for memory-limited scenarios",
+          "Weighted A*: f(n) = g(n) + w*h(n) with w > 1 trades optimality for speed; solution cost is at most w times optimal, useful when suboptimal solutions are acceptable"
+        ],
+        "demonstration": "Solve the 15-puzzle with A* using three different heuristics: misplaced tiles (h1), Manhattan distance (h2), and a pattern database heuristic (h3). Display a comparison table of nodes expanded, solution length, and time for each. Show that h3 dominates h2 dominates h1, with orders-of-magnitude differences in nodes expanded. Then demonstrate greedy best-first search finding a fast but suboptimal solution, and weighted A* trading off optimality for speed.",
+        "setup_requirements": [
+          "Python with AIMA search library and heapq for priority queues",
+          "15-puzzle implementation with multiple heuristic functions",
+          "Visualization tool for search tree exploration order"
+        ],
+        "review": [
+          {
+            "key": "Manhattan Distance Admissibility",
+            "value": "For sliding tile puzzles, Manhattan distance sums each tile's horizontal and vertical distance from its goal position. Since each tile must move at least that many steps (tiles cannot jump over each other but CAN require extra moves due to blocking), the actual cost is always >= Manhattan distance, so the heuristic never overestimates."
+          },
+          {
+            "key": "Why Consistency Matters",
+            "value": "An admissible but inconsistent heuristic may cause A* to re-expand nodes in graph search, losing the efficiency guarantee. Consistency ensures f-values are non-decreasing along any path, so the first time A* expands a node, it has already found the optimal path to that node."
+          },
+          {
+            "key": "Relaxed Problem Technique",
+            "value": "To design a heuristic for the 8-puzzle, relax the constraint that tiles cannot move through each other: the optimal solution to this relaxed problem is Manhattan distance. Relax further (tiles can teleport to goal): misplaced tiles heuristic. More constraints removed = easier problem = weaker but still admissible heuristic."
+          },
+          {
+            "key": "A* Optimality Proof Sketch",
+            "value": "Suppose A* expands a goal node G with suboptimal cost. Then there exists an unexpanded node n on the optimal path with f(n) = g(n) + h(n) <= g(n) + h*(n) = cost of optimal path < cost of G. But A* expands in f-order, so it would have expanded n before G — contradiction."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 4,
+      "topic": "Adversarial Search and Game Trees",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Implement minimax search for two-player zero-sum games",
+        "Apply alpha-beta pruning to reduce the search space exponentially",
+        "Design evaluation functions for complex game states",
+        "Understand Monte Carlo Tree Search as an alternative to minimax for games with large branching factors"
+      ],
+      "readings": [
+        "AIMA, Ch. 5 — Adversarial Search and Games",
+        "Silver et al., 'Mastering the Game of Go with Deep Neural Networks and Tree Search' (2016)",
+        "Knuth and Moore, 'An Analysis of Alpha-Beta Pruning' (1975)"
+      ],
+      "lecture_notes": {
+        "introduction": "Games provide an ideal testbed for AI research: they have clear rules, well-defined winning conditions, and adversarial opponents who actively try to defeat you. The minimax algorithm computes the optimal strategy by assuming the opponent plays perfectly, producing a game tree where the maximizing player and minimizing player alternate turns. In practice, game trees are too large to search completely (chess has approximately 10^120 nodes), so we use alpha-beta pruning to eliminate branches that cannot affect the final decision, depth-limited search with evaluation functions to estimate the value of non-terminal states, and Monte Carlo Tree Search to handle games with enormous branching factors like Go. The progression from simple minimax to AlphaGo illustrates how combining classical search with modern machine learning produces superhuman game-playing AI. These techniques extend beyond games to any adversarial or competitive scenario, including security (modeling attacker-defender interactions), economics (game-theoretic mechanism design), and multi-agent planning.",
+        "key_concepts": [
+          "Game formulation: initial state, player function (whose turn), actions, transition model, terminal test, and utility function mapping terminal states to payoffs",
+          "Minimax algorithm: the maximizing player chooses the action that maximizes the minimum value the opponent can force; computes the optimal strategy for both players under perfect play",
+          "Alpha-beta pruning: maintains alpha (best value for MAX so far) and beta (best value for MIN so far); prunes subtrees where alpha >= beta because the opponent would never allow that branch to be reached",
+          "Move ordering for alpha-beta: with perfect ordering, alpha-beta reduces the effective branching factor from b to sqrt(b), searching O(b^(d/2)) nodes instead of O(b^d) — equivalent to searching twice as deep in the same time",
+          "Depth-limited minimax with evaluation functions: stop search at a fixed depth and estimate state values using domain-specific features (material count, piece activity, king safety in chess)",
+          "Quiescence search: extend the search beyond the depth limit in volatile positions (captures, checks in chess) to avoid the horizon effect where a catastrophic event is just beyond the search depth",
+          "Monte Carlo Tree Search (MCTS): builds an asymmetric game tree using random playouts (simulations); UCB1 formula balances exploration of untried moves vs exploitation of promising ones",
+          "The four phases of MCTS: selection (traverse tree using UCB1), expansion (add one new child), simulation (random playout to terminal state), backpropagation (update statistics up the tree)",
+          "Expectiminimax: extension of minimax for games with chance nodes (dice rolls, card draws); computes expected utility over chance outcomes"
+        ],
+        "demonstration": "Build a tic-tac-toe AI with full minimax (tractable because the game tree is small), then extend to Connect Four with alpha-beta pruning and an evaluation function that considers threats, connectivity, and center control. Compare a depth-4 minimax agent vs a depth-8 alpha-beta agent to show how pruning enables deeper search. Finally, run 100 MCTS simulations on the same Connect Four position and show how the tree asymmetrically deepens toward promising lines of play.",
+        "setup_requirements": [
+          "Python environment with game framework",
+          "Game board visualization library (pygame or matplotlib)",
+          "Timer for measuring search performance"
+        ],
+        "review": [
+          {
+            "key": "Alpha-Beta Pruning",
+            "value": "Alpha is the best score MAX can guarantee so far; beta is the best score MIN can guarantee. When exploring a MIN node, if any child returns a value <= alpha, the remaining children are pruned because MAX would never choose this path. With optimal move ordering, this reduces search from O(b^d) to O(b^(d/2))."
+          },
+          {
+            "key": "Evaluation Function Design",
+            "value": "A good evaluation function for chess considers material (piece values), piece mobility (number of legal moves), king safety (pawn shield, castling), pawn structure (doubled, isolated, passed pawns), and center control. It must be a linear combination of these features for efficiency, computed in O(1) time."
+          },
+          {
+            "key": "MCTS vs Minimax",
+            "value": "Minimax requires a good evaluation function and works best with moderate branching factors. MCTS needs no evaluation function (uses random playouts) and handles huge branching factors (Go has b~250). MCTS naturally spends more time analyzing promising moves, making it anytime — it improves with more computation."
+          },
+          {
+            "key": "Horizon Effect",
+            "value": "A depth-limited search may evaluate a position as favorable because the catastrophe (losing a queen to a forced sequence) occurs just beyond the search horizon. Quiescence search extends volatile positions until the position stabilizes, avoiding this systematic misjudgment."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 5,
+      "topic": "Constraint Satisfaction Problems",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Formulate problems as constraint satisfaction problems with variables, domains, and constraints",
+        "Apply backtracking search with heuristic variable and value ordering",
+        "Implement arc consistency (AC-3) and forward checking for constraint propagation",
+        "Recognize CSP structure (tree decomposition, independent subproblems) and exploit it for efficiency"
+      ],
+      "readings": [
+        "AIMA, Ch. 6 — Constraint Satisfaction Problems",
+        "Mackworth, 'Consistency in Networks of Relations' (1977)"
+      ],
+      "lecture_notes": {
+        "introduction": "Many real-world problems are naturally expressed as constraints on variables rather than as sequences of actions. Scheduling (assign time slots to events without conflicts), map coloring (assign colors to regions so no adjacent regions share a color), circuit layout, and configuration problems all fit this framework. Constraint satisfaction problems have special structure that generic search algorithms cannot exploit. Instead of blindly exploring the state space, CSP solvers use constraint propagation to eliminate impossible values before searching, and intelligent variable/value ordering to make the right choices early. The combination of backtracking search with arc consistency can solve problems with millions of variables that would be intractable for generic search. CSP techniques are also foundational for SAT solvers, which underlie modern software verification, hardware design, and AI planning systems.",
+        "key_concepts": [
+          "CSP formulation: a set of variables X = {X1,...,Xn}, a domain Di for each variable (set of possible values), and a set of constraints specifying allowed combinations of values",
+          "Types of constraints: unary (restrict a single variable), binary (restrict pairs), and higher-order (restrict three or more variables); any CSP can be converted to binary constraints using auxiliary variables",
+          "Backtracking search: depth-first search that assigns one variable at a time and backtracks when a constraint is violated; the standard algorithm for solving CSPs",
+          "Variable ordering — MRV (Minimum Remaining Values): choose the variable with the fewest legal values remaining; the fail-first principle detects dead ends early before wasting time on irrelevant variables",
+          "Value ordering — LCV (Least Constraining Value): choose the value that eliminates the fewest choices for neighboring variables; maximizes the chances that the remaining variables can still be assigned",
+          "Forward checking: when assigning a variable, immediately remove inconsistent values from the domains of neighboring unassigned variables; detects failure earlier than simple backtracking",
+          "Arc consistency (AC-3): a variable Xi is arc-consistent with Xj if for every value in Di there exists a compatible value in Dj; AC-3 enforces this for all arcs, often solving the problem without any search",
+          "Tree-structured CSPs: if the constraint graph is a tree, the CSP can be solved in O(nd^2) time without backtracking using directional arc consistency — exponentially faster than general CSPs",
+          "Local search for CSPs: min-conflicts heuristic assigns variables randomly then iteratively changes the variable involved in the most constraint violations to the value that violates the fewest constraints"
+        ],
+        "demonstration": "Model Sudoku as a CSP: 81 variables (one per cell), domains {1-9}, constraints (all-different for each row, column, and 3x3 box). Solve an easy, medium, and hard puzzle with: (1) plain backtracking (~500K nodes for hard), (2) backtracking + MRV + forward checking (~5K nodes), and (3) backtracking + MRV + AC-3 (~200 nodes). Display the domain sizes at each step to show how constraint propagation dramatically prunes the search space.",
+        "setup_requirements": [
+          "Python environment with constraint propagation framework",
+          "Sudoku visualizer showing domain reduction in real time",
+          "Benchmarking suite with puzzles of varying difficulty"
+        ],
+        "review": [
+          {
+            "key": "Arc Consistency",
+            "value": "Variable Xi is arc-consistent with Xj if for every value in Xi's domain, there exists a compatible value in Xj's domain. AC-3 maintains a queue of arcs and processes each by removing unsupported values; it runs in O(ed^3) time where e is the number of constraints and d is the domain size."
+          },
+          {
+            "key": "MRV Heuristic",
+            "value": "Choose the variable with the fewest remaining legal values first. This implements the fail-first principle: if a variable has only one legal value, it must take that value (no choice), and if it has zero legal values, we fail immediately without wasting time exploring other variables."
+          },
+          {
+            "key": "Forward Checking vs AC-3",
+            "value": "Forward checking only removes values from neighbors of the just-assigned variable. AC-3 propagates constraints transitively — removing a value from Xi's domain may cause a value in Xj's domain to lose support, triggering further propagation. AC-3 is more expensive per step but detects failures earlier."
+          },
+          {
+            "key": "CSP as Search",
+            "value": "A CSP with n variables and domain size d has d^n possible assignments. Backtracking explores this space one variable at a time (unlike generate-and-test which tries all d^n assignments). With constraint propagation, the effective search space is typically much smaller than d^n."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Knowledge Representation and Ontologies",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Represent domain knowledge using semantic networks, frames, and ontologies",
+        "Understand the trade-off between expressiveness and computational tractability in knowledge representation",
+        "Apply description logics and their relationship to OWL ontologies",
+        "Recognize the role of knowledge graphs in modern AI systems"
+      ],
+      "readings": [
+        "AIMA, Ch. 12 — Knowledge Representation",
+        "Brachman and Levesque, 'Knowledge Representation and Reasoning', Ch. 1-3",
+        "Hogan et al., 'Knowledge Graphs' (2021) — Sections 1-3"
+      ],
+      "lecture_notes": {
+        "introduction": "For an AI system to reason about the world, it needs a way to represent what it knows. Knowledge representation (KR) is the study of how to encode information about the world in a form that a computer can use for inference. The choice of representation profoundly affects what inferences are possible and how efficient they are. Simple representations like propositional logic are computationally tractable but cannot express relationships between objects. Rich representations like first-order logic can express nearly anything but are computationally expensive. In practice, knowledge engineers must find the sweet spot: expressive enough to capture the domain, tractable enough to reason efficiently. Modern AI systems increasingly use knowledge graphs — structured representations of entities and their relationships — to combine the benefits of symbolic knowledge representation with the flexibility of modern machine learning. Google's Knowledge Graph, Wikidata, and enterprise knowledge management systems all rely on these techniques. This session surveys the major KR formalisms and their trade-offs, preparing you for the logical reasoning sessions that follow.",
+        "key_concepts": [
+          "The knowledge representation hypothesis: intelligent behavior requires a system to have a representation of its knowledge that it can manipulate computationally to derive new knowledge",
+          "Semantic networks: graph-based representations where nodes are concepts and labeled edges represent relationships (is-a, has-part, causes); intuitive but lack formal semantics",
+          "Frames: structured representations grouping an object's properties as slot-filler pairs with default values and inheritance; Minsky's original proposal for common-sense reasoning",
+          "Ontologies: formal specifications of the concepts in a domain and the relationships among them; provide shared vocabularies for knowledge exchange between agents and systems",
+          "Description logics: a family of formal languages for defining ontologies with well-defined semantics and decidable inference; the logical foundation of OWL (Web Ontology Language)",
+          "Knowledge graphs: large-scale graph databases of entities and relationships; used for question answering, recommendation, and knowledge-enhanced ML; examples include Google Knowledge Graph, Wikidata, and DBpedia",
+          "The expressiveness-tractability trade-off: propositional logic (decidable but limited), description logics (decidable fragments), first-order logic (semi-decidable and expressive), higher-order logics (undecidable but maximally expressive)",
+          "Non-monotonic reasoning: conclusions that can be retracted when new information arrives; default logic and circumscription handle the common case where birds fly but penguins do not",
+          "Temporal and spatial reasoning: representing and reasoning about time (Allen's interval algebra) and space (qualitative spatial reasoning) for planning and natural language understanding"
+        ],
+        "demonstration": "Build a small university ontology in Python: define classes (Person, Student, Professor, Course), properties (enrolledIn, teaches, prerequisiteOf), and instances. Implement inheritance-based reasoning to answer queries like 'What courses can student X take given their completed prerequisites?' Show how adding a new constraint (max enrollment) propagates through the knowledge base. Compare this structured approach with a flat database query to illustrate the power of ontological reasoning.",
+        "setup_requirements": [
+          "Python with rdflib or owlready2 library",
+          "Protege ontology editor for visualization",
+          "Sample domain knowledge base"
+        ],
+        "review": [
+          {
+            "key": "Semantic Networks vs Frames",
+            "value": "Semantic networks represent knowledge as a graph of concepts connected by labeled relationships. Frames organize the same information into structured records with slots and fillers. Both support inheritance (a student is-a person, inheriting person properties). Frames add default values and procedural attachments (if-needed and if-added triggers)."
+          },
+          {
+            "key": "Description Logics",
+            "value": "Description logics define concepts (classes) using constructors like intersection, union, existential restriction, and universal restriction. DL inference includes subsumption (is class C a subclass of D?), consistency (can class C have instances?), and realization (what is the most specific class for instance i?). OWL-DL is based on the SHOIN(D) description logic."
+          },
+          {
+            "key": "Open World vs Closed World Assumption",
+            "value": "Databases use the closed-world assumption: if a fact is not in the database, it is false. Ontologies use the open-world assumption: if a fact is not stated, it is unknown. This matters for reasoning — in a database, 'no enrollment record' means 'not enrolled'; in an ontology, it means 'enrollment status unknown.'"
+          },
+          {
+            "key": "Knowledge Graphs in Practice",
+            "value": "Google's Knowledge Graph contains billions of facts about entities and their relationships, powering search results panels, question answering, and recommendations. Knowledge graph embeddings (TransE, ComplEx) map entities and relations to vectors, enabling link prediction and knowledge-enhanced neural networks."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Propositional Logic and Inference",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Express knowledge using propositional logic with correct syntax and semantics",
+        "Apply truth tables, logical equivalences, and normal forms (CNF, DNF)",
+        "Implement inference methods: model checking, resolution, and DPLL",
+        "Understand the relationship between propositional logic and SAT solving"
+      ],
+      "readings": [
+        "AIMA, Ch. 7 — Logical Agents",
+        "Davis, Logemann, Loveland, 'A Machine Program for Theorem-Proving' (1962)",
+        "Malik and Zhang, 'Boolean Satisfiability: From Theoretical Hardness to Practical Success' (2009)"
+      ],
+      "lecture_notes": {
+        "introduction": "Logic provides the formal foundation for knowledge representation and reasoning in AI. Propositional logic is the simplest logical language: it deals with propositions that are either true or false, connected by logical connectives (and, or, not, implies). Despite its simplicity, propositional logic is powerful enough to express many practical problems, and its inference algorithms form the basis for SAT solvers that are used throughout computer science — from hardware verification to AI planning. The satisfiability problem (SAT) for propositional logic is NP-complete, making it the canonical hard problem, yet modern SAT solvers routinely handle instances with millions of variables thanks to clever algorithmic techniques. Understanding propositional logic and its inference methods is essential preparation for first-order logic (which adds variables and quantifiers) and for practical applications of logical reasoning in AI. This session covers the syntax and semantics of propositional logic, methods for determining whether a sentence is satisfiable or entailed, and the DPLL algorithm that powers modern SAT solvers.",
+        "key_concepts": [
+          "Propositional logic syntax: atomic propositions (P, Q, R), connectives (NOT, AND, OR, IMPLIES, IFF), and well-formed formulas built from these",
+          "Semantics: a model assigns true/false to each proposition; a sentence is satisfiable if some model makes it true, valid (tautology) if all models make it true, unsatisfiable if no model makes it true",
+          "Logical equivalences: De Morgan's laws, distributivity, contrapositive, double negation; used to transform formulas into equivalent forms",
+          "Conjunctive Normal Form (CNF): a conjunction of clauses where each clause is a disjunction of literals; every propositional formula can be converted to CNF, and this is the standard input format for SAT solvers",
+          "Entailment: KB entails alpha (KB |= alpha) if alpha is true in every model where KB is true; this is the fundamental reasoning operation — does the knowledge base logically guarantee this conclusion?",
+          "Inference by model enumeration: check all 2^n truth assignments; sound and complete but exponential in the number of propositions",
+          "Resolution: if clause C1 contains literal L and clause C2 contains NOT L, resolve to produce a new clause with L and NOT L removed; complete for refutation — KB entails alpha iff KB AND NOT alpha is unsatisfiable",
+          "DPLL algorithm: systematic backtracking search for satisfying assignments with unit propagation (if a clause has one unassigned literal, it must be true) and pure literal elimination (if a literal appears only positive, set it true)",
+          "Modern SAT solvers: CDCL (Conflict-Driven Clause Learning) extends DPLL with learned clauses from conflicts, non-chronological backjumping, and VSIDS variable selection; solves industrial instances with millions of variables"
+        ],
+        "demonstration": "Encode a logic puzzle (e.g., 'Knights and Knaves' — each person either always tells the truth or always lies) as propositional logic. Convert to CNF manually, then solve using: (1) truth table enumeration for a small instance, (2) resolution refutation showing the derivation tree, and (3) a DPLL implementation showing unit propagation and backtracking. Compare the number of steps each method takes to illustrate why DPLL is practical and enumeration is not.",
+        "setup_requirements": [
+          "Python with a propositional logic library (pysat or custom implementation)",
+          "CNF converter and resolution engine",
+          "Truth table generator for verification"
+        ],
+        "review": [
+          {
+            "key": "CNF Conversion",
+            "value": "To convert to CNF: (1) eliminate IFF and IMPLIES using equivalences, (2) push NOT inward using De Morgan's laws, (3) distribute OR over AND. The result is a conjunction (AND) of clauses, where each clause is a disjunction (OR) of literals. Example: (P => Q) AND (Q => R) becomes (NOT P OR Q) AND (NOT Q OR R)."
+          },
+          {
+            "key": "Resolution Completeness",
+            "value": "Resolution is refutation-complete: to prove KB |= alpha, add NOT alpha to KB, convert to CNF, and repeatedly apply resolution. If the empty clause is derived, the original KB entails alpha. Resolution only works on CNF clauses and only proves entailment by refutation, not by constructing a satisfying model."
+          },
+          {
+            "key": "Unit Propagation",
+            "value": "If a clause has exactly one unassigned literal, that literal must be true for the clause to be satisfied. Setting it true may create new unit clauses, triggering a cascade of forced assignments. This is the primary source of DPLL's efficiency — most decisions are forced rather than chosen."
+          },
+          {
+            "key": "SAT Solving Applications",
+            "value": "Modern SAT solvers are used for hardware verification (checking that a chip design meets its specification), bounded model checking (verifying software properties), AI planning (encoding action sequences as propositional constraints), and cryptanalysis (finding keys that satisfy known plaintext-ciphertext constraints)."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "First-Order Logic and Inference",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Express knowledge using first-order logic with predicates, functions, quantifiers, and equality",
+        "Apply unification and the most general unifier (MGU) algorithm",
+        "Implement forward chaining and backward chaining inference",
+        "Understand the resolution refutation procedure for first-order logic"
+      ],
+      "readings": [
+        "AIMA, Ch. 8-9 — First-Order Logic and Inference in First-Order Logic",
+        "Robinson, 'A Machine-Oriented Logic Based on the Resolution Principle' (1965)"
+      ],
+      "lecture_notes": {
+        "introduction": "Propositional logic cannot express relationships between objects or make general statements about categories. First-order logic (FOL) adds variables, predicates, functions, and quantifiers, enabling statements like 'Every student who passes all prerequisites can enroll in the course.' This expressiveness makes FOL the standard language for knowledge representation in AI, database theory, and formal verification. However, increased expressiveness comes at a cost: FOL inference is semi-decidable (if a sentence is entailed, a proof can be found; if not, the procedure may run forever). Practical FOL inference uses unification to match variables with terms, forward chaining to derive new facts from existing ones, backward chaining to work backward from a query to supporting facts, and resolution to prove entailment by refutation. Prolog, the logic programming language, is essentially a backward-chaining FOL inference engine. FOL also underlies modern knowledge bases, ontologies, and the Semantic Web, connecting this topic to practical AI knowledge management.",
+        "key_concepts": [
+          "FOL syntax: constants (John, MIT), variables (x, y), predicates (Student(x), Teaches(x,y)), functions (fatherOf(x)), quantifiers (FOR ALL x, EXISTS x), and equality",
+          "Quantifier semantics: FOR ALL x P(x) means P is true for every object in the domain; EXISTS x P(x) means P is true for at least one object; the order of different quantifiers matters (FOR ALL x EXISTS y is not the same as EXISTS y FOR ALL x)",
+          "Converting to FOL: 'All students who pass CS201 can take CS402' becomes FOR ALL x (Student(x) AND Passed(x, CS201)) => CanTake(x, CS402)",
+          "Unification: finding a substitution that makes two expressions identical; the Most General Unifier (MGU) is the simplest such substitution — essential for applying inference rules with variables",
+          "Forward chaining: start with known facts, apply rules whose premises are satisfied to derive new facts, repeat until the query is answered or no new facts can be derived; data-driven, suitable for monitoring and reactive systems",
+          "Backward chaining: start with the query, find rules whose conclusion matches, recursively prove the premises; goal-driven, suitable for question answering and diagnosis; used by Prolog",
+          "FOL resolution: convert to clausal form (Skolemize to remove existential quantifiers, drop universal quantifiers), then apply resolution with unification; refutation-complete for first-order logic",
+          "Skolemization: replace EXISTS y with a Skolem function of all enclosing universally quantified variables; FOR ALL x EXISTS y Loves(x,y) becomes FOR ALL x Loves(x, f(x)) where f is a new function symbol",
+          "Decidable fragments: propositional logic, description logics, and Datalog (no function symbols) are decidable subsets of FOL used in practice for guaranteed termination"
+        ],
+        "demonstration": "Encode a family relationship knowledge base in FOL: Parent(x,y), Ancestor(x,y), Sibling(x,y) with appropriate rules. Use forward chaining to derive all ancestor relationships from parent facts. Use backward chaining to answer 'Is Alice an ancestor of Dave?' showing the proof tree. Then demonstrate unification by hand: unify Knows(John, x) with Knows(y, Mother(y)) to get {y/John, x/Mother(John)}. Show how Prolog would execute the same backward-chaining query.",
+        "setup_requirements": [
+          "Python with FOL inference library or custom implementation",
+          "Unification algorithm implementation",
+          "Optional: SWI-Prolog for comparison demonstrations"
+        ],
+        "review": [
+          {
+            "key": "Universal vs Existential Quantifiers",
+            "value": "FOR ALL x P(x) is equivalent to P(a) AND P(b) AND ... for every object in the domain. EXISTS x P(x) is equivalent to P(a) OR P(b) OR ... The key pattern: FOR ALL typically pairs with IMPLIES (every student passes => everyone is happy), EXISTS typically pairs with AND (there exists a student who is tall AND smart)."
+          },
+          {
+            "key": "Unification Algorithm",
+            "value": "To unify two expressions: if both are constants, they must be identical; if one is a variable, bind it to the other (occurs check: the variable must not occur in the term); if both are function applications, unify the function names and recursively unify arguments. The MGU is unique up to variable renaming."
+          },
+          {
+            "key": "Forward vs Backward Chaining",
+            "value": "Forward chaining derives everything derivable (may do unnecessary work but finds all consequences). Backward chaining only does work relevant to the query (efficient but may miss side effects). Choose forward for monitoring/alerting (fire all triggered rules) and backward for question answering (only derive what is asked)."
+          },
+          {
+            "key": "Semi-Decidability of FOL",
+            "value": "If KB |= alpha, a resolution proof exists and can be found. If KB does not entail alpha, the search may never terminate — there is no algorithm that can always determine non-entailment in finite time. This is Church's theorem (1936), a fundamental limitation of first-order logic."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "Probabilistic Reasoning and Bayes' Theorem",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Apply Bayes' theorem to update beliefs given evidence",
+        "Calculate conditional probabilities and use the chain rule of probability",
+        "Understand the relationship between logical and probabilistic reasoning under uncertainty",
+        "Apply naive Bayes classification as a practical probabilistic reasoning method"
+      ],
+      "readings": [
+        "AIMA, Ch. 13 — Quantifying Uncertainty",
+        "AIMA, Ch. 12 (Naive Bayes sections)",
+        "McGrayne, 'The Theory That Would Not Die' — Chapters 1-3 (historical context)"
+      ],
+      "lecture_notes": {
+        "introduction": "Classical logic assumes we have complete, certain knowledge — a proposition is true or false. But real-world AI operates under uncertainty: sensors are noisy, knowledge is incomplete, and outcomes are stochastic. Probability theory provides a mathematically rigorous framework for reasoning under uncertainty. Bayes' theorem is the centerpiece: it tells us how to update our beliefs about a hypothesis when we observe new evidence. A doctor estimating the probability of a disease given a positive test result, a spam filter classifying emails based on word frequencies, and a robot localizing itself given sensor readings all use Bayesian reasoning. The key insight is that prior beliefs plus likelihood of evidence given the hypothesis yield the posterior probability of the hypothesis given the evidence. This framework extends naturally to sequential decision-making (covered in later courses) and forms the theoretical foundation for much of modern machine learning. Understanding Bayesian reasoning is essential for interpreting model predictions, designing diagnostic systems, and reasoning about the reliability of AI outputs.",
+        "key_concepts": [
+          "Probability axioms: P(A) >= 0, P(true) = 1, P(A OR B) = P(A) + P(B) - P(A AND B); from these, all probability rules can be derived",
+          "Conditional probability: P(A|B) = P(A AND B) / P(B); the probability of A given that we know B is true; fundamentally different from P(A) when A and B are not independent",
+          "Bayes' theorem: P(H|E) = P(E|H) * P(H) / P(E); the posterior probability of hypothesis H given evidence E equals the likelihood times the prior divided by the evidence probability",
+          "Prior probability P(H): our belief in the hypothesis before seeing evidence; encodes background knowledge and base rates",
+          "Likelihood P(E|H): the probability of observing the evidence assuming the hypothesis is true; often easier to estimate than the posterior directly",
+          "The base rate fallacy: ignoring the prior probability leads to dramatic overestimation of posterior probabilities; a 99% accurate test for a rare disease (1% prevalence) yields only a 50% chance of actually having the disease given a positive result",
+          "Independence and conditional independence: events A and B are independent if P(A AND B) = P(A) * P(B); conditionally independent given C if P(A AND B | C) = P(A|C) * P(B|C); conditional independence is more common and more useful",
+          "Naive Bayes classifier: assumes all features are conditionally independent given the class label; P(class | features) proportional to P(class) * product of P(feature_i | class); surprisingly effective for text classification despite the strong independence assumption",
+          "Maximum a posteriori (MAP) estimation: choose the hypothesis with the highest posterior probability; with a uniform prior, MAP reduces to maximum likelihood estimation (MLE)"
+        ],
+        "demonstration": "Build a medical diagnosis system: given symptoms (fever, cough, fatigue), compute the posterior probability of different diseases (flu, cold, COVID, allergy) using Bayes' theorem with real prevalence data and symptom likelihoods. Show how the posterior changes dramatically when we account for base rates vs when we ignore them. Then implement a Naive Bayes spam classifier on a real email dataset, computing word likelihoods for spam vs ham and classifying new messages by multiplying per-word probabilities.",
+        "setup_requirements": [
+          "Python with NumPy and scikit-learn",
+          "Medical diagnosis dataset with prevalence statistics",
+          "Email spam dataset for Naive Bayes classification"
+        ],
+        "review": [
+          {
+            "key": "Bayes' Theorem Application",
+            "value": "A drug test is 99% accurate (P(+|drug) = 0.99, P(-|no drug) = 0.99). If 0.5% of the population uses drugs, a positive test gives P(drug|+) = 0.99 * 0.005 / (0.99 * 0.005 + 0.01 * 0.995) = 0.332. Only 33% chance of actual drug use despite 99% test accuracy — the low base rate dominates."
+          },
+          {
+            "key": "Naive Bayes Assumption",
+            "value": "Naive Bayes assumes features are conditionally independent given the class. For spam detection, this means the presence of 'free' is independent of the presence of 'money' given that the email is spam. This is wrong (they co-occur) but the classifier still works well because it only needs to get the ranking of class probabilities right, not the exact values."
+          },
+          {
+            "key": "Prior Selection",
+            "value": "The choice of prior matters when data is limited. An informative prior encodes domain knowledge (disease base rates). A uniform prior assumes all hypotheses are equally likely. As more data is observed, the likelihood dominates and the posterior converges regardless of the prior — the data overwhelms the prior."
+          },
+          {
+            "key": "Likelihood vs Posterior",
+            "value": "The likelihood P(E|H) is NOT the probability that H is true. P(symptoms|flu) = 0.9 does not mean there is a 90% chance of flu. Bayes' theorem is needed to invert the conditional: the posterior P(flu|symptoms) also depends on the prior P(flu) and the evidence probability P(symptoms)."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "Bayesian Networks",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Construct Bayesian networks that encode conditional independence relationships among variables",
+        "Compute joint and conditional probabilities using the network structure",
+        "Apply exact inference (variable elimination) and approximate inference (likelihood weighting, Gibbs sampling)",
+        "Determine conditional independence from network structure using d-separation"
+      ],
+      "readings": [
+        "AIMA, Ch. 14 — Probabilistic Reasoning",
+        "Pearl, 'Probabilistic Reasoning in Intelligent Systems' (1988), Ch. 1-3",
+        "Koller and Friedman, 'Probabilistic Graphical Models', Ch. 3"
+      ],
+      "lecture_notes": {
+        "introduction": "Bayes' theorem handles individual hypotheses, but real-world reasoning involves many interrelated variables. A doctor diagnosing a patient considers symptoms, medical history, test results, and environmental factors — all of which influence each other in complex ways. Bayesian networks provide a compact representation of the joint probability distribution over all these variables by exploiting conditional independence relationships. A Bayesian network is a directed acyclic graph where nodes represent random variables and edges represent direct probabilistic dependencies, paired with conditional probability tables that quantify these dependencies. The graph structure encodes which variables are conditionally independent, dramatically reducing the number of parameters needed from exponential (full joint distribution) to manageable (local conditional distributions). Exact inference in Bayesian networks is NP-hard in general, but variable elimination and other algorithms make it tractable for many practical networks. For large networks, approximate inference methods like Monte Carlo sampling provide probabilistic guarantees on answer quality. Bayesian networks are used in medical diagnosis (e.g., the QMR-DT system), fault diagnosis in complex systems, natural language understanding, and causal reasoning.",
+        "key_concepts": [
+          "Bayesian network structure: a directed acyclic graph (DAG) where each node Xi has a conditional probability table P(Xi | Parents(Xi)); the joint distribution factors as the product of all CPTs",
+          "Compactness: a full joint distribution over n binary variables requires 2^n - 1 parameters; a Bayesian network with at most k parents per node requires n * 2^k parameters — exponentially fewer when k is small",
+          "Conditional independence from structure: a node is conditionally independent of its non-descendants given its parents; this is the Markov condition that justifies the factored representation",
+          "d-separation: a graphical criterion for reading off conditional independence from the network structure; X and Y are d-separated by Z if every undirected path between X and Y is blocked by Z (through chains, forks, or colliders)",
+          "Exact inference — variable elimination: compute P(query | evidence) by summing out hidden variables one at a time, using the factored representation to avoid constructing the full joint distribution",
+          "Approximate inference — rejection sampling: generate samples from the prior distribution and keep only those consistent with evidence; simple but inefficient when evidence is unlikely",
+          "Approximate inference — likelihood weighting: fix evidence variables and weight each sample by the probability of the evidence given the sample; more efficient than rejection sampling",
+          "Approximate inference — Gibbs sampling (MCMC): initialize all variables, then repeatedly sample each non-evidence variable conditioned on its Markov blanket; converges to the true posterior distribution",
+          "Explaining away: observing a common effect makes its causes dependent even if they were originally independent; a key pattern in diagnostic reasoning (if the alarm sounds and there was an earthquake, burglary becomes less likely)"
+        ],
+        "demonstration": "Build the classic Burglary-Earthquake-Alarm-JohnCalls-MaryCalls Bayesian network. Specify all CPTs with realistic probabilities. Compute P(Burglary | JohnCalls=true, MaryCalls=true) three ways: (1) by enumeration of the full joint, (2) by variable elimination showing each elimination step, and (3) by likelihood weighting with 10,000 samples showing convergence. Demonstrate the explaining-away effect: P(Burglary | Alarm) vs P(Burglary | Alarm, Earthquake) — learning about the earthquake explains away the alarm, reducing the burglary probability.",
+        "setup_requirements": [
+          "Python with pgmpy (probabilistic graphical models library) or custom implementation",
+          "Bayesian network visualizer",
+          "Sampling framework for approximate inference"
+        ],
+        "review": [
+          {
+            "key": "d-Separation Rules",
+            "value": "A path is blocked if it passes through: (1) a chain A->B->C or fork A<-B->C where B is in the evidence set Z, or (2) a collider A->B<-C where B and all B's descendants are NOT in Z. X and Y are d-separated by Z if ALL paths between them are blocked."
+          },
+          {
+            "key": "Variable Elimination",
+            "value": "To compute P(B|j,m): (1) fix evidence J=true, M=true, (2) sum out hidden variables one at a time (E, then A), computing factor products and marginalizations, (3) normalize the result. The elimination order affects efficiency — good orderings keep intermediate factors small."
+          },
+          {
+            "key": "Explaining Away",
+            "value": "If Alarm has two causes (Burglary and Earthquake), P(Burglary|Alarm=true) is moderate. But P(Burglary|Alarm=true, Earthquake=true) is lower because the earthquake explains the alarm. This is a collider pattern (B->A<-E): conditioning on A (the collider) makes B and E dependent even though they are marginally independent."
+          },
+          {
+            "key": "Markov Blanket",
+            "value": "A node's Markov blanket consists of its parents, its children, and its children's other parents. Given its Markov blanket, a node is conditionally independent of all other nodes in the network. This is the minimal set of nodes needed to compute the conditional distribution of any variable, and it defines the Gibbs sampling update."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "Introduction to Machine Learning: Supervised Learning",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Distinguish between supervised, unsupervised, and reinforcement learning paradigms",
+        "Implement decision tree learning with information gain splitting criterion",
+        "Implement k-nearest neighbors classification and understand its properties",
+        "Evaluate model performance using cross-validation, precision, recall, and F1-score"
+      ],
+      "readings": [
+        "AIMA, Ch. 19 — Learning from Examples",
+        "Mitchell, 'Machine Learning', Ch. 3 — Decision Tree Learning",
+        "Bishop, Pattern Recognition and Machine Learning, Ch. 1"
+      ],
+      "lecture_notes": {
+        "introduction": "Machine learning enables AI systems to improve from experience rather than being explicitly programmed for every possible situation. While the previous sessions focused on knowledge-based AI (you tell the system what it needs to know), machine learning lets the system discover patterns from data. This session introduces the three major learning paradigms — supervised (learn from labeled examples), unsupervised (find structure in unlabeled data), and reinforcement (learn from rewards and penalties) — then dives into two fundamental supervised learning algorithms. Decision trees recursively partition the feature space by asking questions about feature values, producing human-interpretable rules. K-nearest neighbors classifies new instances by looking at the labels of similar training examples, making no assumptions about the underlying data distribution. Both algorithms illustrate core ML concepts: the bias-variance trade-off (simple vs complex models), overfitting (memorizing noise vs learning signal), and the importance of proper evaluation using held-out test data. Understanding these foundations prepares you for the dedicated Machine Learning Applications course (CS403), which covers advanced algorithms and practical pipeline construction.",
+        "key_concepts": [
+          "Supervised learning: given a training set of (input, output) pairs, learn a function that maps inputs to outputs; classification (discrete outputs) and regression (continuous outputs)",
+          "Unsupervised learning: given only inputs, discover structure such as clusters (grouping similar items), dimensionality reduction (compressing data), and density estimation (modeling the data distribution)",
+          "Reinforcement learning: an agent learns a policy (mapping states to actions) by interacting with an environment and receiving rewards; no labeled examples, only delayed feedback",
+          "Decision tree learning: recursively split the data by choosing the feature that provides the most information gain (reduction in entropy); produces human-readable if-then rules",
+          "Information gain: H(Y) - H(Y|X) where H is entropy; measures how much knowing the value of feature X reduces uncertainty about the target variable Y; the splitting criterion for ID3/C4.5",
+          "Overfitting in decision trees: a fully-grown tree memorizes the training data including noise; pruning (removing branches that do not improve validation accuracy) or limiting tree depth prevents this",
+          "k-Nearest Neighbors (k-NN): classify a new instance by majority vote of its k closest training examples in feature space; no training phase (lazy learner), but prediction requires scanning all training data",
+          "Distance metrics: Euclidean distance (L2), Manhattan distance (L1), and the importance of feature scaling — features on different scales dominate the distance calculation unless normalized",
+          "The bias-variance trade-off: simple models (high bias) consistently make the same errors regardless of training data; complex models (high variance) are sensitive to the specific training data and overfit; the goal is the sweet spot that minimizes total error",
+          "Cross-validation: k-fold CV splits data into k parts, trains on k-1, tests on the remaining one, rotates k times; provides a more reliable estimate of generalization performance than a single train-test split"
+        ],
+        "demonstration": "Train a decision tree and k-NN classifier on the Iris dataset (150 samples, 4 features, 3 classes). Visualize the decision tree structure and the decision boundaries in 2D (using the two most informative features). Plot accuracy vs tree depth and accuracy vs k to show the bias-variance trade-off. Compute 5-fold cross-validation accuracy for both methods and compare. Show a confusion matrix for each classifier to identify which classes are most confused.",
+        "setup_requirements": [
+          "Python with scikit-learn and matplotlib",
+          "Jupyter Notebook configured",
+          "Iris dataset (included in scikit-learn)"
+        ],
+        "review": [
+          {
+            "key": "Information Gain Example",
+            "value": "If a dataset has 50% positive and 50% negative examples, entropy H = 1 bit. Splitting on feature A produces two subsets: one with 90% positive (H=0.47) and one with 10% positive (H=0.47), weighted average H|A = 0.47. Information gain = 1.0 - 0.47 = 0.53 bits. A feature with higher information gain is more useful for classification."
+          },
+          {
+            "key": "Overfitting",
+            "value": "A model that achieves 100% training accuracy but only 70% test accuracy has overfit — it memorized training data noise rather than learning the underlying pattern. Defenses: cross-validation (detect overfitting), regularization (penalize complexity), pruning (remove unnecessary model parts), and more training data."
+          },
+          {
+            "key": "k-NN Complexity",
+            "value": "k-NN has no training cost but O(n*d) prediction cost per query (comparing against all n training points in d dimensions). KD-trees reduce average query time to O(d * log n) in low dimensions. For high-dimensional data, approximate nearest neighbor methods (locality-sensitive hashing) are needed."
+          },
+          {
+            "key": "Bias-Variance Trade-off Intuition",
+            "value": "A 1-NN classifier (k=1) has zero bias but high variance — its decision boundary is jagged, sensitive to individual training points. A large-k classifier (k=n) has high bias (always predicts the majority class) but zero variance. The optimal k balances these, typically found by cross-validation."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Neural Networks Basics",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Understand the architecture of feedforward neural networks including layers, weights, biases, and activation functions",
+        "Derive and implement the backpropagation algorithm for computing gradients",
+        "Train a neural network on a classification task using gradient descent",
+        "Recognize the role of activation functions, learning rate, and network depth in network behavior"
+      ],
+      "readings": [
+        "AIMA, Ch. 21.1-21.4 — Deep Learning",
+        "Goodfellow, Bengio, Courville, 'Deep Learning', Ch. 6 — Deep Feedforward Networks",
+        "Rumelhart, Hinton, Williams, 'Learning Representations by Back-Propagating Errors' (1986)"
+      ],
+      "lecture_notes": {
+        "introduction": "Neural networks are the most successful and widely-used machine learning models today, powering everything from image recognition to language translation to game playing. A neural network is a parameterized function composed of layers of simple computational units (neurons), where each neuron computes a weighted sum of its inputs, adds a bias, and applies a nonlinear activation function. The universal approximation theorem guarantees that a sufficiently large neural network can approximate any continuous function, making neural networks extraordinarily flexible. The challenge is learning the right parameters (weights and biases) from data. Backpropagation, an efficient application of the chain rule of calculus, computes the gradient of the loss function with respect to every weight in the network, enabling gradient descent optimization. Understanding backpropagation is essential for understanding why neural networks work, when they fail, and how to design architectures for specific tasks. This session builds a neural network from scratch in NumPy — no deep learning frameworks — so you understand exactly what happens during forward propagation, loss computation, and backward propagation before using tools like PyTorch or TensorFlow.",
+        "key_concepts": [
+          "Neuron model: output = activation(sum(weights * inputs) + bias); the weighted sum is a linear transformation, the activation function adds nonlinearity",
+          "Activation functions: sigmoid (output in [0,1], suffers from vanishing gradients), tanh (output in [-1,1], zero-centered), ReLU (max(0,x), most widely used, avoids vanishing gradients for positive inputs), and softmax (converts outputs to probabilities for multi-class classification)",
+          "Feedforward architecture: input layer (features), one or more hidden layers (learned representations), output layer (predictions); each layer is fully connected to the next",
+          "Forward propagation: compute the network output layer by layer; z = Wx + b (linear), a = activation(z) (nonlinear); the final output is compared to the target to compute the loss",
+          "Loss functions: mean squared error for regression, binary cross-entropy for binary classification, categorical cross-entropy for multi-class classification",
+          "Backpropagation: apply the chain rule to compute dLoss/dWeight for every weight in the network; propagate error gradients backward from the output layer through each hidden layer",
+          "Gradient descent update: w_new = w_old - learning_rate * dLoss/dw; the learning rate controls step size — too large causes divergence, too small causes slow convergence",
+          "The vanishing gradient problem: in deep networks with sigmoid/tanh activations, gradients shrink exponentially as they propagate backward through layers, making early layers learn extremely slowly; ReLU mitigates this",
+          "Universal approximation theorem: a neural network with a single hidden layer of sufficient width can approximate any continuous function to arbitrary accuracy; however, depth (more layers) is often more parameter-efficient than width for complex functions"
+        ],
+        "demonstration": "Build a 2-layer neural network from scratch in NumPy that learns the XOR function (which a single-layer network cannot solve because XOR is not linearly separable). Implement forward propagation, cross-entropy loss, backpropagation (computing all gradients by hand and verifying with numerical gradient checking), and gradient descent training. Plot the loss curve over 1000 epochs, visualize the learned decision boundary, and show the hidden layer representations to illustrate how the network transforms the input space to make XOR linearly separable.",
+        "setup_requirements": [
+          "Python with NumPy and matplotlib",
+          "Jupyter Notebook configured",
+          "No deep learning frameworks (build from scratch)"
+        ],
+        "review": [
+          {
+            "key": "Backpropagation Chain Rule",
+            "value": "For a two-layer network: dL/dW2 = dL/da2 * da2/dz2 * dz2/dW2, and dL/dW1 = dL/da2 * da2/dz2 * dz2/da1 * da1/dz1 * dz1/dW1. Each term is a local derivative computed during the forward pass. Backpropagation computes all gradients in one backward pass — O(n) time for n weights, compared to O(n^2) for numerical differentiation."
+          },
+          {
+            "key": "ReLU Advantages",
+            "value": "ReLU(x) = max(0,x) has gradient 1 for positive inputs and 0 for negative inputs. Unlike sigmoid (gradient max 0.25), ReLU does not suffer from vanishing gradients for positive activations. It is also computationally cheaper (no exponents). The dying ReLU problem (neurons stuck at 0) is addressed by Leaky ReLU: max(0.01x, x)."
+          },
+          {
+            "key": "XOR Problem Significance",
+            "value": "Minsky and Papert (1969) proved that a single-layer perceptron cannot learn XOR, contributing to the first AI winter. A two-layer network solves XOR easily — the hidden layer maps the 4 input points to a linearly separable representation. This demonstrated that depth (multiple layers) is essential for learning complex functions."
+          },
+          {
+            "key": "Learning Rate Selection",
+            "value": "Too large a learning rate causes the loss to oscillate or diverge (overshooting minima). Too small a learning rate causes extremely slow convergence. In practice, start with 0.01 and use learning rate schedules (decay over time) or adaptive methods (Adam optimizer) that adjust the rate per-parameter."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "Natural Language Processing Fundamentals",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Understand the core NLP pipeline: tokenization, POS tagging, parsing, and semantic analysis",
+        "Represent text using bag-of-words, TF-IDF, and word embeddings (Word2Vec)",
+        "Implement a text classification system using NLP features",
+        "Appreciate the role of language models and the transformer architecture in modern NLP"
+      ],
+      "readings": [
+        "AIMA, Ch. 23-24 — Natural Language Processing",
+        "Jurafsky and Martin, 'Speech and Language Processing', 3rd Ed., Ch. 2-6",
+        "Mikolov et al., 'Efficient Estimation of Word Representations in Vector Space' (2013)"
+      ],
+      "lecture_notes": {
+        "introduction": "Natural language processing enables AI systems to understand, generate, and reason about human language. NLP is among the most commercially important areas of AI, powering search engines, virtual assistants, machine translation, sentiment analysis, and question answering systems. Language is challenging for computers because it is ambiguous (bank can mean a financial institution or a river bank), context-dependent (the meaning of 'it' depends on what came before), compositional (the meaning of a sentence is built from the meanings of its words and their arrangement), and grounded (understanding language often requires knowledge about the world). This session covers the traditional NLP pipeline and the representations that make text amenable to machine learning. We start with how to convert raw text into features a model can use — from simple bag-of-words to dense word embeddings that capture semantic similarity — then build a text classification system. We conclude with a brief introduction to the transformer architecture and large language models that have revolutionized NLP, setting the stage for deeper study in advanced courses.",
+        "key_concepts": [
+          "Tokenization: splitting text into tokens (words, subwords, or characters); challenges include contractions (don't => do + n't), compound words, and non-whitespace languages (Chinese, Japanese)",
+          "Part-of-speech tagging: assigning grammatical labels (noun, verb, adjective) to each token; enables syntactic analysis and disambiguation (run as noun vs run as verb)",
+          "Bag-of-words representation: represent a document as a vector of word counts, discarding word order; simple but effective for text classification when combined with TF-IDF weighting",
+          "TF-IDF (Term Frequency - Inverse Document Frequency): weights words by how frequent they are in a document (TF) penalized by how common they are across all documents (IDF); emphasizes discriminative words",
+          "Word embeddings (Word2Vec, GloVe): represent words as dense vectors in a continuous space where semantically similar words are close; 'king - man + woman = queen' demonstrates that embeddings capture semantic relationships",
+          "Language models: assign probabilities to sequences of words P(w1, w2, ..., wn); n-gram models estimate P(wn | wn-1, ..., wn-k) from word co-occurrence counts",
+          "Recurrent neural networks for NLP: process sequences one token at a time, maintaining a hidden state; LSTMs and GRUs solve the vanishing gradient problem for long sequences",
+          "The transformer architecture: replaces recurrence with self-attention, processing all tokens in parallel; the basis for BERT (bidirectional encoding), GPT (autoregressive generation), and all modern large language models",
+          "Named entity recognition (NER): identifying and classifying entities (people, organizations, locations, dates) in text; a key information extraction task used in search, question answering, and knowledge base construction"
+        ],
+        "demonstration": "Build a sentiment analysis system for movie reviews: (1) tokenize and clean the text, (2) compute TF-IDF features, (3) train a logistic regression classifier, (4) evaluate with precision/recall/F1 on a test set. Then load pre-trained Word2Vec embeddings and show that similar words (good/great/excellent) have high cosine similarity while dissimilar words (good/terrible) are far apart. Compare TF-IDF + logistic regression with word embedding averages + logistic regression to show how embeddings capture semantics beyond word frequency.",
+        "setup_requirements": [
+          "Python with NLTK or spaCy for text processing",
+          "scikit-learn for TF-IDF and classification",
+          "Pre-trained Word2Vec or GloVe embeddings",
+          "Movie review dataset (IMDB or similar)"
+        ],
+        "review": [
+          {
+            "key": "TF-IDF Intuition",
+            "value": "A word that appears frequently in one document but rarely across the corpus (e.g., 'photosynthesis' in a biology paper) has high TF-IDF and is strongly associated with that document. Common words like 'the' have high TF but low IDF, resulting in low TF-IDF. This automatically identifies discriminative keywords without manual feature engineering."
+          },
+          {
+            "key": "Word2Vec Training",
+            "value": "Skip-gram Word2Vec trains a shallow neural network to predict context words given a target word. Words appearing in similar contexts get similar embeddings. The resulting 300-dimensional vectors capture analogy relationships: vec(king) - vec(man) + vec(woman) is closest to vec(queen), showing that the embedding space encodes semantic relationships geometrically."
+          },
+          {
+            "key": "Why Transformers Replaced RNNs",
+            "value": "RNNs process tokens sequentially (slow, hard to parallelize) and struggle with long-range dependencies despite LSTMs. Transformers use self-attention to relate every token to every other token directly, processing the entire sequence in parallel. This enables training on much larger datasets and capturing long-range dependencies effectively."
+          },
+          {
+            "key": "Large Language Models",
+            "value": "GPT, BERT, and their successors are transformer-based models trained on enormous text corpora. GPT is autoregressive (predicts the next token); BERT is bidirectional (predicts masked tokens using both left and right context). These models demonstrate emergent capabilities (reasoning, translation, summarization) that were not explicitly trained for."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "Computer Vision Introduction",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Understand image representation as multi-dimensional arrays of pixel values",
+        "Apply classical computer vision techniques: edge detection, feature extraction, and template matching",
+        "Implement convolutional neural networks for image classification",
+        "Appreciate the role of transfer learning and pre-trained models in practical computer vision"
+      ],
+      "readings": [
+        "AIMA, Ch. 25 — Computer Vision",
+        "Szeliski, 'Computer Vision: Algorithms and Applications', 2nd Ed., Ch. 1-5",
+        "LeCun et al., 'Gradient-Based Learning Applied to Document Recognition' (1998)"
+      ],
+      "lecture_notes": {
+        "introduction": "Computer vision enables AI systems to extract meaningful information from images and video. From autonomous driving to medical imaging to facial recognition to industrial quality control, computer vision is one of the most impactful applications of AI. The field was transformed by convolutional neural networks, which learn hierarchical visual features directly from pixels rather than relying on hand-engineered feature extractors. A CNN's early layers learn low-level features (edges, corners, textures), middle layers learn mid-level features (object parts, patterns), and late layers learn high-level features (objects, scenes). Transfer learning allows these learned features to be reused across tasks, making it possible to build accurate image classifiers with small datasets by fine-tuning a pre-trained model. This session covers both classical techniques (edge detection, feature descriptors) and modern deep learning approaches (CNNs, transfer learning), giving you the foundation to understand how machines see and the practical skills to build vision applications.",
+        "key_concepts": [
+          "Image representation: height x width x channels (RGB); each pixel is a value in [0,255]; a 224x224 color image has 224 * 224 * 3 = 150,528 input features",
+          "Edge detection: convolving the image with derivative filters (Sobel, Canny) to find boundaries where pixel intensity changes rapidly; edges are the most fundamental low-level feature",
+          "Feature descriptors: SIFT (Scale-Invariant Feature Transform) and HOG (Histogram of Oriented Gradients) extract robust local features for matching and recognition; hand-engineered features that dominated before deep learning",
+          "Convolutional layers: apply learnable filters (kernels) that slide across the image, detecting local patterns; weight sharing (same filter everywhere) reduces parameters and provides translation invariance",
+          "Pooling layers: downsample feature maps (max pooling takes the maximum in each local region), reducing spatial dimensions and providing some invariance to small translations",
+          "CNN architectures: LeNet (1998, handwritten digits), AlexNet (2012, ImageNet breakthrough), VGG (deeper with 3x3 filters), ResNet (skip connections enabling 100+ layer networks), EfficientNet (optimized width/depth/resolution scaling)",
+          "Transfer learning: use a CNN pre-trained on ImageNet (1.4M images, 1000 classes) as a feature extractor; replace the classification head with new classes and fine-tune with a small domain-specific dataset",
+          "Data augmentation: artificially expand the training set by applying transformations (rotation, flipping, cropping, color jittering) to existing images; critical for preventing overfitting on small datasets",
+          "Object detection and segmentation: extending classification to localization (bounding boxes with YOLO, Faster R-CNN) and pixel-level labeling (semantic segmentation with U-Net); the progression from 'what' to 'where' to 'what at every pixel'"
+        ],
+        "demonstration": "Build an image classifier for the CIFAR-10 dataset (60K 32x32 color images, 10 classes). Start with a simple linear classifier on raw pixels (poor accuracy), then apply hand-crafted HOG features (better), then train a small CNN from scratch (good), and finally use a pre-trained ResNet18 with transfer learning (excellent). Compare accuracy, training time, and the number of parameters for each approach. Visualize the learned convolutional filters in the first layer of the CNN to show that it discovers edge detectors and color filters automatically.",
+        "setup_requirements": [
+          "Python with PyTorch and torchvision",
+          "GPU access recommended (Google Colab available)",
+          "CIFAR-10 dataset (auto-downloaded by torchvision)",
+          "OpenCV for classical vision techniques"
+        ],
+        "review": [
+          {
+            "key": "Why CNNs Work for Vision",
+            "value": "CNNs exploit three properties of images: (1) locality — nearby pixels are more related than distant ones, captured by small filters; (2) translation invariance — a cat is a cat regardless of position, captured by weight sharing; (3) hierarchy — complex features (faces) are composed of simpler ones (eyes, noses, edges), captured by stacking layers."
+          },
+          {
+            "key": "ResNet Skip Connections",
+            "value": "ResNet introduces skip (residual) connections that add the input of a block directly to its output: y = F(x) + x. This lets the network learn residual functions F(x) = y - x rather than the full mapping. Skip connections solve the degradation problem (deeper networks performing worse than shallower ones) and enable training networks with 100+ layers."
+          },
+          {
+            "key": "Transfer Learning Rationale",
+            "value": "Early CNN layers learn universal visual features (edges, textures, shapes) that are useful across all vision tasks. Only the final classification layers are task-specific. By reusing pre-trained early layers and only training new final layers, transfer learning achieves high accuracy with as few as 100-1000 images per class."
+          },
+          {
+            "key": "Data Augmentation Importance",
+            "value": "With a small training set (e.g., 500 medical images), a CNN will memorize the training data and fail on new images. Random horizontal flips, rotations up to 15 degrees, brightness/contrast changes, and random crops synthetically increase the effective training set size by 10-50x, teaching the network invariance to these transformations."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Ethics in AI and Course Review",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Identify and analyze ethical challenges in AI systems including bias, fairness, transparency, and accountability",
+        "Apply ethical frameworks to evaluate AI deployment decisions",
+        "Synthesize the connections between all major AI topics covered in the course",
+        "Prepare for the final project presentation by integrating multiple AI techniques"
+      ],
+      "readings": [
+        "AIMA, Ch. 27 — Philosophy, Ethics, and Safety of AI",
+        "Bostrom, 'Superintelligence', Ch. 1-2",
+        "Gebru et al., 'Datasheets for Datasets' (2021)",
+        "Jobin et al., 'The Global Landscape of AI Ethics Guidelines' (2019)"
+      ],
+      "lecture_notes": {
+        "introduction": "As AI systems become more powerful and pervasive, the ethical implications of their design and deployment become critical. AI systems make decisions that affect people's lives in hiring, lending, criminal justice, healthcare, content moderation, and autonomous vehicles. Bias in training data can lead to discriminatory outcomes; opaque models make it impossible to understand or challenge decisions; autonomous systems raise questions about accountability when things go wrong. The responsible AI practitioner must understand these risks and actively design systems that are fair, transparent, accountable, and aligned with human values. This session examines real-world cases of AI gone wrong, introduces ethical frameworks for evaluating AI systems, and discusses technical approaches to fairness and explainability. We also review the entire course, connecting the dots between search, logic, probability, learning, perception, and language, showing how these components combine to create intelligent systems and where the fundamental challenges remain unsolved.",
+        "key_concepts": [
+          "Algorithmic bias: AI systems can perpetuate and amplify societal biases present in training data; examples include racial bias in facial recognition (higher error rates for dark-skinned faces), gender bias in hiring algorithms (penalizing resumes with women's college names), and recidivism prediction (COMPAS system)",
+          "Fairness definitions: demographic parity (equal prediction rates across groups), equalized odds (equal error rates across groups), individual fairness (similar individuals get similar predictions); these definitions are mathematically incompatible — choosing one necessarily violates others",
+          "Transparency and explainability: the right to an explanation when an AI decision affects you; interpretable models (decision trees, linear regression) vs post-hoc explanations of black-box models (LIME, SHAP feature importance)",
+          "Accountability and liability: when an autonomous vehicle causes an accident, who is responsible — the manufacturer, the software developer, the user, or the AI itself? Current legal frameworks were not designed for autonomous decision-making agents",
+          "Privacy and surveillance: AI enables mass surveillance through facial recognition, behavior prediction, and data aggregation; tension between security benefits and civil liberties; differential privacy as a technical approach to privacy-preserving ML",
+          "The alignment problem: ensuring that AI systems pursue goals that are truly aligned with human values; specification gaming (AI finds unintended ways to maximize its objective) and reward hacking illustrate how hard it is to specify what we actually want",
+          "AI safety and existential risk: long-term concerns about artificial general intelligence; the control problem (how to maintain human control over a superintelligent system); the importance of alignment research",
+          "Course synthesis: how search (finding solutions), logic (reasoning about knowledge), probability (handling uncertainty), learning (improving from experience), and perception (understanding the world) form a coherent framework for building intelligent systems",
+          "Open problems: common-sense reasoning, transfer learning across domains, sample-efficient learning, causal reasoning, robust generalization, and value alignment remain unsolved challenges driving current AI research"
+        ],
+        "demonstration": "Analyze a real-world case study of AI bias: take a credit scoring model trained on historical lending data and show how protected attributes (race, gender) indirectly influence predictions through correlated features (zip code, education). Apply three fairness metrics and show they conflict — improving demographic parity worsens equalized odds. Then apply LIME to explain individual predictions, showing which features drove each decision. Discuss: is this model fair enough to deploy? What safeguards are needed? This exercise requires integrating ML concepts (model training, evaluation) with ethical reasoning (fairness definitions, stakeholder analysis).",
+        "setup_requirements": [
+          "Python with scikit-learn, LIME, and fairness metrics libraries (fairlearn or aif360)",
+          "Credit scoring dataset with demographic attributes",
+          "Presentation slides for course review"
+        ],
+        "review": [
+          {
+            "key": "Impossibility of Fairness",
+            "value": "Chouldechova (2017) and Kleinberg et al. (2016) proved that when base rates differ between groups, you cannot simultaneously achieve calibration (predicted probabilities match actual outcomes), equal false positive rates, and equal false negative rates. Any fairness intervention must choose which criteria to prioritize, making this a value judgment, not a purely technical decision."
+          },
+          {
+            "key": "LIME Explanations",
+            "value": "LIME (Local Interpretable Model-agnostic Explanations) explains any black-box model by fitting a simple interpretable model (e.g., linear regression) to the model's behavior in the local neighborhood of the instance being explained. This shows which features most influenced the prediction for that specific instance, enabling case-by-case scrutiny."
+          },
+          {
+            "key": "Course Integration",
+            "value": "A complete AI system combines multiple techniques: search and planning for decision-making, logic for knowledge representation and reasoning, probability for handling uncertainty, ML for learning from data, NLP for language understanding, and computer vision for perception. The art of AI engineering is choosing and integrating the right techniques for each problem."
+          },
+          {
+            "key": "Responsible AI Checklist",
+            "value": "Before deploying an AI system: (1) audit training data for representation and bias, (2) evaluate model performance across demographic groups, (3) provide explanations for consequential decisions, (4) establish human oversight and appeal processes, (5) monitor deployed model for performance degradation and distributional shift, (6) document the system's intended use, limitations, and failure modes."
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 3,
+        "topic": "Search Algorithms and Heuristics",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Prove that the Manhattan distance heuristic is admissible for the 8-puzzle. Then calculate h(n) for the state where tile 1 is at position (0,2), tile 2 is at position (2,0), and all other tiles are in their goal positions.",
+            "type": "calculation",
+            "points": 10,
+            "answer": "Proof of admissibility: In the 8-puzzle, each tile must be moved individually to its goal position. Manhattan distance counts the minimum number of horizontal and vertical moves for each tile. Since tiles can block each other (requiring additional moves), the actual cost is always >= Manhattan distance. Therefore it never overestimates and is admissible.\n\nCalculation: If tile 1's goal is (0,0) and it's at (0,2): distance = |0-0| + |2-0| = 2. If tile 2's goal is (0,1) and it's at (2,0): distance = |0-2| + |1-0| = 3. All others at goal = 0. h(n) = 2 + 3 = 5.",
+            "rubric": [
+              {
+                "key": "Correct admissibility argument (never overestimates because tiles must move at least Manhattan distance)",
+                "value": 4
+              },
+              {
+                "key": "Correct Manhattan distance calculation for each tile",
+                "value": 4
+              },
+              {
+                "key": "Correct total h(n) = 5",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Compare BFS, DFS, UCS, and A* in terms of completeness, optimality, time complexity, and space complexity. Under what condition does A* reduce to uniform cost search?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "BFS: Complete (yes, for finite branching), Optimal (yes, for uniform step costs), Time O(b^d), Space O(b^d). DFS: Complete (no, infinite spaces), Optimal (no), Time O(b^m), Space O(bm). UCS: Complete (yes, for non-negative costs), Optimal (yes), Time O(b^(1+floor(C*/epsilon))), Space same as time. A*: Complete (yes, with admissible heuristic and finite branching), Optimal (yes, with admissible heuristic), Time depends on heuristic quality (worst case same as UCS), Space O(b^d). A* reduces to uniform cost search when h(n) = 0 for all n, meaning the heuristic provides no guidance and f(n) = g(n).",
+            "rubric": [
+              {
+                "key": "Correct properties for all four algorithms",
+                "value": 5
+              },
+              {
+                "key": "Correctly identifies h(n)=0 gives uniform cost search",
+                "value": 3
+              },
+              {
+                "key": "Notes heuristic quality affects A* performance",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Design an admissible heuristic for the Traveling Salesman Problem (finding the shortest tour visiting all cities exactly once). Explain why your heuristic is admissible and discuss its expected quality.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Heuristic: compute the minimum spanning tree (MST) cost of the unvisited cities plus the nearest-neighbor distances from the current city to the MST and from the MST back to the start city.\n\nAdmissibility: The MST is admissible because any tour through the unvisited cities must form a connected path, and the MST is the cheapest connected subgraph. Adding the connections to/from the current city and start gives a lower bound on the remaining tour cost.\n\nQuality: This heuristic is relatively tight because the MST cost is close to the optimal tour cost (the MST cost is at most half the optimal tour cost by Christofides' analysis). It provides much better guidance than simpler heuristics like straight-line distance to the nearest unvisited city.",
+            "rubric": [
+              {
+                "key": "Proposes a valid admissible heuristic",
+                "value": 4
+              },
+              {
+                "key": "Correct proof of admissibility",
+                "value": 4
+              },
+              {
+                "key": "Discusses heuristic quality and comparison to alternatives",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      },
+      {
+        "quiz": 2,
+        "week": 5,
+        "topic": "Game Playing, CSPs, and Knowledge Representation",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Draw the minimax game tree for a game with the following terminal values (left to right): 3, 12, 8, 2, 4, 6, 14, 5, 2. The tree has branching factor 3 and depth 2 (max at root). What is the minimax value? Identify which branches alpha-beta pruning would eliminate with left-to-right evaluation.",
+            "type": "analysis",
+            "points": 15,
+            "answer": "Level 2 (min nodes): Node A = min(3,12,8) = 3, Node B = min(2,4,6) = 2, Node C = min(14,5,2) = 2. Level 0 (max root): max(3,2,2) = 3. Minimax value = 3.\n\nAlpha-beta pruning (left-to-right): After evaluating Node A (value 3), alpha = 3. In Node B, after seeing 2, beta = 2 < alpha = 3, so the remaining children of B (4, 6) are pruned. In Node C, after seeing 14 then 5 then 2, all must be evaluated since we need the minimum. Node C returns 2. Two nodes (children of B with values 4 and 6) are pruned.",
+            "rubric": [
+              {
+                "key": "Correct minimax values at each node",
+                "value": 5
+              },
+              {
+                "key": "Correct final minimax value of 3",
+                "value": 3
+              },
+              {
+                "key": "Correct identification of pruned branches with alpha-beta reasoning",
+                "value": 4
+              },
+              {
+                "key": "Correct tree structure drawn",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Formulate the 4-queens problem as a CSP (variables, domains, constraints). Apply arc consistency to reduce the domains after placing a queen in column 1, row 2. Show which values are eliminated from each variable's domain.",
+            "type": "analysis",
+            "points": 10,
+            "answer": "CSP Formulation: Variables: Q1, Q2, Q3, Q4 (one per column, value = row). Domains: {1,2,3,4} for each. Constraints: for all i != j: Qi != Qj (different rows), |Qi - Qj| != |i - j| (different diagonals).\n\nAfter Q1 = 2: Q2's domain: remove 2 (same row), remove 1 (diagonal), remove 3 (diagonal) => {4}. Q3's domain: remove 2 (same row), remove 4 (diagonal) => {1,3}. Q4's domain: remove 2 (same row), remove 5 (doesn't exist) => {1,3,4}.\n\nArc consistency propagation from Q2={4}: Q3: remove 4 (same row, already gone), remove 3 (diagonal from Q2=4) => {1}. Q4: remove 4 (same row), remove 3 (diagonal from Q2=4, col diff 2, |4-3|=1 != 2, not eliminated... actually |4-3|=1 and |2-4|=2, so not on diagonal). After Q3={1}: Q4: remove 1 (same row), remove 2 (already gone from Q1 constraint). Q4 = {3}. Solution: Q1=2, Q2=4, Q3=1, Q4=3.",
+            "rubric": [
+              {
+                "key": "Correct CSP formulation with variables, domains, constraints",
+                "value": 3
+              },
+              {
+                "key": "Correct initial domain reduction from Q1=2",
+                "value": 4
+              },
+              {
+                "key": "Correct propagation showing cascading domain reductions",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between node consistency, arc consistency, and path consistency in CSPs. Which is most commonly used in practice and why?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Node consistency: every value in a variable's domain satisfies all unary constraints on that variable. Arc consistency: for every pair of constrained variables, every value in one variable's domain has a compatible value in the other's domain satisfying the binary constraint. Path consistency: for every triple of variables, every consistent pair of values for two variables can be extended to a consistent assignment for the third.\n\nArc consistency (AC-3) is most commonly used because it provides a good balance between inference power and computational cost: O(ed^3) where e is constraints and d is domain size. Node consistency is too weak (only handles unary constraints). Path consistency is more powerful but much more expensive (requires maintaining and checking pairs of values, with O(n^3 * d^3) complexity), and the extra pruning rarely justifies the cost for most practical CSPs.",
+            "rubric": [
+              {
+                "key": "Correct definition of all three consistency levels",
+                "value": 5
+              },
+              {
+                "key": "Identifies arc consistency as most common with correct reasoning",
+                "value": 3
+              },
+              {
+                "key": "Explains the cost-benefit trade-off between levels",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 35
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "Logic and Probabilistic Reasoning",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Convert the following sentence to Conjunctive Normal Form (CNF): (P => Q) => (R AND NOT S). Show each step of the conversion.",
+            "type": "calculation",
+            "points": 10,
+            "answer": "Step 1 — Eliminate outer implication: NOT(P => Q) OR (R AND NOT S)\nStep 2 — Eliminate inner implication: NOT(NOT P OR Q) OR (R AND NOT S)\nStep 3 — Apply De Morgan's to NOT(NOT P OR Q): (P AND NOT Q) OR (R AND NOT S)\nStep 4 — Distribute OR over AND:\n  ((P AND NOT Q) OR R) AND ((P AND NOT Q) OR NOT S)\n  = (P OR R) AND (NOT Q OR R) AND (P OR NOT S) AND (NOT Q OR NOT S)\n\nFinal CNF: (P OR R) AND (NOT Q OR R) AND (P OR NOT S) AND (NOT Q OR NOT S)\nThis is a conjunction of four clauses, each a disjunction of literals.",
+            "rubric": [
+              {
+                "key": "Correct elimination of implications",
+                "value": 3
+              },
+              {
+                "key": "Correct application of De Morgan's law",
+                "value": 3
+              },
+              {
+                "key": "Correct distribution to reach CNF",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "A medical test for a disease has sensitivity 95% (P(+|disease) = 0.95) and specificity 90% (P(-|no disease) = 0.90). The disease prevalence is 2%. Calculate P(disease | positive test) using Bayes' theorem. Explain why doctors should not tell patients they 'probably have the disease' based on a positive result.",
+            "type": "calculation",
+            "points": 10,
+            "answer": "Using Bayes' theorem: P(disease|+) = P(+|disease) * P(disease) / P(+)\n\nP(+) = P(+|disease)*P(disease) + P(+|no disease)*P(no disease)\n     = 0.95 * 0.02 + 0.10 * 0.98\n     = 0.019 + 0.098 = 0.117\n\nP(disease|+) = 0.019 / 0.117 = 0.162 (16.2%)\n\nDespite the test being 95% sensitive and 90% specific, a positive result only indicates a 16.2% chance of having the disease. This is because the disease is rare (2% prevalence), so the false positives from the 98% healthy population (0.10 * 0.98 = 9.8%) vastly outnumber the true positives from the 2% sick population (0.95 * 0.02 = 1.9%). Telling a patient they 'probably have the disease' would be wrong 84% of the time — a confirmation test with higher specificity is needed.",
+            "rubric": [
+              {
+                "key": "Correct Bayes' theorem setup and calculation",
+                "value": 5
+              },
+              {
+                "key": "Correct final probability of approximately 16.2%",
+                "value": 3
+              },
+              {
+                "key": "Explains the base rate effect on the posterior",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Write the first-order logic representation of: 'Every student who has completed all prerequisites for a course is eligible to enroll in that course.' Then translate: 'There exists a course that no student is eligible for.'",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Statement 1: FOR ALL s FOR ALL c (Student(s) AND (FOR ALL p Prerequisite(p,c) => Completed(s,p))) => Eligible(s,c)\n\nIn words: For every student s and every course c, if s is a student and s has completed every prerequisite p of course c, then s is eligible to enroll in c.\n\nStatement 2: EXISTS c FOR ALL s NOT Eligible(s,c)\n\nIn words: There exists a course c such that for every student s, s is not eligible for c. (Equivalently: EXISTS c NOT EXISTS s Eligible(s,c))",
+            "rubric": [
+              {
+                "key": "Correct FOL for statement 1 with proper quantifier nesting",
+                "value": 5
+              },
+              {
+                "key": "Correct FOL for statement 2",
+                "value": 3
+              },
+              {
+                "key": "Proper use of predicates and quantifiers throughout",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "Bayesian Networks and Machine Learning",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Given a Bayesian network A -> B -> C with P(A) = 0.3, P(B|A) = 0.8, P(B|not A) = 0.4, P(C|B) = 0.9, P(C|not B) = 0.2. Compute P(C) and P(A|C=true) using the full joint distribution.",
+            "type": "calculation",
+            "points": 12,
+            "answer": "First compute P(B):\nP(B) = P(B|A)P(A) + P(B|not A)P(not A) = 0.8*0.3 + 0.4*0.7 = 0.24 + 0.28 = 0.52\n\nP(C) = P(C|B)P(B) + P(C|not B)P(not B) = 0.9*0.52 + 0.2*0.48 = 0.468 + 0.096 = 0.564\n\nFor P(A|C), by Bayes' theorem: P(A|C) = P(C|A)P(A) / P(C)\nP(C|A) = P(C|B)P(B|A) + P(C|not B)P(not B|A) = 0.9*0.8 + 0.2*0.2 = 0.72 + 0.04 = 0.76\nP(A|C) = 0.76 * 0.3 / 0.564 = 0.228 / 0.564 = 0.404\n\nSo P(C) = 0.564 and P(A|C=true) = 0.404 (compared to prior P(A) = 0.3, observing C=true increases our belief in A).",
+            "rubric": [
+              {
+                "key": "Correct computation of P(B) = 0.52",
+                "value": 3
+              },
+              {
+                "key": "Correct computation of P(C) = 0.564",
+                "value": 3
+              },
+              {
+                "key": "Correct computation of P(C|A) = 0.76",
+                "value": 3
+              },
+              {
+                "key": "Correct final P(A|C) = 0.404 with interpretation",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "A decision tree for classifying animals splits first on 'has_feathers' (yes/no), then on 'can_fly' (yes/no). The training data has 100 animals: 30 birds (25 feathered+fly, 5 feathered+no-fly), 40 mammals (0 feathered+fly, 40 no-feathers+no-fly), 30 fish (0 feathered, 30 no-feathers+no-fly). Calculate the information gain of the first split on 'has_feathers'.",
+            "type": "calculation",
+            "points": 10,
+            "answer": "Before split — entropy of the whole dataset:\nP(bird) = 30/100 = 0.3, P(mammal) = 40/100 = 0.4, P(fish) = 30/100 = 0.3\nH(Y) = -0.3*log2(0.3) - 0.4*log2(0.4) - 0.3*log2(0.3)\n     = -0.3*(-1.737) - 0.4*(-1.322) - 0.3*(-1.737)\n     = 0.521 + 0.529 + 0.521 = 1.571 bits\n\nAfter split on has_feathers:\nhas_feathers=yes: 30 animals (30 birds, 0 mammals, 0 fish)\nH(Y|feathers=yes) = -1*log2(1) = 0 bits (pure node)\n\nhas_feathers=no: 70 animals (0 birds, 40 mammals, 30 fish)\nH(Y|feathers=no) = -(40/70)*log2(40/70) - (30/70)*log2(30/70)\n                 = -0.571*(-0.807) - 0.429*(-1.222)\n                 = 0.461 + 0.524 = 0.985 bits\n\nWeighted average: H(Y|feathers) = (30/100)*0 + (70/100)*0.985 = 0.690 bits\n\nInformation gain = 1.571 - 0.690 = 0.881 bits",
+            "rubric": [
+              {
+                "key": "Correct entropy of original dataset",
+                "value": 3
+              },
+              {
+                "key": "Correct conditional entropies for each split branch",
+                "value": 4
+              },
+              {
+                "key": "Correct information gain calculation",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain d-separation in Bayesian networks using three canonical structures: chain, fork, and collider. For each, state when X and Y are conditionally independent.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Chain (X -> Z -> Y): X and Y are conditionally independent given Z. Knowing Z blocks the flow of information from X to Y. Example: Fire -> Smoke -> Alarm. Knowing there is smoke makes the fire and alarm independent.\n\nFork (X <- Z -> Y): X and Y are conditionally independent given Z. Z is a common cause; conditioning on it explains away the correlation. Example: Intelligence -> GoodGrades and Intelligence -> GoodTestScores. Conditioning on Intelligence makes grades and test scores independent.\n\nCollider (X -> Z <- Y): X and Y are marginally independent but become DEPENDENT when conditioning on Z (or any descendant of Z). This is 'explaining away.' Example: Talent -> Famous <- Luck. Talent and Luck are independent, but if we know someone is famous, learning they are not talented increases our belief in luck.\n\nGeneral rule: X and Y are d-separated by evidence set E if every path between X and Y is blocked by E (chains/forks blocked when middle node is in E, colliders blocked when middle node and descendants are NOT in E).",
+            "rubric": [
+              {
+                "key": "Correct description of chain with independence condition",
+                "value": 2
+              },
+              {
+                "key": "Correct description of fork with independence condition",
+                "value": 2
+              },
+              {
+                "key": "Correct description of collider with explaining away",
+                "value": 3
+              },
+              {
+                "key": "Clear general d-separation rule",
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "Neural Networks, NLP, and Computer Vision",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "A neural network has input layer (3 neurons), hidden layer (4 neurons with ReLU), and output layer (2 neurons with softmax). (a) How many learnable parameters does it have? (b) Given input [1.0, -0.5, 2.0] and the first hidden neuron weights [0.3, -0.1, 0.4] with bias 0.1, compute the first hidden neuron's output after ReLU activation.",
+            "type": "calculation",
+            "points": 10,
+            "answer": "(a) Layer 1: 3 inputs * 4 neurons = 12 weights + 4 biases = 16 parameters. Layer 2: 4 inputs * 2 neurons = 8 weights + 2 biases = 10 parameters. Total: 16 + 10 = 26 learnable parameters.\n\n(b) Linear combination: z = 0.3*1.0 + (-0.1)*(-0.5) + 0.4*2.0 + 0.1 = 0.3 + 0.05 + 0.8 + 0.1 = 1.25. ReLU(1.25) = max(0, 1.25) = 1.25.",
+            "rubric": [
+              {
+                "key": "Correct parameter count with weights and biases for each layer",
+                "value": 5
+              },
+              {
+                "key": "Correct linear combination z = 1.25",
+                "value": 3
+              },
+              {
+                "key": "Correct ReLU activation output = 1.25",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain why convolutional neural networks use weight sharing (the same filter applied across the entire image) rather than fully connected layers for image classification. What are the benefits in terms of parameter count, translation invariance, and computational efficiency?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "A fully connected layer treating each pixel as an independent input for a 224x224 RGB image would have 224*224*3 = 150,528 input weights PER neuron — a single layer with 256 neurons would have 38.5 million parameters, prone to massive overfitting.\n\nWeight sharing benefits:\n1. Parameter efficiency: A 3x3 convolutional filter has only 3*3*3 = 27 weights (plus bias) regardless of image size. A layer with 64 such filters has 1,792 parameters vs millions for fully connected.\n2. Translation invariance: The same filter detects the same feature (e.g., a vertical edge) regardless of where it appears in the image, because it is applied at every spatial position.\n3. Computational efficiency: Convolutions exploit locality (each output depends on a small neighborhood), enabling parallel computation on GPUs. The filter size is independent of image size.\n4. Inductive bias: Convolutions encode the assumption that local patterns (edges, textures) are more important than long-range pixel relationships, which matches the structure of natural images.",
+            "rubric": [
+              {
+                "key": "Explains parameter reduction from weight sharing",
+                "value": 3
+              },
+              {
+                "key": "Explains translation invariance",
+                "value": 3
+              },
+              {
+                "key": "Discusses computational efficiency or appropriate inductive bias",
+                "value": 2
+              },
+              {
+                "key": "Contrasts with fully connected layer parameter count",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Compare bag-of-words, TF-IDF, and word embeddings (Word2Vec) as text representations. For each, state one strength and one weakness. Which would you choose for a document similarity task on a corpus of 10,000 legal documents and why?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Bag-of-Words: Strength — simple, fast, effective for text classification. Weakness — ignores word order and semantics ('not good' and 'good' are similar because they share 'good').\n\nTF-IDF: Strength — weights discriminative words higher than common words, better document representation than raw counts. Weakness — still ignores word order and semantics; high-dimensional sparse vectors.\n\nWord Embeddings: Strength — captures semantic similarity (synonym, analogy relationships) in dense low-dimensional vectors. Weakness — requires aggregation for document-level representation (averaging loses word order); pre-trained embeddings may not match domain vocabulary.\n\nFor 10,000 legal documents: TF-IDF is the best choice because (1) legal documents use specialized vocabulary where word frequency patterns are highly discriminative, (2) TF-IDF naturally handles the domain-specific terms that distinguish legal topics, (3) sparse TF-IDF vectors with cosine similarity are efficient for document-level similarity, and (4) the corpus is large enough for IDF to be meaningful but not so large that scalability is an issue. Word embeddings would require domain-specific fine-tuning to handle legal terminology properly.",
+            "rubric": [
+              {
+                "key": "Correct strength and weakness for each representation",
+                "value": 6
+              },
+              {
+                "key": "Justified recommendation for legal document similarity",
+                "value": 4
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Search-Based Problem Solver",
+        "week_assigned": 2,
+        "week_due": 5,
+        "points": 150,
+        "description": "Implement a comprehensive search framework that solves multiple problems using uninformed and informed search algorithms. Apply your framework to three domains: the 15-puzzle, a route-finding problem on a real city map, and a custom domain of your choice. Analyze the performance trade-offs between algorithms and heuristics with rigorous empirical evaluation.",
+        "objectives": [
+          "Implement BFS, DFS, UCS, A*, IDA*, and greedy best-first search in a generic framework",
+          "Design and prove the admissibility of at least two heuristics per domain",
+          "Conduct rigorous empirical comparison across algorithms, heuristics, and problem sizes",
+          "Apply the framework to a novel domain demonstrating your understanding of problem formulation"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Python source code with a clean, extensible search framework supporting pluggable problems and heuristics",
+          "Performance comparison tables and charts: nodes expanded, solution cost, wall-clock time, and memory usage across all algorithm-heuristic-problem combinations",
+          "Analysis report (5-6 pages) including admissibility proofs, experimental methodology, results analysis, and discussion of when each algorithm is preferred",
+          "README with instructions for reproducing all experiments"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 50,
+            "criteria": [
+              "All six search algorithms implemented correctly and produce correct solutions",
+              "Framework is generic — adding a new problem requires only implementing the problem interface",
+              "Graph search with proper closed-list handling to avoid revisiting states",
+              "Code is clean, well-documented, and follows Python best practices"
+            ]
+          },
+          "heuristic_design": {
+            "points": 35,
+            "criteria": [
+              "At least two admissible heuristics per domain with formal admissibility proofs",
+              "Heuristics demonstrate different levels of informativeness (one should dominate the other)",
+              "Custom domain heuristic shows original thinking, not a textbook example",
+              "Pattern database or other advanced heuristic technique attempted for bonus credit"
+            ]
+          },
+          "empirical_analysis": {
+            "points": 40,
+            "criteria": [
+              "Experiments systematically vary algorithm, heuristic, and problem size",
+              "Results averaged over multiple problem instances with variance reported",
+              "Clear tables and charts comparing all metrics across configurations",
+              "Discussion correctly explains observed performance differences using algorithm properties"
+            ]
+          },
+          "documentation": {
+            "points": 25,
+            "criteria": [
+              "Analysis report is clear, well-structured, and technically accurate",
+              "Admissibility proofs are rigorous and complete",
+              "Limitations acknowledged and future improvements discussed",
+              "All experiments are reproducible from the README instructions"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Correct implementation of all search algorithms in a generic, extensible framework",
+                "Well-designed admissible heuristics with formal proofs and a novel custom domain",
+                "Rigorous empirical evaluation with proper experimental methodology",
+                "Professional documentation with clear analysis and reproducible results"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Game-Playing AI Agent",
+        "week_assigned": 4,
+        "week_due": 8,
+        "points": 150,
+        "description": "Build an AI agent that plays a strategic board game (Connect Four or Othello) at a competitive level using adversarial search techniques. Implement minimax with alpha-beta pruning, design a sophisticated evaluation function, and extend the agent with at least one advanced technique (iterative deepening, transposition tables, move ordering, or MCTS). Evaluate your agent in a tournament against baseline agents.",
+        "objectives": [
+          "Implement minimax with alpha-beta pruning for real-time game play",
+          "Design an evaluation function that captures strategic domain knowledge",
+          "Implement at least one advanced game-playing technique beyond basic alpha-beta",
+          "Conduct a tournament evaluating your agent against agents of varying strength"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Python source code for the game engine and AI agent with clear separation of concerns",
+          "Evaluation function documentation explaining each feature and its strategic rationale",
+          "Tournament results: win rates vs random, greedy, shallow-search, and deep-search opponents",
+          "Analysis report (4-5 pages) covering agent design decisions, evaluation function engineering, advanced technique implementation, and tournament analysis"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 45,
+            "criteria": [
+              "Minimax with alpha-beta pruning implemented correctly and efficiently",
+              "Game engine handles all legal moves, win detection, and draw conditions",
+              "Agent makes moves within a reasonable time limit (5 seconds per move)",
+              "At least one advanced technique (iterative deepening, transposition tables, MCTS, or move ordering) correctly implemented"
+            ]
+          },
+          "evaluation_function": {
+            "points": 40,
+            "criteria": [
+              "Evaluation function considers at least 4 distinct strategic features",
+              "Features are motivated by domain knowledge with clear explanations",
+              "Feature weights are tuned empirically or through automated optimization",
+              "Ablation study shows the contribution of each feature to agent performance"
+            ]
+          },
+          "tournament_evaluation": {
+            "points": 35,
+            "criteria": [
+              "Tournament against at least 4 opponents of varying strength",
+              "At least 100 games per matchup for statistical significance",
+              "Win rates, average game length, and average decision time reported",
+              "Analysis of agent strengths, weaknesses, and failure modes"
+            ]
+          },
+          "documentation": {
+            "points": 30,
+            "criteria": [
+              "Clear description of agent architecture and design decisions",
+              "Evaluation function features are well-motivated and documented",
+              "Advanced technique is explained and its impact on performance is measured",
+              "Report is well-written with proper figures and tables"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Correct and efficient adversarial search with advanced techniques",
+                "Sophisticated evaluation function with strategic domain knowledge",
+                "Rigorous tournament evaluation with statistical analysis",
+                "Professional documentation of design decisions and results"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Probabilistic Reasoning System",
+        "week_assigned": 9,
+        "week_due": 12,
+        "points": 120,
+        "description": "Design and implement a Bayesian network for a real-world diagnostic domain (medical diagnosis, system fault diagnosis, or environmental risk assessment). Build the network structure from domain knowledge, specify conditional probability tables, implement exact and approximate inference algorithms, and validate the system against ground truth data.",
+        "objectives": [
+          "Construct a Bayesian network with at least 12 nodes capturing a real diagnostic domain",
+          "Implement variable elimination for exact inference",
+          "Implement likelihood weighting or Gibbs sampling for approximate inference",
+          "Validate the system's diagnostic accuracy against a labeled test dataset"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Python source code for Bayesian network construction and inference",
+          "Network structure diagram with all CPTs documented and justified",
+          "Inference comparison: exact vs approximate results for 10 test queries with convergence analysis",
+          "Validation report (4-5 pages) with diagnostic accuracy metrics, sensitivity analysis on CPT values, and comparison to a baseline classifier"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 35,
+            "criteria": [
+              "Bayesian network with at least 12 nodes correctly implemented",
+              "Variable elimination produces correct exact inference results",
+              "Approximate inference converges to exact results with sufficient samples",
+              "Code handles evidence setting, multiple query variables, and all evidence patterns"
+            ]
+          },
+          "domain_modeling": {
+            "points": 30,
+            "criteria": [
+              "Network structure reflects genuine domain knowledge with justified independence assumptions",
+              "CPTs are realistic and sourced from domain literature or expert consultation",
+              "Network captures important causal relationships and explaining-away patterns",
+              "At least one d-separation analysis demonstrating conditional independence"
+            ]
+          },
+          "validation": {
+            "points": 35,
+            "criteria": [
+              "Diagnostic accuracy evaluated on at least 50 test cases",
+              "Comparison with a baseline classifier (e.g., naive Bayes or decision tree)",
+              "Sensitivity analysis showing how CPT perturbations affect diagnostic accuracy",
+              "Honest discussion of model limitations and failure cases"
+            ]
+          },
+          "documentation": {
+            "points": 20,
+            "criteria": [
+              "Network diagram is clear and professionally presented",
+              "CPT justifications reference domain sources",
+              "Inference algorithm implementation details are explained",
+              "Report is well-structured with proper methodology and results sections"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 120,
+              "criteria": [
+                "Correct Bayesian network implementation with exact and approximate inference",
+                "Well-motivated domain model with realistic structure and parameters",
+                "Rigorous validation with accuracy metrics and sensitivity analysis",
+                "Professional documentation with domain justification and honest limitations"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 4,
+        "title": "Integrated AI System — Final Project",
+        "week_assigned": 12,
+        "week_due": 15,
+        "points": 180,
+        "description": "Design and build an AI system that integrates at least three major techniques from the course (search, logic, probabilistic reasoning, machine learning, NLP, or computer vision) to solve a substantial real-world problem. The project must demonstrate how different AI techniques complement each other in a cohesive system. Suggested domains include an intelligent tutoring system, a diagnostic assistant, a game with strategic and perceptual components, or a question-answering system.",
+        "objectives": [
+          "Integrate at least three distinct AI techniques into a cohesive system",
+          "Demonstrate that the integration provides value beyond using any single technique alone",
+          "Evaluate the system rigorously on realistic inputs or scenarios",
+          "Present the system and its results in a professional final presentation"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Complete source code with clear documentation and architecture diagram",
+          "System demonstration (live or recorded) showing the system handling realistic scenarios",
+          "Final report (8-10 pages) covering problem motivation, system architecture, implementation details, evaluation methodology and results, and future work",
+          "15-minute final presentation with Q&A"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 60,
+            "criteria": [
+              "At least three distinct AI techniques correctly implemented and integrated",
+              "System handles realistic inputs and produces meaningful outputs",
+              "Integration is genuine — techniques interact and complement each other, not just run independently",
+              "Code is well-structured, documented, and demonstrates software engineering best practices"
+            ]
+          },
+          "system_design": {
+            "points": 40,
+            "criteria": [
+              "Architecture diagram clearly shows how components interact",
+              "Design decisions are justified with reference to the problem requirements",
+              "The choice of techniques for each subproblem is well-motivated",
+              "Scalability and performance considerations are addressed"
+            ]
+          },
+          "evaluation": {
+            "points": 40,
+            "criteria": [
+              "System evaluated on realistic test cases or scenarios",
+              "Ablation study shows the contribution of each AI technique",
+              "Comparison with simpler baselines demonstrates the value of the integrated approach",
+              "Failure cases are identified and analyzed honestly"
+            ]
+          },
+          "documentation": {
+            "points": 40,
+            "criteria": [
+              "Final report is comprehensive, well-written, and technically accurate",
+              "Presentation clearly communicates the system and results to a technical audience",
+              "Related work is discussed and the system is positioned in the broader AI landscape",
+              "Future work identifies concrete improvements and extensions"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 180,
+              "criteria": [
+                "Successful integration of multiple AI techniques into a cohesive system",
+                "Well-motivated design with justified technique choices",
+                "Rigorous evaluation demonstrating the value of integration",
+                "Professional documentation and presentation"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 20,
+      "description": "Five quizzes (weeks 3, 5, 8, 11, 14) covering search, logic, probability, learning, and perception. Each quiz contains 3-4 questions requiring problem solving, proofs, and analysis."
+    },
+    "lab_assignments": {
+      "percentage": 15,
+      "description": "Weekly lab exercises implementing core AI algorithms: search, CSP solvers, logic inference, Bayesian inference, and ML classifiers."
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "Four major projects: Search-Based Problem Solver, Game-Playing AI Agent, Probabilistic Reasoning System, and an Integrated AI Final Project."
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Written exam covering search algorithms, adversarial search, CSPs, knowledge representation, and propositional logic (weeks 1-8)."
+    },
+    "final_project": {
+      "percentage": 20,
+      "description": "Comprehensive final project integrating multiple AI techniques with written report and oral presentation."
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is expected for all lectures and mandatory for lab sessions. More than 3 unexcused absences may result in a reduced participation grade. Active participation in class discussions is valued.",
+    "late_submissions": "Late assignments lose 10% per day up to 5 days late. After 5 days, assignments receive zero credit. One 48-hour extension is granted per student per semester without penalty — use it wisely.",
+    "collaboration": "Discussion of AI concepts and algorithm design strategies is strongly encouraged. All code and written analysis must be individual work. Pair programming is not permitted on individual assignments. Clearly cite any external resources or discussions that influenced your work.",
+    "academic_integrity": "All submitted work must be your own. Using solutions from AI textbook solution manuals, online repositories, or AI code generation tools (GitHub Copilot, ChatGPT) on individual assignments constitutes plagiarism. Violations result in a zero on the assignment and a report to the academic integrity office.",
+    "technology_requirements": "Students need Python 3.12+ with NumPy, scikit-learn, matplotlib, and Jupyter Notebook. PyTorch is needed for the neural networks and vision sessions. Lab computers with all software pre-installed are available. GPU access through Google Colab is sufficient for deep learning assignments."
+  }
+}

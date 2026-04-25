@@ -1,0 +1,1456 @@
+{
+  "course_info": {
+    "course_id": "GD201",
+    "title": "2D Game Development",
+    "credit_hours": 4,
+    "duration": "15 weeks",
+    "meeting_schedule": "Monday, Wednesday, Friday - 4 hours per week",
+    "prerequisites": [
+      "CS115 - Programming for Games",
+      "GD101 - Introduction to Game Design"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "topic": "2D Engine Setup and Godot Project Architecture",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Compare 2D game engine options and evaluate trade-offs for different project types",
+        "Set up a Godot 4 project with proper directory structure and version control",
+        "Understand the scene tree architecture and node inheritance system",
+        "Configure viewport settings for pixel-perfect 2D rendering"
+      ],
+      "readings": [
+        "Godot Engine Documentation: Introduction to Godot 4",
+        "Game Programming Patterns by Robert Nystrom, Ch. 1-2 (Architecture, Overview)",
+        "Godot Documentation: Project Organization Best Practices"
+      ],
+      "lecture_notes": {
+        "introduction": "Welcome to 2D Game Development, a hands-on course that transforms your programming and design foundations into complete, polished 2D games using professional tools and industry-standard workflows. Over the next fifteen weeks, you will build progressively more complex game systems in the Godot 4 engine, culminating in a release-ready vertical slice. Two-dimensional games remain commercially vital and technically demanding -- titles like Celeste, Hollow Knight, and Dead Cells demonstrate that 2D development requires deep understanding of physics, animation, camera work, and player psychology. This course treats Godot not as a toy but as a production tool, and expects you to write code that ships rather than code that demos. Every system you build will be designed for extensibility, performance, and maintainability.",
+        "key_concepts": [
+          "Engine landscape: Godot 4 vs Unity 2D vs GameMaker Studio 2 -- licensing (MIT vs subscription), community size, export targets, and scripting languages",
+          "Godot's scene tree paradigm: every game object is a tree of nodes, scenes are reusable compositions that can be instantiated as child nodes within other scenes",
+          "GDScript fundamentals for programmers: duck-typed, Python-like syntax with optional static typing, @export annotations, signal-based communication",
+          "Project filesystem: res:// protocol, resource management, import presets for textures and audio, .import directory behavior",
+          "Version control for game projects: .gitignore configuration for Godot, Git LFS for binary assets over 1MB, branching strategy for feature development",
+          "Viewport configuration: base resolution (320x180 for pixel art, 640x360 for HD pixel art), stretch mode (canvas_items vs viewport), aspect ratio handling",
+          "Editor layout customization: docking panels, scene tree organization, output log monitoring, debugger breakpoints",
+          "Autoload singletons: global scripts that persist across scene changes for managers (audio, save data, game state)",
+          "Node communication patterns: direct reference vs signals vs groups -- when each is appropriate and maintainable",
+          "Build and export pipeline: one-click export templates, platform-specific settings, debug vs release builds"
+        ],
+        "demonstration": "Creating a new Godot 4 project from scratch: configuring viewport resolution at 320x180 with 4x stretch for pixel art, setting up a player scene hierarchy with Sprite2D and CharacterBody2D, writing basic eight-directional movement in GDScript with static typing, initializing a Git repository with a Godot-specific .gitignore, and testing the export pipeline to HTML5",
+        "setup_requirements": [
+          "Godot 4.2+ installed (standard or .NET version)",
+          "Git with LFS configured and initialized",
+          "Aseprite or LibreSprite for sprite editing",
+          "VS Code with godot-tools extension (optional, Godot has built-in editor)"
+        ],
+        "review": [
+          {
+            "key": "Scene Tree",
+            "value": "Godot's hierarchical node system where each game object is a tree of nodes, and scenes can be instantiated as nodes within other scenes, enabling deep composition and reuse"
+          },
+          {
+            "key": "CharacterBody2D",
+            "value": "Godot's kinematic physics body for player-controlled characters, providing move_and_slide() for built-in collision response with full developer control over movement logic"
+          },
+          {
+            "key": "Autoload Singleton",
+            "value": "A script registered in Project Settings that loads automatically and persists across scene changes, used for global managers like AudioManager, SaveManager, and GameState"
+          },
+          {
+            "key": "res:// Protocol",
+            "value": "Godot's virtual filesystem root pointing to the project directory, used for all resource paths and ensuring portability across operating systems"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 2,
+      "topic": "Scene Trees, Nodes, and Component Architecture",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Design scene hierarchies that promote reuse and separation of concerns",
+        "Implement node communication through signals, groups, and direct references",
+        "Build reusable components using Godot's scene composition pattern",
+        "Apply the single responsibility principle to node design"
+      ],
+      "readings": [
+        "Godot Documentation: Scenes and Nodes",
+        "Game Programming Patterns by Robert Nystrom, Ch. 14 (Component Pattern)",
+        "Godot Documentation: Signals"
+      ],
+      "lecture_notes": {
+        "introduction": "Scene composition is the backbone of maintainable game architecture in Godot. Unlike entity-component systems in other engines, Godot uses a hierarchical node tree where scenes are both the unit of composition and the unit of reuse. Today we explore how to design scene hierarchies that stay clean as your project grows from a prototype to a full game. The key insight is that a scene should represent a single logical entity -- a player, an enemy, a projectile, a UI panel -- and communicate with other scenes through well-defined interfaces rather than reaching deep into another scene's internal node structure. This discipline prevents the fragile coupling that makes large projects collapse under their own weight. We will build a component-style architecture within Godot's scene tree that gives you the flexibility of ECS patterns while leveraging Godot's native strengths.",
+        "key_concepts": [
+          "Node inheritance hierarchy: Node, Node2D, Control, and their specialized descendants -- choosing the right base class",
+          "Scene instancing: sub-scenes as prefabs, unique names with % syntax for stable internal references",
+          "Signal pattern: custom signals with typed parameters, connecting via editor vs code, one-to-many communication",
+          "Groups for broadcasting: adding nodes to groups at runtime, call_group() for one-to-many without direct coupling",
+          "Owner vs parent: understanding scene ownership for save/load and duplication",
+          "@export annotations: exposing node properties to the inspector for designer-friendly tuning",
+          "Resource sharing: when to use unique resources vs shared resources for materials, audio, and data",
+          "Scene change patterns: SceneTree.change_scene_to_packed() vs additive loading for seamless transitions",
+          "Node lifecycle: _ready(), _enter_tree(), _exit_tree(), _process(), _physics_process() and their execution order",
+          "Tool scripts: running editor-time code with @tool for visual previews and gizmos"
+        ],
+        "demonstration": "Building a reusable hitbox/hurtbox component system: creating a Hitbox scene (Area2D with CollisionShape2D) that emits a custom signal with damage data, a Hurtbox scene that receives hits and applies them to a health component, wiring them together on a player scene and an enemy scene without either knowing the other's internal structure",
+        "setup_requirements": [
+          "Godot 4 project from session 1",
+          "Understanding of GDScript signal syntax",
+          "Component architecture reference sheet (provided)"
+        ],
+        "review": [
+          {
+            "key": "Scene Instancing",
+            "value": "Loading a saved scene (.tscn) and adding it as a child node at runtime, enabling dynamic spawning of enemies, projectiles, effects, and UI elements"
+          },
+          {
+            "key": "Signals",
+            "value": "Godot's observer pattern implementation allowing nodes to emit typed events that other nodes connect to, enabling decoupled communication without direct references"
+          },
+          {
+            "key": "Groups",
+            "value": "Named sets of nodes that can be queried or called collectively, useful for broadcasting events like 'pause all enemies' without maintaining explicit lists"
+          },
+          {
+            "key": "Unique Name (%)",
+            "value": "The % prefix in scene tree paths provides a stable reference to a node regardless of its position in the hierarchy, preventing breakage when reorganizing the tree"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 3,
+      "topic": "Sprite Animation and Finite State Machines",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Create sprite sheets and configure AnimatedSprite2D with proper frame timing",
+        "Implement a finite state machine pattern for character behavior and animation",
+        "Handle animation transitions driven by physics state and player input",
+        "Apply squash, stretch, and anticipation principles to game sprites"
+      ],
+      "readings": [
+        "The Animator's Survival Kit by Richard Williams, Ch. 3-5 (Timing and Spacing)",
+        "Godot Documentation: AnimatedSprite2D and AnimationPlayer",
+        "Game Programming Patterns by Robert Nystrom, Ch. 7 (State Pattern)"
+      ],
+      "lecture_notes": {
+        "introduction": "Animation transforms static sprites into living characters. But animation in games is fundamentally different from animation in film because it must respond to unpredictable player input in real time. A film animator knows exactly when a character will jump; a game animator must prepare for a jump that could happen at any frame. This is why game character animation is driven by state machines rather than timelines. Today we build the state machine pattern that will underpin all character behavior in your games, and learn how to make sprites feel alive using the classical animation principles adapted for interactive media. The finite state machine is one of the most important patterns in game development -- it appears in character controllers, enemy AI, menu systems, and game flow management. Master it here and you will use it everywhere.",
+        "key_concepts": [
+          "Sprite sheets vs individual frames: atlas packing, memory implications, and GPU texture sampling efficiency",
+          "AnimatedSprite2D vs AnimationPlayer: frame-based animation for simple sprites vs property-based animation for complex sequences",
+          "Finite state machine pattern: states as classes or enums, transitions guarded by conditions, enter/exit callbacks for setup and cleanup",
+          "Core animation states: idle, run, jump_rise, jump_fall, land, attack, hurt, death -- and the transitions between them",
+          "Animation principles for games: squash and stretch on landing, anticipation frames before jumps, follow-through on attacks",
+          "AnimationTree and blend spaces: smooth transitions between animation states using blend parameters",
+          "Frame-independent animation: using delta time to ensure consistent animation speed across frame rates",
+          "One-shot animations: playing an animation once (attack slash, death) without looping, using animation_finished signal",
+          "Sprite flip and offset: flipping sprites for direction changes, handling asymmetric sprites and weapon attachment points",
+          "Animation events: calling functions at specific animation frames for spawning effects, playing sounds, or activating hitboxes"
+        ],
+        "demonstration": "Building a complete character animation state machine: creating a 6-frame run cycle and 4-frame idle animation in AnimatedSprite2D, implementing a state machine with enum states and a match statement, wiring state transitions to velocity.y and is_on_floor() checks, adding squash on landing using a Tween that scales the sprite, and triggering dust particle effects on state transitions",
+        "setup_requirements": [
+          "Sprite sheet assets (provided in course repository)",
+          "Godot project with CharacterBody2D player from sessions 1-2",
+          "Understanding of enums and match statements in GDScript"
+        ],
+        "review": [
+          {
+            "key": "Finite State Machine",
+            "value": "A design pattern where an object can be in exactly one state at a time, with defined transitions between states triggered by conditions or events, preventing invalid state combinations"
+          },
+          {
+            "key": "Sprite Sheet",
+            "value": "A single image containing multiple animation frames arranged in a grid, reducing draw calls and enabling efficient GPU texture sampling compared to individual frame files"
+          },
+          {
+            "key": "Animation Events",
+            "value": "Function calls triggered at specific frames during an animation, used to synchronize gameplay effects (sound, particles, hitbox activation) with visual animation timing"
+          },
+          {
+            "key": "Squash and Stretch",
+            "value": "An animation principle where objects compress on impact and elongate during fast movement, conveying weight and elasticity -- applied in games via Tween-driven scale changes"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 4,
+      "topic": "Tile Maps and Autotiling Systems",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Configure TileMap nodes with physics layers, navigation layers, and custom data",
+        "Set up terrain autotiling for seamless environment construction",
+        "Design levels using tile-based collision and one-way platforms",
+        "Implement scene tiles for interactive level elements"
+      ],
+      "readings": [
+        "Godot Documentation: TileMap and TileSet",
+        "Level Design: Processes and Experiences by Christopher Totten, Ch. 2-3",
+        "Godot Documentation: Using TileMap Terrains"
+      ],
+      "lecture_notes": {
+        "introduction": "Tile maps are the backbone of 2D level construction, used in genres from platformers to RPGs to strategy games. They provide memory-efficient rendering of large levels, structured collision detection, and a workflow that enables rapid level design iteration. Godot 4 overhauled its TileMap system with a terrain-based autotiling approach that replaces the older bitmask system, making it faster to build complex environments while maintaining full control over tile placement. Understanding tile maps deeply means understanding how to separate visual layers from collision layers from navigation layers, enabling complex level behaviors like destructible terrain, hidden passages, and dynamic environment changes. Today we build a complete tilemap workflow from raw tileset art to a playable level with physics, platforms, and interactive elements.",
+        "key_concepts": [
+          "TileSet configuration: tile size (16x16, 32x32), physics layers for collision, navigation layers for pathfinding, custom data layers for metadata",
+          "Terrain autotiling: Godot 4's terrain system with peering bits that automatically select correct tile variants for seamless ground, walls, and transitions",
+          "Collision layers and masks: separating player (layer 1), enemies (layer 2), projectiles (layer 3), environment (layer 4) for selective collision",
+          "One-way platforms: configuring platform collision on specific tiles so characters can jump through from below but stand on top",
+          "Scene tiles: embedding full scenes (moving platforms, breakable blocks, spike traps) directly into the TileMap for complex level elements",
+          "Multiple TileMap layers: background decoration, main collision, foreground overlay as separate layers in a single TileMap node",
+          "Tile animations: configuring animated tiles (flowing water, flickering torches) directly in the TileSet without code",
+          "Navigation regions: painting walkable areas for enemy pathfinding using NavigationRegion2D baked from TileMap data",
+          "Level design principles: teaching mechanics through layout, safe spaces for learning, visual signposting, hidden reward areas",
+          "TileMap optimization: culling off-screen tiles, using multiple smaller TileMaps for independently scrolling layers"
+        ],
+        "demonstration": "Building a platformer level from scratch: importing a 16x16 tileset sprite sheet, configuring terrain autotiling for ground tiles with corner and edge pieces, adding physics collision shapes per tile, placing one-way platform tiles with the platform collision property, creating a moving platform as a scene tile with AnimatableBody2D, and painting a complete level with background and foreground layers",
+        "setup_requirements": [
+          "Tileset sprite sheet (provided: 16x16 pixel tiles, 12 terrain variants)",
+          "Godot project with animated player character from previous sessions",
+          "Level design sketch on grid paper (homework from previous session)"
+        ],
+        "review": [
+          {
+            "key": "Terrain Autotiling",
+            "value": "A system where the engine automatically selects the correct tile variant based on neighboring tiles using peering bits, handling corners, edges, and transitions without manual tile selection"
+          },
+          {
+            "key": "Collision Layers and Masks",
+            "value": "Layer defines what physics group an object belongs to; Mask defines what groups the object detects collisions with, enabling selective interaction between game object categories"
+          },
+          {
+            "key": "Scene Tiles",
+            "value": "TileMap cells that contain embedded scene instances rather than static sprites, enabling complex interactive elements like moving platforms or breakable blocks within the tile grid"
+          },
+          {
+            "key": "Navigation Layers",
+            "value": "TileMap data layers that define walkable and non-walkable areas, baked into NavigationRegion2D meshes for AI pathfinding through tile-based levels"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 5,
+      "topic": "2D Physics: Rigid Bodies, Kinematic Bodies, and Static Bodies",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Configure RigidBody2D, CharacterBody2D, and StaticBody2D for different gameplay roles",
+        "Implement Area2D detection zones for triggers, pickups, and damage regions",
+        "Tune physics parameters for responsive game feel",
+        "Apply coyote time, input buffering, and variable jump height for polished platforming"
+      ],
+      "readings": [
+        "Game Feel by Steve Swink, Ch. 4-6",
+        "Godot Documentation: Physics Introduction (2D)",
+        "Building Better Jumps (GDC talk notes by Kyle Pittman)"
+      ],
+      "lecture_notes": {
+        "introduction": "Physics in 2D games is almost never about simulating reality. It is about manufacturing feel. The jump in Super Mario Bros. violates every law of Newtonian mechanics and it feels perfect because the physics parameters were tuned for player satisfaction rather than physical accuracy. Today we explore the three physics body types in Godot and learn how to configure and tune them so that movement, collisions, and interactions feel responsive and satisfying. We will implement the trio of platformer polish techniques -- coyote time, input buffering, and variable jump height -- that separate amateur-feeling platformers from professional ones. Understanding when to use physics simulation versus kinematic control is a critical design decision: RigidBody2D for objects that should bounce and tumble realistically, CharacterBody2D for player-controlled entities that need precise control, and StaticBody2D for immovable world geometry. Mixing these correctly creates a world that feels both responsive and physically grounded.",
+        "key_concepts": [
+          "CharacterBody2D: developer-controlled movement with move_and_slide(), is_on_floor(), is_on_wall() for precise platformer mechanics",
+          "RigidBody2D: physics-simulated body with mass, friction, bounce -- ideal for crates, projectiles, ragdolls, and physics puzzles",
+          "StaticBody2D: immovable collision geometry for level walls, floors, and static obstacles with optional constant velocity for conveyors",
+          "Area2D: detection zones without physics response -- used for hitboxes, hurtboxes, item pickups, trigger zones, and hazard areas",
+          "Physics material properties: friction coefficients, bounce (restitution), and their compound effect when two materials interact",
+          "Coyote time implementation: a 100-150ms timer after leaving a ledge during which jump is still allowed, using a Timer node or frame counter",
+          "Input buffering: storing a jump press for 80-120ms so that pressing jump slightly before landing still registers on contact",
+          "Variable jump height: applying higher gravity when the jump button is released mid-jump, giving players control over jump arc",
+          "Raycasting for detection: ShapeCast2D and RayCast2D for ground checks, wall detection, ledge detection, and line-of-sight queries",
+          "Physics layers strategy: organizing collision layers by game role (player, enemy, projectile, environment, trigger) for clean interaction rules"
+        ],
+        "demonstration": "Implementing platformer physics polish: adding coyote time with a 150ms Timer node that starts when leaving a ledge, input buffering with a 100ms jump press memory using another Timer, variable jump height by multiplying gravity by 2.5 when the jump button is released and velocity.y is negative, and wall sliding with 0.3x gravity multiplier when pressing against a wall with is_on_wall()",
+        "setup_requirements": [
+          "Godot project with TileMap level and animated player from previous sessions",
+          "Timer node documentation reference",
+          "Physics debug visualization enabled in project settings"
+        ],
+        "review": [
+          {
+            "key": "Coyote Time",
+            "value": "A 100-200ms grace period after walking off a ledge during which the player can still jump, named after Wile E. Coyote's delayed falls, bridging the gap between visual perception and frame-perfect input"
+          },
+          {
+            "key": "Input Buffering",
+            "value": "Storing player input for a short window (80-120ms) so that a jump press slightly before landing still registers, reducing frustration from strict timing requirements"
+          },
+          {
+            "key": "Variable Jump Height",
+            "value": "Applying increased gravity when the jump button is released during ascent, allowing players to control jump arc height by holding or tapping the jump button"
+          },
+          {
+            "key": "Area2D",
+            "value": "A non-physics detection zone that reports overlapping bodies and areas through signals without applying forces, used for triggers, pickups, damage zones, and interaction prompts"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Camera Systems and Parallax Scrolling",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Implement a camera system with smooth following, look-ahead, and room boundaries",
+        "Create multi-layer parallax backgrounds for depth perception",
+        "Design camera behaviors that adapt to different gameplay contexts",
+        "Implement screen shake and camera trauma for impact feedback"
+      ],
+      "readings": [
+        "Scroll Back: The Theory and Practice of Cameras in Side-Scrollers by Itay Keren",
+        "Godot Documentation: Camera2D and ParallaxBackground",
+        "Math for Game Programmers: Cameras in Side-Scrollers (GDC 2015)"
+      ],
+      "lecture_notes": {
+        "introduction": "The camera is the player's window into your game world, and a bad camera can ruin an otherwise excellent game. Players never notice a good camera because it anticipates their needs, showing them what they need to see before they know they need to see it. The discipline of camera programming in 2D games is deeper than most developers expect: smooth interpolation to prevent motion sickness, look-ahead to reveal upcoming terrain, room-based transitions for Metroidvania-style level design, and impact feedback through screen shake all contribute to the player's experience. Today we study the full spectrum of 2D camera techniques, from the simple follow camera to the sophisticated multi-zone camera systems used in professional titles. We will also implement parallax scrolling, the technique that creates an illusion of depth in 2D worlds by moving background layers at different rates relative to the camera, a technique as old as the arcade era that remains essential in modern 2D games.",
+        "key_concepts": [
+          "Camera2D node: position smoothing (smoothing_enabled, smoothing_speed), drag margins for dead zone behavior, position offset for manual adjustment",
+          "Look-ahead: shifting camera position toward the player's facing direction or movement velocity to reveal upcoming terrain",
+          "Camera limits: bounding the camera to room or level boundaries so the viewport never shows outside the game world",
+          "Room-based cameras: detecting room boundaries with Area2D triggers and smoothly transitioning camera limits between rooms",
+          "ParallaxBackground and ParallaxLayer: configuring motion_scale (0.2 for distant sky, 0.5 for midground hills, 0.8 for near foliage) for depth",
+          "Screen shake: adding random offset to camera position with exponential decay for impact feedback, using trauma accumulation for compound shake",
+          "Camera zoom and transitions: Tween-based zoom changes for boss introductions, area reveals, or focus effects",
+          "Vertical camera behavior: leading the camera downward when the player falls, snapping to landing height to prevent disorientation"
+        ],
+        "demonstration": "Building a complete camera system: configuring Camera2D with smooth follow at speed 5.0, horizontal look-ahead of 40 pixels based on player facing direction, camera limits matching room boundaries, three-layer parallax background with motion_scale values of 0.2, 0.5, and 0.8, and a screen shake system using trauma accumulation with random offset and rotational shake decaying exponentially",
+        "setup_requirements": [
+          "Godot project with playable character and TileMap level",
+          "Parallax background art layers (provided: sky, mountains, trees)",
+          "Tween documentation for camera effects"
+        ],
+        "review": [
+          {
+            "key": "Parallax Scrolling",
+            "value": "A technique where background layers scroll at different speeds relative to the camera, creating depth illusion; layer with motion_scale 0.2 moves at 20% of camera speed, appearing distant"
+          },
+          {
+            "key": "Camera Look-Ahead",
+            "value": "Offsetting the camera in the player's movement direction to reveal upcoming terrain, typically 30-60 pixels ahead, reducing reactive surprises"
+          },
+          {
+            "key": "Camera Trauma",
+            "value": "An accumulated shake intensity value (0.0-1.0) that drives random camera offset and rotation, with exponential decay, allowing multiple hits to compound shake rather than restart it"
+          },
+          {
+            "key": "Dead Zone",
+            "value": "A rectangular area around screen center where the player can move without the camera following, preventing jittery camera movement during small position adjustments"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Particle Systems and Visual Effects",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Create GPU-accelerated particle effects for player feedback and environmental ambiance",
+        "Configure particle parameters for different effect types: explosions, trails, ambient",
+        "Implement one-shot vs continuous particle emitters with proper lifecycle management",
+        "Integrate particle effects with gameplay events through signals and animation events"
+      ],
+      "readings": [
+        "Godot Documentation: GPUParticles2D",
+        "The Art of Game Design by Jesse Schell, Ch. 21 (Aesthetics and Juiciness)",
+        "Juice It or Lose It (GDC talk by Martin Jonasson and Petri Purho)"
+      ],
+      "lecture_notes": {
+        "introduction": "Particle systems are the primary tool for adding visual juice to 2D games. Juice is the collection of small, satisfying visual and audio feedback that makes every player action feel impactful. A jump without dust feels weightless; a hit without sparks feels weak; a coin without a shimmer feels worthless. Particles are computationally cheap when GPU-accelerated, visually rich, and infinitely tuneable -- making them the highest return-on-investment visual polish you can add to a game. Today we cover the full particle authoring pipeline in Godot 4, from understanding the GPU particle simulation model to building a library of reusable effects that you will use throughout your projects. We will build dust kicks, impact sparks, collection sparkles, death explosions, and ambient atmospheric particles, learning how each parameter in the particle system contributes to the final visual effect.",
+        "key_concepts": [
+          "GPUParticles2D vs CPUParticles2D: GPU particles for large quantities with compute shader simulation, CPU particles for compatibility and physics interaction",
+          "ParticleProcessMaterial: emission shape (point, sphere, box, ring), initial velocity, acceleration, gravity, damping over lifetime",
+          "Color gradients over lifetime: particles that fade from bright white to orange to transparent for fire, or from white to gray for smoke",
+          "Scale curves: particles that grow then shrink, or start large and shrink to nothing, controlled by scale_curve property",
+          "One-shot emitters: emitting=true with one_shot=true for explosions and impacts, auto-freeing with queue_free() after finished signal",
+          "Trail effects: using sub-emitters or ribbon trails behind moving objects like projectiles and dashing characters",
+          "Ambient particles: continuous low-density emitters for dust motes, rain, snow, floating embers that build atmosphere",
+          "Blend modes: additive blending for glowing effects (fire, magic), alpha blending for solid particles (dust, debris)",
+          "Performance budgeting: particle count limits, LOD-based emission reduction, culling off-screen emitters",
+          "Effect library pattern: creating a ParticleEffects autoload that spawns pre-configured particle scenes at world positions"
+        ],
+        "demonstration": "Building five particle effects: (1) dust kick on landing with radial emission and gravity, (2) speed lines during dash with directional emission, (3) coin collection sparkle with upward burst and color gradient, (4) enemy death explosion with sub-emitter for secondary debris, (5) ambient dust motes floating across the level with turbulence -- all spawned through a reusable ParticleEffects manager singleton",
+        "setup_requirements": [
+          "Godot project with playable platformer from previous sessions",
+          "Particle texture atlas (provided: circle, square, star, smoke puff, spark)",
+          "GPUParticles2D reference cheat sheet"
+        ],
+        "review": [
+          {
+            "key": "GPUParticles2D",
+            "value": "Hardware-accelerated particle system where emission, movement, color, and scale are computed on the GPU via ParticleProcessMaterial, enabling thousands of particles with minimal CPU overhead"
+          },
+          {
+            "key": "One-Shot Emitter",
+            "value": "A particle system configured to emit once and stop, used for discrete events like explosions and impacts; must be freed after particles expire to prevent memory leaks"
+          },
+          {
+            "key": "Particle Lifetime Curves",
+            "value": "Property curves that control how particle attributes (scale, color, velocity) change from emission to death, enabling effects like fire that starts bright and fades to smoke"
+          },
+          {
+            "key": "Additive Blending",
+            "value": "A blend mode where particle colors are added to the background rather than replacing it, creating glowing effects where overlapping particles become brighter"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Audio Integration and Sound Design",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Implement a complete audio system with music, sound effects, and ambient audio",
+        "Configure audio buses with effects processing for different sound categories",
+        "Synchronize audio playback with gameplay events and animation frames",
+        "Manage audio resource loading and memory for large sound libraries"
+      ],
+      "readings": [
+        "A Sound Effect Walks Into a Bar by Marshall McGee (GDC 2014)",
+        "Godot Documentation: Audio Buses and AudioStreamPlayer2D",
+        "Game Audio Programming by Guy Somberg, Ch. 1-3"
+      ],
+      "lecture_notes": {
+        "introduction": "Audio is the most underappreciated element in game development, yet removing sound from any beloved game immediately reveals how much of the experience it carries. Sound provides feedback faster than visuals because audio processing in the human brain is approximately 20-50 milliseconds faster than visual processing. A jump sound confirms the input before the character visibly leaves the ground. An enemy alert sound gives the player reaction time before the threat is visible. A well-designed audio system is not an afterthought bolted onto finished gameplay -- it is a core feedback channel that operates in parallel with visual feedback. Today we build a professional audio pipeline in Godot, covering the bus routing system, spatial audio for positional effects, resource management strategies for large sound libraries, and the AudioManager singleton pattern that provides a clean API for the rest of your game code.",
+        "key_concepts": [
+          "AudioStreamPlayer vs AudioStreamPlayer2D: non-positional for music and UI sounds, positional for world-space effects with distance attenuation",
+          "Audio bus routing: Master bus, Music bus, SFX bus, Ambient bus -- each with independent volume and effects chains",
+          "Bus effects: reverb for caves, low-pass filter for underwater or muffled scenes, compressor for consistent loudness, chorus for ethereal effects",
+          "Sound variation: randomizing pitch (0.9-1.1) and selecting from multiple samples to prevent repetitive audio",
+          "Audio pooling: pre-instantiating AudioStreamPlayer nodes to avoid allocation during gameplay, recycling finished players",
+          "Music crossfading: smoothly transitioning between background tracks using Tween on volume_db with overlapping playback",
+          "Adaptive audio: changing music layers or intensity based on gameplay state (exploration vs combat vs boss)",
+          "Audio import settings: WAV for short effects (low latency), OGG Vorbis for music (streaming, smaller file size)",
+          "Spatial audio: attenuation curves, max distance, area-based audio zones for rooms with different reverb",
+          "AudioManager singleton: centralized API for play_sfx(), play_music(), crossfade(), set_bus_volume() used throughout the project"
+        ],
+        "demonstration": "Building a complete AudioManager autoload: configuring audio buses (Master, Music, SFX, Ambient) with appropriate effects, implementing play_sfx() with pitch randomization and pooled players, play_music() with crossfade support, connecting player actions (jump, land, attack, hurt) to sound effects via the animation state machine, and adding positional AudioStreamPlayer2D nodes to environmental elements (waterfall, torch, machinery)",
+        "setup_requirements": [
+          "Godot project with playable platformer",
+          "Sound effect library (provided: 20 WAV files for player actions, enemies, UI)",
+          "Music tracks (provided: 2 OGG Vorbis loops for exploration and combat)",
+          "Audio bus layout reference diagram"
+        ],
+        "review": [
+          {
+            "key": "Audio Bus Routing",
+            "value": "A hierarchical mixer system where sounds are routed through categorized buses (Music, SFX, Ambient) that feed into the Master bus, enabling independent volume control and effects per category"
+          },
+          {
+            "key": "Sound Variation",
+            "value": "Randomizing pitch within a small range and selecting from multiple audio samples for the same event to prevent the machine-gun effect where identical sounds played rapidly sound artificial"
+          },
+          {
+            "key": "Audio Pooling",
+            "value": "Pre-creating a pool of AudioStreamPlayer nodes that are reused rather than instantiated per sound, avoiding frame-rate hitches from node allocation during gameplay"
+          },
+          {
+            "key": "Adaptive Audio",
+            "value": "Music that responds to gameplay state by adding or removing layers, changing intensity, or crossfading to different tracks based on combat, exploration, or narrative context"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "Save/Load Systems and Data Persistence",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Design a resource-based save/load system using Godot's Resource class",
+        "Implement persistent game state that survives application restarts",
+        "Handle save data versioning for forward compatibility",
+        "Build error recovery for corrupted or missing save files"
+      ],
+      "readings": [
+        "Game Programming Patterns by Robert Nystrom, Ch. 11 (Serialization)",
+        "Godot Documentation: Saving and Loading (Serialization)",
+        "Godot Documentation: Custom Resources"
+      ],
+      "lecture_notes": {
+        "introduction": "A save system is the contract between your game and your player: their progress will not be lost. Breaking this contract -- through corruption, incompatibility, or data loss -- is one of the fastest ways to lose a player permanently. Save systems appear simple on the surface but contain deep technical challenges: what data needs saving, how to serialize complex object graphs, how to handle save file versions when the game updates, and how to recover gracefully when save data is corrupted or missing. Today we build a professional save system in Godot using custom Resources for type-safe serialization, with versioned save formats that can be migrated forward as your game evolves. We will also implement the SaveManager autoload that provides a clean API for the rest of your code and handles all the edge cases that trip up novice developers: first-time players with no save file, corrupted saves that need graceful fallback, and multiple save slots for player convenience.",
+        "key_concepts": [
+          "What to save: player position, health, inventory, quest flags, world modifications, settings, play time -- versus what to derive at load time",
+          "Godot Custom Resources: extending Resource class to create typed, serializable data containers with @export properties",
+          "ResourceSaver and ResourceLoader: binary .res format (fast, compact) vs text .tres format (human-readable, diffable)",
+          "JSON serialization alternative: using FileAccess with JSON for cross-platform save files and web export compatibility",
+          "Save file versioning: including a version number in save data and writing migration functions to upgrade old saves to current format",
+          "Encryption: using FileAccess.WRITE_ENCRYPTED for protecting save files from casual tampering in competitive or achievement-based games",
+          "Save file locations: user:// directory per-platform behavior (AppData on Windows, ~/.local on Linux, Library on macOS)",
+          "Autosave strategy: checkpoint-based saves at room transitions, timed autosaves every N minutes, manual save at save points",
+          "Error handling: try-catch around file operations, fallback to defaults on corrupt data, backup save files before overwriting",
+          "Settings persistence: separate settings save (volume, controls, display) from game progress save for independent management"
+        ],
+        "demonstration": "Building a complete SaveManager: creating a custom GameSaveData Resource with @export properties for player state, inventory, and level progress; implementing save_game() that writes to user://save_slot_N.tres with a backup of the previous save; implementing load_game() with version checking and migration; adding error handling that creates a default save state on first play or corruption; and connecting autosave triggers to room transition signals",
+        "setup_requirements": [
+          "Godot project with multiple game elements that need persisting",
+          "FileAccess and ResourceSaver documentation reference",
+          "Test save data for corruption recovery testing"
+        ],
+        "review": [
+          {
+            "key": "Custom Resource",
+            "value": "A class extending Godot's Resource that defines typed, serializable properties using @export, providing type-safe save data containers that the engine can serialize and deserialize automatically"
+          },
+          {
+            "key": "Save File Versioning",
+            "value": "Including a format version number in save data and implementing migration functions that transform old save formats to the current schema, preventing data loss when the game updates"
+          },
+          {
+            "key": "user:// Directory",
+            "value": "Godot's platform-independent writable directory for save files, mapped to OS-appropriate locations (AppData, ~/Library, ~/.local) automatically"
+          },
+          {
+            "key": "Autosave Strategy",
+            "value": "Automatic save triggers at design-appropriate moments (room transitions, boss defeats, timed intervals) that protect player progress without requiring manual save actions"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "UI Systems: HUD, Menus, and Inventory",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Build responsive UI layouts using Godot's Control node system",
+        "Implement a HUD that displays health, score, and inventory in real time",
+        "Create menu screens with keyboard, gamepad, and mouse navigation",
+        "Design an inventory system with drag-and-drop and tooltip support"
+      ],
+      "readings": [
+        "Godot Documentation: GUI Tutorial and Control Nodes",
+        "Game UI Patterns by Anders Toxboe, Ch. 3 (HUD Design)",
+        "Godot Documentation: Theme System"
+      ],
+      "lecture_notes": {
+        "introduction": "User interface is where your game communicates its state to the player, and where the player communicates their intent to the game outside of direct character control. A well-designed UI is invisible -- the player reads their health bar, navigates menus, and manages inventory without ever feeling like they left the game world. Godot separates its UI system into a dedicated Control node tree that renders in screen space rather than world space, with a powerful layout system based on anchors, margins, and container nodes that handle responsive positioning. Today we build the three core UI systems that every 2D game needs: a heads-up display (HUD) that reacts to game state in real time, a menu system with proper focus navigation for gamepad support, and an inventory screen that demonstrates Godot's drag-and-drop capabilities. We will also explore Godot's Theme system, which allows you to style all UI elements consistently and swap visual themes without changing any code.",
+        "key_concepts": [
+          "Control nodes vs Node2D: screen-space rendering, anchor-based positioning, layout containers (HBox, VBox, Grid, Margin)",
+          "CanvasLayer for UI: separating HUD from game world so camera movement and zoom do not affect UI position",
+          "Anchors and margins: positioning UI elements relative to screen edges for resolution-independent layouts",
+          "Theme system: defining fonts, colors, styles for all Control node types in a centralized Theme resource",
+          "HUD data binding: connecting UI elements to game state through signals or direct polling in _process()",
+          "Menu navigation: FocusMode, focus_neighbor properties, and grab_focus() for keyboard/gamepad-navigable menus",
+          "Inventory data model: separating inventory data (Array of item Resources) from inventory display (GridContainer of ItemSlot scenes)",
+          "Drag and drop: implementing _get_drag_data(), _can_drop_data(), _drop_data() on inventory slots for item rearrangement",
+          "Screen transitions: fade-to-black using ColorRect with Tween animation between menu screens and game scenes",
+          "Pause menu: implementing pause with get_tree().paused and process_mode settings to keep UI responsive while the game is frozen"
+        ],
+        "demonstration": "Building a complete UI layer: creating a CanvasLayer HUD with animated health bar (TextureProgressBar with Tween for smooth value changes), score counter with number rolling animation, mini-map placeholder, and key item display; implementing a pause menu with resume/settings/quit options navigable by keyboard and gamepad; and prototyping an inventory grid with drag-and-drop item movement between slots",
+        "setup_requirements": [
+          "Godot project with playable game from previous sessions",
+          "UI sprite sheet (provided: health bar frames, item icons, button nine-patches)",
+          "Theme resource template (provided)"
+        ],
+        "review": [
+          {
+            "key": "CanvasLayer",
+            "value": "A rendering layer that draws its children in screen space independent of Camera2D transforms, essential for HUD elements that must stay fixed on screen"
+          },
+          {
+            "key": "Anchors and Margins",
+            "value": "The system for positioning Control nodes relative to their parent's edges (0.0-1.0 normalized), enabling resolution-independent UI layouts that adapt to different screen sizes"
+          },
+          {
+            "key": "Focus Navigation",
+            "value": "The system for navigating between focusable UI elements using directional input, enabling keyboard and gamepad menu navigation without mouse dependency"
+          },
+          {
+            "key": "Theme Resource",
+            "value": "A centralized styling resource that defines visual properties (fonts, colors, textures, margins) for all Control node types, enabling consistent UI appearance and easy theme swapping"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "Enemy AI Patterns and Behavior Design",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Implement enemy AI using state machines with patrol, detect, chase, and attack states",
+        "Design multiple enemy archetypes with distinct behavior patterns",
+        "Build a hitbox/hurtbox combat system with invincibility frames",
+        "Tune enemy AI parameters for fair, readable combat encounters"
+      ],
+      "readings": [
+        "Game Programming Patterns by Robert Nystrom, Ch. 7 (State) and Ch. 3 (Observer)",
+        "AI for Games by Ian Millington, Ch. 5 (Decision Making)",
+        "Godot Documentation: NavigationAgent2D"
+      ],
+      "lecture_notes": {
+        "introduction": "Enemy AI is where game design and game programming converge most visibly. A well-designed enemy teaches the player through its behavior: its tells telegraph attacks, its patrol patterns create timing puzzles, and its vulnerabilities reward observation and skill. Today we apply the state machine pattern we learned for player animation to enemy behavior, building AI that is predictable enough to be fair but complex enough to be engaging. The goal is not to create the smartest AI possible -- it is to create AI that produces fun gameplay. This means enemies that have clear visual tells before attacking, patrol routes the player can learn and exploit, detection ranges that feel fair, and recovery windows where the player can counterattack. We will build three enemy archetypes that demonstrate fundamentally different AI approaches: a patrolling ground enemy, a flying enemy that tracks the player, and a stationary turret that shoots projectiles on a timer.",
+        "key_concepts": [
+          "Enemy state machine: idle, patrol, detect, chase, attack, hurt, death states with clear transition conditions",
+          "Patrol behavior: waypoint-based movement using Path2D or marker nodes, with pause duration at each waypoint",
+          "Detection systems: RayCast2D for line-of-sight, Area2D for proximity detection, combining both for realistic awareness",
+          "Chase behavior: direct pursuit vs NavigationAgent2D pathfinding, speed limits, and giving up after losing sight",
+          "Attack patterns: melee attack with telegraph animation and hitbox activation, ranged attack with projectile spawning",
+          "Hitbox/hurtbox separation: attack hitboxes that only exist during attack animation frames, hurtboxes always active for receiving damage",
+          "Invincibility frames: a brief period after taking damage where additional hits are ignored, communicated by sprite flashing",
+          "Enemy knockback: applying velocity on hit for physical feedback, varying knockback by attack type",
+          "Damage numbers: spawning floating text labels that rise and fade on hit for clear damage communication",
+          "Enemy spawning: using marker nodes in levels to define spawn points, respawn rules, and maximum active enemy counts"
+        ],
+        "demonstration": "Building three enemy types: (1) a Patrol Slime with patrol/detect/chase states using waypoints and Area2D detection, (2) a Flying Eye that hovers and swoops at the player using NavigationAgent2D, (3) a Skeleton Archer that stands on platforms and fires projectiles at intervals when the player is in line-of-sight range -- all sharing a common EnemyBase class with health, hurt, and death behavior, using the hitbox/hurtbox component system from week 2",
+        "setup_requirements": [
+          "Godot project with player combat (attack animation, hitbox)",
+          "Enemy sprite sheets (provided: slime, flying eye, skeleton archer)",
+          "Hitbox/hurtbox component scenes from week 2"
+        ],
+        "review": [
+          {
+            "key": "Enemy State Machine",
+            "value": "A finite state machine governing enemy behavior with states like patrol, detect, chase, attack, hurt, and death, where transitions are driven by proximity to player, line-of-sight, and health"
+          },
+          {
+            "key": "Hitbox/Hurtbox System",
+            "value": "Separating offensive collision (hitbox, active only during attack frames) from defensive collision (hurtbox, always active), enabling precise combat interaction without permanent damage zones"
+          },
+          {
+            "key": "Invincibility Frames",
+            "value": "A brief period (0.3-0.8 seconds) after taking damage where the entity cannot be hit again, preventing multiple hits from a single attack and giving recovery time"
+          },
+          {
+            "key": "Attack Telegraph",
+            "value": "A visual warning animation or effect that plays before an enemy attack connects, giving the player time to react and making combat feel fair rather than arbitrary"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Polish, Juice, and Screen Shake",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Apply 'game juice' techniques systematically to improve game feel",
+        "Implement hit stop, screen flash, and chromatic aberration for impact emphasis",
+        "Add post-processing effects using Godot's shader and environment systems",
+        "Create a polish checklist methodology for evaluating game feel"
+      ],
+      "readings": [
+        "Game Feel by Steve Swink, Ch. 8-10",
+        "Juice It or Lose It (GDC presentation by Martin Jonasson and Petri Purho)",
+        "Godot Documentation: Shaders and CanvasItem Shaders"
+      ],
+      "lecture_notes": {
+        "introduction": "Polish is what transforms a functional prototype into a game that feels good to play. The term 'juice' -- coined by the indie game development community -- refers to the accumulation of small feedback effects that make every player action feel impactful and satisfying. A button press without audio, visual, and haptic feedback feels broken even if it functions correctly. Today we catalog and implement the full spectrum of juice techniques available in 2D games, from the fundamental (screen shake, hit stop, particle bursts) to the advanced (chromatic aberration on damage, time dilation for dramatic moments, dynamic music intensity). The key insight is that polish is not cosmetic -- it is functional feedback that communicates game state to the player. Screen shake tells the player an impact was powerful. Hit stop tells them their attack connected. A flash of white on the enemy confirms damage was dealt. Every juice technique encodes information, and a well-juiced game communicates its mechanics more clearly than a dry one ever could.",
+        "key_concepts": [
+          "Hit stop (frame freeze): pausing the game for 2-5 frames on heavy impacts to emphasize the moment of contact",
+          "Screen shake refinement: trauma-based system with independent x/y offset and rotation, exponential decay, configurable frequency via noise",
+          "Screen flash: brief white ColorRect overlay (0.05s) on damage dealt, brief red tint on damage received",
+          "Time dilation: Engine.time_scale manipulation for slow-motion effects on special moves, boss kills, or dramatic moments",
+          "Chromatic aberration shader: separating RGB channels by a small offset on damage or speed boost for visual intensity",
+          "Sprite white flash: shader that overrides sprite color to white for one frame on hit, confirming damage was dealt",
+          "Tween-based animations: using Tweens for UI element pop-in, number scaling, and any property that needs smooth interpolation",
+          "Post-processing: CRT scanline shader, vignette, bloom for stylistic consistency",
+          "Camera punch: a quick camera offset in the direction of an attack for directional impact emphasis",
+          "Audio synchronization with juice: layering sound effects with visual effects for compound feedback (hit sound + screen shake + particles + hit stop = satisfying combat)"
+        ],
+        "demonstration": "Adding juice to the platformer: implementing hit stop with get_tree().create_timer(0.05) and Engine.time_scale = 0.0, screen flash with a CanvasLayer ColorRect tween, sprite white flash using a simple CanvasItem shader, camera punch on player attack, time slow on the final enemy kill with Engine.time_scale = 0.3 ramping back to 1.0, and a CRT scanline post-processing shader for visual style",
+        "setup_requirements": [
+          "Godot project with combat system and enemies from previous sessions",
+          "Shader reference (provided: white flash, chromatic aberration, CRT scanline)",
+          "Stopwatch or frame counter for timing verification"
+        ],
+        "review": [
+          {
+            "key": "Hit Stop",
+            "value": "Freezing the game for 2-5 frames (33-83ms at 60fps) on heavy impacts to emphasize the moment of contact, conveying weight and power through temporal manipulation"
+          },
+          {
+            "key": "Game Juice",
+            "value": "The accumulation of feedback effects (screen shake, particles, sound, animation, camera) that make player actions feel impactful and satisfying, encoding game state information through sensation"
+          },
+          {
+            "key": "Time Dilation",
+            "value": "Modifying Engine.time_scale to slow or speed game time for dramatic emphasis, with physics_process and process delta automatically adjusted"
+          },
+          {
+            "key": "Sprite White Flash Shader",
+            "value": "A CanvasItem shader that temporarily overrides all sprite pixels to white for one frame on hit, providing instant visual confirmation that damage was dealt"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "Playtesting and Design Iteration",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Design and conduct structured playtesting sessions with clear observation goals",
+        "Distinguish between different types of feedback and prioritize actionable insights",
+        "Iterate on game design based on observed player behavior rather than reported preferences",
+        "Document playtesting findings and design changes in a structured format"
+      ],
+      "readings": [
+        "The Art of Game Design by Jesse Schell, Ch. 25 (Playtesting)",
+        "Game Usability: Advancing the Player Experience, Ch. 4-5",
+        "Playtest Analysis Best Practices (Riot Games Engineering Blog)"
+      ],
+      "lecture_notes": {
+        "introduction": "Playtesting is the most important activity in game development that most developers do too little and too late. Your game exists in two forms: the game you think you built, and the game players actually experience. These are never the same. Playtesting bridges this gap by letting you observe real human beings interacting with your creation, revealing assumptions you did not know you had made and problems you cannot see because you know the solution. Today we cover the methodology of effective playtesting: how to recruit testers, what to observe, how to structure sessions, how to analyze feedback, and most importantly, how to translate observation into design changes. The cardinal rule of playtesting is that the player is always right about their experience but rarely right about the solution. When a player says 'the jump is too floaty,' they are accurately reporting a feeling, but the fix might be faster fall speed, shorter coyote time, or better landing particles rather than literally reducing jump height.",
+        "key_concepts": [
+          "Playtesting types: focus testing (first impression), usability testing (can they figure it out), balance testing (is it fair), QA testing (does it break)",
+          "Session structure: briefing (minimal instructions), observation period (silent), questionnaire, debrief interview",
+          "Think-aloud protocol: having testers vocalize their thought process in real time, revealing mental models and confusion points",
+          "Observation vs self-report: watching what players do (data) versus listening to what they say (opinion) -- behavior is more reliable",
+          "The 5-second test: can a new player understand the core mechanic within 5 seconds of starting?",
+          "Heatmap and analytics: recording player death locations, time-per-section, and input frequency for quantitative level analysis",
+          "Feedback triage: categorizing feedback as critical (blocks progress), important (degrades experience), nice-to-have (polish), and out-of-scope",
+          "A/B testing in games: testing different parameter values (enemy speed, jump height) across different testers to compare outcomes",
+          "Iteration velocity: making the smallest change that addresses the observed problem, retesting quickly, avoiding over-correction",
+          "Postmortem documentation: recording what was tested, what was observed, what was changed, and what the result was for project learning"
+        ],
+        "demonstration": "Running a live playtesting session in class: a volunteer plays a student's prototype while the class observes, recording instances of confusion, frustration, delight, and unexpected behavior on a shared observation template, then conducting a group debrief to identify the top 3 actionable changes, followed by discussing how each change would be implemented technically",
+        "setup_requirements": [
+          "Playable build of student game projects",
+          "Observation template forms (provided: behavior log, emotion tracker)",
+          "Screen recording software (OBS) for session capture",
+          "Post-playtest questionnaire (provided)"
+        ],
+        "review": [
+          {
+            "key": "Think-Aloud Protocol",
+            "value": "A usability testing method where testers verbalize their thoughts, intentions, and confusions in real time while playing, revealing cognitive processes invisible in silent observation"
+          },
+          {
+            "key": "Feedback Triage",
+            "value": "Categorizing playtest feedback by severity (critical, important, nice-to-have, out-of-scope) to prioritize limited development time on the changes with the greatest impact on player experience"
+          },
+          {
+            "key": "Observation vs Self-Report",
+            "value": "The distinction between watching what players actually do (behavioral data, more reliable) and listening to what they say they want (opinion data, less reliable), prioritizing the former for design decisions"
+          },
+          {
+            "key": "Iteration Velocity",
+            "value": "The practice of making the smallest possible change that addresses an observed problem, retesting immediately, and avoiding large changes that introduce new variables"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "Level Progression, Scene Management, and Metagame Systems",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Implement multi-level game flow with scene transitions and loading screens",
+        "Design level progression systems with unlocks, scoring, and star ratings",
+        "Build a level select screen that displays player progress and completion data",
+        "Manage scene lifecycle and resource cleanup to prevent memory leaks"
+      ],
+      "readings": [
+        "Level Design: Processes and Experiences by Christopher Totten, Ch. 7-8",
+        "Godot Documentation: Scene Transitions and ResourceLoader",
+        "Game Design Workshop by Tracy Fullerton, Ch. 9 (Metagame)"
+      ],
+      "lecture_notes": {
+        "introduction": "A game is more than a collection of levels -- it is a journey with pacing, progression, and a sense of growing mastery. The metagame layer sits above individual levels and gives players reasons to replay, explore, and improve. Today we build the systems that connect individual levels into a cohesive game experience: scene transitions that maintain continuity, a level select screen that communicates progress, scoring systems that incentivize mastery, and resource management that keeps memory usage stable as players move between scenes. This is the session where your project transforms from a collection of disconnected prototypes into something that feels like a complete game. We will also address the practical challenges of scene management: preventing memory leaks from nodes that are not properly freed, loading levels asynchronously to avoid frame-rate hitches, and maintaining global state across scene changes through autoload singletons.",
+        "key_concepts": [
+          "Scene transition manager: a singleton that handles fade-out, scene change, and fade-in with a loading indicator for larger scenes",
+          "ResourceLoader.load_threaded_request(): asynchronous scene loading that prevents frame hitches during level transitions",
+          "Level data model: a LevelInfo resource containing level name, scene path, unlock condition, par time, and max stars",
+          "Star rating system: evaluating level completion based on time, collectibles found, damage taken, or score achieved",
+          "Level select UI: GridContainer of level buttons showing locked/unlocked state, star count, and best score from save data",
+          "Scene lifecycle management: ensuring all nodes are freed on scene exit, stopping audio and particle systems, disconnecting signals",
+          "Memory profiling: using Godot's built-in profiler and Monitors to track memory usage, draw calls, and node count across scenes",
+          "Level flow design: tutorial level, escalating difficulty levels, optional challenge levels, boss levels, and secret levels as structural elements",
+          "Persistent elements across scenes: player data, settings, audio state managed through autoloads that survive scene transitions",
+          "End-game flow: final level completion triggers credits, unlocks extras, saves completion flag to save data"
+        ],
+        "demonstration": "Building a complete level flow system: creating a LevelManager autoload that tracks available levels and player progress, implementing a TransitionManager with fade-to-black using a CanvasLayer ColorRect, building a level select screen with GridContainer of LevelButton scenes showing lock/star state from save data, implementing ResourceLoader.load_threaded_request() for smooth level loading, and connecting level completion to the save system with star rating calculation based on collectible percentage and completion time",
+        "setup_requirements": [
+          "Godot project with at least 2 playable levels",
+          "Level button sprite sheet (provided: locked, 0-3 star states)",
+          "SaveManager from session 9 with level progress data structure"
+        ],
+        "review": [
+          {
+            "key": "Threaded Resource Loading",
+            "value": "Loading scene files on a background thread using ResourceLoader.load_threaded_request() so the main thread can display a loading screen or animation without frame-rate drops"
+          },
+          {
+            "key": "Level Select Pattern",
+            "value": "A menu screen displaying all game levels with their lock/unlock state and completion metrics, driven by save data and level requirement definitions"
+          },
+          {
+            "key": "Scene Lifecycle",
+            "value": "The process of properly cleaning up nodes, stopping systems, and freeing memory when a scene exits, preventing memory leaks and orphaned nodes in long play sessions"
+          },
+          {
+            "key": "Star Rating System",
+            "value": "Evaluating level completion quality based on multiple criteria (time, collectibles, damage), displayed as 1-3 stars, incentivizing replay and mastery"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Final Build, Export, and Release Preparation",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Export polished builds for Windows, macOS, Linux, and HTML5 platforms",
+        "Configure platform-specific settings for resolution, input, and performance",
+        "Prepare a release package with store page assets and documentation",
+        "Conduct final QA testing and bug triage for release readiness"
+      ],
+      "readings": [
+        "Godot Documentation: Exporting Projects",
+        "How to Release a Game on Itch.io (itch.io documentation)",
+        "Postmortem Best Practices (Gamasutra archives)"
+      ],
+      "lecture_notes": {
+        "introduction": "Shipping a game is a skill distinct from making a game. Many talented developers build impressive prototypes that never reach players because they underestimate the work required to go from 'it works on my machine' to 'it works on everyone's machine.' Today we cover the final stretch of game development: exporting builds for multiple platforms, testing on target hardware, preparing store page assets, and conducting the final quality assurance pass that determines whether your game is ready for public release. The export process in Godot is straightforward but requires attention to platform-specific details: Windows builds need signed executables to avoid antivirus false positives, HTML5 builds need correct CORS headers for web hosting, and macOS builds need notarization for distribution outside the App Store. Beyond the technical export, releasing a game means preparing marketing materials, writing a compelling store page description, capturing screenshots and trailers, and deciding on a pricing and distribution strategy. This session prepares you to ship your final project as a real, playable release.",
+        "key_concepts": [
+          "Export templates: downloading and configuring official Godot export templates for each target platform",
+          "Platform-specific configuration: resolution, fullscreen mode, icon, splash screen, input mapping display per platform",
+          "HTML5 export considerations: SharedArrayBuffer headers, audio autoplay restrictions, mobile browser compatibility",
+          "Windows export: custom icon (.ico), product name and version, code signing to prevent antivirus false positives",
+          "Release vs debug builds: stripping debug symbols, disabling debug draw, removing development tools and cheats",
+          "QA checklist: systematic testing of all levels, all save/load paths, all UI flows, all enemy types, all edge cases",
+          "Bug triage for release: classifying bugs as blocker (must fix), critical (should fix), minor (can ship with), and won't-fix",
+          "Store page preparation: screenshots at marketing resolution, GIF captures, feature bullet points, system requirements",
+          "Postmortem writing: structured reflection on what went well, what went wrong, and what you would do differently",
+          "Distribution platforms: itch.io (free hosting, pay-what-you-want), Steam (Steamworks SDK, $100 fee), web hosting for HTML5"
+        ],
+        "demonstration": "Exporting the course project for release: configuring export presets for HTML5 and Windows, setting application icon and splash screen, building debug and release versions, uploading to itch.io with a properly formatted store page, testing the HTML5 build in multiple browsers, and running through a 20-item QA checklist to verify release readiness",
+        "setup_requirements": [
+          "Godot export templates installed for all target platforms",
+          "Itch.io account for publishing",
+          "QA checklist template (provided)",
+          "Screenshot capture tool and GIF recording tool"
+        ],
+        "review": [
+          {
+            "key": "Export Templates",
+            "value": "Pre-compiled engine binaries for each target platform that Godot uses to package your project into a standalone executable, downloaded from the Godot website or export manager"
+          },
+          {
+            "key": "Bug Triage",
+            "value": "The process of evaluating discovered bugs by severity (blocker, critical, minor, cosmetic) and deciding which must be fixed before release versus which can ship as known issues"
+          },
+          {
+            "key": "Release Build",
+            "value": "An export with debug features stripped, optimizations enabled, and development tools removed, producing a smaller and faster executable suitable for distribution to players"
+          },
+          {
+            "key": "Postmortem",
+            "value": "A structured project reflection document analyzing what went well, what went wrong, and lessons learned, serving as a professional development tool and portfolio piece"
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 3,
+        "topic": "Engine Architecture, Sprites, and State Machines",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Explain the difference between a CharacterBody2D and a RigidBody2D in Godot 4. For a player-controlled platformer character, which would you choose and why? Describe a scenario where the other type would be more appropriate.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "CharacterBody2D is a kinematic body that moves only through code (move_and_slide), giving the developer full control over movement. RigidBody2D is a physics-simulated body affected by gravity, forces, and collisions automatically. For a platformer character, CharacterBody2D is preferred because platformer movement requires tight, responsive control -- precise jump heights, instant direction changes, and custom gravity curves that physics simulation cannot easily provide. RigidBody2D would be more appropriate for objects like crates in a physics puzzle, pinball bumpers, or ragdoll characters where realistic physical behavior driven by forces and collisions is desired rather than direct position control.",
+            "rubric": [
+              {
+                "key": "Correctly describes both body types and their movement models",
+                "value": 3
+              },
+              {
+                "key": "Chooses CharacterBody2D with valid justification about control requirements",
+                "value": 3
+              },
+              {
+                "key": "Provides an appropriate RigidBody2D use case with reasoning",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Draw or describe a finite state machine for a 2D platformer character with the following states: Idle, Run, Jump_Rise, Jump_Fall, Land. For each transition, specify the condition that triggers it. Explain what code would execute in the enter() callback of the Jump_Rise state.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Transitions: Idle->Run (horizontal input detected and is_on_floor), Run->Idle (no horizontal input and is_on_floor), Idle->Jump_Rise (jump pressed and is_on_floor), Run->Jump_Rise (jump pressed and is_on_floor), Jump_Rise->Jump_Fall (velocity.y >= 0, meaning upward velocity has ended), Jump_Fall->Land (is_on_floor() becomes true), Land->Idle (land animation finished and no horizontal input), Land->Run (land animation finished and horizontal input detected). Also: Run->Jump_Fall and Idle->Jump_Fall (walked off ledge, velocity.y > 0). The Jump_Rise enter() callback would: set the animation to 'jump_rise', apply initial jump velocity (velocity.y = JUMP_SPEED, a negative value), play the jump sound effect, spawn a dust particle effect at the character's feet, and start the coyote time timer if jumping from coyote grace period.",
+            "rubric": [
+              {
+                "key": "All five states with correct transition conditions",
+                "value": 3
+              },
+              {
+                "key": "Handles edge cases like falling off a ledge (not jumping)",
+                "value": 2
+              },
+              {
+                "key": "Jump_Rise enter() callback includes velocity, animation, and at least one feedback effect",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Describe how Godot 4's terrain autotiling system works. What are peering bits, and how do they determine which tile variant to display? Why is this system more efficient than manually placing individual tile variants?",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Godot 4's terrain system examines the neighboring cells around each placed tile to determine which variant to display. Each neighboring cell direction is assigned a peering bit that checks whether the adjacent cell contains the same terrain type. If a neighbor matches, that peering bit is set; the combination of all peering bits maps to a specific tile variant in the TileSet. For example, a tile with matching terrain on all sides displays as a solid interior fill, while a tile with matching terrain only below and to the sides displays as a top edge piece. This is more efficient than manual placement because the artist only needs to define the terrain type per cell, and the engine handles the tedious selection of correct corner, edge, and transition tiles automatically. For a tileset with 47 variants (full Wang tile set), manual placement requires the designer to identify and select the correct variant for every single cell, while autotiling does this instantly and updates neighboring tiles when any tile is added or removed.",
+            "rubric": [
+              {
+                "key": "Explains neighbor checking and peering bit evaluation",
+                "value": 3
+              },
+              {
+                "key": "Describes how peering bit combinations map to tile variants",
+                "value": 3
+              },
+              {
+                "key": "Explains efficiency advantage over manual placement with specific example",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 24
+      },
+      {
+        "quiz": 2,
+        "week": 5,
+        "topic": "Physics, Camera Systems, and Game Feel",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Define coyote time and input buffering in the context of 2D platformer design. For each, specify a typical duration value and explain why these techniques improve the player experience despite being technically 'inaccurate' to real physics.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Coyote time is a grace period (typically 100-150ms) after a player walks off a ledge edge during which they can still execute a jump. Without it, players who press jump one frame after leaving a platform fall, which feels unfair because visually they appeared to still be on the ledge. Input buffering stores a jump press for a short window (typically 80-120ms) before landing, so if a player presses jump slightly early, the jump executes when they touch the ground. Without it, players must time their jump press to the exact frame of landing. Both techniques bridge the gap between human reaction time (~200ms) and frame-perfect input requirements, making the game feel responsive rather than punishing. The player does not perceive the inaccuracy because the time windows are shorter than conscious perception.",
+            "rubric": [
+              {
+                "key": "Correctly defines both terms with clear descriptions",
+                "value": 3
+              },
+              {
+                "key": "Provides appropriate duration values (80-200ms range) for each",
+                "value": 2
+              },
+              {
+                "key": "Explains why inaccuracy improves experience with reference to human perception",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "A parallax background has three layers with motion_scale values of 0.2, 0.5, and 0.8. If the camera moves 200 pixels to the right, how far does each layer move? Which layer appears closest to the viewer and why? Design a four-layer parallax setup for an underwater level and specify the motion_scale for each layer.",
+            "type": "calculation",
+            "points": 8,
+            "answer": "Layer calculations: 0.2 layer moves 40 pixels, 0.5 layer moves 100 pixels, 0.8 layer moves 160 pixels. The 0.8 layer appears closest to the viewer because it moves the most relative to camera movement, matching the real-world parallax effect where nearby objects scroll faster than distant ones. For an underwater level: Layer 1 (motion_scale 0.1) -- deep ocean gradient and distant underwater mountains, barely moving. Layer 2 (motion_scale 0.35) -- mid-distance kelp forest and coral formations swaying gently. Layer 3 (motion_scale 0.65) -- closer seaweed, jellyfish, and fish schools. Layer 4 (motion_scale 0.9) -- foreground bubbles, light rays, and floating particles very close to the camera. The nearly-1.0 foreground layer creates depth by making elements appear to pass between the camera and the gameplay plane.",
+            "rubric": [
+              {
+                "key": "Correct pixel calculations for all three layers (40, 100, 160)",
+                "value": 3
+              },
+              {
+                "key": "Correctly identifies 0.8 as closest with real-world parallax reasoning",
+                "value": 2
+              },
+              {
+                "key": "Four-layer underwater design with appropriate motion_scale progression and descriptions",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between GPUParticles2D and CPUParticles2D in Godot 4. When would you choose each? Describe the parameters you would configure to create a dust-kick particle effect that triggers when a player changes direction while running.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "GPUParticles2D simulates particles on the GPU using compute shaders, enabling thousands of particles with minimal CPU overhead but requiring a compatible GPU and not supporting physics interaction. CPUParticles2D simulates on the CPU, supporting fewer particles but working on all hardware and allowing particles to interact with physics bodies. Choose GPU for large-quantity effects (rain, fire, ambient particles) on desktop/console; choose CPU for web export compatibility, mobile fallback, or when particles need to collide with the environment. For a dust-kick effect: emission_shape = sphere with radius 3px, direction = opposite to player movement (left if running right), initial_velocity = 30-50 pixels/sec, spread = 30 degrees, gravity = Vector2(0, 40) pulling dust down, amount = 8-12 particles, lifetime = 0.4 seconds, one_shot = true, scale_curve = starts at 1.0 and decreases to 0.0, color gradient from tan/brown at full opacity to transparent, damping = 15 to slow particles quickly.",
+            "rubric": [
+              {
+                "key": "Correctly distinguishes GPU vs CPU particles with use cases",
+                "value": 3
+              },
+              {
+                "key": "Dust-kick parameters include emission direction, gravity, lifetime, and one_shot",
+                "value": 3
+              },
+              {
+                "key": "Includes visual refinement (scale curve, color gradient, damping)",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 24
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "Audio Systems, Save/Load, and UI Design",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Describe the audio bus routing architecture you would set up for a 2D platformer game in Godot. Name each bus, explain what sounds route to it, and describe one audio effect you would apply to each bus and why.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Four buses feeding into Master: (1) Music bus -- background music tracks route here; apply a Compressor effect to maintain consistent loudness across quiet and intense sections, preventing music from drowning out SFX during loud passages. (2) SFX bus -- player actions (jump, attack, hurt), enemy sounds, item pickups route here; apply a Limiter effect to prevent clipping when multiple sound effects play simultaneously. (3) Ambient bus -- environmental sounds (wind, water, machinery, bird calls) route here; apply a Reverb effect to create spatial depth and make ambient sounds feel like they exist in the game environment. (4) UI bus -- menu navigation clicks, button presses, notification sounds route here; no heavy effects, but set slightly lower default volume since UI sounds should be present but not prominent. Each bus has independent volume control so players can adjust categories in settings.",
+            "rubric": [
+              {
+                "key": "Names at least 3 distinct buses with correct sound routing",
+                "value": 3
+              },
+              {
+                "key": "Specifies an appropriate audio effect for each bus with reasoning",
+                "value": 3
+              },
+              {
+                "key": "Mentions independent volume control and Master bus relationship",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A player has been playing your game for 10 hours and has completed 7 of 12 levels. They update the game to a new version where you have added an 'achievements' field to the save data format. Explain how a versioned save system handles this situation without losing the player's progress. Write pseudocode for the migration function.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "The save file includes a version number (e.g., version: 2). The new game code expects version 3 with the achievements field. On load, the SaveManager checks the version number against the current expected version. If it is lower, it runs migration functions sequentially: migrate_v2_to_v3(). This function reads the existing v2 data, adds the new 'achievements' field with default values (empty array or all-false dictionary), updates the version number to 3, and saves the migrated data. Pseudocode: func load_game(): var data = ResourceLoader.load(save_path); if data.version < CURRENT_VERSION: data = run_migrations(data); ResourceSaver.save(data, save_path); return data. func run_migrations(data): while data.version < CURRENT_VERSION: match data.version: 2: data.achievements = {}; data.version = 3; 3: data.statistics = {play_time: 0}; data.version = 4; return data. The player's 7 completed levels, inventory, and all other progress are preserved because the migration only adds the new field without touching existing fields.",
+            "rubric": [
+              {
+                "key": "Explains version checking and sequential migration",
+                "value": 3
+              },
+              {
+                "key": "Pseudocode shows migration function that adds field with defaults",
+                "value": 3
+              },
+              {
+                "key": "Confirms existing data preservation and re-save after migration",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between CanvasLayer and Node2D for UI rendering in Godot. Why is CanvasLayer essential for HUD elements? Describe how you would implement a health bar that smoothly animates when the player takes damage.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Node2D children exist in world space and are affected by Camera2D transforms (position, zoom, rotation). CanvasLayer renders its children in screen space independent of the camera, so HUD elements stay fixed on screen regardless of camera movement, zoom, or shake. Without CanvasLayer, a health bar would scroll with the level, zoom when the camera zooms, and shake during screen shake -- all undesirable. For a smooth health bar: use a TextureProgressBar node with a health bar texture, set the max_value to player's max health. When damage occurs, do not set value directly. Instead, use a Tween: create_tween().tween_property(health_bar, 'value', new_health, 0.3).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT). For extra polish, add a second 'ghost' health bar behind the main one that drains slower (0.8s duration) showing the damage dealt, similar to fighting game health bars. Connect the player's health_changed signal to the HUD update function.",
+            "rubric": [
+              {
+                "key": "Correctly explains CanvasLayer screen-space vs Node2D world-space",
+                "value": 3
+              },
+              {
+                "key": "Explains why CanvasLayer is needed for HUD (camera independence)",
+                "value": 2
+              },
+              {
+                "key": "Health bar animation uses Tween with specific easing parameters",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 24
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "Enemy AI, Combat Systems, and Polish",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Design an enemy AI state machine for a 'Skeleton Archer' enemy in a 2D platformer. List all states, transition conditions, and what behavior executes in each state. The archer should patrol a platform, detect the player at range, fire arrows, and retreat if the player gets too close.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "States: (1) Patrol -- walks between two waypoint markers on the platform, flips sprite at each end, speed 40px/s. Transitions: to Detect when player enters detection Area2D (range 250px) AND RayCast2D has line-of-sight. (2) Detect -- stops moving, plays alert animation (! icon above head, 0.5s), faces player. Transitions: to Aim after alert animation completes. (3) Aim -- stands still, tracks player direction for 0.3s (telegraph), bow draw animation plays. Transitions: to Fire after aim duration completes. (4) Fire -- spawns arrow projectile toward player's last known position, plays fire animation. Transitions: to Cooldown immediately after arrow spawn. (5) Cooldown -- waits 1.5s before next shot. Transitions: to Retreat if player is within 80px, to Aim if player is still in detection range and line-of-sight, to Patrol if player is out of detection range. (6) Retreat -- moves away from player at 60px/s (faster than patrol) until reaching 200px distance. Transitions: to Aim if distance >= 200px and player in range, to Patrol if player out of range. (7) Hurt -- plays hurt animation, brief knockback. Transitions: to Aim if player in range after hurt recovery, to Patrol otherwise. (8) Death -- plays death animation, drops loot, queue_free() after animation.",
+            "rubric": [
+              {
+                "key": "At least 6 states with clear behavior descriptions",
+                "value": 3
+              },
+              {
+                "key": "Transition conditions are specific and include detection mechanics (Area2D, RayCast2D)",
+                "value": 3
+              },
+              {
+                "key": "Includes telegraph/anticipation for attacks and retreat behavior for close range",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the hitbox/hurtbox separation pattern for 2D combat. Why are attack hitboxes and damage hurtboxes kept as separate Area2D nodes rather than using a single collision shape? Describe the collision layer/mask configuration that prevents enemies from damaging each other.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Hitboxes are offensive collision shapes that represent the damage-dealing region of an attack; they are only active during specific attack animation frames and have their own shape, position, and size per attack move. Hurtboxes are defensive collision shapes that represent the vulnerable region of a character; they are always active and define where the entity can be hit. Separating them into different Area2D nodes allows: different shapes (a sword hitbox is a wide arc, but the player hurtbox is a tight rectangle), different timing (hitbox exists for 3 frames during an attack, hurtbox is permanent), and different collision layer configurations. For preventing enemy self-damage: Player hitbox on collision layer 3 with mask checking layer 4 (enemy hurtboxes). Enemy hitbox on collision layer 5 with mask checking layer 2 (player hurtbox). Player hurtbox on layer 2. Enemy hurtbox on layer 4. Since enemy hitboxes only mask against player hurtbox layer and not enemy hurtbox layer, enemies cannot damage each other.",
+            "rubric": [
+              {
+                "key": "Clearly defines hitbox (offensive, temporary) vs hurtbox (defensive, permanent)",
+                "value": 3
+              },
+              {
+                "key": "Explains advantages of separation (different shapes, timing, layers)",
+                "value": 3
+              },
+              {
+                "key": "Correct collision layer/mask setup preventing enemy-to-enemy damage",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Define 'hit stop' and explain how it is implemented in Godot 4. Why does freezing the game for 2-5 frames on a heavy hit improve the feeling of combat? What other juice techniques would you combine with hit stop for a satisfying melee attack?",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Hit stop is a brief pause (2-5 frames, approximately 33-83ms at 60fps) where the game freezes or dramatically slows on a heavy impact. Implementation in Godot: set Engine.time_scale = 0.0 (or 0.05 for near-freeze), then create a SceneTreeTimer with process_always=true that fires after the stop duration and resets time_scale to 1.0. The process_always flag is critical because normal timers pause when time_scale is 0. It improves combat feel because the freeze emphasizes the moment of contact, giving the player's brain time to register the impact before the consequence plays out. Without it, fast attacks feel weightless because the visual feedback passes in a single frame. Combined juice for a melee attack: hit stop (3 frames) + screen shake (trauma 0.3) + camera punch in attack direction (5px) + enemy sprite white flash (1 frame shader) + hit particles (sparks burst from contact point) + hit sound effect + enemy knockback velocity + damage number floating text. All triggered simultaneously from the hitbox contact signal.",
+            "rubric": [
+              {
+                "key": "Correct definition and Godot implementation with Engine.time_scale and process_always",
+                "value": 3
+              },
+              {
+                "key": "Explains why the freeze improves feel (emphasis, registration time)",
+                "value": 2
+              },
+              {
+                "key": "Lists at least 4 complementary juice techniques with specific parameters",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 24
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "Playtesting, Level Flow, and Release Preparation",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "A playtester reports: 'The game is too hard.' Explain why this feedback, while valid as an experience report, is insufficient for making design changes. Describe three specific follow-up observations or questions you would use to identify the actual problem, and give a possible design change for each.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "'Too hard' is a symptom, not a diagnosis. The same complaint could indicate completely different problems requiring different solutions. Three follow-up approaches: (1) Observation: Where specifically did the player die most? If deaths cluster at one section, the difficulty spike there is too sharp. Design change: add a safe platform or checkpoint before that section to reduce punishment. (2) Question: Did you understand what you were supposed to do? If they say no, the problem is communication, not difficulty. Design change: add visual signposting (arrows, lighting, enemy placement that teaches the mechanic) rather than making enemies easier. (3) Observation: How many times did they retry before succeeding? If they succeed within 3-5 attempts, the difficulty is appropriate and the issue may be frustration from long death-to-retry time rather than actual difficulty. Design change: place a checkpoint closer to the challenge so retries are faster. The cardinal rule: the player is always right about their experience but rarely right about the solution.",
+            "rubric": [
+              {
+                "key": "Explains why 'too hard' is insufficient (symptom vs diagnosis)",
+                "value": 2
+              },
+              {
+                "key": "Three specific follow-up observations/questions that target different root causes",
+                "value": 3
+              },
+              {
+                "key": "Appropriate design change for each identified root cause",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain how ResourceLoader.load_threaded_request() works in Godot 4 for asynchronous level loading. Why is this important for player experience? Describe the complete flow from the player pressing 'Next Level' to the new level being fully loaded and visible.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "ResourceLoader.load_threaded_request(path) starts loading a resource on a background thread without blocking the main thread. The main thread can continue rendering frames (showing a loading screen, animation, tips) while the level loads. Check progress with ResourceLoader.load_threaded_get_status(path) which returns THREAD_LOAD_IN_PROGRESS, THREAD_LOAD_LOADED, or THREAD_LOAD_FAILED. Retrieve the loaded resource with ResourceLoader.load_threaded_get(path) once status is LOADED. This is important because synchronous loading with load() or preload() freezes the game for the entire load duration -- on slower machines or for large levels, this can mean seconds of frozen screen, which players perceive as a crash. Complete flow: (1) Player presses Next Level, (2) TransitionManager plays fade-to-black animation (0.3s), (3) On fade complete, show loading screen with progress bar and tip text, (4) Call ResourceLoader.load_threaded_request(next_level_path), (5) In _process(), poll load_threaded_get_status() and update progress bar, (6) When status is LOADED, call get_tree().change_scene_to_packed(load_threaded_get(path)), (7) New scene _ready() initializes, (8) TransitionManager plays fade-from-black, (9) Player sees new level.",
+            "rubric": [
+              {
+                "key": "Correctly explains threaded loading API (request, get_status, get)",
+                "value": 3
+              },
+              {
+                "key": "Explains why synchronous loading degrades player experience",
+                "value": 2
+              },
+              {
+                "key": "Complete flow from button press to level visible with transition manager",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "You are preparing your game for release on itch.io with both an HTML5 web build and a Windows downloadable build. List three platform-specific issues you must address for the HTML5 build that do not apply to the Windows build, and explain the solution for each.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Three HTML5-specific issues: (1) Audio autoplay restrictions: Web browsers block audio playback until the user has interacted with the page (clicked or tapped). Solution: add a 'Click to Start' splash screen before the game begins that satisfies the browser's user interaction requirement, or use AudioContext.resume() on first user input. (2) SharedArrayBuffer and COOP/COEP headers: Godot 4 HTML5 exports require SharedArrayBuffer for threading, which requires Cross-Origin-Opener-Policy and Cross-Origin-Embedder-Policy HTTP headers. Solution: configure the itch.io page to use the SharedArrayBuffer option, or if self-hosting, set the COOP: same-origin and COEP: require-corp headers on the web server. (3) Save file persistence: the user:// directory in HTML5 uses IndexedDB, which browsers may clear during cache cleanup, and file sizes are limited. Solution: implement smaller save files (JSON instead of binary Resource), warn players that browser data clearing may affect saves, and consider offering save file export/import functionality.",
+            "rubric": [
+              {
+                "key": "Identifies audio autoplay restriction with correct solution",
+                "value": 3
+              },
+              {
+                "key": "Identifies SharedArrayBuffer/CORS header requirement with solution",
+                "value": 3
+              },
+              {
+                "key": "Identifies save persistence limitation with practical mitigation",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 24
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "2D Platformer Prototype",
+        "week_assigned": 3,
+        "week_due": 6,
+        "points": 150,
+        "description": "Build a playable 2D platformer level in Godot 4 featuring a player character with polished movement, animated sprites driven by a state machine, tile-based level design with autotiling, tuned physics with coyote time and input buffering, a parallax background camera system, and particle effects for player feedback. The level must be completable in 2-3 minutes and demonstrate mastery of core 2D development techniques covered in weeks 1-6.",
+        "objectives": [
+          "Implement responsive player movement with a documented animation state machine",
+          "Design a tile-based level with autotiling, collision layers, and one-way platforms",
+          "Apply game feel principles: coyote time, input buffering, variable jump height, screen shake",
+          "Create a camera system with smooth following, look-ahead, and parallax scrolling",
+          "Add particle effects for at least 3 player actions (jump dust, landing impact, direction change)"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Godot 4 project with all source files and assets committed to Git",
+          "Exported builds: HTML5 and Windows",
+          "Level design document with annotated map showing intended player path and pacing",
+          "Technical write-up (2-3 pages) explaining state machine design, physics tuning decisions, and camera configuration"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 45,
+            "criteria": [
+              "Smooth, responsive movement with appropriate acceleration and deceleration curves",
+              "Animation state machine with correct transitions for all movement states (idle, run, jump_rise, jump_fall, land)",
+              "Coyote time, input buffering, and variable jump height implemented and tuned to appropriate values",
+              "Scene tree is well-organized with descriptive node names and proper component separation"
+            ]
+          },
+          "visual_quality": {
+            "points": 40,
+            "criteria": [
+              "TileMap with autotiling configured correctly for seamless terrain",
+              "Camera follows smoothly with look-ahead and parallax background (at least 2 layers)",
+              "Particle effects provide clear feedback for player actions",
+              "Consistent pixel art style at chosen resolution with no sub-pixel rendering artifacts"
+            ]
+          },
+          "performance_optimization": {
+            "points": 30,
+            "criteria": [
+              "Level teaches mechanics through design rather than text instructions",
+              "Appropriate difficulty curve over 2-3 minutes of gameplay",
+              "At least one hazard type and one collectible type with visual/audio feedback",
+              "Screen shake or camera effects on significant impacts"
+            ]
+          },
+          "documentation": {
+            "points": 35,
+            "criteria": [
+              "Level design document includes annotated map with pacing analysis",
+              "Technical write-up explains state machine design decisions with diagrams",
+              "Physics tuning values are documented with rationale for each",
+              "GDScript follows style guide with type hints and comments on non-obvious logic"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Polished, playable platformer with responsive controls and clear state machine",
+                "Well-designed level that teaches through play with appropriate pacing",
+                "Professional camera work, parallax, and particle effects",
+                "Clean, well-documented codebase with thorough design documentation"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Audio and Save System Integration",
+        "week_assigned": 7,
+        "week_due": 10,
+        "points": 120,
+        "description": "Extend your platformer prototype with a complete audio pipeline (music, SFX, ambient sound with bus routing), a save/load system that persists player progress between sessions, and a functional UI layer including HUD, pause menu, and settings screen. This assignment focuses on the support systems that transform a gameplay prototype into a complete player experience.",
+        "objectives": [
+          "Implement an AudioManager with bus routing, sound variation, and music crossfading",
+          "Build a save/load system with versioned save data and error recovery",
+          "Create a HUD displaying health, score, and collectible count with smooth animations",
+          "Design a pause menu with keyboard/gamepad navigation and a settings screen for volume control"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Updated Godot 4 project with audio, save, and UI systems integrated",
+          "Exported builds (HTML5 and Windows) demonstrating save persistence across restarts",
+          "Audio design document listing all sound events, bus routing, and effect parameters",
+          "System architecture diagram showing how AudioManager, SaveManager, and UI interact with game systems"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 35,
+            "criteria": [
+              "AudioManager autoload with at least 3 buses (Music, SFX, Ambient) and appropriate effects",
+              "Sound variation (pitch randomization, multiple samples) for frequently played effects",
+              "Music crossfading between at least 2 tracks triggered by gameplay state",
+              "Audio pooling prevents frame hitches from runtime AudioStreamPlayer allocation"
+            ]
+          },
+          "visual_quality": {
+            "points": 30,
+            "criteria": [
+              "SaveManager uses versioned Custom Resources with migration support",
+              "Save data includes player position, collected items, and current level",
+              "Error handling for first-play (no save file), corrupted data, and version mismatches",
+              "Autosave triggers at level transitions or checkpoints"
+            ]
+          },
+          "performance_optimization": {
+            "points": 30,
+            "criteria": [
+              "HUD displays health (animated bar), score, and collectibles in a CanvasLayer",
+              "Pause menu with resume, settings, and quit options navigable by keyboard and gamepad",
+              "Settings screen controls volume per bus with changes that persist in save data",
+              "Screen transitions (fade-to-black) between menu and game scenes"
+            ]
+          },
+          "documentation": {
+            "points": 25,
+            "criteria": [
+              "Audio design document is thorough and matches implementation",
+              "System architecture diagram clearly shows manager interactions",
+              "Code is documented with type hints and explanatory comments",
+              "Save data format is documented with version history"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 120,
+              "criteria": [
+                "Professional audio pipeline with bus routing, variation, and crossfading",
+                "Robust save/load system with versioning and error recovery",
+                "Functional UI with animated HUD and navigable menus",
+                "Clean documentation and system architecture"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Complete 2D Game Vertical Slice",
+        "week_assigned": 10,
+        "week_due": 14,
+        "points": 200,
+        "description": "Expand your platformer into a vertical slice featuring at least 3 playable levels with distinct themes, 2+ enemy types with AI state machines, a hitbox/hurtbox combat system with juice effects (hit stop, screen shake, particles), a level select screen with star ratings, and playtesting documentation showing iterative design improvements. The vertical slice must represent a polished, shippable sample of a larger game.",
+        "objectives": [
+          "Implement at least 2 enemy types with distinct AI state machines and attack patterns",
+          "Build a combat system with hitbox/hurtbox separation, invincibility frames, and juice effects",
+          "Design 3+ levels with distinct visual themes, escalating difficulty, and star rating evaluation",
+          "Conduct 3 playtesting sessions with documentation of observations and design changes",
+          "Create a level select screen and level transition system with threaded loading"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Complete Godot 4 project with all source files, assets, and Git history",
+          "Exported builds: HTML5 and Windows, release-quality",
+          "Game design document covering enemy behaviors, level designs, and combat system",
+          "Playtest report: 3 sessions with observation logs, feedback triage, and documented design changes",
+          "Postmortem analysis (2-3 pages): what went well, what went wrong, lessons learned"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 60,
+            "criteria": [
+              "At least 2 enemy types with distinct AI state machines and readable attack patterns",
+              "Hitbox/hurtbox combat with invincibility frames, knockback, and damage feedback",
+              "Hit stop, screen shake, particles, and sprite flash create satisfying combat feel",
+              "Level select screen displays lock state and star ratings from save data"
+            ]
+          },
+          "visual_quality": {
+            "points": 50,
+            "criteria": [
+              "3+ levels with distinct visual themes and tileset variations",
+              "Difficulty progression across levels is intentional and playtested",
+              "Level transitions are smooth with loading screens or fade effects",
+              "Visual consistency across all levels, enemies, and UI elements"
+            ]
+          },
+          "performance_optimization": {
+            "points": 40,
+            "criteria": [
+              "Game runs at stable 60fps with no hitches during gameplay or transitions",
+              "Memory usage is stable across level changes (no leaks from unfired nodes)",
+              "Save/load works correctly across all levels and game states",
+              "All systems (audio, save, UI, AI, combat) work together without conflicts"
+            ]
+          },
+          "documentation": {
+            "points": 50,
+            "criteria": [
+              "Game design document accurately describes all implemented systems",
+              "Playtest reports show real observations from 3 different testers with specific feedback",
+              "Design changes are documented with before/after comparisons",
+              "Postmortem demonstrates critical self-reflection and professional development insight"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 200,
+              "criteria": [
+                "Feature-complete vertical slice with polished combat, multiple levels, and enemy variety",
+                "All game systems integrated and working reliably together",
+                "Playtesting evidence shows iterative design improvement",
+                "Professional documentation including design doc, playtest reports, and postmortem"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 20,
+      "description": "Five quizzes (weeks 3, 5, 8, 11, 14) assessing engine knowledge, design patterns, and technical concepts"
+    },
+    "lab_assignments": {
+      "percentage": 15,
+      "description": "Weekly hands-on lab exercises building specific game systems with graded submissions"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "Three major projects: Platformer Prototype (150pts), Audio/Save Integration (120pts), Vertical Slice (200pts)"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Midterm practical examination: timed implementation of a game system from specification"
+    },
+    "final_project": {
+      "percentage": 20,
+      "description": "Final build presentation with live demonstration, postmortem analysis, and peer evaluation"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is mandatory for all lab sessions and playtesting days. More than 2 unexcused absences from labs may result in a full letter grade reduction. Playtesting sessions cannot be made up.",
+    "late_submissions": "Late assignments are penalized 10% per day for up to 5 days. Builds that do not compile or run receive an automatic 50% penalty. Test your exports on a clean machine before submitting.",
+    "collaboration": "Individual projects must be your own code and assets. You may use free assets from itch.io or OpenGameArt with proper attribution in a CREDITS file. Sharing code solutions between students is prohibited. Peer playtesting and feedback are encouraged and graded.",
+    "academic_integrity": "All code must be written by you or properly attributed. Using AI code generation tools is permitted for boilerplate only (project setup, file I/O) and must be disclosed in your submission. Submitting tutorial code without substantial modification is plagiarism.",
+    "technology_requirements": "Students must have a computer capable of running Godot 4.2+ (Windows, macOS, or Linux). A dedicated GPU is recommended but not required for 2D work. All required software (Godot, Aseprite trial/LibreSprite, Git) is free or open source."
+  }
+}

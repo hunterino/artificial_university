@@ -1,0 +1,1466 @@
+{
+  "course_info": {
+    "course_id": "CS210",
+    "title": "Database Security",
+    "credit_hours": 3,
+    "duration": "15 weeks",
+    "meeting_schedule": "Tuesday, Thursday - 3 hours per week",
+    "prerequisites": [
+      "CY101 - Introduction to Cybersecurity",
+      "CS110 - Programming for Security"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "topic": "Database Security Fundamentals",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Identify the CIA triad as it applies to database systems",
+        "Classify database security threats by attack vector and severity",
+        "Apply the principle of least privilege to database account management",
+        "Distinguish between authentication, authorization, and auditing in DBMS"
+      ],
+      "readings": [
+        "Afyouni, Database Security and Auditing, Ch. 1-2",
+        "OWASP Database Security Cheat Sheet",
+        "NIST SP 800-123 Guide to General Server Security (database sections)"
+      ],
+      "lecture_notes": {
+        "introduction": "Databases contain an organization's most valuable asset: its data. Customer records, financial transactions, health information, intellectual property, and authentication credentials all reside in database systems that must withstand both external attacks and insider threats. Database security ensures that data confidentiality, integrity, and availability are maintained through a defense-in-depth strategy spanning network controls, authentication mechanisms, authorization policies, encryption, and continuous monitoring. The threat landscape is broad: SQL injection remains the most exploited web vulnerability according to OWASP, privilege escalation attacks allow low-privilege users to access administrative functions, and data exfiltration can occur through legitimate query interfaces when access controls are too permissive. This course builds on your cybersecurity and programming foundations to give you the practical skills needed to secure real database deployments. We begin with the fundamentals: understanding what we are protecting, who the adversaries are, and the layered defense model that organizes our response.",
+        "key_concepts": [
+          "CIA triad applied to databases: confidentiality (encryption, access control), integrity (constraints, checksums, transaction isolation), availability (replication, backup, failover)",
+          "Database threat landscape: SQL injection, privilege escalation, data exfiltration, denial of service, insider threats, supply chain attacks on database drivers",
+          "Defense-in-depth for databases: network segmentation, host hardening, authentication, authorization, encryption, auditing, monitoring",
+          "Principle of least privilege: application accounts should have only the minimum permissions required for their function, never superuser or DBA roles",
+          "Separation of duties: distinct accounts for application access, DBA administration, backup operations, and security auditing",
+          "Database security benchmarks: CIS Benchmarks for MySQL, PostgreSQL, Oracle, and SQL Server provide hardening baselines",
+          "OWASP Top 10 database-related vulnerabilities: injection, broken access control, security misconfiguration, and cryptographic failures",
+          "Common database deployment mistakes: default passwords, public network binding, disabled audit logging, unencrypted backups, excessive application privileges",
+          "Security architecture patterns: connection pooling with restricted accounts, read replicas for reporting, dedicated admin networks",
+          "Risk assessment framework: asset valuation, threat modeling, vulnerability identification, and risk prioritization for database systems"
+        ],
+        "demonstration": "Configuring PostgreSQL roles with least-privilege access for a three-tier web application: a read-only reporting account limited to SELECT on specific views, a read-write application account with INSERT/UPDATE/DELETE on application tables only, and a DBA account with full privileges but restricted to connections from a management network. We will test each account to verify it cannot exceed its authorized permissions.",
+        "setup_requirements": [
+          "PostgreSQL 16 installed and running",
+          "pgAdmin 4 or DBeaver database client",
+          "Sample e-commerce database with customers, orders, and products tables",
+          "Network access to the lab PostgreSQL instance"
+        ],
+        "review": [
+          {
+            "key": "Least Privilege in Practice",
+            "value": "Application database accounts should have only SELECT/INSERT/UPDATE on the specific tables they need. Never use the postgres superuser or root account for application connections. Create separate accounts for each application tier and each microservice, and revoke the PUBLIC default privileges that PostgreSQL grants automatically."
+          },
+          {
+            "key": "Defense-in-Depth Layers",
+            "value": "No single control is sufficient. Network segmentation prevents unauthorized connections. Authentication verifies identity. Authorization limits what authenticated users can do. Encryption protects data if other controls fail. Auditing detects bypasses. Each layer compensates for potential failures in others."
+          },
+          {
+            "key": "CIS Benchmarks",
+            "value": "The Center for Internet Security publishes free hardening benchmarks for all major DBMS platforms. Each benchmark contains 50 to 100 specific configuration checks with remediation steps. These benchmarks form the baseline for compliance audits under PCI-DSS, HIPAA, and SOX."
+          },
+          {
+            "key": "Threat Modeling for Databases",
+            "value": "Identify assets (what data is stored), adversaries (external attackers, insiders, partners), attack vectors (network, application, physical), and existing controls. Prioritize security investments based on risk: likelihood multiplied by impact. A SQL injection vulnerability in a public-facing application with PII is higher priority than a theoretical timing attack on an internal analytics database."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 2,
+      "topic": "SQL Injection Types and Prevention",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Classify SQL injection attacks by type: UNION-based, blind boolean, blind time-based, error-based, and out-of-band",
+        "Exploit SQL injection vulnerabilities in a controlled lab environment",
+        "Implement parameterized queries as the primary defense against injection",
+        "Evaluate secondary defenses including WAF rules, input validation, and stored procedures"
+      ],
+      "readings": [
+        "Clarke, SQL Injection Attacks and Defense, Ch. 1-4",
+        "OWASP SQL Injection Prevention Cheat Sheet",
+        "OWASP Testing Guide: SQL Injection section"
+      ],
+      "lecture_notes": {
+        "introduction": "SQL injection remains one of the most critical web application vulnerabilities, consistently appearing in the OWASP Top 10 since its inception. Despite being well-understood and entirely preventable, injection flaws continue to cause massive breaches because developers still construct SQL queries by concatenating user input. Understanding both the attack techniques and the defenses is essential for securing any database-backed application. SQL injection exploits the boundary between code and data in SQL statements. When user input is interpolated directly into a query string, the database engine cannot distinguish between the developer's intended SQL structure and the attacker's injected commands. The result is that the attacker controls the query logic, enabling unauthorized data access, data modification, authentication bypass, and in some cases operating system command execution. This session covers the full taxonomy of injection techniques, from classic UNION-based extraction to blind inference attacks, and then focuses on the defenses that eliminate the vulnerability entirely.",
+        "key_concepts": [
+          "UNION-based SQL injection: appending UNION SELECT to extract data from other tables by matching column count and data types",
+          "Blind boolean-based injection: inferring data one bit at a time by observing whether the application returns a true or false response to injected conditions",
+          "Blind time-based injection: using SLEEP() or pg_sleep() to infer data when the application gives no visible difference between true and false conditions",
+          "Error-based injection: extracting data through database error messages that include query results (EXTRACTVALUE, UPDATEXML in MySQL)",
+          "Out-of-band injection: using database functions to make external network connections (UTL_HTTP in Oracle, xp_cmdshell in SQL Server) to exfiltrate data",
+          "Second-order injection: malicious input stored in the database and later used unsafely in a different query context",
+          "Parameterized queries (prepared statements): the primary defense where the SQL structure is defined separately from the data values, making injection impossible",
+          "ORM security considerations: ORMs generally prevent injection for standard queries but raw SQL escapes and custom query builders can reintroduce vulnerabilities",
+          "Input validation as defense-in-depth: allowlisting expected patterns reduces attack surface but cannot replace parameterized queries",
+          "WAF rules for SQL injection: signature-based detection of injection patterns as an additional layer, with known bypass techniques"
+        ],
+        "demonstration": "Exploiting SQL injection in DVWA (Damn Vulnerable Web Application) to extract the entire user table using UNION-based injection, then demonstrating blind boolean injection to extract the database version character by character. After demonstrating the attacks, we rewrite the vulnerable PHP code with PDO prepared statements and verify the injection no longer works. Finally, we configure ModSecurity WAF with the OWASP Core Rule Set and show both successful blocking and a bypass technique to illustrate why WAF alone is insufficient.",
+        "setup_requirements": [
+          "DVWA running in Docker with MySQL backend",
+          "Python 3 with psycopg2 and requests libraries",
+          "Burp Suite Community Edition for request manipulation",
+          "ModSecurity WAF with OWASP CRS for defense testing"
+        ],
+        "review": [
+          {
+            "key": "Parameterized Queries",
+            "value": "cursor.execute('SELECT * FROM users WHERE id = %s', (user_id,)) in Python/psycopg2. The database engine treats the parameter as data, never as SQL code. This is the only reliable prevention. Every database driver in every language supports parameterized queries. There is never a valid reason to concatenate user input into SQL."
+          },
+          {
+            "key": "ORM Security Trap",
+            "value": "ORMs like SQLAlchemy, Django ORM, and Hibernate generally prevent injection for standard queries. However, raw SQL in ORMs (session.execute(text(user_input))) reintroduces the vulnerability. Always parameterize even when using ORMs, and audit all raw SQL usage."
+          },
+          {
+            "key": "Second-Order Injection",
+            "value": "An attacker registers a username containing SQL metacharacters. The registration uses parameterized queries so the malicious name is safely stored. Later, an admin report query constructs SQL using the stored username without parameterization, triggering the injection. Defense: parameterize all queries, not just those handling direct user input."
+          },
+          {
+            "key": "Blind Injection Efficiency",
+            "value": "Boolean-based blind injection extracts one bit per request. For an 8-character ASCII string, that is 64 requests minimum. Binary search reduces character extraction to about 7 requests per character. Time-based adds seconds of delay per request. Automated tools like sqlmap handle this efficiently but generate detectable traffic patterns."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 3,
+      "topic": "Authentication and Authorization in DBMS",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Configure database authentication methods including password, certificate, and integrated authentication",
+        "Implement role-based access control with GRANT and REVOKE statements",
+        "Design authorization hierarchies using role inheritance and schema-level permissions",
+        "Compare authentication mechanisms across PostgreSQL, MySQL, and SQL Server"
+      ],
+      "readings": [
+        "Afyouni, Database Security and Auditing, Ch. 3-4",
+        "PostgreSQL pg_hba.conf documentation",
+        "MySQL privilege system documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Authentication answers the question 'who are you?' while authorization answers 'what are you allowed to do?' Together, they form the primary access control barrier for database systems. Unlike web application authentication, which typically involves a single login flow, database authentication must handle multiple connection types: application server connections through connection pools, DBA administrative access, replication connections between database servers, backup tool connections, and monitoring agent connections. Each connection type has different security requirements and should use different authentication methods. PostgreSQL's pg_hba.conf file provides the most granular authentication configuration of any open-source database, allowing different authentication methods per database, per user, per source IP, and per connection type. MySQL's privilege system operates differently, combining user identity with source host in its grant tables. SQL Server adds Windows integrated authentication and contained database users. Understanding the differences and correctly configuring authentication for each deployment scenario is the foundation of database access control.",
+        "key_concepts": [
+          "PostgreSQL pg_hba.conf: configuring authentication method per connection type (local/host), database, user, and source address with methods including scram-sha-256, cert, ldap, and reject",
+          "Password authentication security: scram-sha-256 (PostgreSQL), caching_sha2_password (MySQL), and why MD5 and mysql_native_password are deprecated",
+          "Certificate-based authentication: mutual TLS where the client presents a certificate signed by a trusted CA, eliminating password management entirely",
+          "LDAP and Active Directory integration: centralizing database authentication with enterprise identity providers",
+          "GRANT and REVOKE statements: granting specific privileges (SELECT, INSERT, UPDATE, DELETE, EXECUTE) on specific objects (tables, views, functions, schemas) to specific roles",
+          "Role-based access control: creating roles that represent job functions (app_reader, app_writer, dba_admin) and granting roles to users rather than granting privileges directly",
+          "Role inheritance in PostgreSQL: a user inherits privileges from all roles they are a member of, enabling hierarchical permission models",
+          "Row-level security (RLS): PostgreSQL policies that filter rows based on the current user, enforcing data isolation at the database level for multi-tenant applications",
+          "Schema-level permissions: using PostgreSQL schemas to organize objects and control access at the schema level rather than table by table"
+        ],
+        "demonstration": "Configuring a complete authentication and authorization setup for a multi-tenant SaaS application in PostgreSQL. First, configure pg_hba.conf to require scram-sha-256 for application connections and certificate authentication for DBA access. Then create roles (tenant_reader, tenant_writer, tenant_admin) with appropriate privileges, enable row-level security to isolate tenant data, and test that each role can only access its authorized data.",
+        "setup_requirements": [
+          "PostgreSQL 16 with SSL/TLS configured",
+          "OpenSSL for generating client certificates",
+          "Multi-tenant sample database with tenant_id columns",
+          "psql and pgAdmin for testing different connection methods"
+        ],
+        "review": [
+          {
+            "key": "pg_hba.conf Order Matters",
+            "value": "PostgreSQL evaluates pg_hba.conf rules top to bottom and uses the first match. A common mistake is placing a permissive rule before a restrictive one. Always put the most restrictive rules first. Use 'reject' rules explicitly to deny known-bad connections before allow rules."
+          },
+          {
+            "key": "Row-Level Security",
+            "value": "PostgreSQL RLS enables policies that filter rows based on the current user. Example: CREATE POLICY tenant_isolation ON orders USING (tenant_id = current_setting('app.tenant_id')). The application sets the session variable and RLS enforces isolation even if application code has bugs."
+          },
+          {
+            "key": "REVOKE PUBLIC Defaults",
+            "value": "PostgreSQL grants CONNECT on databases and USAGE on the public schema to the PUBLIC pseudo-role by default. Always REVOKE these defaults in production: REVOKE ALL ON DATABASE mydb FROM PUBLIC; REVOKE ALL ON SCHEMA public FROM PUBLIC; Then grant only to specific roles."
+          },
+          {
+            "key": "Connection Pooling Security",
+            "value": "Connection poolers like PgBouncer sit between the application and database. Configure the pooler to authenticate against the database using a service account, and have the application authenticate to the pooler. This separates application identity from database identity and enables connection reuse."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 4,
+      "topic": "Access Control Models: RBAC, ABAC, and MAC",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Compare role-based (RBAC), attribute-based (ABAC), and mandatory access control (MAC) models",
+        "Design RBAC hierarchies for enterprise database deployments",
+        "Implement ABAC policies using PostgreSQL row-level security with custom attributes",
+        "Evaluate when each access control model is most appropriate"
+      ],
+      "readings": [
+        "NIST SP 800-162 Guide to ABAC Definition and Considerations",
+        "Ferraiolo and Kuhn, Role-Based Access Controls (NIST)",
+        "SELinux and SE-PostgreSQL documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Access control models provide the theoretical framework for deciding who can access what data under what conditions. In practice, most organizations use role-based access control because it maps naturally to organizational structure: job titles become roles, and roles receive permissions. However, RBAC has limitations in complex environments. Attribute-based access control extends the model by making authorization decisions based on arbitrary attributes of the user, the resource, the action, and the environment. Mandatory access control goes further by enforcing system-defined classification levels that even administrators cannot override. Understanding these models is essential for designing database security architectures that balance security, usability, and administrative overhead. Real-world deployments often combine elements of all three models: RBAC for basic access structure, ABAC for fine-grained contextual decisions, and MAC for classified or regulated data that requires system-enforced controls. This session covers each model's theory, its database implementation, and the trade-offs that determine which model fits a given requirement.",
+        "key_concepts": [
+          "RBAC fundamentals: users, roles, permissions, and sessions; role hierarchies where senior roles inherit junior role permissions",
+          "RBAC constraints: separation of duties (no user can have both approver and submitter roles), cardinality constraints (only N users can hold the DBA role), prerequisite constraints (must hold analyst role before senior analyst)",
+          "ABAC components: subject attributes (department, clearance, location), object attributes (classification, owner, sensitivity), action attributes (read, write, delete), and environment attributes (time of day, network location)",
+          "ABAC policy language: expressing rules like 'allow SELECT on patients WHERE user.department = record.department AND time BETWEEN 08:00 AND 18:00'",
+          "MAC (Mandatory Access Control): Bell-LaPadula model (no read up, no write down) for confidentiality, Biba model for integrity",
+          "SE-PostgreSQL: SELinux-based MAC enforcement for PostgreSQL that adds security labels to database objects and enforces kernel-level access policies",
+          "Implementing ABAC in PostgreSQL: combining row-level security policies with session variables and custom functions to evaluate attribute-based conditions",
+          "RBAC role explosion problem: as the number of unique access patterns grows, RBAC requires an impractical number of roles, motivating ABAC",
+          "Hybrid models: using RBAC for coarse-grained access with ABAC policies for fine-grained, context-sensitive decisions within each role"
+        ],
+        "demonstration": "Building a hybrid RBAC/ABAC system in PostgreSQL for a healthcare application. Create RBAC roles (doctor, nurse, billing, admin), then add ABAC policies using row-level security that restrict doctors to patients in their department, limit nurse access to current shift hours, and require billing staff to access only de-identified records unless they have a specific insurance processing attribute.",
+        "setup_requirements": [
+          "PostgreSQL 16 with row-level security enabled",
+          "Healthcare sample database with patients, encounters, and billing tables",
+          "Multiple test user accounts with different role and attribute combinations",
+          "Policy testing scripts to verify access control decisions"
+        ],
+        "review": [
+          {
+            "key": "RBAC vs ABAC Trade-offs",
+            "value": "RBAC is simpler to administer and audit: list a user's roles and you know their permissions. ABAC is more flexible but harder to audit: permissions depend on runtime attribute values. Choose RBAC for stable organizational structures, ABAC for dynamic, context-dependent access requirements."
+          },
+          {
+            "key": "Role Explosion",
+            "value": "An organization with 5 departments, 4 job levels, 3 data classifications, and 2 locations theoretically needs 5x4x3x2 = 120 roles under pure RBAC. ABAC handles the same requirements with a handful of policies referencing attribute values, avoiding the combinatorial explosion."
+          },
+          {
+            "key": "MAC in Practice",
+            "value": "Mandatory access control is used in military and intelligence databases where classification levels (Unclassified, Secret, Top Secret) must be system-enforced. SE-PostgreSQL implements MAC but adds significant operational complexity. Most commercial deployments use RBAC with ABAC extensions instead."
+          },
+          {
+            "key": "Auditing Access Control",
+            "value": "Whatever model you use, you must be able to answer: who accessed what data, when, and under what authorization. RBAC makes this straightforward through role membership queries. ABAC requires logging the attribute values that were evaluated for each access decision."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 5,
+      "topic": "Encryption at Rest",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Implement Transparent Data Encryption to protect database files on disk",
+        "Design column-level encryption for sensitive fields using pgcrypto",
+        "Apply application-level encryption patterns with external key management",
+        "Evaluate the performance impact and security trade-offs of each encryption approach"
+      ],
+      "readings": [
+        "PostgreSQL pgcrypto extension documentation",
+        "NIST SP 800-111 Guide to Storage Encryption Technologies",
+        "AWS RDS encryption at rest documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Encryption at rest protects database contents when physical security or access control fails. If an attacker steals a database backup, extracts a hard drive, or gains unauthorized file system access, properly implemented encryption at rest renders the stolen data unreadable without the encryption key. There are three distinct approaches, each protecting against different threat scenarios. Transparent Data Encryption (TDE) encrypts database files on disk, protecting against physical media theft and unauthorized file system access. Column-level encryption encrypts specific sensitive fields within the database, protecting against unauthorized database access even from users with query privileges. Application-level encryption encrypts data before it reaches the database, providing the strongest protection because the database engine never sees the plaintext. Each approach has different key management requirements, performance characteristics, and operational implications. A comprehensive encryption strategy often combines multiple approaches: TDE as a baseline, column-level encryption for the most sensitive fields like SSN and payment card numbers, and application-level encryption for data that even DBAs should not see in plaintext.",
+        "key_concepts": [
+          "Transparent Data Encryption: encrypts tablespace files on disk transparently to applications; protects against physical theft but not against authenticated database users",
+          "Column-level encryption with pgcrypto: using pgp_sym_encrypt/pgp_sym_decrypt to encrypt specific columns; queries against encrypted columns require application changes",
+          "Application-level encryption: encrypt in the application layer before INSERT, decrypt after SELECT; the database stores only ciphertext and cannot be compelled to produce plaintext",
+          "Key management hierarchy: master keys protect data encryption keys (DEKs); DEKs encrypt the actual data; this envelope encryption pattern enables key rotation without re-encrypting all data",
+          "External key management: storing encryption keys in HashiCorp Vault, AWS KMS, or Azure Key Vault rather than in the database or application configuration",
+          "Performance impact: TDE adds 3-5% overhead; column-level encryption adds per-row overhead and prevents index-based searching on encrypted columns",
+          "Searchable encryption trade-offs: deterministic encryption allows equality searches but leaks patterns; randomized encryption is more secure but prevents searching",
+          "Encryption algorithm selection: AES-256 for symmetric encryption, avoid deprecated algorithms (DES, 3DES, RC4)",
+          "Key rotation procedures: rotating DEKs by re-encrypting data, rotating master keys by re-wrapping DEKs, scheduled rotation policies for compliance"
+        ],
+        "demonstration": "Implementing three layers of encryption on a PostgreSQL healthcare database. First, enable TDE using the pg_tde extension for full-disk encryption. Then apply column-level encryption using pgcrypto to encrypt patient SSN and insurance ID columns. Finally, demonstrate application-level encryption where the Python application encrypts diagnosis notes with a key from HashiCorp Vault before storing them, and show that even a DBA with full database access sees only ciphertext for the diagnosis field.",
+        "setup_requirements": [
+          "PostgreSQL 16 with pgcrypto extension installed",
+          "HashiCorp Vault running in dev mode for key management",
+          "Python application with cryptography library and hvac (Vault client)",
+          "Healthcare sample database with sensitive columns (SSN, insurance_id, diagnosis)"
+        ],
+        "review": [
+          {
+            "key": "TDE vs Column Encryption",
+            "value": "TDE protects against physical media theft (stolen disk, discarded drive). Column encryption protects against unauthorized database access (compromised account, SQL injection reading data). TDE is transparent to applications; column encryption requires application changes to encrypt and decrypt."
+          },
+          {
+            "key": "Key Management is the Hard Part",
+            "value": "Encryption is only as strong as key management. Store encryption keys in an external KMS, not in the database or application code. Implement key rotation without re-encrypting all data using envelope encryption. The master key in KMS can rotate transparently; only the DEK wrapper changes."
+          },
+          {
+            "key": "Searchable Encryption Dilemma",
+            "value": "Encrypting a column with randomized encryption means you cannot use WHERE ssn = '123-45-6789' because each encryption produces different ciphertext. Deterministic encryption allows equality search but reveals which rows have the same value. Tokenization (storing a token mapped to the encrypted value in a separate vault) is the industry-standard compromise."
+          },
+          {
+            "key": "Compliance Requirements",
+            "value": "PCI-DSS requires encryption of cardholder data at rest. HIPAA requires encryption of PHI as an addressable safeguard. GDPR considers encryption a key technical measure for data protection. Each framework has specific requirements for key management, algorithm strength, and audit trails."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Encryption in Transit",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Configure TLS for database connections in PostgreSQL and MySQL",
+        "Implement mutual TLS (mTLS) for client certificate authentication",
+        "Analyze TLS handshake captures to verify encryption is active",
+        "Design certificate management workflows for database TLS deployments"
+      ],
+      "readings": [
+        "PostgreSQL SSL/TLS configuration documentation",
+        "MySQL encrypted connections documentation",
+        "NIST SP 800-52 Guidelines for TLS Implementations"
+      ],
+      "lecture_notes": {
+        "introduction": "Data in transit between application servers and databases crosses network infrastructure that may be shared, sniffable, or compromised. Without encryption, database credentials and query results travel in plaintext, visible to anyone with network access between the client and server. TLS (Transport Layer Security) encrypts the entire communication channel, protecting both authentication credentials and data payloads. Configuring TLS for database connections involves server-side certificate setup, client-side verification configuration, and optionally mutual TLS where both sides present certificates. The operational challenges are significant: certificate provisioning, renewal, revocation, and trust chain management must all be automated and monitored. A single expired certificate can cause a production outage. This session covers the full lifecycle of database TLS configuration, from generating certificates through monitoring for expiration, with hands-on configuration of both PostgreSQL and MySQL. We also examine common misconfigurations that provide a false sense of security, such as setting sslmode=prefer in PostgreSQL, which silently falls back to unencrypted connections if TLS negotiation fails.",
+        "key_concepts": [
+          "TLS fundamentals for databases: server certificate, CA trust chain, cipher suite negotiation, and session encryption",
+          "PostgreSQL SSL modes: disable, allow, prefer, require, verify-ca, verify-full; only verify-full provides protection against MITM attacks",
+          "MySQL TLS configuration: --require-secure-transport, REQUIRE SSL in GRANT statements, ssl_mode connection parameter",
+          "Mutual TLS (mTLS): client presents a certificate signed by a trusted CA; the server verifies the client certificate in addition to the client verifying the server certificate",
+          "Certificate management: generating CA and server certificates with OpenSSL, configuring certificate rotation, monitoring expiration dates",
+          "Connection string security: ensuring application connection strings specify the strictest SSL mode and include CA certificate paths",
+          "Network sniffing demonstration: capturing unencrypted database traffic with tcpdump/Wireshark to show credentials and data in plaintext",
+          "Performance impact of TLS: connection establishment overhead (TLS handshake), minimal ongoing encryption overhead for modern CPUs with AES-NI",
+          "Certificate revocation: CRL and OCSP for revoking compromised certificates, and the operational challenges of revocation checking"
+        ],
+        "demonstration": "Capture unencrypted PostgreSQL traffic with tcpdump showing passwords and query results in plaintext. Then configure TLS on the PostgreSQL server with a self-signed CA, require verify-full SSL mode for all connections, and capture the same traffic to show it is now encrypted. Finally, configure mutual TLS so the database authenticates clients by their certificate CN field, eliminating password-based authentication entirely.",
+        "setup_requirements": [
+          "PostgreSQL 16 with SSL support compiled",
+          "OpenSSL for certificate generation",
+          "tcpdump or Wireshark for traffic capture",
+          "Two separate hosts or containers to demonstrate network traffic"
+        ],
+        "review": [
+          {
+            "key": "sslmode=prefer is Insecure",
+            "value": "PostgreSQL's 'prefer' SSL mode attempts TLS but silently falls back to plaintext if the server does not support it or if a MITM strips the TLS negotiation. Always use 'verify-full' in production, which requires a valid server certificate matching the expected hostname."
+          },
+          {
+            "key": "mTLS Eliminates Passwords",
+            "value": "With mutual TLS, the client's identity is established by its certificate rather than a password. This eliminates password management, rotation, and the risk of credential theft. The pg_hba.conf 'cert' authentication method maps the certificate CN to a database user."
+          },
+          {
+            "key": "Certificate Automation",
+            "value": "Manual certificate management does not scale. Use tools like cert-manager (Kubernetes), HashiCorp Vault PKI, or AWS ACM to automate certificate issuance, renewal, and distribution. Monitor certificate expiration with alerting thresholds at 30, 14, and 7 days before expiry."
+          },
+          {
+            "key": "Internal CA vs Public CA",
+            "value": "Database TLS typically uses an internal CA because databases are not publicly accessible and do not need publicly trusted certificates. An internal CA gives you full control over certificate issuance and revocation. Store the CA private key in an HSM or KMS, not on the database server."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Backup and Recovery Security",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Implement encrypted database backup procedures using pg_dump and WAL archiving",
+        "Design backup access control policies that prevent unauthorized data access",
+        "Perform point-in-time recovery to respond to ransomware and data corruption events",
+        "Verify backup integrity through automated hash verification and test restores"
+      ],
+      "readings": [
+        "PostgreSQL backup and recovery documentation",
+        "NIST SP 800-34 Contingency Planning Guide (database sections)",
+        "Veeam Database Backup Best Practices whitepaper"
+      ],
+      "lecture_notes": {
+        "introduction": "Backups are simultaneously a critical security control and a significant security risk. They protect against data loss from hardware failure, ransomware, accidental deletion, and corruption. But backups also contain complete copies of all database data, making them high-value targets for attackers. An unencrypted backup stolen from a file share, an S3 bucket with public access, or a discarded tape is a full data breach equivalent to compromising the production database. Backup security requires encrypting backup files, restricting access to backup storage, monitoring for unauthorized access, and regularly testing that backups can actually be restored. The most dangerous backup failure is not a missing backup but a backup that exists but cannot be restored when needed. This session covers the complete backup security lifecycle: encrypted backup creation, secure storage, integrity verification, access control, and tested recovery procedures. We pay special attention to point-in-time recovery, which is the primary defense against ransomware attacks on databases, allowing restoration to the exact moment before the attack began.",
+        "key_concepts": [
+          "Backup types for PostgreSQL: pg_dump logical backups, pg_basebackup physical backups, and continuous WAL archiving for point-in-time recovery",
+          "Backup encryption: encrypting pg_dump output with GPG or OpenSSL, encrypting WAL archives, and using encrypted storage destinations",
+          "Backup access control: restricting who can create, access, and delete backups; using separate backup service accounts with minimal database privileges",
+          "Backup storage security: encrypted S3 buckets with server-side encryption, restricted IAM policies, versioning to prevent deletion, and cross-region replication",
+          "Point-in-time recovery (PITR): using WAL archives to restore to any second in time; critical for ransomware response where you restore to the moment before encryption began",
+          "Backup integrity verification: computing and storing SHA-256 hashes of backup files, automated integrity checks before storage, and periodic test restores",
+          "Backup retention and rotation: defining retention policies (daily/weekly/monthly/yearly) that balance storage costs with recovery requirements",
+          "Ransomware resilience: immutable backup storage (S3 Object Lock, WORM), air-gapped backups, and backup integrity monitoring to detect silent corruption",
+          "Disaster recovery testing: scheduled DR drills that restore backups to a separate environment and verify data integrity and application functionality"
+        ],
+        "demonstration": "Implementing a complete backup security workflow. Create an encrypted pg_dump backup with GPG encryption and SHA-256 hash verification. Configure WAL archiving with encrypted archive storage. Simulate a ransomware attack by encrypting the production database files, then perform point-in-time recovery to the moment before the attack. Verify the recovered database matches the pre-attack state by comparing row counts and checksums.",
+        "setup_requirements": [
+          "PostgreSQL 16 with WAL archiving configured",
+          "GPG for backup encryption",
+          "Separate restore environment (second PostgreSQL instance)",
+          "Scripts for backup creation, verification, and restoration"
+        ],
+        "review": [
+          {
+            "key": "Backup as Breach Vector",
+            "value": "An unencrypted backup is equivalent to the production database. Encrypt all backups before they leave the database server. Use GPG with asymmetric encryption so the backup process has the public key (can encrypt) but not the private key (cannot decrypt), reducing exposure if the backup server is compromised."
+          },
+          {
+            "key": "PITR for Ransomware",
+            "value": "Point-in-time recovery using WAL archives allows restoration to any second in time. Critical for ransomware response: identify the timestamp of the first encryption activity, restore to one second before that timestamp. WAL archives must be stored on immutable storage that the ransomware cannot encrypt or delete."
+          },
+          {
+            "key": "Test Your Restores",
+            "value": "A backup that has never been tested is not a backup. Schedule automated weekly restore tests that load the backup into a separate environment and run validation queries. Alert if the restore fails or if data integrity checks do not pass. The only metric that matters is successful restore time."
+          },
+          {
+            "key": "Immutable Backup Storage",
+            "value": "S3 Object Lock or equivalent WORM (Write Once Read Many) storage prevents backup deletion or modification even by administrators. Configure a retention period that exceeds your recovery requirements. This ensures backups survive even if the AWS account credentials are compromised."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Audit Logging and Monitoring",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Configure comprehensive database audit logging with pgAudit",
+        "Design monitoring rules to detect anomalous database activity",
+        "Implement database activity monitoring for compliance requirements",
+        "Analyze audit logs to investigate security incidents"
+      ],
+      "readings": [
+        "NIST SP 800-92 Guide to Computer Security Log Management",
+        "pgAudit extension documentation",
+        "PCI-DSS Requirement 10: Track and Monitor All Access to Network Resources and Cardholder Data"
+      ],
+      "lecture_notes": {
+        "introduction": "Database auditing provides visibility into who accessed what data, when, and how. Without audit logging, security incidents go undetected, compliance requirements cannot be met, and forensic investigation is impossible. The challenge is configuring audit logging that captures meaningful security events without generating so much noise that important events are buried. PostgreSQL's built-in logging captures connection events and slow queries but lacks the granularity needed for security auditing. The pgAudit extension fills this gap by logging individual SQL statements with the database objects they access, the user who executed them, and the timestamp. Beyond logging, Database Activity Monitoring (DAM) solutions analyze query patterns in real-time to detect anomalies: a service account running SELECT * on the users table at 3 AM, a sudden spike in data volume leaving the database, or a new query pattern from an application account that has never executed that type of query before. This session covers both the configuration of audit logging and the design of monitoring rules that turn raw logs into actionable security alerts.",
+        "key_concepts": [
+          "PostgreSQL built-in logging: log_connections, log_disconnections, log_statement, log_duration; useful but insufficient for security auditing",
+          "pgAudit extension: session-level and object-level audit logging with configurable granularity per role and per object class (READ, WRITE, DDL, ROLE)",
+          "Audit log content: timestamp, user, database, client IP, SQL statement, affected objects, rows affected; the minimum fields needed for compliance",
+          "Database Activity Monitoring: real-time analysis of query patterns to detect anomalies, policy violations, and potential attacks",
+          "Anomaly detection rules: unusual query patterns from application accounts, bulk data access (SELECT with large result sets), DDL changes outside maintenance windows, privilege escalation attempts",
+          "Log aggregation and analysis: shipping database logs to a SIEM (Splunk, Elasticsearch) for centralized monitoring, correlation, and alerting",
+          "Compliance audit trails: PCI-DSS Requirement 10 mandates logging all access to cardholder data; HIPAA mandates logging all access to PHI; GDPR requires logging data subject access",
+          "Log integrity protection: write-once log storage, cryptographic hash chains, and log forwarding to prevent attackers from tampering with audit trails",
+          "Performance impact management: targeted auditing (specific roles, specific tables) versus full auditing; log rotation and archival strategies"
+        ],
+        "demonstration": "Configure pgAudit to log all data access on a healthcare database. Set up session-level auditing for DDL and role changes, and object-level auditing for SELECT/INSERT/UPDATE/DELETE on the patients and prescriptions tables. Ship logs to Elasticsearch and create Kibana dashboards showing query volume over time, top queried tables, and unusual activity alerts. Then simulate a data exfiltration attempt (bulk SELECT at unusual hours) and show how the monitoring detects and alerts on it.",
+        "setup_requirements": [
+          "PostgreSQL 16 with pgAudit extension installed",
+          "Elasticsearch and Kibana for log analysis (or Splunk)",
+          "Filebeat for log shipping",
+          "Healthcare sample database with sensitive tables"
+        ],
+        "review": [
+          {
+            "key": "pgAudit Configuration",
+            "value": "pgAudit provides session-level logging (all statements by a role) and object-level logging (specific statements on specific objects). Configure object-level auditing for sensitive tables and session-level auditing for DDL and role changes. This targets logging to security-relevant events without logging every SELECT on lookup tables."
+          },
+          {
+            "key": "Detecting Data Exfiltration",
+            "value": "Alert on queries returning unusually large result sets, SELECT * on sensitive tables, queries at unusual hours from application accounts, and new query patterns never seen before from a given account. Correlate database alerts with network monitoring for data volume leaving the database server."
+          },
+          {
+            "key": "Log Integrity",
+            "value": "If an attacker gains database access, they will try to delete or modify audit logs to cover their tracks. Forward logs to a separate system in real-time. Use append-only storage. Implement cryptographic hash chains where each log entry includes a hash of the previous entry, making tampering detectable."
+          },
+          {
+            "key": "Compliance Logging Requirements",
+            "value": "PCI-DSS requires logging access to cardholder data, authentication events, privilege changes, and administrative actions with 1 year retention. HIPAA requires logging access to PHI for 6 years. Design your audit configuration to meet the most stringent applicable requirement."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "MySQL Hardening",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Harden a MySQL installation from default configuration to CIS Benchmark compliance",
+        "Configure MySQL authentication plugins and password policies",
+        "Implement MySQL audit logging using the Enterprise Audit plugin or alternatives",
+        "Secure MySQL replication and backup processes"
+      ],
+      "readings": [
+        "CIS MySQL Benchmark (latest version)",
+        "MySQL Security documentation",
+        "MySQL Enterprise Audit documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "MySQL is the world's most popular open-source database, powering millions of applications from small websites to enterprise systems. Its ubiquity makes it a frequent target, and its default configuration prioritizes ease of setup over security. A fresh MySQL installation has several security weaknesses: the root account may lack a password or use a weak authentication plugin, the test database is accessible to anonymous users, remote root access may be enabled, and audit logging is not configured. The mysql_secure_installation script addresses some of these issues but is insufficient for production hardening. The CIS Benchmark for MySQL contains over 80 specific hardening recommendations organized into categories: installation and planning, operating system, file permissions, general configuration, MySQL permissions, auditing and logging, replication, and authentication. This session walks through the most critical hardening steps for MySQL, focusing on the changes that produce the largest security improvement with manageable operational impact. We compare MySQL Community Edition's built-in security features with MySQL Enterprise's additional capabilities, including the Enterprise Audit plugin and Enterprise Encryption.",
+        "key_concepts": [
+          "mysql_secure_installation limitations: removes anonymous users and test database but does not address file permissions, network binding, audit logging, or authentication plugin configuration",
+          "MySQL authentication plugins: caching_sha2_password (default in 8.0), mysql_native_password (deprecated), LDAP authentication for enterprise integration",
+          "MySQL password policy: validate_password component for enforcing length, complexity, dictionary checks, and password reuse prevention",
+          "Network hardening: bind-address configuration to restrict listening interfaces, skip-networking for local-only access, firewall rules for remote access",
+          "File permission hardening: datadir permissions (700), log file permissions, socket file permissions, securing the my.cnf configuration file",
+          "MySQL privilege hardening: removing excessive SUPER, FILE, and PROCESS privileges from application accounts; disabling LOAD DATA LOCAL INFILE",
+          "MySQL audit logging: Enterprise Audit plugin (JSON/XML format), or open-source alternatives like MariaDB Audit Plugin and mysql-audit from McAfee",
+          "MySQL replication security: encrypting replication traffic with TLS, using replication-specific accounts with minimal privileges, monitoring replication lag for integrity",
+          "MySQL Roles (8.0+): creating and assigning roles for RBAC, mandatory roles for all new connections"
+        ],
+        "demonstration": "Taking a fresh MySQL 8.0 installation through the complete hardening process. Run mysql_secure_installation as a baseline, then apply CIS Benchmark recommendations: configure caching_sha2_password, enable validate_password with strong policy, bind to localhost, set restrictive file permissions, create application-specific accounts with minimal privileges, enable the audit log, and configure TLS for all connections. Run a CIS Benchmark scanner before and after to show the improvement.",
+        "setup_requirements": [
+          "MySQL 8.0 fresh installation (Docker or VM)",
+          "CIS Benchmark document for MySQL 8.0",
+          "MySQL Shell or mysql CLI client",
+          "CIS-CAT scanner or manual benchmark checklist"
+        ],
+        "review": [
+          {
+            "key": "LOAD DATA LOCAL INFILE Risk",
+            "value": "When enabled, LOAD DATA LOCAL INFILE allows a client to read any file the MySQL client process can access and send it to the server. An attacker with SQL injection can use this to read /etc/passwd or application configuration files. Disable with local_infile=0 in my.cnf."
+          },
+          {
+            "key": "FILE Privilege Danger",
+            "value": "The FILE privilege allows a MySQL user to read and write files on the server filesystem using LOAD DATA INFILE and SELECT INTO OUTFILE. Never grant FILE to application accounts. Combined with SQL injection, FILE privilege enables reading server files and writing web shells."
+          },
+          {
+            "key": "MySQL vs PostgreSQL Security",
+            "value": "PostgreSQL has row-level security built in; MySQL does not (use views as a workaround). PostgreSQL's pg_hba.conf provides more granular authentication control. MySQL's Enterprise features (audit, encryption, firewall) require a commercial license. Both support TLS and modern authentication."
+          },
+          {
+            "key": "Replication Security",
+            "value": "MySQL replication transmits all data changes. Without TLS, binary log events travel in plaintext. The replication account needs REPLICATION SLAVE privilege only; never use root. Monitor replication integrity: SHOW SLAVE STATUS shows seconds_behind_master and any errors."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "PostgreSQL Security",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Harden PostgreSQL following the CIS Benchmark for PostgreSQL",
+        "Configure advanced PostgreSQL security features including sepgsql, pgcrypto, and connection limits",
+        "Implement PostgreSQL security monitoring with pg_stat_statements and log analysis",
+        "Design secure PostgreSQL deployment architectures for production environments"
+      ],
+      "readings": [
+        "CIS PostgreSQL Benchmark (latest version)",
+        "PostgreSQL Security documentation",
+        "PostgreSQL pg_stat_statements documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "PostgreSQL is the most advanced open-source relational database, and its security features reflect that sophistication. Row-level security, extensive authentication options via pg_hba.conf, pgcrypto for column-level encryption, and the pgAudit extension provide a comprehensive security toolkit. However, PostgreSQL's default configuration also prioritizes developer convenience over production security. The default pg_hba.conf on many installations trusts local connections without passwords, the public schema grants usage to all users, and the postgres superuser account has no enforced password complexity. The CIS Benchmark for PostgreSQL contains recommendations spanning installation, OS configuration, file permissions, logging, authentication, authorization, auditing, and network security. This session focuses on the PostgreSQL-specific hardening steps that go beyond what we covered in previous general sessions: advanced pg_hba.conf patterns, connection limit configuration to prevent denial of service, pg_stat_statements for query performance and security monitoring, and the security implications of PostgreSQL extensions, functions, and stored procedures.",
+        "key_concepts": [
+          "pg_hba.conf advanced patterns: using CIDR ranges, hostname matching, SSL certificate CN matching, and custom PAM modules for authentication",
+          "Connection limits: per-user, per-database, and global connection limits to prevent resource exhaustion and detect compromised credentials (sudden spike in connections)",
+          "pg_stat_statements: tracking query execution statistics to identify unusual query patterns, slow queries, and potential injection attempts",
+          "PostgreSQL extension security: extensions run with superuser privileges during installation; audit installed extensions and restrict CREATE EXTENSION to DBAs only",
+          "SECURITY DEFINER functions: PostgreSQL functions that execute with the privileges of the function owner rather than the caller, similar to setuid; audit for privilege escalation risks",
+          "Search path hijacking: if search_path includes schemas writable by untrusted users, they can create objects that shadow system functions; always qualify function calls with schema names",
+          "PostgreSQL backup user configuration: creating a dedicated backup role with pg_read_all_data privilege (pg 14+) rather than superuser access",
+          "Monitoring pg_stat_activity: real-time view of all active connections, queries, and wait events; essential for detecting suspicious sessions",
+          "PostgreSQL upgrade security: ensuring security configurations survive major version upgrades with pg_upgrade"
+        ],
+        "demonstration": "Performing a complete PostgreSQL security audit and hardening. Start with pg_hba.conf to enforce scram-sha-256 for all connections, set connection limits to prevent DoS, enable pg_stat_statements to monitor query patterns, audit installed extensions and SECURITY DEFINER functions, fix search_path configurations, and configure alerting for suspicious activity in pg_stat_activity.",
+        "setup_requirements": [
+          "PostgreSQL 16 with default configuration (unhardened)",
+          "CIS Benchmark document for PostgreSQL 16",
+          "psql CLI and pgAdmin",
+          "Monitoring scripts for pg_stat_activity and pg_stat_statements"
+        ],
+        "review": [
+          {
+            "key": "Search Path Hijacking",
+            "value": "If a function calls 'SELECT * FROM users' without qualifying the schema, and the search_path includes a schema writable by an attacker, the attacker can create a malicious 'users' table or function in that schema. Fix: always use schema-qualified names (public.users) and set search_path explicitly for each function."
+          },
+          {
+            "key": "SECURITY DEFINER Audit",
+            "value": "Functions defined with SECURITY DEFINER execute with the owner's privileges. If the owner is a superuser and the function has a SQL injection vulnerability, any user who can call the function can execute arbitrary SQL as superuser. Audit all SECURITY DEFINER functions and minimize their use."
+          },
+          {
+            "key": "pg_stat_statements for Security",
+            "value": "Beyond performance tuning, pg_stat_statements reveals security-relevant patterns: new query shapes from application accounts (possible injection), queries with unusually high row counts (data exfiltration), and queries against tables the application normally does not access."
+          },
+          {
+            "key": "Connection Monitoring",
+            "value": "Monitor pg_stat_activity for idle-in-transaction connections (possible abandoned sessions), queries running longer than expected thresholds, connections from unexpected source IPs, and superuser sessions outside maintenance windows."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "NoSQL Security: MongoDB",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Identify security challenges unique to MongoDB and document databases",
+        "Harden MongoDB authentication, authorization, and network configuration",
+        "Prevent NoSQL injection attacks specific to MongoDB query operators",
+        "Configure MongoDB encryption and auditing for production deployments"
+      ],
+      "readings": [
+        "MongoDB Security Checklist documentation",
+        "OWASP NoSQL Injection Prevention Cheat Sheet",
+        "MongoDB Enterprise Audit documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "NoSQL databases present a different security profile than relational databases. MongoDB, the most popular document database, has been the subject of thousands of data breaches, most caused by misconfigured deployments exposed to the internet without authentication. The MongoLock ransomware campaign automated the discovery and extortion of unsecured MongoDB instances, affecting an estimated 28,000 databases in a single wave. MongoDB's security model differs fundamentally from SQL databases: there is no pg_hba.conf equivalent for fine-grained connection control, the query language uses JSON operators rather than SQL (creating different injection vectors), and the schema-less nature means data classification and access control must account for documents with varying structures. However, MongoDB has significantly improved its security defaults in recent versions: authentication is now required by default in MongoDB 6.0+, localhost binding is enabled by default, and the Enterprise version includes a comprehensive audit framework. This session covers MongoDB-specific security configuration, the unique NoSQL injection vectors that bypass traditional SQL injection defenses, and the operational practices needed to maintain security in document database deployments.",
+        "key_concepts": [
+          "MongoDB authentication: SCRAM-SHA-256 (default), x.509 certificates, LDAP (Enterprise), and Kerberos; authentication must be explicitly enabled on older versions with --auth flag",
+          "MongoDB authorization: role-based access control with built-in roles (read, readWrite, dbAdmin, userAdmin) and custom roles with fine-grained privileges on specific collections",
+          "NoSQL injection in MongoDB: using $gt, $ne, $regex, and $where operators in user input to bypass authentication or extract data; example: {username: 'admin', password: {$gt: ''}} matches any non-empty password",
+          "MongoDB network hardening: bindIp configuration, enabling TLS/SSL for all connections, and using MongoDB's built-in firewall (net.tls settings)",
+          "MongoDB encryption: Client-Side Field Level Encryption (CSFLE) for encrypting sensitive fields before they reach the server, Encrypted Storage Engine (Enterprise), and queryable encryption",
+          "MongoDB auditing: Enterprise Audit Log for recording authentication, authorization, CRUD operations, and administrative actions in JSON format",
+          "MongoDB Atlas security: VPC peering, private endpoints, IP allowlisting, database access audit, and encryption at rest (default enabled)",
+          "Document validation as security: using JSON Schema validation to enforce document structure and prevent injection of unexpected fields",
+          "Replica set security: internal authentication between replica set members using keyFile or x.509 certificates"
+        ],
+        "demonstration": "Taking an intentionally insecure MongoDB instance (no authentication, bound to 0.0.0.0) and discovering it with a port scan. Demonstrate how easily data can be extracted. Then harden the instance: enable SCRAM-SHA-256 authentication, create users with appropriate roles, bind to localhost, enable TLS, configure auditing, and demonstrate that NoSQL injection against the hardened instance fails. Show Client-Side Field Level Encryption for encrypting SSN fields so even database administrators see only ciphertext.",
+        "setup_requirements": [
+          "MongoDB 7.0 (intentionally insecure configuration for demonstration)",
+          "MongoDB Shell (mongosh)",
+          "Python with pymongo for NoSQL injection demonstration",
+          "MongoDB Compass for visual database management"
+        ],
+        "review": [
+          {
+            "key": "MongoDB Default Risk History",
+            "value": "Pre-6.0 MongoDB shipped with authentication disabled and bound to all interfaces. Shodan searches found hundreds of thousands of exposed instances. MongoDB 6.0+ requires authentication by default and binds to localhost, but legacy deployments and Docker images with older defaults remain vulnerable."
+          },
+          {
+            "key": "NoSQL Injection Prevention",
+            "value": "Never pass user input directly as MongoDB query operators. Validate that user input is a string, not an object: if typeof(password) !== 'string', reject the request. Use MongoDB's $jsonSchema validation on collections. Parameterize queries in your driver (pymongo sanitizes by default if you use the correct API)."
+          },
+          {
+            "key": "Client-Side Field Level Encryption",
+            "value": "CSFLE encrypts sensitive fields in the driver before they are sent to the server. The MongoDB server stores and processes ciphertext only. Even a compromised server or DBA cannot read the encrypted fields. Key management uses AWS KMS, Azure Key Vault, or GCP KMS for master keys."
+          },
+          {
+            "key": "MongoDB vs PostgreSQL Security Comparison",
+            "value": "PostgreSQL offers row-level security (MongoDB has no equivalent), more granular authentication control (pg_hba.conf), and a mature extension ecosystem (pgAudit). MongoDB offers client-side field level encryption (more advanced than pgcrypto), flexible document-level access patterns, and Atlas managed security. Choose based on your data model and security requirements."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Data Masking and Anonymization",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Distinguish between data masking, anonymization, pseudonymization, and tokenization",
+        "Implement dynamic data masking for non-production database access",
+        "Design static data masking pipelines for development and testing environments",
+        "Evaluate anonymization techniques against re-identification attacks"
+      ],
+      "readings": [
+        "NIST SP 800-188 De-Identifying Government Datasets",
+        "GDPR Article 25: Data Protection by Design and by Default",
+        "PostgreSQL data masking approaches documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Organizations need to use production data for development, testing, analytics, and reporting, but exposing sensitive data in these contexts creates unnecessary risk. Data masking replaces sensitive values with realistic but fictional substitutes, allowing downstream users to work with structurally identical data without accessing real personal information. The techniques range from simple character substitution to sophisticated statistical methods that preserve data utility while preventing re-identification. GDPR, HIPAA, and PCI-DSS all recognize masking and anonymization as key controls for data protection. However, the distinction between these techniques matters enormously for compliance. Pseudonymized data (where the mapping between real and fake values is preserved) is still personal data under GDPR. Truly anonymized data (where re-identification is impossible) falls outside GDPR scope entirely. Achieving true anonymization is surprisingly difficult: research has shown that 87% of the US population can be uniquely identified by just zip code, birth date, and gender. This session covers the spectrum of techniques, their implementation in database systems, and the re-identification risks that determine whether your masked data is truly anonymous.",
+        "key_concepts": [
+          "Dynamic data masking: on-the-fly obfuscation where different users see different views of the same data based on their privileges; no data modification occurs",
+          "Static data masking: creating a permanently masked copy of the database for non-production environments; the original data is not present in the masked copy",
+          "Pseudonymization: replacing identifiers with consistent substitutes (hash or lookup table); reversible if the mapping is available; still personal data under GDPR",
+          "Anonymization: irreversible removal of identifying information; if truly anonymous, the data is outside GDPR scope; achieving true anonymity is technically challenging",
+          "Tokenization: replacing sensitive values with random tokens stored in a separate vault; allows detokenization when needed (e.g., payment processing)",
+          "K-anonymity: ensuring every combination of quasi-identifiers (age, zip, gender) appears in at least k records to prevent unique identification",
+          "Differential privacy: adding calibrated statistical noise to query results so individual records cannot be distinguished; used by US Census Bureau and Apple",
+          "Re-identification attacks: linking quasi-identifiers across datasets to identify individuals; the Netflix Prize dataset was de-anonymized by cross-referencing with IMDB",
+          "Masking techniques for common data types: name shuffling, address generalization, date shifting, SSN format-preserving encryption, email domain replacement"
+        ],
+        "demonstration": "Implement three masking approaches on a PostgreSQL customer database. First, create dynamic masking using views and row-level security where analysts see masked SSN (***-**-1234) and masked names while the application sees real data. Second, build a static masking pipeline that creates a development copy with Faker-generated replacement data maintaining referential integrity. Third, demonstrate a re-identification attack on a poorly anonymized dataset by cross-referencing with public records.",
+        "setup_requirements": [
+          "PostgreSQL 16 with sample customer database",
+          "Python with Faker library for realistic data generation",
+          "Public dataset for re-identification demonstration",
+          "pgAdmin for view management"
+        ],
+        "review": [
+          {
+            "key": "Dynamic vs Static Masking",
+            "value": "Dynamic masking applies at query time through views or database middleware; no separate copy is needed but performance overhead applies to every query. Static masking creates a separate masked database; higher setup cost but no runtime overhead. Use dynamic for ad-hoc reporting access, static for development and testing environments."
+          },
+          {
+            "key": "Pseudonymization is Not Anonymization",
+            "value": "GDPR treats pseudonymized data as personal data because it can be re-identified using the pseudonymization mapping. Only truly anonymized data (where re-identification is impossible by any reasonably available means) falls outside GDPR scope. Most practical masking implementations produce pseudonymized, not anonymized, data."
+          },
+          {
+            "key": "Referential Integrity in Masking",
+            "value": "When masking a database, foreign key relationships must be preserved. If customer_id 1234 is masked to customer_id 5678, all references in orders, invoices, and support tickets must be consistently updated. Static masking tools must process tables in foreign key dependency order."
+          },
+          {
+            "key": "Re-identification Risk",
+            "value": "Research shows that 87% of the US population is uniquely identifiable by zip code, birth date, and gender alone. Simply removing names and SSNs is insufficient. Generalize quasi-identifiers (zip code to first 3 digits, birth date to year only) and apply k-anonymity to prevent unique identification."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "Compliance: GDPR, HIPAA, and PCI-DSS",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Map database security controls to GDPR, HIPAA, and PCI-DSS requirements",
+        "Implement the Right to Erasure (GDPR Article 17) in relational database systems",
+        "Design database architectures that satisfy PCI-DSS cardholder data environment requirements",
+        "Conduct a database compliance gap analysis against a regulatory framework"
+      ],
+      "readings": [
+        "GDPR Articles 5, 17, 25, 32 (data protection principles, right to erasure, data protection by design, security)",
+        "HIPAA Security Rule 45 CFR 164.312 (technical safeguards)",
+        "PCI-DSS v4.0 Requirements 3, 7, 8, 10 (stored data protection, access control, identification, logging)"
+      ],
+      "lecture_notes": {
+        "introduction": "Regulatory compliance is not optional for database administrators working with personal data, health information, or payment card data. GDPR applies to any organization processing data of EU residents, with fines up to 4% of global annual revenue. HIPAA applies to covered entities and business associates handling protected health information, with civil penalties up to $1.9 million per violation category per year. PCI-DSS applies to any organization that stores, processes, or transmits cardholder data, with non-compliance potentially resulting in loss of payment processing privileges. Each framework specifies technical controls that directly affect database configuration: encryption requirements, access control mandates, audit logging specifications, data retention limits, and breach notification obligations. This session maps the database security controls we have covered throughout the course to specific regulatory requirements, identifies gaps that commonly cause compliance failures, and covers the implementation challenges unique to each framework. We pay special attention to GDPR's Right to Erasure, which requires the ability to completely delete an individual's personal data from all database systems, a surprisingly difficult technical challenge in systems with referential integrity, backups, replicas, and audit logs.",
+        "key_concepts": [
+          "GDPR database requirements: encryption at rest and in transit, access control and logging, data minimization (collect only what you need), purpose limitation (use only for stated purpose), right to erasure implementation",
+          "Right to Erasure (GDPR Article 17): deleting all personal data for a data subject from all systems including backups; exceptions for legal obligations, public health, and archiving in the public interest",
+          "Implementing erasure in databases: soft delete with scheduled purge, cascading deletes across related tables, purging from backups (technically challenging), and handling replicas",
+          "HIPAA technical safeguards: access control (unique user ID, emergency access, auto logoff, encryption), audit controls (recording and examining activity), integrity controls (data authentication), transmission security (encryption)",
+          "HIPAA minimum necessary standard: access to PHI must be limited to the minimum necessary for the user's job function; maps directly to least privilege and RBAC",
+          "PCI-DSS cardholder data environment: identifying all databases storing PAN (primary account number), encrypting stored PAN, restricting access, logging all access, and regular vulnerability scanning",
+          "PCI-DSS tokenization: replacing PAN with a token in application databases, storing the actual PAN only in a hardened token vault, reducing the cardholder data environment scope",
+          "Compliance gap analysis: systematic comparison of current database configuration against regulatory requirements, documenting gaps and remediation plans",
+          "Cross-regulation mapping: identifying controls that satisfy multiple frameworks simultaneously (encryption at rest satisfies GDPR Article 32, HIPAA 164.312(a)(2)(iv), and PCI-DSS Requirement 3.5)"
+        ],
+        "demonstration": "Conduct a compliance gap analysis on a PostgreSQL database storing customer data, health information, and payment card numbers. Map current security controls to GDPR, HIPAA, and PCI-DSS requirements. Identify gaps (missing encryption, insufficient logging, no erasure capability). Implement the Right to Erasure using a stored procedure that cascades deletion across all related tables, logs the erasure event, and generates a compliance certificate. Implement PCI-DSS tokenization for payment card numbers using a separate token vault.",
+        "setup_requirements": [
+          "PostgreSQL 16 with multi-purpose sample database (customer, health, payment data)",
+          "Compliance requirements mapping spreadsheet",
+          "Token vault implementation (separate PostgreSQL instance or HashiCorp Vault)",
+          "Erasure audit logging configuration"
+        ],
+        "review": [
+          {
+            "key": "Right to Erasure in Practice",
+            "value": "Erasing a user's data requires: identifying all tables containing their data (data mapping), cascading deletes across foreign key relationships, handling backups (accept that backups will age out and overwrite, or implement backup-level redaction), and documenting the erasure. Soft delete followed by scheduled hard delete is the common pattern."
+          },
+          {
+            "key": "PCI-DSS Scope Reduction",
+            "value": "Tokenization is the most effective way to reduce PCI-DSS scope. If your application database stores tokens instead of actual card numbers, only the token vault is in the cardholder data environment. This dramatically reduces the number of systems subject to PCI-DSS controls and audit."
+          },
+          {
+            "key": "HIPAA Audit Requirements",
+            "value": "HIPAA requires audit controls that record and examine activity in information systems containing PHI. This maps to pgAudit configured to log all access to PHI tables, with logs retained for 6 years. The audit must include who accessed the data, what they accessed, when, and from where."
+          },
+          {
+            "key": "Compliance is Continuous",
+            "value": "Passing a compliance audit is a point-in-time assessment. Maintaining compliance requires continuous monitoring, automated configuration checks, and regular internal audits. Configuration drift (someone disabling audit logging to fix a performance issue) is the most common cause of compliance failures between audits."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "Cloud Database Security",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Secure cloud-managed database services (AWS RDS, Azure SQL, GCP Cloud SQL)",
+        "Implement IAM-based database authentication for cloud databases",
+        "Configure VPC placement, security groups, and private endpoints for database isolation",
+        "Evaluate the shared responsibility model for cloud database security"
+      ],
+      "readings": [
+        "AWS RDS Security Best Practices documentation",
+        "Azure SQL Database Security documentation",
+        "GCP Cloud SQL Security documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Cloud-managed database services shift operational responsibility to the cloud provider but introduce new security considerations. The shared responsibility model means the provider secures the infrastructure (hardware, hypervisor, network, patching) while the customer secures the configuration (authentication, authorization, encryption keys, network access, audit logging). Misunderstanding this boundary is the leading cause of cloud database breaches. AWS RDS, Azure SQL Database, and GCP Cloud SQL each offer robust security features, but they must be explicitly configured. Default configurations vary: some enable encryption at rest by default while others require you to opt in. Network isolation through VPC placement and security groups is the most critical configuration because a database exposed to the internet, even with strong authentication, is orders of magnitude more vulnerable than one accessible only from a private subnet. IAM-based authentication eliminates database passwords by using cloud identity tokens, and private endpoints eliminate internet traversal entirely. This session covers the cloud-specific security configurations that supplement the general database security principles covered in previous weeks.",
+        "key_concepts": [
+          "Shared responsibility model: cloud provider secures infrastructure (host OS, patching, physical security); customer secures configuration (access control, encryption settings, network rules, monitoring)",
+          "VPC placement: databases in private subnets with no public IP, accessible only from application subnets through security group rules",
+          "Security groups and NACLs: stateful firewall rules that restrict database access to specific source IPs or security groups (application servers only)",
+          "IAM database authentication: using AWS IAM, Azure AD, or GCP IAM tokens instead of database passwords; tokens are short-lived and tied to cloud identity",
+          "Private endpoints (AWS PrivateLink, Azure Private Link): accessing cloud databases over the cloud provider's private network backbone without traversing the internet",
+          "Encryption at rest: AWS RDS uses KMS-managed keys (enabled by default since 2023), Azure uses service-managed or customer-managed keys, GCP encrypts by default",
+          "Encryption in transit: requiring TLS for all database connections and verifying server certificates to prevent MITM attacks",
+          "Cloud database audit logging: AWS RDS sends logs to CloudWatch, Azure SQL sends to Log Analytics, GCP Cloud SQL sends to Cloud Logging; all support export to SIEM",
+          "Automated patching and maintenance: cloud providers handle OS and engine patching but customers must schedule maintenance windows and test for application compatibility"
+        ],
+        "demonstration": "Deploy an AWS RDS PostgreSQL instance with security best practices: place in a private subnet with no public access, configure security groups to allow connections only from the application security group, enable IAM authentication so the application uses temporary tokens instead of passwords, enable encryption at rest with a customer-managed KMS key, require SSL for all connections, enable enhanced monitoring and Performance Insights, and configure audit logs shipping to CloudWatch with alert rules for suspicious activity.",
+        "setup_requirements": [
+          "AWS account with VPC and subnet configuration",
+          "AWS CLI and RDS console access",
+          "Terraform or CloudFormation template for reproducible deployment",
+          "Application server in the VPC for testing IAM authentication"
+        ],
+        "review": [
+          {
+            "key": "No Public Access, Ever",
+            "value": "A cloud database should never have a public IP or be accessible from the internet. Place databases in private subnets. Use VPN, bastion hosts, or AWS Session Manager for administrative access. Security groups should reference other security groups (application servers) rather than IP ranges."
+          },
+          {
+            "key": "IAM Authentication Benefits",
+            "value": "IAM-based database authentication eliminates long-lived passwords. The application requests a temporary token (valid for 15 minutes) using its IAM role. No passwords to rotate, store, or protect. If the application server is compromised, the token expires quickly. Supports MFA for human access."
+          },
+          {
+            "key": "Customer-Managed Keys",
+            "value": "AWS provides default encryption with AWS-managed keys, but customer-managed KMS keys give you control over key policy, rotation, and the ability to revoke access by deleting the key. Use customer-managed keys for sensitive databases and configure automatic annual rotation."
+          },
+          {
+            "key": "Cloud Database Backup Security",
+            "value": "Cloud database backups (automated snapshots, manual snapshots) are encrypted with the same key as the database. Ensure snapshots are not shared with other AWS accounts or made public. Configure backup retention (up to 35 days for RDS). For longer retention, export snapshots to encrypted S3 buckets."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Security Audit Capstone",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Conduct a comprehensive security audit of a database deployment",
+        "Identify vulnerabilities across authentication, authorization, encryption, logging, and network security",
+        "Produce a professional security audit report with findings, risk ratings, and remediation recommendations",
+        "Present audit findings to stakeholders with clear prioritization"
+      ],
+      "readings": [
+        "OWASP Database Security Assessment Guide",
+        "NIST SP 800-53A Assessing Security and Privacy Controls",
+        "Sample database security audit reports"
+      ],
+      "lecture_notes": {
+        "introduction": "The security audit capstone brings together every topic covered in this course into a single comprehensive assessment. A database security audit systematically evaluates the security posture of a database deployment against established benchmarks, compliance requirements, and security best practices. The audit process follows a structured methodology: scope definition, information gathering, vulnerability assessment, risk analysis, and report writing. This mirrors the work performed by internal security teams, external auditors, and penetration testers in real organizations. A well-conducted audit produces a report that prioritizes findings by risk level, provides specific remediation guidance, and maps findings to applicable compliance frameworks. The ability to conduct and communicate security assessments is among the most valuable skills a database security professional can have, because it combines technical depth with business communication. In this capstone session, you will apply the full breadth of knowledge from the course to audit a deliberately misconfigured database deployment. You will find real vulnerabilities, assess their risk, and produce a report that could be presented to a CISO or audit committee.",
+        "key_concepts": [
+          "Audit methodology: define scope, gather information (configuration review, network scan, privilege enumeration), test controls, analyze risks, report findings",
+          "CIS Benchmark scoring: comparing actual configuration against benchmark recommendations and calculating a compliance percentage",
+          "Vulnerability categorization: critical (immediate exploitation risk), high (significant risk with available exploit), medium (risk requiring specific conditions), low (theoretical or minor risk)",
+          "Risk rating formula: risk = likelihood x impact; likelihood considers exploitability, attacker skill required, and detection difficulty; impact considers data sensitivity and business criticality",
+          "Audit report structure: executive summary, methodology, scope, findings (each with description, risk rating, evidence, remediation), and overall risk assessment",
+          "Common audit findings: default credentials, excessive privileges, missing encryption, inadequate logging, unpatched vulnerabilities, public network exposure, unencrypted backups",
+          "Remediation prioritization: fix critical and high findings immediately, schedule medium findings for the next maintenance window, accept or remediate low findings based on cost-benefit analysis",
+          "Continuous compliance monitoring: automating audit checks with scripts or tools (Qualys, Nessus database plugins, custom pg_stat queries) to detect configuration drift between audits",
+          "Audit evidence documentation: screenshots, configuration file extracts, query outputs, and tool reports that prove each finding for audit trail purposes"
+        ],
+        "demonstration": "Conducting a live security audit of a deliberately misconfigured PostgreSQL database. Walk through the audit methodology step by step: enumerate network exposure (port scan), test authentication (default passwords, missing SSL), review authorization (excessive privileges, missing RLS), check encryption (unencrypted data, TDE status), evaluate logging (pgAudit configuration), review backup security (unencrypted backups), and assess compliance mapping. Compile findings into a structured audit report with risk ratings and prioritized remediation recommendations.",
+        "setup_requirements": [
+          "Deliberately misconfigured PostgreSQL instance with 10+ planted vulnerabilities",
+          "Nmap or similar port scanner",
+          "Audit checklist based on CIS PostgreSQL Benchmark",
+          "Audit report template"
+        ],
+        "review": [
+          {
+            "key": "Audit vs Penetration Test",
+            "value": "An audit reviews configuration and controls systematically against a benchmark. A penetration test actively exploits vulnerabilities to demonstrate impact. Both are valuable: audits catch configuration weaknesses comprehensively, penetration tests demonstrate real-world attack chains that combine multiple weaknesses."
+          },
+          {
+            "key": "Executive Summary",
+            "value": "The executive summary is the most important section of the audit report because it is the only section executives will read. State the overall risk level, the number of findings by severity, the top 3 most critical findings, and the recommended immediate actions. One page maximum."
+          },
+          {
+            "key": "Continuous Compliance",
+            "value": "A point-in-time audit provides assurance at the moment of assessment. Configuration drift begins immediately. Implement automated compliance checks that run daily or weekly and alert on deviations from the hardened baseline. Tools like Chef InSpec, Ansible, or custom SQL scripts can automate CIS Benchmark checks."
+          },
+          {
+            "key": "False Sense of Security",
+            "value": "Passing an audit does not mean the database is secure. Audits test known vulnerabilities and configuration standards. Zero-day vulnerabilities, application-level logic flaws, and social engineering are typically outside audit scope. Defense in depth and continuous monitoring complement periodic audits."
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 3,
+        "topic": "Database Fundamentals, SQL Injection, and Authentication",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "A developer writes the following Python code to query a database: query = f\"SELECT * FROM orders WHERE customer_id = '{request.args.get('id')}'\" followed by cursor.execute(query). Explain the vulnerability, provide two specific exploit payloads (one for data extraction and one for authentication bypass), and rewrite the code securely.",
+            "type": "code_analysis",
+            "points": 8,
+            "answer": "Vulnerability: String interpolation (f-string) concatenates user input directly into the SQL query, enabling SQL injection. The database cannot distinguish between the developer's SQL structure and the attacker's injected commands. Data extraction payload: id=' UNION SELECT username, password, NULL, NULL FROM users-- produces: SELECT * FROM orders WHERE customer_id = '' UNION SELECT username, password, NULL, NULL FROM users--' which returns all usernames and passwords (assuming the orders table has 4 columns). Authentication bypass payload: id=' OR '1'='1 produces: SELECT * FROM orders WHERE customer_id = '' OR '1'='1' which returns all orders for all customers because '1'='1' is always true. Secure rewrite: query = 'SELECT * FROM orders WHERE customer_id = %s' followed by cursor.execute(query, (request.args.get('id'),)). The %s placeholder is parameterized; psycopg2 handles escaping and type conversion, ensuring the input is always treated as a data value, never as SQL code.",
+            "rubric": [
+              {
+                "key": "Correct vulnerability identification with explanation of why f-string interpolation is dangerous",
+                "value": 2
+              },
+              {
+                "key": "Valid data extraction payload with column count matching and explanation",
+                "value": 2
+              },
+              {
+                "key": "Valid authentication bypass payload with explanation",
+                "value": 2
+              },
+              {
+                "key": "Correct parameterized query rewrite with explanation of why it prevents injection",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "You are configuring PostgreSQL pg_hba.conf for a production deployment. The requirements are: (1) the application server at 10.0.1.0/24 connects to the 'appdb' database as the 'appuser' role, (2) DBAs connect from the management network 10.0.99.0/24 to any database with certificate authentication, (3) all other connections should be rejected. Write the pg_hba.conf entries in the correct order and explain why order matters.",
+            "type": "configuration",
+            "points": 8,
+            "answer": "pg_hba.conf entries (order is critical, first match wins): Line 1: hostssl appdb appuser 10.0.1.0/24 scram-sha-256 -- Application server access to appdb only, requires SSL and password. Line 2: hostssl all dba_role 10.0.99.0/24 cert -- DBA access to all databases from management network, requires client certificate. Line 3: host all all 0.0.0.0/0 reject -- Reject all other connections from any source. Line 4: host all all ::/0 reject -- Reject all IPv6 connections. Order matters because PostgreSQL evaluates pg_hba.conf top to bottom and uses the first matching rule. If the reject rule were placed first, it would match all connections before the allow rules are evaluated, locking out all users. If the DBA cert rule were placed before the app rule with a broader database match, and a DBA tried to connect to appdb, they would match the DBA rule and need a certificate even if they had a password. The most specific rules must come first, followed by more general rules, with the default deny rule last.",
+            "rubric": [
+              {
+                "key": "Correct pg_hba.conf syntax with appropriate authentication methods",
+                "value": 3
+              },
+              {
+                "key": "Correct order with specific rules before general rules and reject last",
+                "value": 3
+              },
+              {
+                "key": "Clear explanation of first-match evaluation and why order matters",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A healthcare application stores patient SSNs encrypted with AES-256 using pgcrypto. The encryption key is stored in the same database in a 'config' table readable by the application account. Explain why this is insecure and design a proper key management architecture.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "The key stored in the same database defeats the purpose of encryption: anyone who compromises the database (through SQL injection, stolen backup, compromised DBA account, or physical media theft) gets both the encrypted data and the key to decrypt it. The encryption provides zero additional protection beyond what access control already provides. Proper architecture: (1) Store the encryption master key in an external KMS (AWS KMS, HashiCorp Vault, Azure Key Vault) that the application accesses via authenticated API calls. The database never contains or sees the master key. (2) Use envelope encryption: the KMS holds the master key, which encrypts data encryption keys (DEKs). The DEK is stored encrypted in the database alongside the data it encrypts. To decrypt, the application sends the encrypted DEK to the KMS, receives the plaintext DEK, and uses it locally. (3) The application authenticates to the KMS using IAM role (not a password in the database). (4) Implement key rotation: generate a new DEK periodically, re-encrypt data. The master key in KMS rotates transparently by re-wrapping the DEKs. (5) Database compromise alone yields only ciphertext and encrypted DEKs, which are useless without KMS access.",
+            "rubric": [
+              {
+                "key": "Clear explanation of why co-located key is insecure with specific attack scenarios",
+                "value": 2
+              },
+              {
+                "key": "Proper external KMS-based key management architecture",
+                "value": 3
+              },
+              {
+                "key": "Envelope encryption and key rotation design",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 2,
+        "week": 5,
+        "topic": "Access Control Models and Encryption",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "An organization has 5 departments, 4 job levels, 3 data classification levels, and access rules that vary by time of day. Explain why pure RBAC is insufficient for this scenario, design a hybrid RBAC/ABAC solution, and show how you would implement it in PostgreSQL using roles and row-level security.",
+            "type": "design",
+            "points": 8,
+            "answer": "Pure RBAC is insufficient because the number of unique access patterns requires 5 x 4 x 3 = 60 roles just for the department/level/classification combinations, and adding time-of-day constraints makes RBAC roles impractical since roles are static while time is dynamic. This is the role explosion problem. Hybrid RBAC/ABAC solution: Use RBAC for coarse-grained access (department roles with base permissions). Use ABAC via row-level security for fine-grained, context-sensitive decisions. Implementation: (1) Create department roles: CREATE ROLE hr_staff, CREATE ROLE finance_staff, etc. (2) Grant base table access to roles: GRANT SELECT ON employees TO hr_staff. (3) Set session variables for ABAC attributes: SET app.job_level = '3'; SET app.clearance = 'confidential'. (4) Create RLS policies combining role membership and attributes: CREATE POLICY dept_isolation ON employees USING (department = current_setting('app.department')); CREATE POLICY classification_check ON employees USING (data_classification <= current_setting('app.clearance')::int); CREATE POLICY business_hours ON employees USING (EXTRACT(HOUR FROM now()) BETWEEN 8 AND 18 OR current_setting('app.job_level')::int >= 4). (5) Senior staff (level 4) bypass time restrictions but still respect department and classification policies.",
+            "rubric": [
+              {
+                "key": "Correct explanation of role explosion problem with RBAC",
+                "value": 2
+              },
+              {
+                "key": "Sound hybrid RBAC/ABAC design with clear separation of concerns",
+                "value": 3
+              },
+              {
+                "key": "Working PostgreSQL implementation with roles and RLS policies",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Compare TDE (Transparent Data Encryption), column-level encryption with pgcrypto, and application-level encryption. For each, state what threat it protects against, what threat it does NOT protect against, and when you would choose it.",
+            "type": "comparison",
+            "points": 8,
+            "answer": "TDE (Transparent Data Encryption): Protects against physical media theft (stolen disk, discarded drive) and unauthorized file system access. Does NOT protect against authenticated database users running queries, SQL injection, or compromised DBA accounts because the decryption is transparent at the database layer. Choose when: compliance requires encryption at rest as a baseline control, or when physical media security is a concern. Easiest to implement with no application changes. Column-level encryption (pgcrypto): Protects against unauthorized database access from users without the decryption key, including compromised read-only accounts and SQL injection extracting encrypted columns. Does NOT protect against compromised application accounts that have access to both the encrypted data and the decryption key. Choose when: specific columns contain sensitive data (SSN, credit cards) that most database users should not see, and you need different access levels for different columns. Application-level encryption: Protects against all database-layer attacks because the database never sees plaintext. Even a compromised DBA, full database breach, or stolen backup yields only ciphertext. Does NOT protect against compromise of the application layer where encryption and decryption occur. Choose when: maximum data protection is required, when you need to ensure even DBAs cannot read sensitive data, or when you must prove to auditors that database access alone cannot expose data. Typical production deployment: TDE as baseline + column-level for sensitive fields + application-level for the most critical data.",
+            "rubric": [
+              {
+                "key": "Correct threat protection and limitation for each encryption type",
+                "value": 3
+              },
+              {
+                "key": "Appropriate use-case guidance for each approach",
+                "value": 3
+              },
+              {
+                "key": "Recognition that approaches are complementary, not mutually exclusive",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "You capture PostgreSQL network traffic with tcpdump and observe that the application is connecting with sslmode=prefer. The connection succeeds and data is transmitted. Explain why this is not secure and what specific attack it fails to prevent.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "sslmode=prefer attempts a TLS connection but silently falls back to an unencrypted connection if the TLS handshake fails for any reason. This is vulnerable to a TLS stripping attack (a type of man-in-the-middle attack): an attacker positioned between the client and server intercepts the initial connection attempt, strips the SSL negotiation response from the server (or sends a response indicating the server does not support SSL), and the client falls back to plaintext without any warning or error. All subsequent traffic (including credentials and query data) is transmitted in cleartext, visible to the attacker. Even without active MITM, network issues or misconfigurations that prevent TLS negotiation will silently degrade to plaintext. The fix is to use sslmode=verify-full, which: (1) requires a TLS connection (fails rather than falling back to plaintext), (2) verifies the server certificate is signed by a trusted CA, and (3) verifies the server certificate hostname matches the expected server name. This prevents both passive eavesdropping and active MITM attacks.",
+            "rubric": [
+              {
+                "key": "Correct explanation of sslmode=prefer behavior and silent fallback",
+                "value": 2
+              },
+              {
+                "key": "Description of TLS stripping / MITM attack",
+                "value": 3
+              },
+              {
+                "key": "Correct recommendation of sslmode=verify-full with explanation of its three protections",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "Backup Security, Audit Logging, and MySQL Hardening",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Your organization's pgAudit logs reveal that the application service account executed: SELECT * FROM patients WHERE diagnosis LIKE '%HIV%' at 3:00 AM. The application does not have a feature that queries by diagnosis. Describe what this indicates, your investigation steps, and the compliance implications.",
+            "type": "incident_analysis",
+            "points": 8,
+            "answer": "This indicates unauthorized data access, likely through: (1) SQL injection in the application allowing an attacker to run arbitrary queries through the application's database connection, or (2) Compromised application credentials being used directly against the database from an unauthorized source. Investigation steps: (1) Check application server logs for the corresponding HTTP request at 3:00 AM to identify the source. If an HTTP request exists, analyze the web server access logs for the source IP and the request parameters that triggered this query (SQL injection vector). (2) If no HTTP request exists, the credentials are being used directly against the database. Check the pgAudit log for the client_addr field to identify the source IP of the database connection. (3) Cross-reference the source IP with known infrastructure. If the IP is not an application server, the credentials are compromised. (4) Assess scope: query pgAudit logs for all activity from this source in the same time window to identify everything that was accessed. (5) Containment: rotate the application database credentials immediately and restrict pg_hba.conf to only allow connections from known application server IPs. Compliance implications: This is a HIPAA breach if PHI was accessed by an unauthorized party. Under HIPAA, a breach of unsecured PHI affecting 500 or more individuals requires notification to HHS within 60 days and notification to affected individuals. The HIV diagnosis data is especially sensitive. Document all investigation steps for the breach notification assessment.",
+            "rubric": [
+              {
+                "key": "Identifies likely attack vectors (SQL injection and credential compromise)",
+                "value": 2
+              },
+              {
+                "key": "Systematic investigation steps using audit logs and correlated evidence",
+                "value": 3
+              },
+              {
+                "key": "Recognizes HIPAA breach implications and notification requirements",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Design an encrypted backup strategy for a PostgreSQL database containing PCI-DSS cardholder data. Specify the backup types, encryption methods, key management, storage locations, integrity verification, and how you would respond to a ransomware attack using this strategy.",
+            "type": "design",
+            "points": 8,
+            "answer": "Backup strategy: Types: (1) Nightly pg_basebackup full physical backup for fast complete restore. (2) Continuous WAL archiving to a separate storage destination for point-in-time recovery. (3) Weekly pg_dump logical backup for schema-level portability and verification. Encryption: (1) Full backups encrypted with GPG using asymmetric encryption (public key on the backup server, private key stored only in the KMS). (2) WAL archives encrypted with AES-256 before writing to storage. (3) Backup destination (S3 bucket) has server-side encryption with customer-managed KMS key as a second layer. Key management: (1) GPG private key and AES encryption keys stored in AWS KMS, never on the database or backup server. (2) Key rotation: new encryption key monthly; old keys retained in KMS for decrypting historical backups. Storage: (1) Primary: encrypted S3 bucket in the same region with S3 Object Lock (WORM) to prevent deletion. (2) Secondary: cross-region replication to a second encrypted S3 bucket for disaster recovery. (3) Both buckets: versioning enabled, lifecycle policy to transition to Glacier after 90 days, retention of 1 year per PCI-DSS. Integrity verification: (1) SHA-256 hash computed at backup time and stored separately from the backup. (2) Automated weekly restore test to a separate environment with row count and checksum verification. (3) Alert if any verification fails. Ransomware response: (1) Identify the timestamp of first ransomware activity from monitoring alerts. (2) Deploy a new PostgreSQL instance from the latest pg_basebackup. (3) Apply WAL archives up to one second before the ransomware timestamp using PITR. (4) Verify data integrity by comparing row counts and checksums. (5) The ransomware cannot encrypt or delete the S3 backups because Object Lock prevents modification.",
+            "rubric": [
+              {
+                "key": "Complete backup strategy with appropriate types and encryption",
+                "value": 3
+              },
+              {
+                "key": "Sound key management with separation from backup storage",
+                "value": 2
+              },
+              {
+                "key": "Ransomware response procedure using PITR with immutable backup storage",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain why the MySQL FILE privilege and LOAD DATA LOCAL INFILE are dangerous, provide a specific attack scenario combining SQL injection with each, and state how to mitigate each risk.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "FILE privilege danger: The FILE privilege allows a MySQL user to read server-side files with LOAD DATA INFILE and write files with SELECT INTO OUTFILE. Attack scenario: An attacker exploits SQL injection in a web application whose MySQL account has FILE privilege. The attacker injects: ' UNION SELECT LOAD_FILE('/etc/shadow') -- to read the server's password hashes, or: ' UNION SELECT '<?php system($_GET[\"c\"]);?>' INTO OUTFILE '/var/www/html/shell.php' -- to write a web shell to the web server's document root, gaining remote code execution. Mitigation: Never grant FILE privilege to application accounts. Remove it explicitly: REVOKE FILE ON *.* FROM 'appuser'@'%'; LOAD DATA LOCAL INFILE danger: This allows the MySQL client to read any file accessible to the client process and send it to the server. In a web application context, the MySQL client runs as the web server process. Attack scenario: An attacker with SQL injection can craft a rogue MySQL server or exploit the LOAD DATA LOCAL protocol to trick the client into sending arbitrary files. Even without a rogue server, the attacker can inject: LOAD DATA LOCAL INFILE '/etc/passwd' INTO TABLE leak_table; to read the web server's /etc/passwd file into a table they can then query. Mitigation: Set local_infile=0 in my.cnf to globally disable this feature. In the MySQL client library, use the --local-infile=0 connection option. Remove the LOAD DATA LOCAL capability from the MySQL client entirely.",
+            "rubric": [
+              {
+                "key": "Correct explanation of FILE privilege risks with specific attack scenario",
+                "value": 3
+              },
+              {
+                "key": "Correct explanation of LOAD DATA LOCAL INFILE risks with specific attack scenario",
+                "value": 2
+              },
+              {
+                "key": "Appropriate mitigation steps for each risk",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "PostgreSQL Security, NoSQL Security, and Data Masking",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "A MongoDB web application accepts login requests as JSON: {username: req.body.username, password: req.body.password}. An attacker sends: {username: 'admin', password: {$gt: ''}}. Explain why this works, what the attacker achieves, and how to prevent it in both the application code and MongoDB configuration.",
+            "type": "code_analysis",
+            "points": 8,
+            "answer": "Why it works: MongoDB query operators like $gt (greater than) are JavaScript objects. If the application passes the request body directly to the MongoDB query without type checking, the password field becomes a query operator instead of a string literal. The query db.users.findOne({username: 'admin', password: {$gt: ''}}) matches any document where username is 'admin' AND password is greater than an empty string, which is true for any non-empty password. The attacker bypasses authentication without knowing the password. What the attacker achieves: Authentication bypass as the admin user, gaining full administrative access to the application. Application code prevention: (1) Type check all input: if (typeof req.body.password !== 'string') { reject the request }. (2) Use a schema validation library (Joi, Zod) that enforces string types on authentication fields. (3) Use the MongoDB $eq operator explicitly: {username: {$eq: req.body.username}, password: {$eq: req.body.password}} to force equality comparison regardless of input type. (4) Use mongoose or a similar ODM that enforces schema types. MongoDB configuration prevention: (1) Apply $jsonSchema validation on the users collection requiring password to be a string type. (2) Use MongoDB's query operator allowlist if available. (3) Enable audit logging to detect unusual query patterns.",
+            "rubric": [
+              {
+                "key": "Correct explanation of how MongoDB operator injection bypasses authentication",
+                "value": 3
+              },
+              {
+                "key": "Application-level prevention with type checking and explicit operators",
+                "value": 3
+              },
+              {
+                "key": "MongoDB configuration-level prevention with schema validation",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain PostgreSQL's search_path hijacking vulnerability. Provide a specific attack scenario where an unprivileged user exploits it to escalate privileges, and describe the mitigation steps.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Search path hijacking exploits PostgreSQL's object name resolution. When a function or query references an unqualified object name (e.g., 'users' instead of 'public.users'), PostgreSQL searches schemas in the order specified by the search_path setting. If the search_path includes a schema writable by unprivileged users, an attacker can create a malicious object in that schema that shadows a legitimate object. Attack scenario: (1) A DBA creates a SECURITY DEFINER function owned by the postgres superuser: CREATE FUNCTION admin_tool() RETURNS void SECURITY DEFINER AS $$ BEGIN DELETE FROM inactive_users; END; $$ LANGUAGE plpgsql; The function references 'inactive_users' without schema qualification. (2) The default search_path is '\"$user\", public'. An unprivileged user 'attacker' has CREATE privilege on the 'attacker' schema (their personal schema). (3) The attacker creates: CREATE TABLE attacker.inactive_users AS SELECT * FROM public.users; then: CREATE OR REPLACE FUNCTION attacker.inactive_users() RETURNS SETOF users LANGUAGE plpgsql AS $$ BEGIN GRANT postgres TO attacker; RETURN; END; $$. (4) When admin_tool() executes, it searches 'attacker' schema first (because $user resolves to the caller), finds the attacker's function or table, and executes with superuser privileges. Mitigation: (1) Always use schema-qualified names in functions: public.inactive_users. (2) Set search_path explicitly in every SECURITY DEFINER function: SET search_path = public. (3) Revoke CREATE on the public schema from PUBLIC. (4) Audit all SECURITY DEFINER functions for unqualified references.",
+            "rubric": [
+              {
+                "key": "Correct explanation of search_path resolution and the vulnerability mechanism",
+                "value": 2
+              },
+              {
+                "key": "Specific attack scenario showing privilege escalation via SECURITY DEFINER",
+                "value": 3
+              },
+              {
+                "key": "Complete mitigation steps including schema qualification and search_path pinning",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "A company anonymizes its customer database for analytics by removing names and email addresses but retaining zip code, birth date, and gender. Explain why this is insufficient for true anonymization and describe two techniques to improve it.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "This is insufficient because research by Latanya Sweeney demonstrated that 87% of the US population can be uniquely identified by the combination of zip code, birth date, and gender alone. An attacker can cross-reference these quasi-identifiers with public records (voter registration, census data) to re-identify individuals. For example, if a zip code has only one person born on March 15, 1985, the anonymized record maps directly to that person even without name or email. Technique 1: K-anonymity. Generalize quasi-identifiers so that every combination of values appears in at least k records: generalize zip code to the first 3 digits (02139 becomes 021**), generalize birth date to year and quarter (1985-03-15 becomes 1985-Q1), and retain gender as-is. Choose k >= 5 so that each quasi-identifier combination matches at least 5 people. This prevents unique identification but may still allow attribute disclosure if all k records share the same sensitive attribute. Technique 2: Differential privacy. Instead of releasing individual records, release aggregate statistics with calibrated noise added. For example, instead of individual records, release 'count of customers by age group and region' with Laplacian noise added to each count. The noise is calibrated to a privacy budget (epsilon) that mathematically bounds the maximum information any single record contributes. This provides provable privacy guarantees regardless of auxiliary information the attacker has.",
+            "rubric": [
+              {
+                "key": "Correct explanation of re-identification risk using quasi-identifiers",
+                "value": 2
+              },
+              {
+                "key": "K-anonymity technique with generalization examples",
+                "value": 3
+              },
+              {
+                "key": "Second technique (differential privacy or L-diversity) with explanation",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "Compliance, Cloud Security, and Comprehensive Review",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "A GDPR data subject requests erasure of all their personal data under Article 17. Your PostgreSQL database has their data in 6 tables with foreign key relationships, daily encrypted backups retained for 1 year, 3 read replicas, and an audit log. Describe your complete erasure procedure, including what you can and cannot delete and how you handle each system.",
+            "type": "procedure",
+            "points": 8,
+            "answer": "Complete erasure procedure: (1) Data mapping: Query the data dictionary and application documentation to identify all 6 tables containing the data subject's personal data. Trace foreign key relationships to determine deletion order (child tables first, then parent). (2) Primary database deletion: Execute cascading DELETE in a transaction, starting from the most dependent tables and working up to the root entity. Use a stored procedure that logs each deletion to the erasure audit table before executing. DELETE FROM order_items WHERE order_id IN (SELECT id FROM orders WHERE customer_id = :id); DELETE FROM orders WHERE customer_id = :id; (continue for all 6 tables). (3) Read replicas: Replicas automatically receive the DELETE operations through replication. Verify deletion propagated by querying each replica. If replication lag exists, wait for replicas to catch up and verify. (4) Encrypted backups: This is the hardest part. You cannot practically delete individual records from encrypted backup files. Legal approach: document that backups will age out according to the 1-year retention policy. GDPR allows reasonable retention of backup data if restoration from backup would re-insert the deleted data AND you have a process to re-delete if a backup is ever restored. Implement a 'tombstone' table of erased subject IDs that is checked after any backup restoration. (5) Audit log: The audit log of the erasure itself must be retained as proof of compliance. Previous audit entries containing the data subject's activity should be anonymized (replace identifiable fields with a hash) rather than deleted, preserving the audit trail structure. (6) Documentation: Generate an erasure certificate recording: data subject identifier, tables affected, rows deleted, timestamp, operator, and the backup retention explanation. Provide this to the data subject as confirmation.",
+            "rubric": [
+              {
+                "key": "Correct deletion procedure with foreign key order and transaction handling",
+                "value": 2
+              },
+              {
+                "key": "Practical handling of backups with tombstone/re-deletion approach",
+                "value": 3
+              },
+              {
+                "key": "Appropriate handling of audit logs and erasure documentation",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "An AWS RDS PostgreSQL instance is configured with: publicly accessible = yes, security group allowing 0.0.0.0/0 on port 5432, master password stored in the application's environment variables, encryption at rest disabled, and enhanced monitoring disabled. Identify each misconfiguration, explain the risk, and provide the specific AWS fix for each.",
+            "type": "incident_analysis",
+            "points": 8,
+            "answer": "Misconfiguration 1: Publicly accessible = yes. Risk: The database has a public IP and DNS entry, making it directly reachable from the internet. Combined with the open security group, anyone in the world can attempt connections. Fix: Modify the RDS instance to set publicly accessible = no. Place the instance in a private subnet with no internet gateway route. Misconfiguration 2: Security group allowing 0.0.0.0/0 on port 5432. Risk: Even if the database requires authentication, exposure to the entire internet enables brute force attacks, exploitation of PostgreSQL vulnerabilities, and denial of service. Fix: Restrict the security group inbound rule to the application server's security group ID only: aws ec2 authorize-security-group-ingress --group-id sg-db --protocol tcp --port 5432 --source-group sg-app. Misconfiguration 3: Master password in environment variables. Risk: Environment variables may be logged, exposed through debugging endpoints, visible in container orchestration metadata, or leaked through SSRF attacks. Fix: Enable IAM database authentication for the application (RDS supports generating temporary auth tokens via IAM). For the master password, store it in AWS Secrets Manager with automatic rotation enabled. Misconfiguration 4: Encryption at rest disabled. Risk: Data on the underlying EBS volumes is unencrypted, vulnerable to physical access or EBS snapshot theft. PCI-DSS and HIPAA require encryption at rest. Fix: Encryption cannot be enabled on an existing unencrypted RDS instance. Create an encrypted snapshot, restore to a new encrypted instance, and redirect the application. Use a customer-managed KMS key for control over key policy. Misconfiguration 5: Enhanced monitoring disabled. Risk: No visibility into database performance, connection patterns, or anomalous activity. Cannot detect attacks, performance issues, or compliance violations. Fix: Enable enhanced monitoring (1-second granularity), enable Performance Insights, configure CloudWatch alarms for connection count spikes and CPU anomalies, and enable PostgreSQL audit logging with log export to CloudWatch Logs.",
+            "rubric": [
+              {
+                "key": "All five misconfigurations correctly identified with specific risks",
+                "value": 3
+              },
+              {
+                "key": "Technically accurate AWS-specific fix for each misconfiguration",
+                "value": 3
+              },
+              {
+                "key": "Recognition that encryption requires instance recreation and IAM auth eliminates passwords",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the shared responsibility model for AWS RDS database security. For each of the following, state whether it is AWS's responsibility or the customer's responsibility: OS patching, database engine patching, security group configuration, physical data center security, backup encryption configuration, pg_hba.conf equivalent configuration, and SSL certificate management for the RDS endpoint.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "AWS responsibility (infrastructure layer): (1) OS patching: AWS manages the underlying operating system and applies security patches automatically. Customers cannot access the OS layer of an RDS instance. (2) Physical data center security: AWS secures the physical infrastructure including facilities, power, cooling, and hardware. Covered under SOC 2, ISO 27001, and FedRAMP certifications. (3) Database engine patching: AWS provides engine patches and applies them during customer-defined maintenance windows. The customer chooses when to apply (auto or manual), but AWS provides the patches. (4) SSL certificate management for the RDS endpoint: AWS provisions and rotates the SSL/TLS certificate for the RDS endpoint. Customers must update their CA bundles when AWS rotates the root CA (as happened in 2020). Customer responsibility (configuration layer): (1) Security group configuration: The customer defines which IPs and security groups can connect to the database. AWS provides the security group mechanism but the customer configures the rules. (2) Backup encryption configuration: The customer must enable encryption at rest (which also encrypts backups). AWS provides the capability but does not enable it on pre-2023 instances by default. (3) pg_hba.conf equivalent configuration: RDS does not expose pg_hba.conf directly, but the customer configures authentication through parameter groups (password_encryption, ssl settings) and IAM authentication settings. The customer is responsible for creating database users, roles, and permissions. Shared: Database engine patching is shared because AWS provides patches but the customer schedules the maintenance window and must test application compatibility.",
+            "rubric": [
+              {
+                "key": "Correct assignment of AWS vs customer responsibilities for each item",
+                "value": 3
+              },
+              {
+                "key": "Understanding that RDS abstracts OS access but exposes configuration through parameter groups",
+                "value": 2
+              },
+              {
+                "key": "Recognition of shared responsibilities and customer testing obligations",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Database Security Hardening and Assessment",
+        "week_assigned": 3,
+        "week_due": 6,
+        "points": 175,
+        "description": "Harden a provided PostgreSQL installation from default configuration to CIS Benchmark compliance. Perform a complete security assessment before and after hardening, produce a professional hardening guide, and develop an automated hardening script that can be applied to new installations.",
+        "objectives": [
+          "Harden PostgreSQL from default installation to CIS Benchmark compliance across all control categories",
+          "Implement authentication, authorization, encryption, auditing, and network security controls",
+          "Perform a comprehensive security assessment comparing the default and hardened configurations",
+          "Produce a reusable hardening guide with rationale for each configuration change",
+          "Develop an automated hardening script that is idempotent and validates its own changes"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Hardened PostgreSQL configuration files with inline documentation explaining each setting",
+          "Security assessment report with before/after comparison showing specific vulnerabilities fixed",
+          "Database security hardening guide (8-12 pages) suitable for production use by operations teams",
+          "Automated hardening shell script with validation checks and rollback capability",
+          "CIS Benchmark compliance checklist with pass/fail status for each recommendation"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 55,
+            "criteria": [
+              "Authentication hardened: scram-sha-256 enforced, default passwords changed, pg_hba.conf locked down",
+              "Authorization configured: least privilege roles created, PUBLIC defaults revoked, row-level security enabled",
+              "Encryption enabled: TLS required for all connections, pgcrypto for sensitive columns, backup encryption",
+              "Audit logging: pgAudit configured for security-relevant events, log integrity protected",
+              "Network security: localhost binding or firewall rules, connection limits, SSL mode enforcement"
+            ]
+          },
+          "visual_quality": {
+            "points": 40,
+            "criteria": [
+              "Before/after security comparison with specific metrics (CIS score, open vulnerabilities)",
+              "SQL injection testing performed against the hardened instance showing prevention",
+              "Access control validation: each role tested for correct permissions and correct denials",
+              "Backup security: encrypted backup creation and verified restoration demonstrated"
+            ]
+          },
+          "performance_optimization": {
+            "points": 40,
+            "criteria": [
+              "Step-by-step hardening guide clear enough for junior DBAs to follow",
+              "Security rationale provided for each configuration change explaining what threat it mitigates",
+              "Rollback procedures included for every change in case of application compatibility issues",
+              "Compliance mapping showing which CIS, PCI-DSS, and HIPAA requirements each change satisfies"
+            ]
+          },
+          "documentation": {
+            "points": 40,
+            "criteria": [
+              "Hardening script automates all key configurations without manual steps",
+              "Script is idempotent: running it twice produces the same result as running it once",
+              "Script validates each change after applying it and reports pass/fail status",
+              "Script handles errors gracefully with clear error messages and continues to remaining checks"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 175,
+              "criteria": [
+                "Comprehensive database hardening from default to CIS Benchmark compliant state",
+                "Thorough security assessment with quantified before/after comparison",
+                "Professional hardening guide suitable for production operations teams",
+                "Functional automation script that is idempotent and self-validating"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Multi-Database Security Architecture",
+        "week_assigned": 8,
+        "week_due": 12,
+        "points": 175,
+        "description": "Design and implement a secure database architecture for a healthcare organization that uses PostgreSQL for patient records, MongoDB for medical imaging metadata, and Redis for session caching. Implement security controls for each database, secure inter-database communication, and demonstrate compliance with HIPAA technical safeguards.",
+        "objectives": [
+          "Implement security hardening for three different database technologies in a single architecture",
+          "Design access control policies that work consistently across SQL and NoSQL databases",
+          "Secure inter-database communication and application-to-database connections",
+          "Demonstrate HIPAA compliance through encryption, access control, auditing, and integrity controls",
+          "Create a unified monitoring dashboard that detects security anomalies across all three databases"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Hardened configuration for PostgreSQL, MongoDB, and Redis with documentation",
+          "Access control policy document mapping roles to permissions across all three databases",
+          "TLS configuration for all database connections with certificate management plan",
+          "HIPAA compliance mapping showing which technical safeguards each control satisfies",
+          "Monitoring dashboard (Grafana or Kibana) with security-relevant alerts for all three databases",
+          "Architecture diagram showing network segmentation, encryption boundaries, and data flows"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 55,
+            "criteria": [
+              "PostgreSQL hardened with authentication, RLS, pgcrypto, and pgAudit",
+              "MongoDB hardened with SCRAM authentication, RBAC, TLS, and audit logging",
+              "Redis hardened with ACLs, TLS, protected mode, and persistence security",
+              "All inter-database and application connections encrypted with TLS",
+              "Consistent access control model across all three database technologies"
+            ]
+          },
+          "visual_quality": {
+            "points": 40,
+            "criteria": [
+              "Complete HIPAA technical safeguard mapping with evidence for each requirement",
+              "Access control tested: demonstrate that each role has correct permissions in each database",
+              "Encryption verified: network captures showing encrypted traffic for all connections",
+              "Audit logging demonstrated: security events captured and analyzed across all databases"
+            ]
+          },
+          "performance_optimization": {
+            "points": 40,
+            "criteria": [
+              "Monitoring dashboard shows real-time security metrics for all three databases",
+              "Alert rules configured for authentication failures, unusual query patterns, and privilege changes",
+              "Performance impact of security controls measured and documented",
+              "Failover and recovery tested: security controls survive database restart and failover"
+            ]
+          },
+          "documentation": {
+            "points": 40,
+            "criteria": [
+              "Architecture diagram clearly shows all components, network boundaries, and data flows",
+              "Configuration documentation explains every security setting and its purpose",
+              "Operations runbook covers common security tasks: user creation, key rotation, incident response",
+              "HIPAA compliance evidence organized for audit presentation"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 175,
+              "criteria": [
+                "Secure multi-database architecture with consistent security controls",
+                "HIPAA compliance demonstrated with specific technical safeguard mappings",
+                "Unified monitoring and alerting across all database technologies",
+                "Professional documentation suitable for compliance audit"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Database Security Audit and Penetration Test",
+        "week_assigned": 12,
+        "week_due": 15,
+        "points": 150,
+        "description": "Conduct a comprehensive security audit and penetration test of a deliberately vulnerable database deployment. Identify all vulnerabilities, demonstrate exploitation of critical findings, develop remediation recommendations, and produce a professional audit report suitable for executive and technical audiences.",
+        "objectives": [
+          "Conduct a systematic security audit following CIS Benchmark methodology",
+          "Perform penetration testing to demonstrate the impact of identified vulnerabilities",
+          "Assess compliance against GDPR, HIPAA, and PCI-DSS requirements",
+          "Produce a professional audit report with executive summary and technical details",
+          "Develop a prioritized remediation plan with effort estimates and risk reduction metrics"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Security audit report (15-20 pages) with executive summary, methodology, and detailed findings",
+          "Penetration test evidence: screenshots and logs showing exploitation of top 5 vulnerabilities",
+          "Compliance gap analysis against GDPR, HIPAA, and PCI-DSS with specific gaps identified",
+          "Prioritized remediation plan with effort estimates, risk ratings, and recommended timeline",
+          "Presentation slides (10-15 slides) summarizing findings for executive audience"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 45,
+            "criteria": [
+              "All planted vulnerabilities discovered (minimum 8 of 10)",
+              "Penetration testing demonstrates real exploitation, not just theoretical risk",
+              "Attack chains identified: combining multiple vulnerabilities for escalated impact",
+              "False positives identified and excluded from findings"
+            ]
+          },
+          "visual_quality": {
+            "points": 35,
+            "criteria": [
+              "Compliance gap analysis is specific (citing exact regulation section and specific gap)",
+              "Risk ratings are justified with likelihood and impact analysis",
+              "Remediation recommendations are actionable with specific configuration changes",
+              "Effort estimates are realistic and prioritization reflects actual risk"
+            ]
+          },
+          "performance_optimization": {
+            "points": 35,
+            "criteria": [
+              "Executive summary communicates risk clearly to non-technical audience",
+              "Technical details are thorough enough for operations team to implement fixes",
+              "Report follows professional audit report format and conventions",
+              "Presentation effectively communicates key findings in 10-minute timeframe"
+            ]
+          },
+          "documentation": {
+            "points": 35,
+            "criteria": [
+              "Evidence is thorough: screenshots, log extracts, and tool output for each finding",
+              "Methodology is clearly documented and reproducible",
+              "Scope limitations and assumptions are explicitly stated",
+              "Report quality is professional enough for external audit submission"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Comprehensive security audit with all major vulnerabilities identified",
+                "Penetration testing demonstrates real-world exploitation impact",
+                "Professional report suitable for executive and technical audiences",
+                "Actionable remediation plan with prioritization and effort estimates"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 20,
+      "description": "Five quizzes assessing database security concepts, attack techniques, defense configurations, and compliance knowledge"
+    },
+    "lab_assignments": {
+      "percentage": 15,
+      "description": "Hands-on lab exercises for each weekly topic covering database configuration, security testing, and monitoring"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "Three major assignments: database hardening, multi-database security architecture, and security audit with penetration testing"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Written and practical exam covering SQL injection, access control, encryption, auditing, and DBMS-specific hardening"
+    },
+    "final_project": {
+      "percentage": 20,
+      "description": "Security audit capstone project demonstrating comprehensive database security assessment skills"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is mandatory for all lab sessions. More than 2 unexcused absences may result in a grade reduction. Lab exercises cannot be made up without prior arrangement.",
+    "late_submissions": "Late assignments are penalized 10% per day. No submissions accepted more than 5 days late without prior arrangement with the instructor.",
+    "collaboration": "Lab exercises may be completed in pairs. All reports, scripts, and audit documents must be individual work. Sharing hardening scripts or audit findings between students is prohibited.",
+    "academic_integrity": "SQL injection testing and penetration testing must only be performed against designated lab databases. Accessing other students' databases or any non-lab systems is prohibited and may result in disciplinary action.",
+    "technology_requirements": "Students need a laptop capable of running PostgreSQL 16, MySQL 8.0, MongoDB 7.0, and Docker. Lab VMs are provided for dedicated testing environments. VPN access required for remote lab sessions."
+  }
+}

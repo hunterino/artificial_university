@@ -1,0 +1,1496 @@
+{
+  "course_info": {
+    "course_id": "GD302",
+    "title": "Level Design",
+    "credit_hours": 3,
+    "duration": "15 weeks",
+    "meeting_schedule": "Tuesday, Thursday - 3 hours per week",
+    "prerequisites": [
+      "GD201 - 2D Game Development",
+      "GD102 - Game Theory and Mechanics"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "topic": "Level Design Philosophy and Player Flow",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Identify the core principles of effective level design and their origins in architectural theory",
+        "Analyze player flow through spatial layouts using heat maps, critical paths, and desire lines",
+        "Distinguish between designer intent and emergent player behavior and understand why playtesting bridges the gap",
+        "Apply the teaching triad (introduce, test, challenge) to sequence gameplay introductions"
+      ],
+      "readings": [
+        "An Architectural Approach to Level Design Ch. 1-2 (Christopher Totten)",
+        "Level Up! The Guide to Great Video Game Design Ch. 10 (Scott Rogers)",
+        "Gamasutra: 'What Makes a Good Level?' (Dan Taylor)"
+      ],
+      "lecture_notes": {
+        "introduction": "Level design is the invisible hand guiding the player through an experience. Great level design feels natural -- the player always knows where to go, always discovers optional secrets at just the right rate, and never feels lost or herded. But every sight line, chokepoint, reward placement, and lighting gradient is a deliberate choice by the designer. The discipline sits at the intersection of architecture, psychology, and game mechanics. Architects have understood for centuries how to guide human movement through spaces: wide corridors invite exploration, narrow passages create tension, and landmarks orient the visitor. Level design applies these principles to interactive spaces where the visitor has agency, weapons, and objectives. This session establishes the vocabulary and analytical framework we will use all semester. We will dissect World 1-1 of Super Mario Bros. -- arguably the most studied level in game design history -- to see how Miyamoto teaches the player running, jumping, power-ups, and enemies in 30 seconds of gameplay without a single line of tutorial text.",
+        "key_concepts": [
+          "The teaching triad: introduce a mechanic safely (no risk), test it in controlled risk (failure costs little), challenge it under pressure (failure costs progress). This three-beat rhythm appears in virtually every well-designed level.",
+          "Weenies and landmarks: visual attractors that orient the player without UI markers. Coined by Walt Disney for Disneyland's castle visible from every land. In games, a distant tower, a glowing door, or a unique color draws the player forward.",
+          "Critical path vs exploration space: the required route versus optional reward areas. The critical path must be clear and completable; exploration rewards players who deviate with loot, lore, or shortcuts.",
+          "Flow theory applied to spatial design: Csikszentmihalyi's flow state requires balanced challenge and skill. Level geometry controls this balance: wide open areas lower challenge, tight corridors with enemies raise it.",
+          "The 30-second loop: how a single room or arena should deliver a complete micro-experience -- enter, assess, engage, resolve -- in approximately 30 seconds of active gameplay.",
+          "Desire lines: paths players actually take versus paths the designer intended. Studying desire lines in playtesting reveals where the level's communication fails.",
+          "Affordance in level design: visual cues that communicate interaction possibilities. A ledge with a different texture affords climbing. A door with a visible handle affords opening. Broken railings afford jumping through.",
+          "The gate-and-key principle: progression gates that require specific capabilities (items, skills, knowledge, environmental changes) to pass, structuring the player's journey through ability acquisition.",
+          "Spatial storytelling: using environment details (abandoned objects, damage patterns, lighting changes) to convey narrative without cutscenes or dialogue.",
+          "Scale and proportion: how the size of spaces relative to the player character communicates importance (cathedrals feel sacred) and danger (cramped tunnels feel threatening)."
+        ],
+        "demonstration": "Analyzing the first level of Super Mario Bros. (World 1-1) to identify the teaching triad for each mechanic: how the first Goomba teaches collision from the left (safe approach), the first gap teaches jumping over pits, and the question block teaches reward exploration.",
+        "setup_requirements": [
+          "Unreal Engine 5.3 installed with starter content",
+          "Graph paper or digital diagramming tool (Miro, Figma) for top-down maps",
+          "Reference video of World 1-1 analysis (provided in course materials)"
+        ],
+        "review": [
+          {
+            "key": "Teaching Triad",
+            "value": "Introduce: show the mechanic in a safe context (enemy approaches from the left, giving the player time to react). Test: require using it with some risk (enemy on a narrow platform). Challenge: demand mastery under pressure (enemy plus time limit plus gap). This rhythm appears in virtually every well-designed level."
+          },
+          {
+            "key": "Weenie",
+            "value": "A visually prominent landmark visible from the player's current position that communicates 'go there' without explicit UI. Coined by Walt Disney for Disneyland's castle visible from every themed land. In games: a distant tower, a glowing exit, or a unique environmental feature."
+          },
+          {
+            "key": "Desire Lines",
+            "value": "In urban planning, desire lines are the worn paths people actually walk, ignoring the paved sidewalks. In level design, heat maps reveal where players actually go vs where the designer intended. The gap between the two is the level's communication debt."
+          },
+          {
+            "key": "Affordance",
+            "value": "Visual cues that suggest how an element can be interacted with. A yellow-painted ledge affords grabbing. A cracked wall affords breaking. Consistent affordance language across a game trains players to read the environment without tutorials."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 2,
+      "topic": "Pacing and Intensity Curves",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Map emotional intensity curves for existing game levels and identify pacing patterns",
+        "Design pacing structures that alternate tension and relief using the sawtooth model",
+        "Apply the concept of narrative beats to spatial progression in interactive environments",
+        "Use breathing rooms, vista moments, and safe zones as deliberate pacing tools"
+      ],
+      "readings": [
+        "An Architectural Approach to Level Design Ch. 4 (Christopher Totten)",
+        "Gamasutra: 'The Art of Pacing' (Mike Stout)",
+        "Half-Life 2 Developer Commentary (Valve)"
+      ],
+      "lecture_notes": {
+        "introduction": "A level that is always intense is exhausting. A level that is always calm is boring. Great pacing alternates between peaks of intensity and valleys of rest, and the shape of that alternation defines the emotional signature of the experience. Film editors have understood this for a century: chase scenes need quiet dialogue scenes before and after them to work. Level design applies the same principle spatially. A narrow corridor full of enemies raises tension; an open vista with no threats releases it. The pacing curve is not just about combat difficulty -- it encompasses cognitive load (puzzle complexity), emotional weight (narrative revelations), spatial pressure (claustrophobic tunnels vs open fields), and sensory intensity (loud/bright vs quiet/dim). Today we study pacing as a design tool, map intensity curves for published game levels, and practice constructing our own pacing plans. The key insight is that pacing is not something that happens to a level -- it is something the designer builds into the level's geometry, encounter placement, and environmental storytelling with deliberate intention.",
+        "key_concepts": [
+          "Intensity curves: plotting combat density, puzzle difficulty, narrative tension, and environmental pressure over the player's progression through the level, creating a visual pacing blueprint.",
+          "The sawtooth pattern: gradual tension buildup followed by sharp release (boss rooms, safe rooms). Each successive sawtooth starts from a slightly higher baseline, creating an overall ascending arc.",
+          "Breathing rooms: spaces that exist purely to let the player regroup, save, absorb what happened, and prepare for what is next. Without breathing rooms, players experience decision fatigue and disengage.",
+          "Environmental storytelling as pacing tool: narrative moments embedded in the environment (journals, NPC conversations, visual vignettes) that slow gameplay without cutscenes, giving the player rest while maintaining engagement.",
+          "Tempo manipulation through geometry: long corridors build anticipation (the player sees the destination getting closer), open arenas signal combat preparation, tight turns create surprise encounters.",
+          "The rest-activity ratio: professional-level pacing typically follows a 1:2 to 1:3 ratio of rest to activity time, though this varies by genre (survival horror uses more rest; action games use less).",
+          "Crescendo design: the final section of a level should be its most intense, giving the player a climactic payoff. Anti-climactic endings (boss is easy, final room is empty) are the most common pacing failures.",
+          "Audio-visual pacing: soundtrack intensity, lighting warmth/coolness, ambient sound density, and color saturation all reinforce spatial pacing. A breathing room with combat music playing fails as a rest point.",
+          "Player-controlled pacing: giving the player optional exploration lets them self-regulate intensity. Players who need a break can explore a side path; players who want action can push forward on the critical path.",
+          "Pacing across a full game: micro-pacing within a level, meso-pacing across a chapter (3-5 levels), and macro-pacing across the full campaign. Each scale needs its own intensity curve."
+        ],
+        "demonstration": "Mapping the intensity curve of Resident Evil 4's village encounter, identifying how geometry (open square with buildings), enemy spawn timing (waves with pauses), audio (escalating combat music), and the scripted chainsaw appearance work together to create a pacing masterclass.",
+        "setup_requirements": [
+          "Intensity curve template spreadsheet (provided in course materials)",
+          "Reference videos of analyzed game segments",
+          "Graph paper or digital charting tool for creating pacing curves"
+        ],
+        "review": [
+          {
+            "key": "Sawtooth Pacing",
+            "value": "Tension rises gradually through escalating encounters, then drops sharply at resolution points (boss defeat, safe room). The next sawtooth starts from a slightly higher baseline, creating an overall ascending arc that builds toward the level's climax."
+          },
+          {
+            "key": "Breathing Room",
+            "value": "A deliberate low-intensity space (merchant area, vista overlook, save point) placed after high-intensity sequences. The player recovers, manages inventory, and processes narrative information. Without breathing rooms, players experience fatigue and disengage."
+          },
+          {
+            "key": "Tempo Through Geometry",
+            "value": "Long straight corridors build anticipation because the player sees the destination approaching. 90-degree turns create surprise because the player cannot see what is around the corner. Wide open spaces signal 'prepare for combat' because the player recognizes arena shapes."
+          },
+          {
+            "key": "Crescendo Design",
+            "value": "The final encounter of a level must be its most intense moment. Anti-climactic endings (easy final boss, empty last room) waste all the pacing buildup. The crescendo should also introduce a novel element (new mechanic, unexpected twist) to prevent the climax from feeling like 'more of the same.'"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 3,
+      "topic": "Player Guiding Techniques",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Apply at least five distinct guiding techniques (lighting, color, geometry, audio, motion) to direct player movement through a level without UI waypoints",
+        "Understand the psychology of attention and how peripheral vision, contrast, and motion capture player focus",
+        "Design environments where the intended path is obvious to first-time players while rewarding exploration for veterans",
+        "Evaluate published game levels for their use of guiding techniques through analytical screenshots and diagrams"
+      ],
+      "readings": [
+        "An Architectural Approach to Level Design Ch. 3 (Christopher Totten)",
+        "Level Up! Ch. 11 (Scott Rogers)",
+        "GDC 2012: 'Visual Design of Uncharted 3' (Robh Ruppel)"
+      ],
+      "lecture_notes": {
+        "introduction": "The best level design is invisible. When a player naturally gravitates toward the objective, discovers the hidden cave, and notices the ambush before it triggers, they feel smart and capable. They attribute their success to their own skill, not to the designer's invisible guidance. This is the paradox of player guiding: the more effective it is, the less players notice it. Professional level designers have a toolkit of guiding techniques that range from obvious (a glowing trail) to subtle (a slight color temperature shift in the light near the objective). The most effective levels layer multiple techniques so that different players pick up on different cues: some respond to lighting, others to sound, others to geometry. Today we study the full guiding toolkit and practice applying each technique in graybox exercises. The goal is not to use every technique in every level, but to understand which techniques work for which situations and which player types.",
+        "key_concepts": [
+          "Light-based guiding: brighter areas attract attention. A well-lit corridor against a dim environment draws the eye. Volumetric light shafts pointing toward objectives are used extensively in Naughty Dog titles.",
+          "Color-based guiding: a single high-saturation color in a desaturated environment creates an irresistible focal point. Mirror's Edge uses red for interactive objects against white/blue architecture.",
+          "Geometry-based guiding: corridors funnel movement; open spaces invite exploration. A T-junction with the critical path lit and the exploration path darker communicates priority without words.",
+          "Audio-based guiding: directional sound (a distant waterfall, NPC dialogue, music changing) communicates spatial information. Players unconsciously move toward interesting sounds.",
+          "Motion-based guiding: moving objects (flags, birds taking flight, a character walking ahead) capture peripheral vision. Motion is the strongest attentional capture mechanism in human vision.",
+          "Framing and composition: using architectural framing (doorways, arches, window views) to compose the player's view so that the objective is centered or placed on a rule-of-thirds intersection.",
+          "Negative space: empty areas that contrast with detailed surroundings draw the eye. A smooth wall in a room full of clutter becomes a focal point because the brain seeks pattern breaks.",
+          "Breadcrumb placement: small collectibles (coins, rings, orbs) placed along the intended path create a visual trail. The player follows the rewards without realizing they are being guided.",
+          "NPC behavior as guide: friendly NPCs that walk toward the objective, look at interesting things, or call out directions provide natural guidance disguised as character behavior.",
+          "Layered redundancy: using at least three guiding techniques simultaneously (light + color + geometry) ensures that players with different perceptual tendencies all receive the message."
+        ],
+        "demonstration": "Analyzing guiding techniques in three published levels: Uncharted 4 (light and color), The Last of Us Part II (geometry and NPC behavior), and Portal (geometry and motion). Then grayboxing a simple corridor in Unreal Engine and applying lighting-based guiding to direct players toward a hidden alcove.",
+        "setup_requirements": [
+          "Unreal Engine 5.3 with BSP brush tools and point lights",
+          "Screenshot collection of analyzed levels (provided in course materials)",
+          "Basic understanding of UE5 material editor for colored emissive surfaces"
+        ],
+        "review": [
+          {
+            "key": "Layered Redundancy",
+            "value": "Never rely on a single guiding technique. Light guides visually attentive players, audio guides exploratory players, geometry guides movement-oriented players. Layering three or more techniques ensures virtually all players receive the spatial message."
+          },
+          {
+            "key": "Motion Capture",
+            "value": "Human peripheral vision is extremely sensitive to motion. A flag waving near an entrance, birds scattering from a rooftop, or a lantern swinging in the breeze all capture attention automatically. Motion-based guiding works even when the player is not looking directly at the guide."
+          },
+          {
+            "key": "Framing",
+            "value": "Architectural framing (doorways, arches, natural rock formations) directs the player's gaze by constraining their field of view. Placing the objective visible through a doorframe guarantees the player sees it when they pass through."
+          },
+          {
+            "key": "Breadcrumb Placement",
+            "value": "Small collectibles placed along the intended path serve as a visual trail. The player chases the rewards and arrives at the objective without feeling guided. This technique works best when the rewards have intrinsic value (currency, health) rather than being purely decorative."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 4,
+      "topic": "Environmental Puzzles",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Design environmental puzzles that use spatial reasoning, physics, and level mechanics rather than abstract logic",
+        "Apply the principles of progressive disclosure to puzzle difficulty scaling within a level",
+        "Create multi-step puzzles that build on previously taught mechanics while introducing one new element per puzzle",
+        "Balance puzzle complexity to avoid both trivial solutions and opaque solutions that block player progress"
+      ],
+      "readings": [
+        "Level Up! Ch. 12 (Scott Rogers)",
+        "Gamasutra: 'Designing Puzzles for Portal 2' (Erik Wolpaw)",
+        "The Legend of Zelda: Breath of the Wild Developer Interview (GDC 2017)"
+      ],
+      "lecture_notes": {
+        "introduction": "Environmental puzzles are level design's thinking challenges. Unlike abstract puzzles (sliding tiles, riddles), environmental puzzles use the game's spatial mechanics as their vocabulary: pushing blocks, redirecting water, activating switches in sequence, using line-of-sight mechanics, or combining items in the world. The best environmental puzzles feel like discoveries rather than obstacles -- the player experiments with the environment and has an 'aha' moment when the solution clicks. This requires careful design: the puzzle must be solvable through logical reasoning rather than trial-and-error, all necessary information must be visible in the environment, and the solution must feel satisfying rather than arbitrary. Today we study puzzle design principles from Zelda, Portal, and The Witness, then practice designing a three-room puzzle sequence where each room teaches one mechanic and the final room combines all three.",
+        "key_concepts": [
+          "Lock-and-key design: gates that require specific items, abilities, or environmental actions to pass. The 'key' can be a physical object (keycard), an ability (double jump), knowledge (a password), or an environmental change (draining water).",
+          "Progressive disclosure in puzzles: introduce one mechanic at a time. Room 1 teaches pushing blocks. Room 2 teaches pressure plates. Room 3 requires pushing a block onto a pressure plate. Each room adds one new element to the player's toolkit.",
+          "Environmental communication: the puzzle's rules and solution must be inferrable from visual cues in the environment. Glowing conduits show energy flow paths. Broken pipes show where water should flow. Floor markings show where objects belong.",
+          "Failure feedback: when the player attempts a wrong solution, the environment should communicate why it failed. A block sliding into a wall and stopping tells the player 'wrong direction.' A switch reverting tells them 'time limit.'",
+          "Red herrings and distractors: optional elements that look interactive but are not part of the solution create the illusion of complexity. Used sparingly, they make the solution feel earned. Overused, they frustrate players.",
+          "Hint escalation: if the player is stuck for a defined time, the environment provides increasingly obvious hints -- an NPC comment, a camera pan, a subtle light change. This prevents complete progression blocks without removing the satisfaction of solving.",
+          "Physics-based puzzles: using the game's physics engine as the puzzle vocabulary (weight, momentum, buoyancy, trajectories). These feel natural because the player already understands real-world physics intuitively.",
+          "Multi-solution puzzles: designing puzzles with 2-3 valid solutions rewards creative thinking and prevents frustration from not finding 'the one right answer.' Breath of the Wild excels at this.",
+          "Puzzle pacing within a dungeon: alternating puzzles with combat and exploration maintains engagement. Three puzzles in a row is mentally exhausting; interleaving other activities resets cognitive load.",
+          "Testing puzzle difficulty: the designer is the worst judge of their own puzzle's difficulty because they know the solution. Only fresh-eyes playtesting reveals whether a puzzle is too easy, too hard, or too obscure."
+        ],
+        "demonstration": "Designing and grayboxing a three-room puzzle sequence in Unreal Engine: Room 1 teaches a push-block mechanic (push block onto floor switch to open door). Room 2 teaches a timed switch (hit switch, door opens for 10 seconds). Room 3 combines both (push block onto timed switch, run to the door before it closes). Blueprint scripting for the switch and door interactions.",
+        "setup_requirements": [
+          "Unreal Engine 5.3 with BSP tools and Blueprint visual scripting",
+          "Trigger volume and movable actor setup",
+          "Timer node familiarity in Blueprints"
+        ],
+        "review": [
+          {
+            "key": "Progressive Disclosure",
+            "value": "Teach one puzzle mechanic per room. Room 1: block pushing. Room 2: pressure plates. Room 3: combine both. The player never faces a puzzle requiring a mechanic they have not already practiced in isolation."
+          },
+          {
+            "key": "Environmental Communication",
+            "value": "The puzzle's rules must be visible without text. Glowing conduits show energy paths. Floor markings show where blocks belong. Broken geometry shows where the solution creates a bridge. If a player needs a text prompt to understand the puzzle, the environmental design has failed."
+          },
+          {
+            "key": "Multi-Solution Design",
+            "value": "Breath of the Wild shrines often have 2-3 valid solutions: the intended path, a physics exploit, and a creative abuse of abilities. This rewards player creativity and prevents the frustration of searching for 'the one right answer.'"
+          },
+          {
+            "key": "Hint Escalation",
+            "value": "After 2 minutes stuck: subtle environmental cue (light flickers near the solution). After 4 minutes: NPC comment ('that wall looks weak'). After 6 minutes: camera briefly pans toward the answer. Escalation prevents blocks without removing the satisfaction of self-discovery."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 5,
+      "topic": "Combat Encounter Design",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Create combat arenas with tactical depth through cover placement, elevation changes, and flanking routes",
+        "Design enemy encounter compositions that test different player skills (ranged, melee, evasion, crowd control)",
+        "Apply the combat bowl, arena, and corridor archetypes to different combat scenarios",
+        "Balance encounter difficulty through enemy count, type mix, spawn timing, and arena geometry"
+      ],
+      "readings": [
+        "Halo 2 Multiplayer Map Design GDC Talk (Jaime Griesemer)",
+        "Level Up! Ch. 13 (Scott Rogers)",
+        "Doom Eternal Level Design Postmortem (GDC 2020)"
+      ],
+      "lecture_notes": {
+        "introduction": "Combat is where level design and game design intersect most intensely. The arena geometry defines the tactical possibilities: where can the player take cover? Where can enemies flank? Is there high ground? Are there chokepoints? A perfectly balanced combat system feels unfair in a poorly designed arena, and a mediocre combat system can feel incredible in a well-designed one. The level designer controls the combat experience not by tuning damage numbers (that is the systems designer's job) but by shaping the space where combat occurs. Today we study three combat space archetypes -- the corridor, the arena, and the combat bowl -- and analyze how commercial games use geometry to create varied tactical challenges. We will graybox a combat arena and test it with placeholder enemies to evaluate whether the space creates the intended tactical choices.",
+        "key_concepts": [
+          "Combat arena anatomy: entry points (where the player enters), cover positions (full and half cover), flanking routes (paths around cover), high ground (elevation advantage), and kill zones (open areas with no cover).",
+          "The combat bowl: a depression or enclosed area where the play area is lower than the surrounding terrain. Enemies spawn or position on the elevated rim, creating natural cover-to-cover gameplay as the player pushes uphill.",
+          "Corridor combat: tight spaces that favor close-range combat, limit flanking options, and create ambush opportunities around corners. Corridors build tension because the player cannot retreat or maneuver freely.",
+          "Arena combat: open spaces with distributed cover that allow 360-degree movement, weapon switching between ranges, and prioritization choices (which enemy group to engage first).",
+          "Enemy composition design: combining enemy types (ranged snipers on high ground, melee rushers from flanks, heavy tanks in the center) to force the player to use multiple skills simultaneously.",
+          "Spawn timing and waves: spawning all enemies at once creates chaos; spawning in waves creates rhythm. The first wave establishes the encounter, subsequent waves introduce complications, the final wave is the most dangerous.",
+          "Retreat and recovery: combat spaces should offer brief moments where the player can disengage, heal, and reassess. Dead-end arenas with no cover create frustration rather than challenge.",
+          "Encounter readability: the player should understand the tactical situation within 3 seconds of entering the space. Enemy positions, cover locations, and escape routes must be visually clear.",
+          "Dynamic arena modification: environmental elements that change during combat (destructible cover, collapsing bridges, flooding areas) escalate encounters over time and prevent camping.",
+          "Difficulty through geometry vs numbers: adding more enemies is the lazy difficulty increase. Changing the arena geometry (removing cover, adding elevation for enemies, restricting escape routes) creates more interesting difficulty scaling."
+        ],
+        "demonstration": "Grayboxing a combat bowl arena in Unreal: elevated rim with 3 enemy spawn points, central cover cluster, two flanking routes, one high-ground sniper perch. Placing placeholder enemies with AI and playtesting to evaluate the tactical flow. Then modifying the arena to increase difficulty by removing one cover position and adding a second sniper perch.",
+        "setup_requirements": [
+          "Unreal Engine 5.3 with BSP brushes and basic AI navigation",
+          "AI controller for placeholder enemies (provided in course materials)",
+          "Weapon pickups and health items for testing encounter balance"
+        ],
+        "review": [
+          {
+            "key": "Combat Bowl",
+            "value": "An arena where the play area is lower than the surroundings. Enemies on the rim have elevation advantage, forcing the player to push uphill through cover. Used extensively in Halo and Destiny for dramatic 'push the hill' encounters."
+          },
+          {
+            "key": "Enemy Composition",
+            "value": "Snipers on high ground force the player to use cover. Melee rushers force the player to move. Shielded enemies force the player to flank. Combining all three in one encounter creates rich tactical decisions where the player must prioritize threats."
+          },
+          {
+            "key": "Encounter Readability",
+            "value": "Within 3 seconds of entering a combat space, the player should understand: where are the enemies, where is cover, and where can I retreat. If the player dies without understanding the encounter's structure, the arena design has failed."
+          },
+          {
+            "key": "Difficulty Through Geometry",
+            "value": "Adding enemies is easy difficulty scaling. Removing cover, adding enemy elevation, restricting escape routes, or introducing destructible cover creates smarter difficulty that forces the player to adapt their tactics rather than just endure more damage."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Open World vs Linear Level Progression",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Compare the design constraints of open-world, linear, and hub-and-spoke level structures",
+        "Design hub-and-spoke layouts that offer player choice within a structured framework",
+        "Understand how open-world games manage pacing and narrative without linear control",
+        "Evaluate content density and its impact on player engagement across different progression structures"
+      ],
+      "readings": [
+        "An Architectural Approach to Level Design Ch. 7 (Christopher Totten)",
+        "GDC 2017: 'Building Non-Linear Narratives in Horizon Zero Dawn' (John Gonzalez)",
+        "The Design of Breath of the Wild's Open World (GDC 2017, Hidemaro Fujibayashi)"
+      ],
+      "lecture_notes": {
+        "introduction": "Linear design gives the designer near-total control over pacing, information delivery, and difficulty scaling. The player walks a curated path and experiences every beat in the intended order. Open-world design trades that control for player agency: the player chooses where to go, what to do, and in what order. Most shipped games exist on a spectrum between these extremes, and understanding the tradeoffs lets you choose the right structure for your game's goals. Hub-and-spoke designs split the difference: a central hub offers freedom of choice (which spoke to tackle next), while each spoke is internally linear with controlled pacing. Metroidvania designs add another dimension: the world is open but ability-gated, so the player's traversal options expand as they acquire new capabilities. Today we analyze how different progression structures serve different design goals, study the content density problem that plagues open-world games, and design a hub-and-spoke layout that provides exploration freedom without sacrificing narrative coherence.",
+        "key_concepts": [
+          "Linear corridors: maximum pacing control, predictable difficulty curves, scripted set-pieces. Every player has the same experience. Production cost per minute of gameplay is highest because every path is crafted.",
+          "Hub-and-spoke: a central safe area (hub) connecting to self-contained levels (spokes). The player chooses which spoke to tackle, but each spoke is internally linear. Used by Dark Souls bonfires, Metroid stations, and Mario 64's castle.",
+          "Open world: player-driven exploration with points of interest as content anchors. Difficulty scales by region. The main quest provides structure but is optional at any given moment.",
+          "Metroidvania: an interconnected world where ability gates (double jump, grapple hook, bomb) control access to new areas. Backtracking is rewarded as new abilities unlock previously visible but inaccessible paths.",
+          "Gating in open worlds: soft gates (enemy difficulty discourages early entry), hard gates (story locks requiring quest completion), and natural gates (cliffs, rivers, weather) that guide player progression.",
+          "Content density: the amount of meaningful interactive content per unit of traversal time. Ubisoft-style open worlds often suffer from icon fatigue (too many markers). Some survival games suffer from empty walking (too little content).",
+          "Fast travel and traversal: open worlds need traversal mechanics (horses, vehicles, fast travel) proportional to their size. Fast travel solves backtracking but eliminates the experience of traversal.",
+          "Emergent narratives in open worlds: player-created stories from systemic interactions (in Breath of the Wild: using a metal weapon as a lightning rod during a thunderstorm). These moments compensate for the lack of scripted pacing.",
+          "Procedural vs hand-crafted content: open worlds often mix both. Major locations are hand-crafted for quality, while random encounters and minor points of interest use procedural variation.",
+          "Player freedom vs narrative coherence: the more freedom the player has, the harder it is to tell a coherent story. Open-world narratives must work regardless of which content the player completes first."
+        ],
+        "demonstration": "Designing a hub-and-spoke layout on paper: a town hub connecting to a forest dungeon (linear), a mountain pass (semi-linear with optional caves), and a lake region (open mini-zone with scattered points of interest). Then grayboxing the hub in Unreal with door connections to each spoke.",
+        "setup_requirements": [
+          "Unreal Engine 5.3 with landscape tools",
+          "World partition plugin enabled for large-scale layouts",
+          "Diagramming tool for hub-and-spoke maps"
+        ],
+        "review": [
+          {
+            "key": "Hub-and-Spoke",
+            "value": "A central safe zone (hub) with multiple exits leading to self-contained levels (spokes). The player chooses which spoke to tackle, but each spoke is internally paced. Provides exploration freedom while maintaining per-level quality."
+          },
+          {
+            "key": "Content Density",
+            "value": "The ratio of meaningful interactions to traversal time. Too high (Ubisoft icon fatigue) overwhelms the player. Too low (empty walking) bores the player. The sweet spot depends on the game's intended pace and genre expectations."
+          },
+          {
+            "key": "Ability Gating",
+            "value": "In Metroidvania design, visible but inaccessible areas motivate the player to acquire new abilities. Seeing a ledge you cannot reach yet creates a mental bookmark that pays off when you get the double jump. This creates natural non-linear progression."
+          },
+          {
+            "key": "Emergent Narrative",
+            "value": "Player-created stories from systemic interactions. These moments are unpredictable by the designer but deeply personal to the player. Breath of the Wild's physics systems generate more memorable moments than most scripted set-pieces."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Grayboxing and Blockout Workflow",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Execute the complete grayboxing workflow from concept sketch through blockout to playtestable prototype",
+        "Apply correct scale and proportion using character metrics (jump height, weapon range, cover height)",
+        "Use BSP brushes, modular kits, and landscape tools for rapid spatial prototyping",
+        "Evaluate a graybox for gameplay quality without being influenced by visual polish"
+      ],
+      "readings": [
+        "Level Up! Ch. 14 (Scott Rogers)",
+        "Gamasutra: 'The Metrics of Space' (Luke McMillan)",
+        "Epic Games: 'Level Design in UE5' official tutorial series"
+      ],
+      "lecture_notes": {
+        "introduction": "Grayboxing is where level design becomes tangible. A concept document describes the vision. A top-down floor plan maps the space. But the graybox is the first time anyone can actually walk through the level and feel whether it works. The grayboxing workflow is deliberately lo-fi: untextured geometric primitives (boxes, ramps, cylinders) define the space so the designer can iterate on layout, scale, and flow without the sunk-cost fallacy of invested art assets. A graybox should be ugly. If it looks pretty, the designer spent too much time on presentation and not enough on playtesting. The correct workflow is: sketch, block out, playtest, iterate, playtest again, iterate again, and only then begin the art pass. Most amateur level designers skip straight to detailed art and then discover that their layout does not work -- but now every change costs hours of asset rework. Today we practice the full grayboxing pipeline in Unreal Engine, using character metrics to ensure correct scale and proportion.",
+        "key_concepts": [
+          "Character metrics: the measurable capabilities that define spatial constraints. Jump height (2.5m), cover height (1.0m standing, 0.6m crouching), weapon range (effective at 30m for rifles), sprint speed (7 m/s). All level geometry must be designed relative to these constants.",
+          "BSP brushes: additive and subtractive geometric primitives in Unreal Engine for rapid spatial prototyping. Additive creates solid geometry (walls, floors), subtractive carves holes (doorways, windows).",
+          "Modular kit approach: pre-built reusable geometry pieces (wall segments, floor tiles, stair sections, doorframes) that snap to a grid (1m or 2m) for efficient blockout with consistent proportions.",
+          "Scale reference: placing a player-height capsule (1.8m) in every room during grayboxing to verify that ceilings are not too low, corridors are not too narrow, and cover is the right height.",
+          "The three-playtest rule: a graybox should be playtested at least three times with different people before any art pass begins. Each playtest reveals layout problems invisible to the designer.",
+          "Kill your darlings: if a room does not serve the level's pacing or gameplay, remove it regardless of how much time was spent building it. The graybox stage is the cheapest time to cut content.",
+          "Navigation flow testing: timing how long players take to traverse the level, where they stop, where they backtrack, and where they get lost. These metrics are more informative than subjective feedback.",
+          "Vertical space: many beginner levels are flat. Adding multi-level areas with ramps, ledges, and overlooks creates visual variety, tactical depth, and spatial orientation landmarks.",
+          "Sightline management: controlling what the player can see at each point in the level. Revealing the destination early (weenie) but obscuring the path creates the satisfying feeling of planning a route.",
+          "Iteration speed: the goal of grayboxing is maximum iterations per hour. Every workflow choice (BSP vs modular kit, simple vs complex geometry, placeholder vs scripted encounters) should favor speed."
+        ],
+        "demonstration": "Live grayboxing session: starting from a top-down sketch, blocking out a multi-room level in Unreal using BSP brushes and a modular kit. Placing scale-reference capsules, testing jump gaps with a player character, and identifying a sightline problem that requires layout adjustment.",
+        "setup_requirements": [
+          "Unreal Engine 5.3 with BSP tools and a modular graybox kit (provided in course materials)",
+          "Player character with correct jump height and sprint speed",
+          "Stopwatch for navigation timing tests"
+        ],
+        "review": [
+          {
+            "key": "Character Metrics",
+            "value": "Jump height, sprint speed, weapon range, cover height, and interaction distance are the spatial constants that all level geometry must respect. A gap wider than the jump distance is impassable. Cover shorter than the character's standing height provides no protection."
+          },
+          {
+            "key": "BSP Brushes",
+            "value": "Additive brushes create solid geometry. Subtractive brushes carve holes in solid geometry. The workflow is: create a solid room (additive), then carve doorways and windows (subtractive). BSP is fast for prototyping but should be replaced with static meshes for shipping."
+          },
+          {
+            "key": "Kill Your Darlings",
+            "value": "If playtesting reveals that a room slows down the pacing, confuses players, or serves no gameplay purpose, remove it. The graybox stage is the cheapest time to cut content because no art assets have been committed."
+          },
+          {
+            "key": "Sightline Management",
+            "value": "Controlling what the player sees at each position. Revealing the destination (weenie) while hiding the path creates navigation puzzles. Hiding the destination creates mystery. Never show the player something interesting without a reachable path to it."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Lighting for Gameplay",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Use lighting as a functional level design tool for guiding, pacing, and communicating gameplay information",
+        "Understand the technical constraints of real-time lighting (dynamic vs baked, shadow maps, light budget)",
+        "Apply color temperature, intensity, and shadow placement to reinforce spatial narrative and mood",
+        "Design lighting setups that serve gameplay first and aesthetics second"
+      ],
+      "readings": [
+        "An Architectural Approach to Level Design Ch. 5 (Christopher Totten)",
+        "GDC 2019: 'The Art of Lighting in The Last of Us Part II' (Erick Pangilinan)",
+        "Unreal Engine 5 Lumen Documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Lighting is the level designer's most powerful tool for guiding player attention, establishing mood, and communicating spatial information. A single point light in a dark room draws the eye more effectively than any waypoint marker. Warm lighting says 'safe'; cool lighting says 'danger.' Bright areas invite exploration; dark areas create tension. But lighting in games is not just artistic -- it is technical. Real-time lighting has strict budgets: too many shadow-casting lights tank frame rate, too much baked lighting prevents dynamic time-of-day changes. The level designer must understand both the artistic and technical dimensions to light a level effectively. Today we study lighting as a gameplay tool rather than a visual decoration, practicing setups where every light serves a functional purpose: guiding the player, defining space boundaries, establishing mood, or highlighting interactive elements. The artistic beauty of the lighting should be a byproduct of its functional design, not the goal.",
+        "key_concepts": [
+          "Light as a guiding tool: brighter areas attract the eye and feet. A well-placed light at the end of a dark corridor is the most reliable guiding technique in the level designer's toolkit.",
+          "Color temperature and mood: warm light (3000-4000K, orange/yellow) communicates safety, comfort, and invitation. Cool light (6000-10000K, blue/white) communicates danger, sterility, or the supernatural.",
+          "Shadow placement for gameplay: shadows define the boundary between safe and dangerous territory. A shadow line across a doorway says 'something dangerous is beyond.' Pools of light create safe havens.",
+          "Dynamic vs baked lighting: dynamic lights (computed in real-time) support time-of-day and destruction but are expensive (limited shadow-casting lights per scene). Baked lighting (precomputed into lightmaps) is free at runtime but static.",
+          "Lumen global illumination (UE5): real-time GI that bounces light between surfaces, creating realistic ambient lighting. Lumen replaces lightmap baking for most scenarios but has its own performance constraints.",
+          "Light budget management: a typical scene can afford 4-8 shadow-casting dynamic lights. Beyond that, use non-shadow-casting fill lights, baked lighting, or light importance volumes that only activate nearby lights.",
+          "Emissive materials as light sources: glowing mushrooms, lava, LED strips, and neon signs that emit light without explicit light actors. Emissive materials contribute to Lumen GI at lower cost than point lights.",
+          "Contrast ratio: the relationship between the brightest and darkest areas in a scene. High contrast (bright lights, deep shadows) creates drama and clear spatial boundaries. Low contrast (flat, even lighting) creates calm but can be visually boring.",
+          "Silhouette lighting: backlighting enemies or objectives so they are visible as dark shapes against a bright background. This ensures the player can always see threats even in otherwise dark environments.",
+          "Lighting as pacing tool: gradual transitions from warm to cool, bright to dark, or colorful to monochrome communicate shifts in the level's emotional tone, reinforcing spatial pacing."
+        ],
+        "demonstration": "Taking a previously grayboxed level and adding a complete lighting pass in Unreal Engine: key light for the critical path, fill lights for exploration areas, color-coded lights for faction territory (warm for friendly, cool for hostile), and emissive materials for interactive elements. Comparing before and after playtest results for player navigation accuracy.",
+        "setup_requirements": [
+          "Unreal Engine 5.3 with Lumen enabled",
+          "Previously grayboxed level from Session 7",
+          "Point lights, spotlights, and rect lights in UE5",
+          "Emissive material instances"
+        ],
+        "review": [
+          {
+            "key": "Light as Guide",
+            "value": "A bright light at the end of a dark corridor is the most reliable player-guiding technique. Players move toward light instinctively. Use lighting to mark critical path exits, reward alcoves, and dangerous transitions."
+          },
+          {
+            "key": "Color Temperature",
+            "value": "Warm (3000-4000K): safe, inviting, human. Cool (6000-10000K): dangerous, sterile, alien. Mixing both in a scene creates spatial contrast: the warm hub feels safe, the cool dungeon entrance feels threatening."
+          },
+          {
+            "key": "Contrast Ratio",
+            "value": "High contrast (deep shadows, bright highlights) creates clear spatial boundaries and dramatic mood. Low contrast (even lighting) creates calm but can make spaces feel flat. Combat arenas benefit from high contrast; rest areas benefit from low."
+          },
+          {
+            "key": "Silhouette Lighting",
+            "value": "Backlighting enemies creates dark silhouettes against bright backgrounds, ensuring the player can always see threats. This technique works even in very dark environments where direct lighting would break the mood."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "Procedural Generation: BSP and Wave Function Collapse",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Implement BSP dungeon generation that produces fully connected room layouts",
+        "Understand Wave Function Collapse as a constraint-based tile placement algorithm",
+        "Evaluate when procedural generation enhances level design vs when hand-crafted levels are superior",
+        "Design hybrid approaches that combine procedural layout with hand-crafted encounter design"
+      ],
+      "readings": [
+        "Procedural Generation in Game Design Ch. 3-5 (Tanya X. Short & Tarn Adams)",
+        "Spelunky by Derek Yu, Boss Fight Books (Ch. 4-6)",
+        "Maxim Gumin: Wave Function Collapse algorithm documentation (GitHub)"
+      ],
+      "lecture_notes": {
+        "introduction": "Procedural generation promises infinite content. The reality is more nuanced: algorithms can produce quantity, but quality requires constraints, templates, and careful validation. A BSP dungeon generator can produce thousands of unique layouts, but without design rules, most of them will be boring -- rooms connected by corridors with no pacing, no guiding, and no spatial narrative. The art of procedural level design is not the algorithm itself but the constraints you impose on it. Spelunky's procedural levels feel hand-designed because each generated room is selected from a library of hand-crafted templates, and the generator only decides which templates to place and how to connect them. Wave Function Collapse takes this further: given a set of example tiles with adjacency rules, it generates new layouts that look like they were designed by the same artist. Today we implement BSP dungeon generation and study WFC, then discuss the hybrid approach that most commercially successful procedural games actually use.",
+        "key_concepts": [
+          "Binary Space Partitioning (BSP) for dungeon generation: recursively subdivide a bounding rectangle along random horizontal or vertical lines until leaf nodes are small enough to be rooms. Connect sibling leaves with corridors. Guarantees full connectivity by construction.",
+          "Wave Function Collapse (WFC): start with a grid of tiles where each cell can be any tile. Collapse the cell with the fewest possibilities to a specific tile, then propagate adjacency constraints to neighbors, reducing their possibilities. Repeat until all cells are collapsed.",
+          "Template-based generation: hand-designed room chunks assembled by algorithm with connectivity rules. Each template has defined entry/exit points, encounter types, and difficulty ratings. The generator selects and connects templates based on design rules.",
+          "Validation passes: algorithmic checks that every generated level is completable. Reachability (can the player reach the exit from the start), key-before-lock (are required items accessible before their gates), and difficulty curve (does the challenge escalate).",
+          "Seed-based determinism: using a random seed to make procedural generation reproducible. Players can share seeds to play the same layout. Developers can reproduce bugs by recording the seed.",
+          "Constraint design: the designer's role in procedural generation is defining constraints, not layouts. 'Every floor must have exactly one shop room,' 'boss rooms must be at least 3 rooms from the start,' 'no more than 2 consecutive dead ends.'",
+          "Hand-crafted set-pieces in procedural worlds: key narrative moments, tutorials, and boss encounters are hand-designed and placed at fixed points in the generation graph. The procedural content connects them.",
+          "Aesthetic coherence: ensuring that generated layouts look intentional rather than random. WFC achieves this by encoding aesthetic rules in tile adjacencies. BSP achieves it by constraining room proportions and corridor styles.",
+          "Runtime generation vs design-time generation: generating levels at runtime (roguelikes) requires fast algorithms. Generating candidate levels at design time and curating the best ones (No Man's Sky planets) allows slower algorithms and human quality control.",
+          "Player perception of procedural content: players notice and remember spatial patterns. If a generated layout accidentally duplicates a previous run's structure, it breaks the illusion of infinite variety. Anti-repetition constraints prevent this."
+        ],
+        "demonstration": "Implementing a BSP dungeon generator in Python that outputs room rectangles and corridor connections as JSON, then importing the result into Unreal as a graybox using a Blueprint spawner. Then comparing BSP output with WFC output from a tile-based example to see the aesthetic difference.",
+        "setup_requirements": [
+          "Python 3.10+ for generation scripts",
+          "Unreal Engine 5.3 with Blueprint JSON importer",
+          "WFC reference implementation (provided in course materials)",
+          "Understanding of graph connectivity algorithms"
+        ],
+        "review": [
+          {
+            "key": "BSP Dungeon Generation",
+            "value": "Recursively split a bounding rectangle along random horizontal or vertical lines until leaf nodes are room-sized. Connect sibling leaves with corridors. Guarantees full connectivity because every split creates two connected halves."
+          },
+          {
+            "key": "Wave Function Collapse",
+            "value": "Given example tiles with adjacency rules, WFC generates new layouts that match the aesthetic of the examples. It works by iteratively collapsing the most constrained cell and propagating constraints to neighbors. Output looks hand-designed because it encodes design rules in tile relationships."
+          },
+          {
+            "key": "Validation Passes",
+            "value": "After generation, verify: (1) the player can reach the exit (graph reachability), (2) required items are accessible before their gates (topological sort of key-lock pairs), (3) difficulty escalates (distance-from-start correlates with enemy strength)."
+          },
+          {
+            "key": "Template-Based Hybrid",
+            "value": "The commercially most successful approach: hand-design 50-200 room templates with varied gameplay, then let the algorithm select and connect them. Each template is playtested individually. The algorithm provides variety; the templates provide quality."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "Multiplayer Map Design",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Design balanced multiplayer maps that avoid dominant strategies and positional advantages",
+        "Apply symmetrical and asymmetrical map balance techniques for competitive play",
+        "Understand spawn point placement, sight line management, and flow patterns for deathmatch and objective modes",
+        "Analyze published multiplayer maps to identify design principles and balance strategies"
+      ],
+      "readings": [
+        "Halo 3 Multiplayer Map Design (Chris Carney, GDC 2009)",
+        "Counter-Strike Map Design Principles (Valve Developer Community)",
+        "Level Up! Ch. 15 (Scott Rogers)"
+      ],
+      "lecture_notes": {
+        "introduction": "Multiplayer level design is a fundamentally different discipline from single-player. In single-player, the designer controls the challenge by placing enemies, obstacles, and rewards. In multiplayer, the challenge comes from other human players who are unpredictable, adaptive, and motivated to exploit every advantage the map gives them. A slight elevation advantage at one spawn point can make an entire map unplayable competitively. A sight line that lets a sniper cover the objective from spawn without moving breaks the game. Multiplayer maps must be balanced -- not perfectly symmetrical, but fair. Both teams or all players must have equivalent access to power positions, resources, and objectives. Today we study the principles of competitive map design, analyze classic maps from Halo, Counter-Strike, and Overwatch, and practice designing a balanced team-based map with spawn areas, control points, and managed sight lines.",
+        "key_concepts": [
+          "Symmetrical balance: identical geometry for both teams (mirrored or rotationally symmetric). Guarantees fairness but can feel repetitive. Used in arena shooters and fighting game stages.",
+          "Asymmetrical balance: different geometry for each team that provides equivalent strategic opportunities through different means. More visually interesting but much harder to balance. Used in Counter-Strike and Overwatch.",
+          "Spawn point rules: spawns must have momentary protection (spawn room), must not have direct sight lines to the objective or enemy spawns, and must provide multiple exit routes to prevent spawn camping.",
+          "Sight line management: every sight line in a multiplayer map is a design decision. Long unbroken sight lines favor snipers. Corners and cover favor close-range combat. The designer controls the range of engagements through sight line length.",
+          "Power positions: locations that provide a tactical advantage (elevation, cover, sight lines to objectives). Power positions must be contestable -- reachable from multiple directions so the occupying team can be challenged.",
+          "Rotation and flow: the paths players take through the map should form loops, not dead ends. Dead ends trap players and create frustrating situations. Loops allow flanking, rotation, and dynamic positioning.",
+          "Objective placement: control points, flags, and payload paths must be placed where interesting gameplay happens, not where the geometry happens to have an open area. The objective location should create the map's signature encounter.",
+          "Map callouts and readability: each area must be visually distinct so players can communicate positions verbally ('enemy on balcony,' 'sniper at tower'). Color coding, unique architecture, and named landmarks enable team communication.",
+          "Chokepoints and control zones: narrow passages that both teams must contest. Good chokepoints have multiple approach angles and nearby flanking routes. Bad chokepoints have one approach that can be locked down by a single defender.",
+          "Playtest metrics for multiplayer: kill heatmaps (where do most kills happen), win rate by side (is one spawn advantaged), time-to-first-engagement (too fast means no setup time, too slow means boring openings)."
+        ],
+        "demonstration": "Analyzing de_dust2 (Counter-Strike): identifying the asymmetrical balance between T and CT sides, the chokepoint design at mid doors, the rotation paths through tunnels, and the sight line management at A site. Then sketching a symmetric team-deathmatch map on paper with marked spawn areas, power positions, and sight lines.",
+        "setup_requirements": [
+          "Unreal Engine 5.3 for graybox construction",
+          "Reference images of analyzed multiplayer maps",
+          "Grid paper for top-down map sketching",
+          "Kill heatmap overlay tool (provided in course materials)"
+        ],
+        "review": [
+          {
+            "key": "Asymmetrical Balance",
+            "value": "Each side has different geometry but equivalent strategic options. In CS2's de_dust2, Terrorists have faster routes to B site while CTs have better defensive positions at A site. Overall win rates are near 50% because the advantages balance out."
+          },
+          {
+            "key": "Power Position Contestability",
+            "value": "A strong position (high ground, good cover, objective overview) must be reachable from at least two directions so the occupying team can be challenged. An uncontestable power position breaks the map."
+          },
+          {
+            "key": "Flow Loops",
+            "value": "Player paths should form loops: A connects to B connects to C connects back to A. This enables flanking, rotation, and dynamic play. Dead-end corridors trap players and create frustration. Every path should connect to at least two other paths."
+          },
+          {
+            "key": "Map Callouts",
+            "value": "Each area needs a distinct visual identity and a memorable name. 'Sniper nest,' 'tunnel,' 'balcony,' and 'garage' are better callouts than 'area 1' through 'area 4.' Visual distinctiveness enables instant recognition under pressure."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "Accessibility in Level Design",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Design levels that are playable by people with visual, motor, auditory, and cognitive disabilities",
+        "Apply universal design principles that improve the experience for all players, not just disabled players",
+        "Implement accessibility features including navigation assists, difficulty scaling through geometry, and sensory redundancy",
+        "Evaluate existing levels against accessibility checklists and identify common exclusion patterns"
+      ],
+      "readings": [
+        "Game Accessibility Guidelines (gameaccessibilityguidelines.com)",
+        "GDC 2020: 'Accessibility in The Last of Us Part II' (Emilia Schatz)",
+        "Microsoft Gaming Accessibility Practices documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Approximately 15-20% of the global population has some form of disability, and many more have situational impairments (playing in a bright room, holding a baby, wearing headphones in a noisy train). Accessible level design is not a niche concern -- it is a design quality that improves the experience for everyone. Curb cuts were designed for wheelchairs but benefit cyclists, parents with strollers, and delivery workers. Similarly, high-contrast critical path markers help colorblind players but also help fully sighted players in visually complex scenes. Today we study accessibility as a level design discipline: how to design spaces that communicate through multiple sensory channels, offer multiple difficulty levels through geometry rather than just health pools, and remain playable with reduced motor precision. The Last of Us Part II set the industry standard with over 60 accessibility options, many of which are level-design-dependent. We will evaluate our own grayboxes against accessibility criteria and identify improvements.",
+        "key_concepts": [
+          "Sensory redundancy: critical information must be communicated through at least two channels (visual + audio, or visual + haptic). A locked door should look locked, sound locked (rejected handle noise), and feel locked (controller vibration on interaction).",
+          "Color-independent design: never use color as the sole differentiator for gameplay information. Combine color with shape, pattern, or text. A red door and a green door should also have distinct symbols or textures for colorblind players.",
+          "Navigation assists: optional features that highlight the critical path (pulsing waypoint, breadcrumb trail, companion hints) for players who struggle with spatial navigation. These should be toggleable, not forced.",
+          "Difficulty through geometry: offering multiple paths of varying difficulty through the same space. A narrow platforming section is hard; a wider path with more ledges nearby is easier. Both reach the same destination.",
+          "Motor accessibility: designing interactions that do not require precise timing or complex input sequences. Hold-to-interact instead of tap-to-interact. Auto-aim assists for players with tremors. Skip options for skill-check sequences.",
+          "Cognitive accessibility: reducing cognitive load through clear visual hierarchy, consistent spatial language (blue doors always lead forward), and recap mechanisms (mission log, map markers) for players with memory or attention differences.",
+          "Subtitles and captions: audio-dependent gameplay information (enemy approaching from behind, puzzle audio cues) must have visual alternatives. Directional subtitle indicators show where dialogue is coming from.",
+          "Adjustable traversal: allowing players to modify jump distance, climb speed, or fall damage eliminates ability-gating for players who cannot perform precise platforming. This can be a difficulty setting rather than a universal change.",
+          "High-contrast mode: an optional rendering mode that simplifies visual complexity, increases the contrast of interactive elements, and reduces background detail. Helps low-vision players and improves readability for everyone.",
+          "Accessibility testing: including disabled playtesters in the QA process. Automated tools can check contrast ratios and color dependencies, but real players reveal the barriers that tools miss."
+        ],
+        "demonstration": "Evaluating a previously built graybox against the Game Accessibility Guidelines checklist. Identifying three accessibility barriers (color-dependent puzzle, timed platforming section with no alternative, audio-only alert for off-screen enemies) and implementing fixes in Unreal Engine.",
+        "setup_requirements": [
+          "Previously built graybox level",
+          "Game Accessibility Guidelines checklist (printed or digital)",
+          "Color blindness simulation filters (Unreal Engine post-process)",
+          "Screen reader compatibility testing tools"
+        ],
+        "review": [
+          {
+            "key": "Sensory Redundancy",
+            "value": "Every critical gameplay signal should use at least two sensory channels. A locked door: looks different (visual), makes a rejection sound (audio), and vibrates the controller (haptic). This ensures the information reaches every player regardless of sensory ability."
+          },
+          {
+            "key": "Difficulty Through Geometry",
+            "value": "Instead of only adjusting health and damage, offer alternative paths. A narrow ledge over a pit is the hard path; a wider bridge nearby is the easy path. Both reach the same area. This lets players self-select difficulty through level navigation."
+          },
+          {
+            "key": "Color-Independent Design",
+            "value": "Never use color alone to convey information. Red and green are indistinguishable to 8% of males. Combine color with shape (circle vs triangle), pattern (striped vs solid), or text labels. This is also good design for screens with poor color calibration."
+          },
+          {
+            "key": "Navigation Assists",
+            "value": "Optional helpers (pulsing waypoints, breadcrumb trails, companion dialogue hints) that guide players who struggle with spatial navigation. These must be toggleable -- forcing them on all players removes the exploration challenge that some players enjoy."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Playtesting Methodologies",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Conduct structured playtesting sessions that produce actionable, quantitative feedback",
+        "Analyze playtest data including heat maps, completion funnels, time-spent maps, and death locations",
+        "Distinguish between playtester preferences and playtester behavior, prioritizing observed behavior for design decisions",
+        "Iterate on level designs based on evidence rather than designer assumptions or playtester opinions"
+      ],
+      "readings": [
+        "Level Up! Ch. 17 (Scott Rogers)",
+        "Gamasutra: 'The Door Problem' (Liz England)",
+        "GDC 2016: 'Playtesting at Supergiant Games' (Greg Kasavin)"
+      ],
+      "lecture_notes": {
+        "introduction": "The map in your head is not the map the player experiences. Playtesting is where designer intent collides with player reality. Every level design is a hypothesis: 'I believe players will notice the light, turn left, find the cave, and feel rewarded.' Playtesting either validates or disproves that hypothesis. The most common mistake designers make is treating playtest feedback as votes on what to change. A playtester saying 'I did not like the dark corridor' is an opinion; a playtester walking past the cave entrance three times without seeing it is data. Behavior trumps preference every time because players are unreliable narrators of their own experience. They will say 'the combat was too hard' when the real problem is that the arena had insufficient cover. They will say 'the puzzle was confusing' when the real problem is that the environmental cue was not visible from the entry point. Today we practice conducting structured playtests with silent observation, collecting quantitative data, and making evidence-based iteration decisions.",
+        "key_concepts": [
+          "Structured playtesting protocol: (1) brief the tester on controls only, not objectives, (2) silent observation -- watch without helping, (3) think-aloud -- ask the tester to verbalize their thoughts, (4) post-session questionnaire -- structured questions after the playthrough.",
+          "Heat map analysis: tracking player position at fixed intervals to visualize flow. Hot spots reveal where players spend time (stuck or exploring). Cold spots reveal areas players never visit (wasted content or hidden paths).",
+          "Completion funnel: percentage of players reaching each milestone (room 1: 100%, room 2: 95%, room 3: 60%, boss: 40%). Sharp drop-offs pinpoint exactly where the level loses players.",
+          "Death map: recording death locations to identify difficulty spikes, unfair encounters, and unclear hazards. A cluster of deaths at one spot reveals a design problem that tuning alone may not solve.",
+          "Time-spent analysis: how long players spend in each area. Spending 30 seconds in a puzzle room designed for 5 minutes means the puzzle is too easy. Spending 10 minutes means it is too hard or unclear.",
+          "The five-playtest rule: a level is not shippable until five independent playtesters can complete it without designer intervention. If even one tester needs help, there is a communication problem in the level.",
+          "Behavior vs opinion: what players do is more reliable than what they say. A player who says 'the level was easy' but died 6 times has a different experience than they report. Track both but weight behavior more heavily.",
+          "Iteration taxonomy: tuning (adjusting numbers without changing layout), restructuring (modifying the spatial layout), and rethinking (changing the core concept). Most issues require restructuring, not tuning.",
+          "A/B testing: creating two versions of a problem area and testing each with different player groups. Comparing completion rates and time-spent reveals which version communicates better.",
+          "Playtest scheduling: test early (paper prototypes), test often (every major iteration), and test late (near-final polish). Each stage reveals different problems. Early tests find concept issues; late tests find polish issues."
+        ],
+        "demonstration": "Running a live playtest of a student's graybox level: collecting heat map data via Unreal's analytics blueprint, recording a think-aloud session, then analyzing the results to identify a stuck point. Live iteration on the layout based on the observed data, then re-testing with a different participant.",
+        "setup_requirements": [
+          "Playtestable graybox level from previous sessions",
+          "Analytics blueprint for position and death tracking (provided in course materials)",
+          "Screen recording software for think-aloud capture",
+          "Post-session questionnaire template"
+        ],
+        "review": [
+          {
+            "key": "Completion Funnel",
+            "value": "If 100% of playtesters enter room 1 but only 40% reach room 3, there is a design problem between rooms 2 and 3. The funnel pinpoints exactly where to focus iteration effort. Sharp drops indicate gates; gradual drops indicate grinding attrition."
+          },
+          {
+            "key": "Silent Observation",
+            "value": "Watching a playtester without offering any help or hints. The designer's instinct to say 'try looking left' is exactly the information the level should be communicating through its geometry and lighting. If you must intervene, the level has failed at that point."
+          },
+          {
+            "key": "Behavior vs Opinion",
+            "value": "A player who says 'I liked the puzzle' but took 15 minutes and tried every wrong solution first has a different experience than they report. Track observable behavior (time, attempts, path taken) alongside subjective feedback and weight behavior more heavily in design decisions."
+          },
+          {
+            "key": "Iteration Taxonomy",
+            "value": "Tuning: change enemy count, item placement, timer duration. Restructuring: move walls, add cover, widen corridors, change room connections. Rethinking: replace the puzzle concept, change the encounter type, redesign the room's purpose. Most playtesting issues require restructuring, not tuning."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "Iteration Process and Design Documentation",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Execute a structured iteration cycle: playtest, analyze data, identify problems, generate solutions, implement changes, re-test",
+        "Write clear level design documentation that communicates intent to artists, programmers, and producers",
+        "Create before-and-after comparisons that demonstrate how specific design changes addressed specific player behavior problems",
+        "Manage iteration scope to ship on schedule: when to iterate and when to ship what you have"
+      ],
+      "readings": [
+        "An Architectural Approach to Level Design Ch. 10 (Christopher Totten)",
+        "Gamasutra: 'Level Design Documentation Tips' (Joel Burgess)",
+        "Naughty Dog Level Design Pipeline (GDC 2018)"
+      ],
+      "lecture_notes": {
+        "introduction": "Iteration is the engine of quality. No level ships in the form it was first conceived. The difference between a competent level designer and an excellent one is not the quality of their first draft but the speed and effectiveness of their iteration cycles. Each cycle -- playtest, analyze, identify, redesign, implement, re-test -- improves the level by fixing the most impactful problem. The key is discipline: fixing one problem per iteration rather than overhauling everything at once, so you can isolate which change produced which improvement. Documentation is the memory of iteration. Without it, a designer on a six-month project cannot remember why the third room was widened or when the shortcut was added. Design documents capture intent (what the designer was trying to achieve), rationale (why this specific approach was chosen), and evidence (which playtest data supported the decision). Today we practice the full iteration cycle from playtest data through documented redesign, and discuss when to stop iterating and accept the current quality level -- because iteration has diminishing returns, and shipping matters.",
+        "key_concepts": [
+          "The iteration cycle: (1) playtest with fresh participants, (2) collect quantitative data (heat maps, funnels, death maps), (3) identify the single most impactful problem, (4) generate 2-3 possible solutions, (5) implement the best solution, (6) re-test to verify the fix.",
+          "One change per iteration: changing multiple things simultaneously makes it impossible to determine which change fixed which problem. Discipline means fixing the worst issue, re-testing, then addressing the next issue.",
+          "Before-and-after documentation: screenshots, heat maps, and metrics from before and after each change. This creates an evidence-based design history that supports future decisions and team communication.",
+          "Level design documents: purpose statement (what experience the level delivers), layout diagram (annotated top-down map), intensity curve (pacing plan), encounter specifications (enemy types, positions, triggers), and asset requirements (what art and audio the level needs).",
+          "Annotation practices: marking up the level layout with callouts for sight lines, lighting notes, encounter triggers, scripted events, and design intent. Annotations communicate to the team why each element exists.",
+          "Scope management: each iteration improves quality but costs time. When the improvement per iteration drops below a threshold (marginal returns), it is time to ship. Perfectionism is the enemy of shipping.",
+          "Cut lists: maintaining a prioritized list of improvements that would be nice but are not worth the iteration cost. This prevents scope creep while documenting ideas for post-launch updates or sequels.",
+          "Team communication: level designers work with environment artists, lighting artists, audio designers, and programmers. Clear documentation reduces miscommunication and prevents the art pass from undermining the layout's gameplay function.",
+          "Version control for level design: saving each iteration as a separate version so the team can compare, revert, and understand the evolution of the design. This is especially important when an iteration makes things worse.",
+          "Post-mortem writing: after the level ships (or the semester ends), documenting what worked, what failed, and what was learned. Post-mortems are the designer's primary tool for professional growth."
+        ],
+        "demonstration": "Taking a student's graybox with two rounds of playtest data: comparing the heat maps and completion funnels from before and after their iteration. Identifying one remaining problem, brainstorming three solutions as a class, selecting the best one with justification, and implementing it live. Then writing a one-page design document entry for the change.",
+        "setup_requirements": [
+          "Student graybox with at least two rounds of playtest data",
+          "Heat map and completion funnel comparison screenshots",
+          "Level design document template (provided in course materials)",
+          "Version-controlled project with iteration history"
+        ],
+        "review": [
+          {
+            "key": "One Change Per Iteration",
+            "value": "Changing multiple things at once makes it impossible to know which change fixed the problem. If you widen a corridor AND add lighting AND move an enemy, and the completion rate improves, which change caused it? Isolate variables by changing one thing at a time."
+          },
+          {
+            "key": "Diminishing Returns",
+            "value": "The first iteration fixes the worst problem and improves the level significantly. The tenth iteration fixes a minor issue and improves it marginally. Knowing when to stop iterating and ship is a professional skill. The level does not need to be perfect -- it needs to be good enough."
+          },
+          {
+            "key": "Design Documentation",
+            "value": "A level design document captures: what experience the level delivers (purpose), how the space is laid out (diagram), how the pacing flows (intensity curve), what the player fights (encounters), and what assets are needed (art/audio requirements)."
+          },
+          {
+            "key": "Post-Mortem",
+            "value": "After shipping, document what worked (keep doing), what failed (stop doing), and what was learned (start doing). Honest post-mortems require admitting mistakes. The designer who never admits problems never improves."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "Portfolio Preparation and Industry Presentation",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Compile level design work into a professional portfolio suitable for industry job applications",
+        "Present level design decisions with clear visual communication: annotated screenshots, flythrough videos, and data visualizations",
+        "Write portfolio case studies that demonstrate the design process from concept through playtested iteration",
+        "Understand industry expectations for junior level designer portfolios and how to meet them"
+      ],
+      "readings": [
+        "Level Design Portfolio Best Practices (World of Level Design blog)",
+        "GDC 2019: 'Getting a Level Design Job' (Steve Lee)",
+        "Naughty Dog Level Design Hiring Guide (published online)"
+      ],
+      "lecture_notes": {
+        "introduction": "A level design portfolio is not a gallery of pretty screenshots. It is evidence that you can design functional, engaging game spaces through a disciplined process of research, design, prototyping, playtesting, and iteration. Hiring managers at game studios spend an average of 90 seconds on a portfolio before deciding whether to read further. In those 90 seconds, they look for three things: (1) can this person build a playable level in an engine, (2) do they understand spatial design principles, and (3) can they communicate their design decisions clearly. Today we focus on all three: organizing your semester's work into portfolio-ready case studies, creating annotated flythroughs of your levels, and writing process breakdowns that show you can think critically about your own work. The most common portfolio mistake is showing only the final result. Studios want to see the process: the concept sketch, the first graybox, the playtest data, the iteration, and the final polished level. This evidence of process is what separates a designer from someone who just builds environments.",
+        "key_concepts": [
+          "Portfolio structure: 3-5 level design projects, each presented as a case study with concept, process, and result. Quality over quantity -- three excellent projects beat ten mediocre ones.",
+          "Case study format: (1) project overview (game genre, engine, duration), (2) design goals and constraints, (3) layout evolution (concept sketch -> graybox -> final), (4) key design decisions with rationale, (5) playtest data and iteration evidence, (6) final result with flythrough video.",
+          "Annotated screenshots: top-down maps with callouts for sight lines, pacing notes, encounter zones, and player flow arrows. These demonstrate that the designer thinks about spatial design, not just 3D modeling.",
+          "Flythrough videos: 60-90 second walkthroughs of the level from the player's perspective, with text overlays pointing out design decisions (guiding light here, breathing room here, combat arena here).",
+          "Process documentation: before-and-after comparisons showing how playtest data led to specific changes. This is the strongest evidence of design skill because it demonstrates evidence-based decision making.",
+          "Engine proficiency: demonstrating competence in at least one major engine (Unreal or Unity). The portfolio should include at least one level that is playable, not just viewable as screenshots.",
+          "Diverse project range: showing different level types (linear, open, multiplayer, puzzle) demonstrates versatility. Studios prefer designers who can adapt to different design challenges.",
+          "Written communication: clear, concise descriptions of design decisions. Avoid jargon without explanation. Write for a mixed audience of designers, artists, and producers.",
+          "Visual presentation quality: consistent formatting, readable fonts, appropriate image resolution, and professional layout. The portfolio's visual quality signals the designer's attention to detail.",
+          "Online presence: hosting the portfolio on a personal website (not just ArtStation or a PDF) with easy navigation, fast loading, and mobile compatibility. Include links to playable builds when possible."
+        ],
+        "demonstration": "Reviewing two example level design portfolios (one strong, one weak) and identifying what makes the strong one effective. Then live-editing a student's case study: selecting the best screenshots, writing annotated callouts, and structuring the process narrative for maximum impact.",
+        "setup_requirements": [
+          "All semester deliverables compiled digitally",
+          "Screen capture tool for annotated screenshots",
+          "Video editing software for flythrough creation (OBS, DaVinci Resolve)",
+          "Portfolio template (web or PDF, provided in course materials)"
+        ],
+        "review": [
+          {
+            "key": "Process Over Product",
+            "value": "Studios hire designers who can solve spatial design problems through evidence-based iteration, not artists who make pretty environments. Showing concept -> graybox -> playtest -> iteration -> final is more valuable than showing only the polished result."
+          },
+          {
+            "key": "90-Second Test",
+            "value": "Hiring managers spend 90 seconds on initial portfolio review. The first page must immediately communicate: this person can design and build playable game levels. Lead with your best project, not your biography."
+          },
+          {
+            "key": "Annotated Top-Down Maps",
+            "value": "A top-down map with callouts for sight lines, flow arrows, pacing zones, and encounter areas demonstrates spatial thinking. This single image communicates more design skill than a dozen beauty screenshots."
+          },
+          {
+            "key": "Diverse Project Range",
+            "value": "Show at least three different level types: a linear single-player level, a combat-focused arena, and one additional type (multiplayer map, puzzle level, or open-world zone). Versatility demonstrates adaptability."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Final Level Presentation and Peer Review",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Present a polished, playtested level that integrates all design principles covered in the course",
+        "Conduct structured peer reviews providing actionable, constructive feedback on classmates' level designs",
+        "Reflect on personal design growth over the semester through honest post-mortem analysis",
+        "Evaluate level designs against professional quality standards and identify paths for continued improvement"
+      ],
+      "readings": [
+        "Course review materials covering all 14 previous sessions",
+        "Peer review rubric and presentation guidelines (provided in course materials)"
+      ],
+      "lecture_notes": {
+        "introduction": "This is the culmination of the semester. Over 14 weeks you have studied and practiced every facet of level design: player flow, pacing, guiding techniques, environmental puzzles, combat encounter design, progression structures, grayboxing, lighting, procedural generation, multiplayer balance, accessibility, playtesting, and iteration. Today you present your final level: a complete, playtested, iterated game level that demonstrates your command of these principles. The presentation is not just a playthrough -- it is a design defense. You will walk through your design intent, show your playtest data, explain your iteration decisions, and honestly assess what works and what does not. Your peers will provide structured feedback using the review rubric, and you will review two of their levels in return. The goal is not perfection but demonstrable growth. A level with known flaws and a thoughtful plan for addressing them is more impressive than a level the designer claims is flawless.",
+        "key_concepts": [
+          "Presentation structure: (1) design overview and goals (2 minutes), (2) live playthrough or flythrough video (5 minutes), (3) design decisions walkthrough with annotated maps (3 minutes), (4) playtest data and iteration evidence (3 minutes), (5) post-mortem: what worked, what did not, what you would change (2 minutes).",
+          "Design defense: explaining not just what you built but why you made each decision. 'I placed the combat bowl here because playtesting showed players needed a difficulty spike after the puzzle section' is a design argument. 'I put it here because it looked cool' is not.",
+          "Structured peer review: using the course rubric to evaluate classmates' levels on flow, pacing, guiding, combat design, accessibility, and polish. Feedback must be specific and actionable: 'the corridor between rooms 2 and 3 is too long and breaks pacing' rather than 'the level is too slow.'",
+          "Post-mortem honesty: the most valuable section of any presentation. Admitting that the puzzle was too obscure, the combat was unbalanced, or the pacing sagged in the middle demonstrates self-awareness and growth potential.",
+          "Professional-quality deliverables: the final level should represent the student's best work, with consistent scale, functional lighting, clear guiding, playtested encounters, and documented iteration history.",
+          "Receiving criticism constructively: peer feedback is not personal attack. Every critique is an opportunity to improve. Defending your design is appropriate; dismissing valid criticism is not.",
+          "Growth documentation: comparing your first graybox from week 2 with your final level from week 15. The gap between them is the tangible measure of what you learned this semester.",
+          "Career next steps: how to continue developing level design skills after the course -- modding communities, game jams, open-source engine contributions, and portfolio building.",
+          "Industry connections: how the principles from this course map to industry roles (level designer, world designer, encounter designer, quest designer) and what each specialization emphasizes.",
+          "Continued learning resources: books, GDC talks, online communities, and personal projects that support ongoing skill development in level design."
+        ],
+        "demonstration": "Student final presentations: 15-minute slots per student including playthrough, design walkthrough, playtest evidence, and post-mortem. Peer review forms completed during each presentation. Instructor feedback on design growth and portfolio readiness.",
+        "setup_requirements": [
+          "Completed final level build in Unreal Engine",
+          "Presentation materials (annotated maps, playtest data visualizations, flythrough video)",
+          "Peer review rubric sheets",
+          "Screen sharing and projection for live demonstrations"
+        ],
+        "review": [
+          {
+            "key": "Design Defense",
+            "value": "Every design decision should be justified by either design principles or playtest evidence. 'I added this light because players were missing the cave entrance in 3 out of 5 playtests' is a strong argument. The ability to defend your decisions is what separates designers from builders."
+          },
+          {
+            "key": "Constructive Peer Review",
+            "value": "Good feedback is specific, actionable, and focused on the work rather than the person. 'The sight line from the entry reveals the boss room too early, removing the surprise. Consider adding a bend in the corridor.' Bad feedback: 'the level needs work.'"
+          },
+          {
+            "key": "Growth Over Perfection",
+            "value": "The final level does not need to be flawless. It needs to demonstrate that the designer can apply the course's principles, collect and interpret playtest data, and iterate based on evidence. A flawed level with thoughtful analysis is better than a polished level with no process documentation."
+          },
+          {
+            "key": "Post-Mortem Value",
+            "value": "The 'what went wrong' section is the most valuable part of any post-mortem. Admitting that the pacing sagged, the puzzle was obscure, or the combat was unbalanced demonstrates the reflective practice that defines professional designers."
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 3,
+        "topic": "Level Design Principles, Pacing, and Player Guiding",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "A playtest reveals that 80% of players in your level run straight past an optional reward cave because they never notice its entrance. The cave entrance is on the left wall of a corridor where the critical path leads right and forward. Using level design principles from this course, describe three specific modifications you would make to draw players toward the cave without placing a UI marker on it.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Modification 1: Place a weenie visible through the cave entrance -- a glowing object, unique color, or light source that contrasts with the corridor's palette, creating a visual attractor that catches the player's peripheral vision. Modification 2: Bend the corridor so the player's forward path briefly faces the cave entrance before curving right. This forces the cave into the player's central vision for 1-2 seconds of travel, creating awareness without forcing a detour. Modification 3: Add a directional audio cue (running water, wind, distinct ambient sound) emanating from the cave that contrasts with the corridor's audio environment, alerting audio-attentive players. These three modifications use layered redundancy (visual, geometric, and audio channels) to reach players with different perceptual tendencies.",
+            "rubric": [
+              {
+                "key": "Proposes a visual attractor (weenie/lighting/contrast) at the entrance",
+                "value": 3
+              },
+              {
+                "key": "Proposes a geometry or audio modification that increases awareness",
+                "value": 3
+              },
+              {
+                "key": "Explains why the modifications work using course principles",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Draw or describe an intensity curve for a 10-minute level segment that contains: a puzzle room, a combat arena, a breathing room, and a boss encounter. Label each section on the curve and explain why you ordered them the way you did.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "The curve follows a sawtooth pattern: (1) Puzzle room at medium intensity (2-4 minutes) -- cognitively engaging but not physically threatening. (2) Combat arena at high intensity (2-3 minutes) -- the puzzle solution opens the arena, and the difficulty spike rewards the mental effort with action. (3) Breathing room at low intensity (1-2 minutes) -- a safe space with a save point, ammo refill, and environmental storytelling. (4) Boss encounter at peak intensity (3-4 minutes) -- the climax, drawing on skills from both the puzzle and combat sections. The ordering creates two sawtooth cycles: puzzle builds to combat (first release), breathing room builds to boss (second and larger release). Starting with the puzzle eases the player in cognitively before demanding reflexive action.",
+            "rubric": [
+              {
+                "key": "Correct sawtooth shape with ascending intensity peaks",
+                "value": 2
+              },
+              {
+                "key": "Each section labeled with appropriate intensity level and duration",
+                "value": 3
+              },
+              {
+                "key": "Justifies ordering with pacing principles",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the teaching triad and give a specific example of how a platforming mechanic (wall jumping) would be introduced, tested, and challenged across three consecutive rooms.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "The teaching triad introduces a mechanic safely, tests it with moderate risk, and challenges it under pressure. Room 1 (Introduce): A short gap with walls on both sides. Falling results in landing on a safe platform just below, so failure costs 2 seconds of re-climbing. The player can experiment with wall jumping timing without punishment. A visual prompt (scuff marks on the walls) hints at the mechanic. Room 2 (Test): A taller gap requiring 2-3 consecutive wall jumps. Falling drops the player to a lower path that loops back to the start of the gap, costing 15-20 seconds. The stakes are higher but not punishing. Room 3 (Challenge): Wall jumping over a hazard (lava, spikes) while avoiding moving obstacles (swinging pendulums) between the walls. The timing window is tight, failure sends the player back to a checkpoint, and the challenge combines wall jumping with obstacle reading from earlier in the level.",
+            "rubric": [
+              {
+                "key": "Correctly defines the three stages of the teaching triad",
+                "value": 2
+              },
+              {
+                "key": "Room 1 introduces safely with low failure cost",
+                "value": 2
+              },
+              {
+                "key": "Room 2 tests with moderate risk and increased complexity",
+                "value": 2
+              },
+              {
+                "key": "Room 3 challenges under pressure with combined mechanics",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 2,
+        "week": 5,
+        "topic": "Environmental Puzzles and Combat Encounter Design",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "You are designing a combat arena for a third-person shooter. The encounter should force the player to use both cover-based tactics and flanking maneuvers. Sketch or describe the arena layout including: entry points, cover positions, enemy placement, and at least one flanking route. Explain how the geometry creates the intended tactical behavior.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "The arena is a combat bowl: a central depression 20m in diameter, ringed by a 2m-high elevated perimeter. The player enters from a corridor at the south, stepping down into the bowl. Cover cluster: 4-5 waist-high barriers in the center of the bowl provide initial cover. Enemy placement: 3 ranged enemies on the north perimeter (elevation advantage), 2 melee rushers spawning from east and west ground-level doors after 10 seconds. Flanking route: a narrow tunnel beneath the east perimeter connects the south entry to the east side, allowing the player to emerge behind the east melee spawn. The geometry forces flanking because the central cover protects from the north snipers but not from the east/west rushers. The player must use the flanking tunnel to clear the rushers before pushing up the north ramp to engage the snipers.",
+            "rubric": [
+              {
+                "key": "Clear arena layout with entry, cover, and enemy positions described",
+                "value": 3
+              },
+              {
+                "key": "Flanking route that creates tactical decision-making",
+                "value": 3
+              },
+              {
+                "key": "Explains how geometry forces the intended combat behavior",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the principle of progressive disclosure in puzzle design. Why is it superior to presenting the player with all puzzle mechanics simultaneously? Give an example of a three-room puzzle sequence that progressively discloses mechanics.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Progressive disclosure introduces one mechanic at a time, allowing the player to master each in isolation before combining them. Presenting all mechanics simultaneously overwhelms the player with too many variables, making it impossible to isolate which mechanic solves which part of the puzzle. Example: Room 1 teaches light redirection -- the player aims a mirror to redirect a beam of light onto a sensor, opening a door. Simple and clear. Room 2 teaches color filtering -- the player passes white light through colored filters to produce red, green, or blue light, matching the sensor's required color. Room 3 combines both -- the player must redirect a light beam through mirrors AND pass it through the correct color filter sequence to produce the target color on a sensor at the end of a multi-mirror path. Each room adds exactly one new element to the player's toolkit.",
+            "rubric": [
+              {
+                "key": "Correctly defines progressive disclosure and its cognitive benefit",
+                "value": 2
+              },
+              {
+                "key": "Explains why simultaneous presentation is inferior",
+                "value": 2
+              },
+              {
+                "key": "Provides a concrete three-room example with clear progression",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "What is the difference between difficulty through geometry and difficulty through numbers? Give one example of each for the same combat encounter, and explain why geometry-based difficulty is generally considered better level design.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Difficulty through numbers: increasing enemy health from 100 to 200 HP and adding 3 more enemies to the same arena. The player does the same thing but it takes longer and requires more resources. Difficulty through geometry: removing two cover positions, adding a sniper perch at elevation behind the player's entry point, and making the flanking route narrower. The player must change their tactics -- they cannot camp behind cover because the rear sniper threatens them, and the reduced cover forces more aggressive movement. Geometry-based difficulty is better because it forces the player to develop new strategies and use different skills, creating a learning experience. Number-based difficulty just inflates the time and resource cost of the same strategy, which feels tedious rather than challenging. Players remember the encounter where they had to change tactics, not the one where enemies had more health.",
+            "rubric": [
+              {
+                "key": "Clear example of number-based difficulty increase",
+                "value": 2
+              },
+              {
+                "key": "Clear example of geometry-based difficulty increase",
+                "value": 3
+              },
+              {
+                "key": "Explains why geometry-based is superior (forces tactical adaptation)",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "Open World Design, Grayboxing, and Lighting for Gameplay",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "Compare a hub-and-spoke level structure with a fully open-world structure. For each, describe one strength and one weakness related to pacing control. Then name a game that uses each structure effectively.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Hub-and-spoke: Strength -- each spoke can be internally paced like a linear level, giving the designer control over difficulty curves and narrative beats within each self-contained area. Weakness -- the player must return to the hub between spokes, which can feel repetitive and interrupts momentum. Example: Dark Souls uses bonfires as hubs connecting to self-contained areas with carefully paced encounters. Open world: Strength -- the player has complete freedom to explore at their own pace, creating a sense of discovery and personal narrative. Weakness -- the designer cannot control the order or pacing of content consumption, so intensity curves are unpredictable and narrative coherence suffers. Example: Breath of the Wild lets players tackle any region in any order, with systemic interactions creating emergent pacing that compensates for the lack of authored pacing control.",
+            "rubric": [
+              {
+                "key": "Correct strength and weakness for hub-and-spoke with pacing justification",
+                "value": 3
+              },
+              {
+                "key": "Correct strength and weakness for open world with pacing justification",
+                "value": 3
+              },
+              {
+                "key": "Appropriate game examples for each structure",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain why character metrics (jump height, sprint speed, cover height) must be established before grayboxing begins. Describe what happens to a level's gameplay if the graybox is built without reference to these metrics.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Character metrics define the spatial constraints that all level geometry must respect. Jump height determines gap width and ledge height. Sprint speed determines corridor length and timing puzzle windows. Cover height determines barrier dimensions. If grayboxing begins without these metrics, the designer will build spaces at arbitrary scale. Gaps may be unjumpable or trivially jumpable. Cover may be too tall (player cannot shoot over it) or too short (provides no protection). Corridors may be so long that traversal is boring or so short that encounters blend together. When character metrics are established later, the entire graybox must be rebuilt because the proportions are wrong. Metric-first grayboxing saves time by ensuring every dimension is functional from the start.",
+            "rubric": [
+              {
+                "key": "Explains the role of character metrics in spatial design",
+                "value": 3
+              },
+              {
+                "key": "Describes specific problems from metric-less grayboxing",
+                "value": 2
+              },
+              {
+                "key": "Connects to time savings from metric-first approach",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Describe how a level designer would use lighting to communicate that a player is transitioning from a safe area to a dangerous area, without any text, UI elements, or enemy visibility. List at least three specific lighting changes.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "(1) Color temperature shift: transition from warm light (3500K, orange/amber) in the safe area to cool light (7000K, blue/white) approaching the dangerous area. The gradual shift triggers unconscious unease because humans associate warm light with shelter and cool light with exposure. (2) Contrast increase: the safe area has soft, even lighting with low shadow contrast. The dangerous area has harsh, directional lighting with deep shadows, creating visual tension and hiding potential threats in the dark areas. (3) Light source change: the safe area uses visible, domestic light sources (torches, lamps, fires) that feel controlled and human. The dangerous area uses sourceless ambient light or eerie sources (bioluminescent fungi, flickering industrial lights) that feel unnatural and unpredictable. Together, these three changes create a clear emotional gradient that communicates danger through visceral perception rather than explicit information.",
+            "rubric": [
+              {
+                "key": "Color temperature shift from warm to cool",
+                "value": 3
+              },
+              {
+                "key": "Contrast or shadow change that increases tension",
+                "value": 3
+              },
+              {
+                "key": "Third distinct lighting change with emotional justification",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "Procedural Generation, Multiplayer Design, and Accessibility",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "Compare the BSP dungeon generation algorithm with Wave Function Collapse. For each, describe how it generates a layout, then explain one scenario where each algorithm is the better choice.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "BSP recursively subdivides a bounding rectangle into leaf nodes that become rooms, then connects sibling nodes with corridors, guaranteeing full connectivity by construction. WFC places tiles one at a time from a set of hand-authored examples, collapsing each tile's possibilities based on adjacency constraints propagated from already-placed neighbors. BSP is better for traditional dungeon-crawlers (roguelikes) where rectangular rooms with corridor connections are the expected style and guaranteed connectivity is critical. WFC is better for organic or stylistically specific environments (town layouts, cave systems, overworld regions) where the output must match the aesthetic of hand-crafted examples and tile-level visual coherence matters more than geometric regularity.",
+            "rubric": [
+              {
+                "key": "Correct description of BSP algorithm",
+                "value": 2
+              },
+              {
+                "key": "Correct description of WFC algorithm",
+                "value": 3
+              },
+              {
+                "key": "Appropriate scenario for each with valid reasoning",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "You are designing a multiplayer capture-the-flag map. Explain three specific design principles you must follow to ensure the map is balanced and fun for both teams. For each principle, describe what happens if it is violated.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Principle 1: Symmetrical or equivalent spawn-to-flag distances. Both teams must reach the center of the map in approximately the same time. Violation: one team reaches the flag first every round, creating an unfair first-engagement advantage that compounds across the match. Principle 2: Multiple routes between bases. At least 3 paths (main route, flanking route, high-risk shortcut) prevent defensive lockdowns. Violation: with only one path, a single defender can completely block flag carriers, making the game a stalemate with no tactical variety. Principle 3: Contestable power positions. High ground, sniper perches, and chokepoints must be approachable from multiple directions. Violation: an uncontestable position lets one team lock down the map with a single player, removing strategic decision-making from the game.",
+            "rubric": [
+              {
+                "key": "Three distinct, valid design principles for CTF balance",
+                "value": 3
+              },
+              {
+                "key": "Clear explanation of what happens when each is violated",
+                "value": 3
+              },
+              {
+                "key": "Principles are specific to multiplayer design, not generic",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the principle of sensory redundancy in accessible level design. Give a specific example of a level design element that violates this principle and describe how you would fix it.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Sensory redundancy means that critical gameplay information must be communicated through at least two sensory channels (visual + audio, or visual + haptic, etc.) so that players with impairments in one sense can still receive the information. Violation example: a stealth level where the player must avoid searchlights that sweep the area, but the searchlights make no sound. A deaf player receives no warning when a searchlight is about to sweep their position. Fix: add an audio cue (a mechanical humming that gets louder as the light approaches) AND a controller vibration that intensifies with searchlight proximity. Now the information is available through vision (seeing the light), hearing (hearing the hum), and touch (feeling the vibration). Any two of these three channels provide sufficient warning.",
+            "rubric": [
+              {
+                "key": "Correctly defines sensory redundancy",
+                "value": 2
+              },
+              {
+                "key": "Provides a specific violation example",
+                "value": 2
+              },
+              {
+                "key": "Fix adds at least two additional sensory channels",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "Playtesting, Iteration, and Portfolio Presentation",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "You run a playtest with 10 players and observe: Room 1 (100% reach), Room 2 (100%), Room 3 (50%), Room 4 (50%), Boss Room (30%). Identify the most critical design problem, describe what data you would collect to diagnose it, and propose a specific hypothesis for the cause.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "The critical problem is the 50% drop between Room 2 and Room 3 -- half the players cannot progress past that point. Next data: death heat map in Room 2/3 transition, time-spent data for the 50% who did not reach Room 3, and think-aloud recordings to determine if players are stuck (ability gate), dying (difficulty spike), or lost (navigation failure). Hypothesis: The transition from Room 2 to Room 3 contains an ability gate (a jump gap or puzzle mechanic) that was not adequately taught in Rooms 1-2. Players who happen to discover the mechanic progress while others do not. This is consistent with a binary 50% pass/fail drop rather than a gradual decline, suggesting a discrete barrier rather than accumulated attrition.",
+            "rubric": [
+              {
+                "key": "Correctly identifies Room 2-to-3 as the primary drop point",
+                "value": 3
+              },
+              {
+                "key": "Specifies appropriate data to collect for diagnosis",
+                "value": 3
+              },
+              {
+                "key": "Proposes a specific, testable hypothesis",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain why the one-change-per-iteration principle is important in level design iteration. Describe a scenario where violating this principle leads to a worse outcome than following it.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "One-change-per-iteration ensures that the designer can attribute observed improvements (or regressions) to a specific change. When multiple changes are made simultaneously, it is impossible to determine which change caused the effect. Scenario: a designer observes that players get lost between Room 2 and Room 3 (50% drop). They simultaneously (a) add a guiding light to Room 2's exit, (b) widen the corridor, and (c) remove an enemy from the transition. The completion rate improves to 80%. But they do not know whether the light, the width, or the enemy removal caused the improvement. Later, when a different area has the same problem, they apply all three changes when perhaps only the lighting was needed, wasting development time on unnecessary modifications. Worse, if the next playtest shows a new problem caused by the widened corridor (players now skip content), they cannot undo just the corridor change without potentially losing the improvement from the lighting.",
+            "rubric": [
+              {
+                "key": "Explains the attribution problem from simultaneous changes",
+                "value": 3
+              },
+              {
+                "key": "Provides a concrete scenario showing the negative outcome",
+                "value": 2
+              },
+              {
+                "key": "Connects to long-term consequences for design decisions",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "What are the three things a hiring manager looks for in the first 90 seconds of reviewing a level design portfolio? For each, describe one specific portfolio element that demonstrates it.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "(1) Engine competence -- can this person build a playable level? Demonstrated by: a downloadable or video-embedded playable level in Unreal or Unity, not just concept art or paper designs. The portfolio must show implemented, functional game spaces. (2) Spatial design understanding -- do they think about player flow, pacing, and encounter design? Demonstrated by: an annotated top-down map with callouts for sight lines, pacing zones, guiding techniques, and encounter areas. This single image communicates spatial thinking more effectively than beauty screenshots. (3) Communication clarity -- can they explain their design decisions? Demonstrated by: a concise case study with design goals, process documentation (concept -> graybox -> playtest -> iteration), and a post-mortem that honestly assesses strengths and weaknesses. Clear writing signals a designer who can collaborate with a team.",
+            "rubric": [
+              {
+                "key": "Identifies engine competence with a specific demonstration element",
+                "value": 3
+              },
+              {
+                "key": "Identifies spatial design understanding with a specific element",
+                "value": 3
+              },
+              {
+                "key": "Identifies communication clarity with a specific element",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Complete Level Design: From Concept to Playtested Graybox",
+        "week_assigned": 3,
+        "week_due": 8,
+        "points": 150,
+        "description": "Design, graybox, and playtest a complete single-player game level in Unreal Engine 5. The level must be 8-12 minutes of gameplay, include at least one puzzle sequence, one combat arena, and one exploration/reward area. You must conduct at least three formal playtesting sessions with different participants and iterate on the design based on observed data. Submit both the original and iterated graybox to demonstrate how playtesting changed your design.",
+        "objectives": [
+          "Apply the full level design pipeline from concept document through grayboxing to playtested iteration",
+          "Demonstrate mastery of pacing, player flow, guiding techniques, and spatial composition",
+          "Use playtesting data to make evidence-based design decisions documented with before/after comparisons",
+          "Produce a level that communicates its critical path and rewards exploration without relying on UI markers"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Level design document: concept overview, annotated floor plan, intensity curve, encounter specifications, and target experience statement",
+          "Unreal Engine project with both original and iterated graybox versions saved as separate maps",
+          "Playtesting report with heat maps, completion funnel data, death maps, and player feedback summaries from 3+ sessions",
+          "Iteration log documenting each change with before/after data and rationale",
+          "Post-mortem reflection (2-3 pages) analyzing what changed, why, and what you would do differently"
+        ],
+        "grading_rubric": {
+          "design_concept": {
+            "points": 25,
+            "criteria": [
+              "Level design document clearly articulates the target experience and design goals",
+              "Floor plan demonstrates understanding of flow, pacing, and spatial composition",
+              "Intensity curve matches the intended emotional journey with appropriate sawtooth pacing",
+              "Puzzle, combat, and exploration areas serve distinct roles in the overall pacing"
+            ]
+          },
+          "graybox_quality": {
+            "points": 40,
+            "criteria": [
+              "Level is navigable and completable without external guidance by fresh playtesters",
+              "Spatial composition uses weenies, sight lines, lighting, and geometry to guide the player",
+              "Scale and proportions are correct relative to character metrics (jump height, cover height, weapon range)",
+              "Combat arenas have tactical depth with cover, elevation, flanking options, and readable encounter structure",
+              "Puzzle sequences use progressive disclosure and environmental communication"
+            ]
+          },
+          "playtesting_process": {
+            "points": 40,
+            "criteria": [
+              "At least three formal playtests conducted with documented protocol and different participants",
+              "Heat map, completion funnel, and death map data collected and analyzed with specific findings",
+              "Design problems identified from observed player behavior rather than playtester opinions",
+              "Iteration decisions justified by playtesting evidence with before/after documentation",
+              "At least two distinct iteration cycles with measurable improvement"
+            ]
+          },
+          "documentation_quality": {
+            "points": 25,
+            "criteria": [
+              "Post-mortem demonstrates honest self-assessment and identifies specific lessons learned",
+              "Iteration log clearly connects each change to specific playtest observations",
+              "Writing is clear, concise, and professionally formatted",
+              "Visual documentation (screenshots, diagrams, annotated maps) effectively communicates design intent"
+            ]
+          },
+          "accessibility_consideration": {
+            "points": 20,
+            "criteria": [
+              "Level uses sensory redundancy for critical gameplay information",
+              "Color is not the sole differentiator for any gameplay element",
+              "At least one difficulty-through-geometry alternative path is provided",
+              "Accessibility evaluation documented with at least 3 items checked"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Complete level design pipeline from concept through playtested iteration with evidence",
+                "Effective use of pacing, flow, guiding, puzzle, and combat design principles",
+                "Evidence-based iteration driven by playtesting data with measurable improvement",
+                "Professional documentation with honest self-assessment and specific lessons learned"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Multiplayer Map Design with Procedural Variation",
+        "week_assigned": 9,
+        "week_due": 12,
+        "points": 150,
+        "description": "Design and build a balanced multiplayer map for a team-based game mode (capture the flag, control point, or team deathmatch) in Unreal Engine 5. The map must demonstrate symmetrical or asymmetrical balance, managed sight lines, contestable power positions, and flow loops. Additionally, implement one procedural element: either a BSP-generated dungeon wing, a WFC-generated decorative layer, or procedurally placed pickup/spawn variations that create replay variety. Playtest the map with at least 4 players in two sessions.",
+        "objectives": [
+          "Design a competitively balanced multiplayer map with intentional sight line and flow management",
+          "Implement procedural generation for replay variety while maintaining design quality",
+          "Balance spawn points, power positions, and objectives for fair competitive play",
+          "Collect and analyze multiplayer-specific playtest metrics (kill heatmaps, win rates by side)"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Unreal Engine project with playable multiplayer map supporting the chosen game mode",
+          "Annotated top-down map showing spawn areas, power positions, sight lines, flow loops, and procedural elements",
+          "Procedural generation implementation (BSP, WFC, or procedural placement) with documentation of the algorithm and constraints",
+          "Playtesting report with kill heatmaps, win rate by side, and time-to-first-engagement metrics from 2+ multiplayer sessions",
+          "Balance analysis document (2-3 pages) explaining how the map achieves fairness and where balance issues remain"
+        ],
+        "grading_rubric": {
+          "map_balance": {
+            "points": 40,
+            "criteria": [
+              "Both teams have equivalent strategic opportunities (symmetrical or asymmetrical balance)",
+              "Spawn points are protected, have multiple exits, and have no direct sight lines to objectives",
+              "Power positions are contestable from at least two directions",
+              "Kill heatmaps show distributed engagement areas rather than single dominant spots"
+            ]
+          },
+          "spatial_design": {
+            "points": 35,
+            "criteria": [
+              "Flow loops allow flanking, rotation, and dynamic positioning with no dead ends",
+              "Sight lines are intentionally managed to support varied engagement ranges",
+              "Map callouts are visually distinct and enable team communication",
+              "Scale is appropriate for the player count and game mode"
+            ]
+          },
+          "procedural_element": {
+            "points": 30,
+            "criteria": [
+              "Procedural generation is implemented and produces valid, playable variations",
+              "Algorithm constraints prevent generation of unbalanced or unplayable layouts",
+              "Documentation explains the algorithm, constraints, and validation process",
+              "Procedural element adds meaningful replay variety without breaking core balance"
+            ]
+          },
+          "playtesting_and_analysis": {
+            "points": 25,
+            "criteria": [
+              "At least two multiplayer playtest sessions conducted with 4+ players",
+              "Kill heatmaps and win-rate data collected and analyzed",
+              "Balance issues identified and documented honestly",
+              "At least one iteration based on playtest data"
+            ]
+          },
+          "documentation": {
+            "points": 20,
+            "criteria": [
+              "Annotated map clearly communicates design intent",
+              "Balance analysis is thorough and data-driven",
+              "Known issues and future improvements are documented",
+              "Writing is professional and well-organized"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Balanced multiplayer map with intentional spatial design and managed sight lines",
+                "Functional procedural element that adds replay variety without breaking balance",
+                "Data-driven playtesting with multiplayer-specific metrics and analysis",
+                "Professional documentation with honest balance assessment"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Final Portfolio Level with Complete Design Pipeline",
+        "week_assigned": 12,
+        "week_due": 15,
+        "points": 200,
+        "description": "Create a portfolio-quality game level that demonstrates mastery of all course concepts. The level must be visually polished beyond graybox (basic lighting pass, material assignments, environmental props), 10-15 minutes of gameplay, and include all major design elements: guiding techniques, pacing with intensity curve, at least one puzzle, at least one combat encounter, accessibility considerations, and documented iteration history. Present the level as a portfolio case study with flythrough video, annotated maps, and process documentation.",
+        "objectives": [
+          "Produce a portfolio-ready level that meets industry junior-level expectations for quality and documentation",
+          "Integrate all course concepts (flow, pacing, guiding, puzzles, combat, lighting, accessibility) into a cohesive experience",
+          "Create professional presentation materials including flythrough video, annotated maps, and case study narrative",
+          "Demonstrate design growth through documented iteration and honest post-mortem analysis"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Unreal Engine project with playable, visually polished level",
+          "Flythrough video (60-90 seconds) with text overlays highlighting design decisions",
+          "Annotated top-down map with flow arrows, pacing zones, guiding callouts, and encounter areas",
+          "Portfolio case study (3-4 pages): project overview, design goals, process documentation, key decisions with rationale, playtest data, and post-mortem",
+          "Intensity curve for the complete level with labeled sections",
+          "Accessibility evaluation checklist with at least 10 items assessed"
+        ],
+        "grading_rubric": {
+          "level_quality": {
+            "points": 60,
+            "criteria": [
+              "Level is completable, engaging, and polished beyond graybox quality",
+              "Flow, pacing, and guiding techniques work effectively to create the intended experience",
+              "Puzzle, combat, and exploration elements are well-designed and varied",
+              "Lighting serves gameplay function and reinforces spatial narrative",
+              "Accessibility considerations are implemented, not just documented"
+            ]
+          },
+          "portfolio_presentation": {
+            "points": 50,
+            "criteria": [
+              "Flythrough video is professional, well-paced, and clearly highlights design decisions",
+              "Annotated map effectively communicates spatial design intent to a reviewer",
+              "Case study narrative is clear, concise, and demonstrates design thinking",
+              "Visual materials are high quality with consistent formatting"
+            ]
+          },
+          "design_process_evidence": {
+            "points": 40,
+            "criteria": [
+              "At least two rounds of playtesting with documented data and iteration",
+              "Before/after comparisons demonstrate evidence-based design changes",
+              "Post-mortem honestly assesses strengths, weaknesses, and lessons learned",
+              "Design growth from early course work to final level is visible"
+            ]
+          },
+          "integration_of_course_concepts": {
+            "points": 30,
+            "criteria": [
+              "Teaching triad is evident in mechanic introduction sequences",
+              "Pacing follows a deliberate intensity curve with breathing rooms and crescendo",
+              "At least three guiding techniques are layered in the critical path",
+              "Combat encounters use geometry for tactical depth, not just enemy placement"
+            ]
+          },
+          "live_presentation": {
+            "points": 20,
+            "criteria": [
+              "Presentation is structured, confident, and within time limit",
+              "Design decisions are defended with principles or evidence",
+              "Questions from peers and instructor are addressed thoughtfully",
+              "Peer review feedback is constructive and actionable"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 200,
+              "criteria": [
+                "Portfolio-quality level integrating all course concepts with polish beyond graybox",
+                "Professional presentation materials suitable for industry portfolio",
+                "Evidence-based design process with documented iteration and honest post-mortem",
+                "Confident live presentation with design defense and constructive peer engagement"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 20,
+      "description": "Five quizzes assessing understanding of level design theory, spatial design principles, and analytical skills"
+    },
+    "lab_assignments": {
+      "percentage": 15,
+      "description": "Weekly in-class grayboxing exercises building specific spatial design, lighting, and encounter design skills"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "Three projects: single-player playtested level, multiplayer map with procedural element, and final portfolio level"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Written and practical exam covering level design principles, pacing, guiding, puzzle design, and combat encounter design"
+    },
+    "final_project": {
+      "percentage": 20,
+      "description": "Portfolio-quality final level with complete case study, flythrough video, and live presentation with peer review"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is mandatory for all playtesting sessions and critiques. Missing a playtesting session without prior arrangement will result in a zero for the associated exercise, as playtesting requires participant presence.",
+    "late_submissions": "Design documents and written assignments lose 10% per day late. Graybox projects cannot be submitted late because they require in-class playtesting on specific dates. Arrange alternatives at least one week in advance.",
+    "collaboration": "Playtesting requires partnering with classmates, but all design work and grayboxing must be individual. You may not use another student's graybox layout as a starting point for your own work.",
+    "academic_integrity": "Level designs must be original work. Recreating published game levels is acceptable only for analysis exercises, not for graded design submissions. All reference material and inspiration sources must be cited.",
+    "technology_requirements": "Students must have Unreal Engine 5.3 installed with at least 50 GB of free disk space. A mouse with at least two buttons is required for viewport navigation. Lab machines are available for students whose hardware cannot run UE5."
+  }
+}

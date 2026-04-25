@@ -1,0 +1,1450 @@
+{
+  "course_info": {
+    "course_id": "MATH210",
+    "title": "Applied Mathematics for Security",
+    "credit_hours": 3,
+    "duration": "15 weeks",
+    "meeting_schedule": "Monday, Wednesday - 3 hours per week",
+    "prerequisites": []
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "topic": "Number Theory Basics",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Perform integer division, compute remainders, and apply the division algorithm",
+        "Identify and verify properties of prime and composite numbers",
+        "Apply divisibility rules and the Fundamental Theorem of Arithmetic",
+        "Connect number theory concepts to their role in cryptographic systems"
+      ],
+      "readings": [
+        "Katz and Lindell, Introduction to Modern Cryptography, Ch. 1 (mathematical background)",
+        "Rosen, Discrete Mathematics and Its Applications, Ch. 4.1-4.2",
+        "Paar and Pelzl, Understanding Cryptography, Ch. 1"
+      ],
+      "lecture_notes": {
+        "introduction": "The mathematics underlying modern cryptography is primarily number theory, the branch of mathematics concerned with the properties of integers. These concepts are not merely theoretical curiosities; they directly determine the security strength of the encryption systems that protect every internet transaction, every secure communication, and every digital signature. RSA, the most widely deployed public-key cryptosystem, relies on the difficulty of factoring large integers. Diffie-Hellman key exchange relies on the difficulty of computing discrete logarithms. Elliptic curve cryptography combines algebraic geometry with number theory to achieve the same security with smaller keys. Even symmetric ciphers like AES use number theory in their design, operating in finite fields (Galois fields) for their S-box and column-mixing operations. This course builds the mathematical foundations that security professionals need to understand, evaluate, and in some cases implement cryptographic systems. We begin with the most basic number theory concepts: divisibility, primes, and the structure of the integers. These foundations seem elementary, but they lead directly to the modular arithmetic and computational problems that make modern cryptography possible. By the end of this course, you will understand not just how to use cryptographic tools but why they work and what mathematical assumptions their security depends on.",
+        "key_concepts": [
+          "Division algorithm: for any integers a and d > 0, there exist unique integers q (quotient) and r (remainder) such that a = d*q + r with 0 <= r < d",
+          "Divisibility: a divides b (written a | b) if there exists an integer k such that b = a*k; foundational for understanding factors and primes",
+          "Prime numbers: an integer p > 1 whose only positive divisors are 1 and p itself; the atoms of number theory",
+          "Fundamental Theorem of Arithmetic: every integer greater than 1 has a unique prime factorization (up to ordering); e.g., 84 = 2^2 * 3 * 7",
+          "Composite numbers: integers with divisors other than 1 and themselves; can be factored into primes",
+          "Sieve of Eratosthenes: efficient algorithm for finding all primes up to a given limit; demonstrates the distribution of primes",
+          "Prime Number Theorem: the number of primes up to N is approximately N / ln(N); primes become sparser but never run out",
+          "Infinitude of primes: Euclid's proof that there are infinitely many primes (proof by contradiction: if p_1, ..., p_n were all primes, then p_1*p_2*...*p_n + 1 would be divisible by none of them)",
+          "Cryptographic relevance: RSA security depends on the difficulty of factoring n = p*q where p and q are large primes; generating these primes and verifying primality are essential operations"
+        ],
+        "demonstration": "Implement the Sieve of Eratosthenes in Python to find all primes up to 10,000. Visualize the distribution of primes and compare with the Prime Number Theorem approximation N/ln(N). Then demonstrate how RSA key generation starts by selecting two large random primes (using Python's secrets module for cryptographic randomness) and testing primality with the Miller-Rabin test, connecting the abstract number theory to practical cryptographic implementation.",
+        "setup_requirements": [
+          "Python 3 with sympy library for number theory functions",
+          "Jupyter notebook for interactive exploration",
+          "Scientific calculator for manual calculations"
+        ],
+        "review": [
+          {
+            "key": "Fundamental Theorem of Arithmetic",
+            "value": "Every integer > 1 has a unique prime factorization. This means factoring is well-defined but not necessarily efficient. For small numbers, trial division works. For large numbers (hundreds of digits), the best known algorithms require sub-exponential but super-polynomial time. This computational asymmetry is the foundation of RSA."
+          },
+          {
+            "key": "Prime Density",
+            "value": "Among 1024-bit numbers, approximately 1 in 710 is prime (by the Prime Number Theorem, about 1 in ln(2^1024) = 710). RSA key generation randomly selects 1024-bit odd numbers and tests primality until a prime is found. On average, about 355 random odd numbers must be tested."
+          },
+          {
+            "key": "Why Primes Matter for Security",
+            "value": "Public-key cryptography needs mathematical operations that are easy in one direction and hard in reverse. Multiplying two 512-digit primes takes microseconds. Factoring their 1024-digit product takes longer than the age of the universe with current algorithms and computers. This one-way property is what makes RSA possible."
+          },
+          {
+            "key": "Primality vs Factoring",
+            "value": "Determining whether a number is prime (primality testing) is efficient: the AKS algorithm runs in polynomial time, and probabilistic tests like Miller-Rabin are fast in practice. But finding the factors of a composite number (factoring) is believed to be hard. These are fundamentally different problems with very different computational complexity."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 2,
+      "topic": "Modular Arithmetic",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Perform addition, subtraction, multiplication, and exponentiation in modular arithmetic",
+        "Apply modular reduction to simplify computations with large numbers",
+        "Solve linear congruences and understand when solutions exist",
+        "Connect modular arithmetic operations to their use in cryptographic algorithms"
+      ],
+      "readings": [
+        "Rosen, Ch. 4.1-4.3",
+        "Katz and Lindell, Ch. 9.1-9.2 (number-theoretic foundations)",
+        "Paar and Pelzl, Ch. 6.1-6.2"
+      ],
+      "lecture_notes": {
+        "introduction": "Modular arithmetic is the arithmetic of remainders: all operations are performed within a finite set {0, 1, 2, ..., n-1}, and results that exceed n-1 are reduced by taking the remainder when divided by n. This may seem like a mathematical curiosity, but it is the mathematical foundation of virtually all public-key cryptography. RSA encryption computes c = m^e mod n. Diffie-Hellman computes g^a mod p. Digital signatures, key exchange, and certificate validation all depend on modular arithmetic being efficient to compute (forward) but hard to reverse (backward) for certain operations. Modular arithmetic has special properties that make it suitable for cryptography. It wraps around: adding 1 to n-1 gives 0, creating a cyclic structure. It preserves algebraic structure: the standard algebraic rules (commutativity, associativity, distributivity) still hold. Most importantly, modular exponentiation can be computed efficiently even for enormous numbers using the square-and-multiply algorithm, while the reverse operation (the discrete logarithm: given g^a mod p, find a) is computationally infeasible for properly chosen parameters. This session establishes fluency in modular arithmetic operations, the congruence notation, and the connection to cryptographic computations.",
+        "key_concepts": [
+          "Congruence notation: a is congruent to b mod n (written a = b (mod n)) if n divides (a - b); equivalently, a and b have the same remainder when divided by n",
+          "Modular addition: (a + b) mod n = ((a mod n) + (b mod n)) mod n; results stay within {0, 1, ..., n-1}",
+          "Modular multiplication: (a * b) mod n = ((a mod n) * (b mod n)) mod n; intermediate results can be reduced at each step",
+          "Modular exponentiation: a^k mod n computed efficiently by the square-and-multiply algorithm (repeated squaring); avoids computing the enormous number a^k directly",
+          "Square-and-multiply algorithm: to compute a^k mod n, express k in binary, then square for each bit and multiply when the bit is 1; complexity is O(log k) multiplications",
+          "Linear congruence: ax = b (mod n) has a solution if and only if gcd(a, n) divides b; when solvable, there are gcd(a, n) solutions modulo n",
+          "Residue classes: the set Z_n = {0, 1, ..., n-1} with modular addition and multiplication forms a ring; when n is prime, Z_p is a field (every nonzero element has an inverse)",
+          "Chinese Remainder Theorem (CRT): if n = n_1 * n_2 with gcd(n_1, n_2) = 1, then for any a_1, a_2, there is a unique x mod n such that x = a_1 (mod n_1) and x = a_2 (mod n_2); used in RSA for faster decryption",
+          "Clock arithmetic analogy: modular arithmetic mod 12 is the arithmetic of clock hours; 10 + 5 = 3 (mod 12) because 15 mod 12 = 3"
+        ],
+        "demonstration": "Implement modular exponentiation using the square-and-multiply algorithm in Python. Compute 7^256 mod 13 both by the naive method (computing 7^256 first, then reducing) and by square-and-multiply (reducing at each step). Show that square-and-multiply is feasible for 2048-bit numbers while naive computation is impossible. Then demonstrate the Chinese Remainder Theorem by solving a system of congruences and showing how CRT accelerates RSA decryption.",
+        "setup_requirements": [
+          "Python 3 with sympy for modular arithmetic verification",
+          "Implementation of square-and-multiply from scratch",
+          "Timing comparison scripts for naive vs efficient modular exponentiation"
+        ],
+        "review": [
+          {
+            "key": "Modular Arithmetic in RSA",
+            "value": "RSA encryption: c = m^e mod n. RSA decryption: m = c^d mod n. Both operations use modular exponentiation on numbers with 2048+ bits. The square-and-multiply algorithm makes this feasible: computing 2048-bit modular exponentiation requires about 2048 modular multiplications, each of which is fast."
+          },
+          {
+            "key": "Why Modular Reduction is Essential",
+            "value": "Without modular reduction, 7^256 is a number with 217 digits. With mod 13, the result is a single digit. Cryptographic computations involve exponents with hundreds of digits; without intermediate modular reduction, the numbers would have more digits than atoms in the universe."
+          },
+          {
+            "key": "Z_p is a Field",
+            "value": "When p is prime, every nonzero element of Z_p has a multiplicative inverse. This means division (except by zero) is always possible in Z_p. This algebraic structure is essential for cryptography: RSA requires inverses mod phi(n), and ECC operates in fields Z_p."
+          },
+          {
+            "key": "CRT for Performance",
+            "value": "The Chinese Remainder Theorem lets RSA decryption work with two smaller modular exponentiations (mod p and mod q) instead of one large one (mod n = p*q). Since modular exponentiation cost is cubic in the number of bits, two half-size computations are about 4 times faster than one full-size computation."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 3,
+      "topic": "Prime Numbers and Factorization",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Apply probabilistic primality testing algorithms (Fermat, Miller-Rabin)",
+        "Understand the computational complexity of integer factorization",
+        "Evaluate the security implications of factoring advances for RSA",
+        "Generate cryptographically suitable prime numbers"
+      ],
+      "readings": [
+        "Katz and Lindell, Ch. 9.2 (primality testing and factoring)",
+        "Paar and Pelzl, Ch. 7.7-7.8",
+        "NIST SP 800-57 key size recommendations"
+      ],
+      "lecture_notes": {
+        "introduction": "The security of RSA rests on the assumption that factoring the product of two large primes is computationally infeasible. The RSA modulus n = p * q is public, but recovering p and q from n should require more computation than any attacker can perform. This assumption has held for nearly 50 years, but it is not proven: we do not know for certain that no efficient factoring algorithm exists. What we do know is that the best known classical factoring algorithms (General Number Field Sieve) have sub-exponential but super-polynomial running time, and the largest RSA modulus factored to date is RSA-250 (829 bits), achieved in 2020 using approximately 2700 CPU-core-years. RSA-2048 (2048 bits) is estimated to require approximately 10^14 times more computation, placing it well beyond current capabilities. However, Shor's quantum algorithm factors integers in polynomial time on a quantum computer, which would break RSA entirely once sufficiently large quantum computers exist. On the other side of the factoring problem is primality testing: efficiently determining whether a given number is prime without factoring it. The Miller-Rabin probabilistic primality test is used in practice for generating RSA primes, providing extremely high confidence (error probability < 2^(-128) with 64 iterations) in polynomial time. This session covers both sides: primality testing for key generation and factoring resistance for security.",
+        "key_concepts": [
+          "Fermat's Little Theorem: if p is prime and gcd(a, p) = 1, then a^(p-1) = 1 (mod p); basis for Fermat primality test",
+          "Fermat primality test: if a^(n-1) != 1 (mod n) for some a, then n is composite; if it equals 1, n is probably prime (but Carmichael numbers fool this test)",
+          "Carmichael numbers: composite numbers where a^(n-1) = 1 (mod n) for all a coprime to n; rare but exist (561, 1105, ...); the Fermat test cannot detect them",
+          "Miller-Rabin primality test: stronger version that checks additional conditions beyond Fermat; detects Carmichael numbers; error probability < 1/4 per round, so k rounds give error < (1/4)^k",
+          "Prime generation for RSA: generate a random odd number of the desired bit length, test with Miller-Rabin (64 rounds), if composite, increment by 2 and repeat; average attempts: about ln(2^n)/2 for n-bit primes",
+          "Trial division: divide by all primes up to sqrt(n); guaranteed correct but impractical for large n; O(sqrt(n)) complexity",
+          "General Number Field Sieve (GNFS): fastest known classical factoring algorithm; complexity approximately exp(1.9 * (ln n)^(1/3) * (ln ln n)^(2/3)); sub-exponential",
+          "RSA factoring records: RSA-768 (768 bits) factored in 2009 using ~1500 CPU-years; RSA-250 (829 bits) factored in 2020 using ~2700 CPU-core-years; RSA-2048 remains infeasible",
+          "Shor's algorithm: factors integers in polynomial time O((log n)^3) on a quantum computer; would break all RSA key sizes; motivates post-quantum cryptography research"
+        ],
+        "demonstration": "Implement the Miller-Rabin primality test in Python from scratch. Test it against known primes and composites, including Carmichael numbers (561, 1105, 1729). Generate a 1024-bit RSA prime by repeated random selection and Miller-Rabin testing, counting the number of candidates tested. Estimate the security of RSA-2048 by extrapolating from published factoring records using the GNFS complexity formula.",
+        "setup_requirements": [
+          "Python 3 with the secrets module for cryptographic random number generation",
+          "Miller-Rabin implementation from scratch",
+          "GNFS complexity estimation script",
+          "Table of RSA factoring records for reference"
+        ],
+        "review": [
+          {
+            "key": "Miller-Rabin in Practice",
+            "value": "With 64 rounds of Miller-Rabin, the probability of accepting a composite as prime is less than (1/4)^64 = 2^(-128), which is less than the probability of hardware failure during the computation. This is why Miller-Rabin is considered sufficient for cryptographic prime generation despite being probabilistic."
+          },
+          {
+            "key": "Factoring Difficulty Scaling",
+            "value": "GNFS complexity for n-bit modulus is approximately exp(1.9 * n^(1/3) * (log n)^(2/3)). Doubling the bit length from 1024 to 2048 increases the factoring cost by a factor of approximately 10^14. This is why 2048-bit RSA is considered safe against classical computers for the foreseeable future."
+          },
+          {
+            "key": "Quantum Threat",
+            "value": "Shor's algorithm factors an n-bit number using O(n^3) quantum operations. A 2048-bit RSA modulus would require approximately 4000 logical qubits. Current quantum computers have ~1000 noisy qubits, far from the millions of physical qubits needed for error correction. Estimates for breaking RSA-2048: 2030-2040, but highly uncertain."
+          },
+          {
+            "key": "Safe Prime Generation",
+            "value": "For some protocols (Diffie-Hellman), safe primes p where (p-1)/2 is also prime are preferred. They ensure the multiplicative group Z_p* has a large prime-order subgroup, preventing small-subgroup attacks. Safe primes are rarer (about 1 in ln(p)^2), making generation slower."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 4,
+      "topic": "GCD and Extended Euclidean Algorithm",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Compute the GCD using the Euclidean algorithm",
+        "Apply the Extended Euclidean Algorithm to find Bezout coefficients",
+        "Compute modular multiplicative inverses using the Extended Euclidean Algorithm",
+        "Apply modular inverses to RSA key generation"
+      ],
+      "readings": [
+        "Rosen, Ch. 4.3-4.4",
+        "Katz and Lindell, Ch. 9.1",
+        "Cormen et al., Introduction to Algorithms, Ch. 31.2"
+      ],
+      "lecture_notes": {
+        "introduction": "The Greatest Common Divisor and the Extended Euclidean Algorithm are among the most ancient and most useful algorithms in mathematics, dating back to Euclid around 300 BCE. The Euclidean algorithm computes gcd(a, b) by repeatedly replacing the larger number with the remainder of dividing the two, converging to the GCD in at most O(log(min(a,b))) steps. The Extended Euclidean Algorithm goes further: it finds integers x and y such that ax + by = gcd(a, b) (Bezout's identity). When gcd(a, n) = 1, this gives x such that ax = 1 (mod n), meaning x is the modular multiplicative inverse of a modulo n. Modular inverses are essential for cryptography. In RSA, the private exponent d is the modular inverse of the public exponent e modulo phi(n): d = e^(-1) mod phi(n), computed by the Extended Euclidean Algorithm. Without modular inverses, RSA key generation would be impossible. In Diffie-Hellman, modular inverses are used in various protocol variants. In elliptic curve arithmetic, point addition requires computing modular inverses of coordinate differences. The Extended Euclidean Algorithm is the standard method for computing these inverses, and it is one of the few algorithms that every security professional should be able to implement from memory.",
+        "key_concepts": [
+          "GCD definition: gcd(a, b) is the largest positive integer that divides both a and b; gcd(a, 0) = a; gcd(0, 0) is undefined (or conventionally 0)",
+          "Euclidean algorithm: gcd(a, b) = gcd(b, a mod b); repeat until the remainder is 0; the last nonzero remainder is the GCD",
+          "Algorithm efficiency: the Euclidean algorithm requires at most O(log(min(a, b))) steps; each step reduces the smaller number by at least half",
+          "Bezout's identity: for any integers a, b, there exist integers x, y such that ax + by = gcd(a, b); the Extended Euclidean Algorithm finds x and y",
+          "Extended Euclidean Algorithm: extends the basic algorithm by tracking the linear combination at each step; returns gcd(a, b) and coefficients x, y",
+          "Modular inverse: a^(-1) mod n exists if and only if gcd(a, n) = 1; computed as the x from ax + ny = 1 (since ax = 1 - ny = 1 (mod n))",
+          "RSA key generation: choose primes p, q; compute n = p*q and phi(n) = (p-1)(q-1); choose e coprime to phi(n); compute d = e^(-1) mod phi(n) using Extended Euclidean",
+          "Coprime integers: a and b are coprime if gcd(a, b) = 1; every nonzero element of Z_p (p prime) is coprime to p, so every nonzero element has an inverse",
+          "Euler's totient function: phi(n) = count of integers in {1, ..., n} coprime to n; phi(p) = p-1 for prime p; phi(p*q) = (p-1)(q-1) for distinct primes p, q"
+        ],
+        "demonstration": "Implement the Extended Euclidean Algorithm in Python from scratch. Use it to compute gcd(240, 46) = 2 and find x, y such that 240x + 46y = 2. Then compute the modular inverse of 17 mod 3120 (the RSA example from week 2): 17^(-1) mod 3120 = 2753, and verify: 17 * 2753 mod 3120 = 1. Finally, complete a full RSA key generation: choose p = 61, q = 53, compute n = 3233, phi(n) = 3120, choose e = 17, compute d = 2753, encrypt m = 65 as c = 65^17 mod 3233 = 2790, decrypt c = 2790^2753 mod 3233 = 65.",
+        "setup_requirements": [
+          "Python 3 for algorithm implementation",
+          "Step-by-step Extended Euclidean worksheet",
+          "RSA key generation walkthrough template"
+        ],
+        "review": [
+          {
+            "key": "Extended Euclidean Step-by-Step",
+            "value": "To find gcd(240, 46) and Bezout coefficients: 240 = 5*46 + 10; 46 = 4*10 + 6; 10 = 1*6 + 4; 6 = 1*4 + 2; 4 = 2*2 + 0. GCD = 2. Back-substitute: 2 = 6 - 1*4 = 6 - 1*(10 - 1*6) = 2*6 - 10 = 2*(46 - 4*10) - 10 = 2*46 - 9*10 = 2*46 - 9*(240 - 5*46) = -9*240 + 47*46. Verify: -9*240 + 47*46 = -2160 + 2162 = 2."
+          },
+          {
+            "key": "RSA Private Key Computation",
+            "value": "The RSA private exponent d = e^(-1) mod phi(n). This requires gcd(e, phi(n)) = 1 (e and phi(n) must be coprime). The standard choice e = 65537 = 2^16 + 1 is prime and coprime to most phi(n) values. The Extended Euclidean Algorithm computes d in O(log(phi(n))) steps."
+          },
+          {
+            "key": "Efficiency Matters",
+            "value": "For 2048-bit RSA, phi(n) has about 2048 bits. The Extended Euclidean Algorithm requires about 2048 iterations, each involving division of numbers with up to 2048 bits. This is extremely fast (microseconds) compared to the modular exponentiations in encryption and decryption."
+          },
+          {
+            "key": "Coprimality Check",
+            "value": "Before computing an inverse, verify gcd(a, n) = 1. If gcd(a, n) > 1, the inverse does not exist. In RSA, if gcd(e, phi(n)) > 1, choose a different e. The standard e = 65537 rarely fails this check, but it must always be verified."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 5,
+      "topic": "Probability Foundations",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Define and compute probabilities using sample spaces and events",
+        "Apply counting principles (multiplication rule, permutations, combinations) to security scenarios",
+        "Calculate the probability of brute-force attack success for various key spaces",
+        "Model security events using probability distributions"
+      ],
+      "readings": [
+        "Katz and Lindell, Ch. 3.1-3.3 (computational security definitions)",
+        "Rosen, Ch. 7.1-7.3",
+        "Anderson, Security Engineering, Ch. 5 (probability in security)"
+      ],
+      "lecture_notes": {
+        "introduction": "Probability is the language of security analysis. Every security assessment ultimately answers a probabilistic question: what is the probability that an attacker succeeds? Key strength is measured in bits of security, where n bits means an attacker must perform 2^n operations on average. Password entropy quantifies the probability that a random guess succeeds. False positive and false negative rates determine whether a security system helps or hinders. Birthday attacks exploit the counter-intuitive probability of collisions. Understanding probability enables you to make quantitative security decisions rather than relying on vague assertions. Should your password be 8 characters or 12? How large should your hash output be to resist collision attacks? How many authentication attempts should be allowed before lockout? These questions all have precise probabilistic answers. This session introduces the probability concepts most relevant to security analysis, with every example drawn from real security scenarios. We cover the sample space model, counting principles for computing key space sizes, and the probability distributions that model attacker success in brute-force, dictionary, and statistical attacks.",
+        "key_concepts": [
+          "Sample space: the set of all possible outcomes; for a 128-bit key, the sample space is {0, 1}^128 with 2^128 elements",
+          "Events and probability: P(event) = |favorable outcomes| / |total outcomes| for uniform distributions; P(guessing a 128-bit key) = 1 / 2^128",
+          "Multiplication rule: if process A has m outcomes and process B has n outcomes, the combined process has m * n outcomes; a 4-digit PIN has 10^4 = 10,000 possibilities",
+          "Permutations: ordered arrangements; P(n, k) = n! / (n-k)!; relevant for ordered password character selection without repetition",
+          "Combinations: unordered selections; C(n, k) = n! / (k!(n-k)!); relevant for selecting features in anomaly detection",
+          "Key space size: the number of possible keys determines brute-force difficulty; 128-bit key = 2^128 possibilities = 3.4 x 10^38",
+          "Expected attempts for brute-force: on average, an attacker must try half the key space to find the correct key; expected attempts = 2^(n-1) for n-bit key",
+          "Geometric distribution: models the number of trials until first success; P(X = k) = (1-p)^(k-1) * p; models brute-force attack progress",
+          "Password entropy: H = log2(possible_passwords); a password chosen uniformly from a set of N possibilities has entropy log2(N) bits"
+        ],
+        "demonstration": "Calculate the key space sizes and brute-force resistance for various security parameters: a 4-digit PIN (10^4 = 10,000 possibilities, ~13 bits of entropy), an 8-character lowercase password (26^8 = ~208 billion, ~37 bits), a 12-character mixed-case alphanumeric password (62^12 = ~3.2 x 10^21, ~71 bits), and a 256-bit AES key (2^256 = ~1.2 x 10^77). Estimate the time to brute-force each at different attack speeds (1 million guesses/sec, 1 billion guesses/sec, GPU cluster at 10 billion guesses/sec).",
+        "setup_requirements": [
+          "Python 3 for probability calculations",
+          "Scientific calculator for large number computation",
+          "Brute-force time estimation spreadsheet"
+        ],
+        "review": [
+          {
+            "key": "Bits of Security",
+            "value": "A system has n bits of security if an attacker needs 2^n operations to break it. AES-128 provides 128 bits of security against brute force. RSA-2048 provides approximately 112 bits of security (because factoring is faster than brute force). The security level determines the difficulty of the best known attack."
+          },
+          {
+            "key": "Password Entropy",
+            "value": "Entropy = log2(possible_passwords). An 8-character password from 26 lowercase letters: log2(26^8) = 37.6 bits. At 10 billion guesses/sec (GPU cluster), exhausting the space takes 26^8 / 10^10 = 20.8 seconds. This is why short, simple passwords are insecure regardless of the hashing algorithm."
+          },
+          {
+            "key": "Expected Value vs Worst Case",
+            "value": "The expected number of brute-force attempts is |keyspace|/2, but the worst case is |keyspace|. For security analysis, use the expected value for average-case estimates and the full keyspace for worst-case guarantees. An attacker might get lucky and succeed on the first try."
+          },
+          {
+            "key": "Large Numbers in Security",
+            "value": "2^128 = 3.4 x 10^38. If every atom on Earth (approximately 10^50) were a computer performing 10^12 operations per second, it would take 3.4 x 10^38 / (10^50 * 10^12) = 3.4 x 10^(-24) seconds to exhaust a 128-bit key space. Wait, that is too fast. Recalculate: 10^50 * 10^12 = 10^62 ops/sec total. 3.4 x 10^38 / 10^62 = 3.4 x 10^(-24) seconds. This means 128 bits is actually not enough against such a hypothetical adversary, but no real adversary has 10^50 computers."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Conditional Probability and Bayes' Theorem",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Compute conditional probabilities using the definition P(A|B) = P(A and B) / P(B)",
+        "Apply Bayes' theorem to update threat probabilities with new evidence",
+        "Analyze the base rate fallacy in security alert systems",
+        "Calculate false positive and false negative rates for security detection systems"
+      ],
+      "readings": [
+        "Rosen, Ch. 7.3 (Bayes' theorem)",
+        "Anderson, Security Engineering, Ch. 5 (base rate fallacy)",
+        "Axelsson, The Base-Rate Fallacy and the Difficulty of Intrusion Detection"
+      ],
+      "lecture_notes": {
+        "introduction": "Conditional probability and Bayes' theorem are essential tools for security analysis because security decisions are almost always made under uncertainty with incomplete information. When an intrusion detection system raises an alert, what is the probability that a real attack is occurring? When a user fails three login attempts, what is the probability that it is an attacker versus a legitimate user who forgot their password? When a security scan finds a potential vulnerability, what is the probability it is a true positive? Bayes' theorem provides the framework for answering these questions by combining prior probabilities (base rates) with new evidence (observations) to produce updated probabilities (posterior beliefs). The base rate fallacy is one of the most important concepts in practical security: even a highly accurate detection system produces overwhelming numbers of false positives when the base rate of actual attacks is very low. If an IDS has a 99% true positive rate and a 1% false positive rate, and only 0.01% of traffic is malicious, then 99% of alerts will be false positives. Understanding this mathematically prevents wasting resources chasing false alarms and enables proper tuning of detection thresholds. This session develops the mathematical tools for probabilistic reasoning about security events.",
+        "key_concepts": [
+          "Conditional probability: P(A|B) = P(A and B) / P(B); the probability of A given that B has occurred; updates our belief about A when we observe B",
+          "Independence: A and B are independent if P(A|B) = P(A); observing B gives no information about A; key streams in cryptography must be independent of plaintext",
+          "Bayes' theorem: P(A|B) = P(B|A) * P(A) / P(B); converts P(evidence|hypothesis) into P(hypothesis|evidence)",
+          "Prior, likelihood, and posterior: P(attack) is the prior (base rate); P(alert|attack) is the likelihood (detection rate); P(attack|alert) is the posterior (what we want to know)",
+          "Base rate fallacy: ignoring the prior probability when interpreting evidence; if attacks are rare, even accurate detectors produce many false positives",
+          "True positive rate (sensitivity): P(alert|attack) = probability of detecting a real attack; higher is better",
+          "False positive rate: P(alert|no attack) = probability of alerting when there is no attack; lower is better",
+          "Precision: P(attack|alert) = fraction of alerts that are true positives; depends heavily on the base rate",
+          "ROC curve: plotting true positive rate vs false positive rate for different detection thresholds; the curve shows the trade-off between catching attacks and generating false alarms"
+        ],
+        "demonstration": "Calculate the precision of an IDS with 99% detection rate and 1% false positive rate under three scenarios: (1) 50% of traffic is malicious (precision = 99%), (2) 1% of traffic is malicious (precision = 50%), (3) 0.01% of traffic is malicious (precision = 0.98%). Show how precision drops dramatically as the base rate decreases. Then apply Bayes' theorem to a threat intelligence scenario: given a threat intelligence report with 80% accuracy, update the probability that a specific IP is malicious from the prior 0.1% (base rate) to the posterior using the report as evidence.",
+        "setup_requirements": [
+          "Python 3 for Bayesian calculations",
+          "Probability tree diagram tools",
+          "IDS base rate calculator spreadsheet"
+        ],
+        "review": [
+          {
+            "key": "Base Rate Fallacy in IDS",
+            "value": "An IDS with 99% detection rate and 1% false positive rate on a network where 0.01% of connections are malicious: P(attack|alert) = (0.99 * 0.0001) / (0.99 * 0.0001 + 0.01 * 0.9999) = 0.000099 / 0.010098 = 0.98%. Only about 1 in 100 alerts is a real attack. The other 99 are false positives."
+          },
+          {
+            "key": "Bayes for Threat Intelligence",
+            "value": "If a threat intel feed says IP X is malicious (feed accuracy 80%), and the base rate of malicious IPs is 0.1%: P(malicious|flagged) = (0.8 * 0.001) / (0.8 * 0.001 + 0.2 * 0.999) = 0.0008 / 0.2006 = 0.4%. Even with an 80% accurate feed, only 0.4% of flagged IPs are truly malicious because the base rate is so low."
+          },
+          {
+            "key": "ROC Analysis for Security Tools",
+            "value": "Every detection system has a threshold that trades false positives for false negatives. A low threshold catches more attacks (high sensitivity) but generates more false alerts. A high threshold reduces false alerts but misses more attacks. The ROC curve visualizes this trade-off, and the area under the curve (AUC) measures overall discriminative ability."
+          },
+          {
+            "key": "Bayesian Updating in SOC",
+            "value": "Security Operations Centers implicitly use Bayesian reasoning: a single IDS alert has low prior probability of being a real attack. But when that alert correlates with a second indicator (unusual login time), the posterior probability increases. Each additional correlated indicator further updates the probability, justifying escalation."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Statistics for Anomaly Detection",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Compute descriptive statistics and build statistical baselines for normal network behavior",
+        "Apply hypothesis testing to determine whether observed behavior is anomalous",
+        "Use z-scores and percentiles for threshold-based anomaly detection",
+        "Evaluate detection systems using Type I and Type II error rates"
+      ],
+      "readings": [
+        "Bejtlich, The Practice of Network Security Monitoring, Ch. 7",
+        "Chandola et al., Anomaly Detection: A Survey (key sections)",
+        "NIST SP 800-94 Guide to IDS and IPS"
+      ],
+      "lecture_notes": {
+        "introduction": "Statistical anomaly detection identifies security threats by recognizing deviations from established baselines of normal behavior. Unlike signature-based detection, which can only find known threats, statistical detection can identify novel attacks that have never been seen before, as long as they cause measurable deviations from normal patterns. The approach requires building statistical models of normal behavior from historical data, then flagging observations that fall outside expected ranges. Network traffic volumes, connection counts, data transfer sizes, login frequencies, and API call patterns all follow distributions that can be characterized statistically. When a user who normally transfers 50 MB per day suddenly transfers 5 GB, or when a server that normally handles 100 connections per hour suddenly receives 10,000, the statistical deviation flags the anomaly. The mathematical foundation involves descriptive statistics for baseline building, hypothesis testing for determining whether a deviation is statistically significant, and the careful management of false positive and false negative rates. This session develops the statistical tools needed to build, evaluate, and tune anomaly detection systems.",
+        "key_concepts": [
+          "Descriptive statistics for baselines: mean (average behavior), median (robust to outliers), standard deviation (spread of normal variation), and percentiles (defining normal ranges)",
+          "Normal distribution: many aggregated metrics approximate a bell curve; the 68-95-99.7 rule gives quick thresholds: values beyond 3 standard deviations occur less than 0.3% of the time",
+          "Z-score anomaly detection: z = (x - mean) / std_dev; flag observations where |z| exceeds a threshold (commonly z > 3); simple, interpretable, but assumes normal distribution",
+          "Hypothesis testing framework: null hypothesis H0 (behavior is normal) vs alternative H1 (behavior is anomalous); significance level alpha determines the false positive rate",
+          "Type I error (false positive): rejecting H0 when it is true; concluding anomaly when behavior is normal; wastes analyst time and causes alert fatigue",
+          "Type II error (false negative): failing to reject H0 when it is false; missing a real anomaly; allows attacks to go undetected",
+          "Trade-off: lowering the threshold catches more anomalies (fewer Type II errors) but generates more false alerts (more Type I errors); the optimal balance depends on the cost of each error type",
+          "Non-parametric methods: when data does not follow a normal distribution (network traffic is often heavy-tailed), use percentile-based thresholds or the interquartile range (IQR) method instead of z-scores",
+          "Time series baselines: accounting for daily, weekly, and seasonal patterns in baseline construction; Monday morning traffic differs from Sunday midnight traffic"
+        ],
+        "demonstration": "Build a statistical anomaly detection system for network traffic. Load 30 days of hourly traffic volume data, compute mean, standard deviation, and percentiles for each hour of each day of the week (separate baselines for Monday 9 AM, Monday 10 AM, etc.). Apply z-score detection with threshold z > 3 to a new week of data containing one simulated data exfiltration event (2 AM spike). Show the detection triggering on the anomalous spike. Then intentionally lower the threshold to z > 2 and show the increase in false positives. Plot the ROC curve.",
+        "setup_requirements": [
+          "Python with numpy, scipy, and pandas for statistical computation",
+          "Network traffic dataset (simulated or real) with labeled anomalies",
+          "matplotlib for visualization",
+          "ROC curve plotting tools"
+        ],
+        "review": [
+          {
+            "key": "Z-Score Interpretation",
+            "value": "z = (x - mean) / std_dev. A value with z = 4.5 is 4.5 standard deviations from the mean, occurring by chance with probability approximately 3.4 x 10^(-6), or about once every 294,000 observations. This is highly anomalous and warrants investigation. However, with millions of observations per day, even rare events occur frequently."
+          },
+          {
+            "key": "Time-Dependent Baselines",
+            "value": "Network traffic has strong daily and weekly patterns: high during business hours, low at night, reduced on weekends. A single global baseline would flag all nighttime traffic as anomalous (low) and miss anomalies during peak hours. Build separate baselines for each time period to account for these patterns."
+          },
+          {
+            "key": "Heavy-Tailed Distributions",
+            "value": "Network traffic, file sizes, and web request sizes follow heavy-tailed distributions (long right tails) rather than normal distributions. Z-scores assume normality and will produce too many false positives for heavy-tailed data. Use percentile-based thresholds (flag if > 99.9th percentile) or log-transform the data before computing z-scores."
+          },
+          {
+            "key": "Alert Fatigue",
+            "value": "If a system generates 1000 alerts per day and 99% are false positives, analysts process 10 real alerts and 990 false ones. After months of this, analysts stop investigating alerts carefully and miss real attacks. Reducing false positives is as important as improving detection rates."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Set Theory and Boolean Algebra",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Apply set operations (union, intersection, complement, difference) to security policy analysis",
+        "Construct and simplify Boolean expressions for firewall rules and access control policies",
+        "Use truth tables and Boolean algebra laws to verify security policy equivalences",
+        "Connect set theory and Boolean algebra to packet filtering and policy optimization"
+      ],
+      "readings": [
+        "Rosen, Ch. 2.1-2.3 (set theory) and Ch. 12.1-12.3 (Boolean algebra)",
+        "Cheswick et al., Firewalls and Internet Security, Ch. 3-4",
+        "Boolean algebra reference for digital logic"
+      ],
+      "lecture_notes": {
+        "introduction": "Set theory and Boolean algebra provide the mathematical language for expressing, analyzing, and optimizing security policies. Every firewall rule is a Boolean expression: accept the packet if (source IP is in set A) AND (destination port is in set B) AND (protocol is TCP). Access control lists combine set membership tests with Boolean operators. Network segmentation defines zones as sets of IP addresses with rules governing traffic between zones. Boolean algebra allows us to simplify complex policy rules, detect redundant rules, identify conflicting rules, and verify that a policy achieves its intended behavior. Set theory is equally important for security analysis beyond network policies. Threat modeling defines asset sets, threat actor sets, and vulnerability sets, then analyzes their intersections. Vulnerability scanners compare the set of installed software versions against the set of known vulnerable versions. Compliance frameworks define required control sets, and audits verify that the implemented control set is a superset. Understanding these mathematical foundations enables precise reasoning about security configurations that informal analysis might miss. A firewall policy with hundreds of rules may contain redundant rules, shadowed rules (rules that never match because a preceding rule matches first), and conflicting rules (rules that would both accept and deny the same packet). Boolean algebra provides the tools to analyze and resolve these issues.",
+        "key_concepts": [
+          "Set notation and operations: union (A or B), intersection (A and B), complement (not A), difference (A but not B), symmetric difference (A or B but not both)",
+          "Set membership: x in A tests whether element x belongs to set A; fundamental operation for firewall rules (is this source IP in the allowed set?)",
+          "Boolean algebra: a mathematical system with two values (true/false or 1/0) and three operations (AND, OR, NOT) satisfying specific axioms",
+          "Boolean algebra laws: identity (A AND 1 = A), domination (A AND 0 = 0), idempotent (A AND A = A), complement (A AND NOT A = 0), De Morgan's (NOT(A AND B) = NOT A OR NOT B)",
+          "Firewall rules as Boolean expressions: ACCEPT if (src in 10.0.0.0/8) AND (dst_port in {80, 443}) AND (protocol = TCP); each clause is a set membership test",
+          "Policy optimization: using Boolean algebra to simplify rules; combining (src = 10.0.1.0/24 OR src = 10.0.2.0/24) into src = 10.0.0.0/22 when appropriate",
+          "Rule shadowing: rule R2 is shadowed by rule R1 if every packet matching R2 also matches R1 and R1 appears first; R2 never fires",
+          "Rule conflicts: two rules that match the same packet but specify different actions (accept vs deny); resolved by rule ordering (first match wins)",
+          "Venn diagrams for security analysis: visualizing the intersection of user roles, resource permissions, and network zones"
+        ],
+        "demonstration": "Model a firewall policy with 10 rules as Boolean expressions. Use Boolean algebra to identify two redundant rules and one shadowed rule. Simplify the policy from 10 rules to 7 rules while maintaining identical behavior. Verify the equivalence by constructing truth tables for key packet combinations. Then analyze an access control matrix using set operations: show that the set of users who can read AND write to a resource is the intersection of the read permission set and the write permission set.",
+        "setup_requirements": [
+          "Python for Boolean expression evaluation",
+          "Truth table generation tool",
+          "Firewall rule analysis framework",
+          "Venn diagram drawing tool"
+        ],
+        "review": [
+          {
+            "key": "De Morgan's Laws for Security",
+            "value": "NOT (allow SSH AND allow HTTP) = deny SSH OR deny HTTP. De Morgan's laws are essential for converting between allow-list and deny-list representations of security policies. An 'allow everything except SSH and HTTP' policy is equivalent to 'deny SSH or deny HTTP', which can be expressed as two deny rules."
+          },
+          {
+            "key": "Rule Ordering Matters",
+            "value": "Firewalls process rules top-to-bottom, first match wins. If rule 1 allows all traffic from 10.0.0.0/8 and rule 5 denies traffic from 10.0.1.5/32, the deny rule never fires because the allow rule matches first. This is a shadowing problem. Move the more specific deny rule before the broader allow rule."
+          },
+          {
+            "key": "Set Theory in Threat Modeling",
+            "value": "Threat = Assets intersection Threats intersection Vulnerabilities. If any set in the intersection is empty, the threat does not exist. Removing an asset, mitigating a vulnerability, or blocking a threat actor reduces the intersection to empty for that specific threat scenario."
+          },
+          {
+            "key": "Boolean Minimization",
+            "value": "Karnaugh maps and Quine-McCluskey algorithm minimize Boolean expressions to the smallest equivalent form. Applied to firewall policies, this reduces the number of rules while maintaining identical behavior, improving both readability and processing speed."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "Information Theory and Entropy",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Calculate Shannon entropy for probability distributions and message sources",
+        "Apply entropy to measure password strength, key randomness, and data compressibility",
+        "Understand perfect secrecy and the one-time pad through information theory",
+        "Analyze the information leakage of encryption schemes"
+      ],
+      "readings": [
+        "Katz and Lindell, Ch. 2 (perfectly secret encryption)",
+        "Cover and Thomas, Elements of Information Theory, Ch. 1-2",
+        "Shannon, Communication Theory of Secrecy Systems (selected sections)"
+      ],
+      "lecture_notes": {
+        "introduction": "Information theory, founded by Claude Shannon in 1948, provides the mathematical framework for quantifying information, uncertainty, and secrecy. Shannon entropy H(X) = -sum(p(x) * log2(p(x))) measures the average amount of uncertainty (or information content) in a random variable. For a uniform distribution over 2^n outcomes, the entropy is exactly n bits, which matches our intuitive notion of key strength. For a non-uniform distribution (like English text or human-chosen passwords), the entropy is less than the maximum, reflecting the patterns and predictability in the source. Information theory directly connects to security in several fundamental ways. Perfect secrecy, achieved by the one-time pad, means the ciphertext provides zero information about the plaintext: H(plaintext | ciphertext) = H(plaintext). This is the theoretical gold standard, but it requires a key as long as the message. Practical cryptosystems settle for computational security: the ciphertext does reveal some information in theory, but extracting it requires infeasible computation. Entropy also measures the quality of random number generators (a good generator has maximum entropy), the strength of passwords (human-chosen passwords have much less entropy than random strings), and the compressibility of data (lossless compression cannot reduce data below its entropy).",
+        "key_concepts": [
+          "Shannon entropy: H(X) = -sum(p(x) * log2(p(x))) for each outcome x; measured in bits; represents the average number of yes/no questions needed to identify the outcome",
+          "Maximum entropy: H(X) = log2(n) for a uniform distribution over n outcomes; any non-uniformity reduces entropy; maximum entropy = maximum uncertainty = maximum security",
+          "Entropy of English: approximately 1.0-1.5 bits per character (vs 4.7 bits per character for uniform random from 26 letters); the difference reflects the predictability of English",
+          "Password entropy: calculated from the actual distribution of human-chosen passwords, not from the character set size; '123456' contributes very little entropy despite being 6 characters from a 10-digit alphabet",
+          "Perfect secrecy: H(M|C) = H(M); the ciphertext provides zero information about the message; achieved if and only if the key space is at least as large as the message space and each key is used exactly once",
+          "One-time pad: plaintext XOR random key = ciphertext; achieves perfect secrecy; the key must be truly random, at least as long as the message, used only once, and securely shared",
+          "Joint entropy: H(X, Y) = H(X) + H(Y|X); the total information in two variables is the information in X plus the additional information in Y given X",
+          "Mutual information: I(X; Y) = H(X) - H(X|Y) = H(Y) - H(Y|X); measures how much knowing Y reduces uncertainty about X; for perfect secrecy, I(M; C) = 0",
+          "Entropy in random number generation: a truly random bit source has entropy of 1 bit per bit; a biased source has less; health tests for random number generators check that entropy meets minimum thresholds"
+        ],
+        "demonstration": "Calculate the entropy of various probability distributions: a fair coin (1 bit), a loaded coin with P(H) = 0.9 (0.47 bits), a uniform 8-character lowercase password (37.6 bits), and a dictionary word from a 50,000-word dictionary (15.6 bits). Show that human-chosen passwords have much less entropy than their character-set-size calculation would suggest by analyzing a leaked password database. Demonstrate the one-time pad: encrypt and decrypt a message, then show that the same ciphertext could decrypt to any plaintext of the same length, proving perfect secrecy.",
+        "setup_requirements": [
+          "Python 3 for entropy calculations",
+          "Leaked password frequency list for analysis",
+          "One-time pad implementation",
+          "Entropy visualization tools"
+        ],
+        "review": [
+          {
+            "key": "Entropy as Security Measure",
+            "value": "A 128-bit AES key chosen uniformly at random has 128 bits of entropy: the maximum for a 128-bit string. A 128-bit key generated by a flawed RNG that outputs only even numbers has 127 bits of entropy. If the RNG has a bias that an attacker can exploit, the effective entropy may be much lower, directly reducing security."
+          },
+          {
+            "key": "Human Password Entropy",
+            "value": "An 8-character random password from 72 characters has 49.4 bits of entropy. But a human-chosen 8-character password averages about 18-28 bits of entropy because humans use dictionary words, predictable patterns (capital first letter, digit at end), and common substitutions. This is why password policies based on character requirements fail."
+          },
+          {
+            "key": "One-Time Pad Limitations",
+            "value": "The OTP achieves perfect secrecy but is impractical for most applications: the key must be truly random (not pseudorandom), as long as the message (no compression), used exactly once (reuse destroys security completely), and securely distributed (the key distribution problem). These constraints limit OTP use to the most sensitive communications."
+          },
+          {
+            "key": "Compression and Entropy",
+            "value": "Lossless compression cannot reduce data below its entropy. If English text has ~1.3 bits per character and is stored as 8-bit ASCII, the maximum compression ratio is about 8/1.3 = 6:1. If encrypted data appears to have maximum entropy (good cipher), it cannot be compressed at all. Compressibility of ciphertext indicates a weak cipher."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "Symmetric Cryptography Mathematics",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Perform arithmetic in GF(2^8) as used in AES S-boxes and MixColumns",
+        "Understand permutation and substitution operations mathematically",
+        "Analyze the confusion and diffusion properties that make ciphers secure",
+        "Compute the avalanche effect quantitatively"
+      ],
+      "readings": [
+        "Paar and Pelzl, Understanding Cryptography, Ch. 4 (AES)",
+        "Daemen and Rijmen, The Design of Rijndael, Ch. 2-4 (mathematical background)",
+        "NIST FIPS 197: AES Standard"
+      ],
+      "lecture_notes": {
+        "introduction": "Symmetric encryption algorithms like AES are built on precise mathematical structures that give them their security properties. AES operates in the Galois field GF(2^8), a finite field with 256 elements where addition is XOR and multiplication is polynomial multiplication modulo an irreducible polynomial. The AES S-box computes the multiplicative inverse in GF(2^8) followed by an affine transformation, creating a highly nonlinear substitution that is the primary source of AES's resistance to linear and differential cryptanalysis. The MixColumns operation multiplies each column of the state by a fixed matrix over GF(2^8), providing the diffusion that ensures each output byte depends on all input bytes after two rounds. Understanding these mathematical operations reveals why AES is secure and what properties a symmetric cipher must have. Shannon identified two essential properties: confusion (making the relationship between key and ciphertext complex) and diffusion (spreading the influence of each plaintext bit across the entire ciphertext). The S-box provides confusion through its nonlinear GF(2^8) operations, and the ShiftRows plus MixColumns provide diffusion through linear mixing. The avalanche effect, where changing one input bit changes approximately half the output bits, is the measurable consequence of good confusion and diffusion. This session covers the mathematics that makes symmetric cryptography work.",
+        "key_concepts": [
+          "Galois field GF(2^8): 256 elements represented as polynomials of degree <= 7 with binary coefficients; addition is XOR (coefficient-wise mod 2); multiplication is polynomial multiplication mod the irreducible polynomial x^8 + x^4 + x^3 + x + 1",
+          "GF(2^8) addition: XOR of the byte representations; 0x57 XOR 0x83 = 0xD4; equivalent to adding polynomials mod 2",
+          "GF(2^8) multiplication: polynomial multiplication modulo the irreducible polynomial; more complex than addition; lookup tables or the xtime() function are used in practice",
+          "AES S-box: computes the multiplicative inverse in GF(2^8) (with 0 mapping to 0), then applies an affine transformation; produces a highly nonlinear mapping that resists linear and differential attacks",
+          "Permutations: bijective functions that rearrange elements; AES ShiftRows is a byte-level permutation of the state matrix rows; permutations alone do not provide security (they are linear)",
+          "Substitution vs permutation: substitution (S-box) provides nonlinearity (confusion); permutation (ShiftRows) and linear mixing (MixColumns) provide diffusion; both are needed",
+          "Shannon's confusion and diffusion: confusion means each ciphertext bit depends on multiple key bits in a complex way; diffusion means each ciphertext bit depends on multiple plaintext bits",
+          "Avalanche effect: changing one bit of the input should change approximately 50% of the output bits; measured as the Hamming distance between outputs for inputs differing in one bit",
+          "MixColumns as matrix multiplication: each column of the AES state is multiplied by a fixed 4x4 matrix over GF(2^8); this linear operation spreads each byte's influence across the column"
+        ],
+        "demonstration": "Implement GF(2^8) addition and multiplication in Python. Show that GF(2^8) addition is XOR by example. Implement the xtime() function for efficient GF(2^8) multiplication. Compute the AES S-box value for a single byte by finding the GF(2^8) inverse and applying the affine transformation. Demonstrate the avalanche effect: encrypt two plaintexts differing by one bit using AES and count the number of differing bits in the ciphertexts (should be approximately 64 out of 128).",
+        "setup_requirements": [
+          "Python 3 for GF(2^8) arithmetic implementation",
+          "AES S-box lookup table for verification",
+          "PyCryptodome for AES encryption in avalanche demonstration",
+          "Hamming distance calculation tool"
+        ],
+        "review": [
+          {
+            "key": "GF(2^8) is a Field",
+            "value": "GF(2^8) is a field with 256 elements. Every nonzero element has a multiplicative inverse. Addition is XOR (fast). Multiplication requires polynomial reduction (more complex). AES uses this field because: 256 elements fit in one byte, field arithmetic provides algebraic structure for security proofs, and the inverse operation creates the desired nonlinearity."
+          },
+          {
+            "key": "Why Inverse in GF(2^8)?",
+            "value": "The multiplicative inverse in GF(2^8) has the highest possible nonlinearity for a function from GF(2^8) to itself. This means it provides the maximum resistance to linear approximation (used in linear cryptanalysis). The AES designers chose it specifically for this mathematical property."
+          },
+          {
+            "key": "Avalanche Criterion",
+            "value": "A function satisfies the strict avalanche criterion if changing any single input bit causes each output bit to flip with probability exactly 1/2. AES achieves this after 2 rounds. After all 10/12/14 rounds, the avalanche is essentially perfect: each output bit appears random with respect to each input bit."
+          },
+          {
+            "key": "Linear vs Nonlinear",
+            "value": "Linear operations (XOR, bit shifts, permutations) alone cannot provide security because they can be described by simple equations an attacker can solve. Nonlinear operations (S-boxes) create complex dependencies that prevent algebraic attacks. AES alternates nonlinear (SubBytes) and linear (ShiftRows, MixColumns, AddRoundKey) operations."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "RSA Mathematical Foundations",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Derive the mathematical correctness of RSA encryption and decryption using Euler's theorem",
+        "Implement RSA key generation, encryption, and decryption from mathematical primitives",
+        "Analyze the mathematical security of RSA: factoring, chosen-ciphertext attacks, and padding",
+        "Evaluate RSA key size recommendations based on factoring difficulty"
+      ],
+      "readings": [
+        "Katz and Lindell, Ch. 13.1-13.2 (RSA)",
+        "Paar and Pelzl, Ch. 7 (RSA and the modular inverse)",
+        "Boneh, Twenty Years of Attacks on the RSA Cryptosystem"
+      ],
+      "lecture_notes": {
+        "introduction": "RSA is the most widely deployed public-key cryptosystem, used in TLS certificates, SSH keys, email encryption, digital signatures, and code signing. Its security and correctness rest entirely on number theory. The correctness of RSA, meaning that decryption recovers the original plaintext, follows from Euler's theorem: a^(phi(n)) = 1 (mod n) for gcd(a, n) = 1. Since the public and private exponents satisfy e * d = 1 (mod phi(n)), we have m^(ed) = m^(1 + k*phi(n)) = m * (m^(phi(n)))^k = m * 1^k = m (mod n). The security of RSA rests on the computational difficulty of factoring n = p * q. If an attacker can factor n, they can compute phi(n) = (p-1)(q-1) and then compute d = e^(-1) mod phi(n), exactly as the legitimate key generator did. Without knowing the factorization, computing d from the public key (n, e) is believed to be as hard as factoring n. This session covers the complete mathematical treatment of RSA: the number theory that makes it work, the security reductions that relate its strength to factoring, the mathematical attacks that constrain implementation choices, and the padding schemes (OAEP) that address the mathematical weaknesses of textbook RSA.",
+        "key_concepts": [
+          "Euler's theorem: a^(phi(n)) = 1 (mod n) when gcd(a, n) = 1; the foundation of RSA's correctness",
+          "Euler's totient function: phi(n) counts integers in {1, ..., n-1} coprime to n; phi(p*q) = (p-1)(q-1) for distinct primes p, q",
+          "RSA key generation: choose primes p, q; compute n = p*q; compute phi(n) = (p-1)(q-1); choose e coprime to phi(n); compute d = e^(-1) mod phi(n); public key = (n, e), private key = (n, d)",
+          "RSA encryption: c = m^e mod n; RSA decryption: m = c^d mod n; correctness: m^(ed) mod n = m (by Euler's theorem)",
+          "Textbook RSA weaknesses: deterministic (same plaintext always produces the same ciphertext), multiplicative homomorphism (E(m1) * E(m2) = E(m1 * m2)), and vulnerable to small-exponent attacks",
+          "RSA-OAEP: Optimal Asymmetric Encryption Padding adds randomness and structure before encryption, making RSA probabilistic and CCA-secure",
+          "Security reduction: breaking RSA is no harder than factoring n; it is unknown whether it is easier (the RSA problem may be easier than factoring, but this is not believed to be the case)",
+          "Common RSA attacks: small public exponent (e = 3 with small messages), common modulus attack, Wiener's attack on small d, Hastad's broadcast attack, Bleichenbacher's PKCS#1 v1.5 padding oracle",
+          "Key size recommendations: NIST recommends RSA-2048 (112 bits of security) through 2030; RSA-3072 (128 bits) for longer-term security; RSA-4096 for the most conservative applications"
+        ],
+        "demonstration": "Implement RSA from mathematical primitives in Python (no crypto library). Generate two 512-bit primes using Miller-Rabin, compute n and phi(n), choose e = 65537, compute d using Extended Euclidean, encrypt a message, and decrypt to recover it. Then demonstrate a textbook RSA attack: encrypt the same message twice and show the ciphertext is identical (deterministic), then multiply two ciphertexts and show the product decrypts to the product of the plaintexts (homomorphism). Finally, show how RSA-OAEP padding prevents both attacks.",
+        "setup_requirements": [
+          "Python 3 with the implementations from previous weeks (Miller-Rabin, Extended Euclidean, modular exponentiation)",
+          "RSA key generation script",
+          "PyCryptodome for OAEP comparison",
+          "Attack demonstration scripts"
+        ],
+        "review": [
+          {
+            "key": "RSA Correctness Proof",
+            "value": "We need m^(ed) = m (mod n). Since ed = 1 + k*phi(n): m^(ed) = m^(1 + k*phi(n)) = m * (m^(phi(n)))^k. By Euler's theorem, m^(phi(n)) = 1 (mod n) when gcd(m, n) = 1. So m^(ed) = m * 1^k = m (mod n). The proof extends to all m (including gcd(m, n) > 1) using the Chinese Remainder Theorem."
+          },
+          {
+            "key": "Why e = 65537",
+            "value": "65537 = 2^16 + 1 is a Fermat prime. Its binary representation has only two 1-bits, making modular exponentiation with this exponent require only 17 multiplications (16 squarings and 1 multiplication). This makes encryption fast. It is also large enough to prevent small-exponent attacks."
+          },
+          {
+            "key": "Padding is Not Optional",
+            "value": "Textbook RSA (no padding) is insecure: it is deterministic (leaks whether the same message was sent twice), malleable (attacker can manipulate ciphertext to change the plaintext), and vulnerable to chosen-ciphertext attacks. Always use RSA-OAEP for encryption or RSA-PSS for signatures."
+          },
+          {
+            "key": "Factoring vs RSA Problem",
+            "value": "The RSA problem (computing m from c = m^e mod n given only the public key) is no harder than factoring (if you can factor n, you can solve the RSA problem). Whether the RSA problem is strictly easier than factoring is unknown. Most cryptographers believe they are equivalent in difficulty, but this has not been proven."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Elliptic Curve Basics",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Define elliptic curves and understand the group law for point addition",
+        "Perform point addition and scalar multiplication on elliptic curves over finite fields",
+        "Compare ECC security and efficiency with RSA at equivalent security levels",
+        "Understand the Elliptic Curve Discrete Logarithm Problem (ECDLP)"
+      ],
+      "readings": [
+        "Paar and Pelzl, Understanding Cryptography, Ch. 9",
+        "Hankerson et al., Guide to Elliptic Curve Cryptography, Ch. 1-3",
+        "NIST FIPS 186-5: Digital Signature Standard (ECDSA sections)"
+      ],
+      "lecture_notes": {
+        "introduction": "Elliptic Curve Cryptography achieves the same security level as RSA with dramatically smaller key sizes. A 256-bit ECC key provides approximately 128 bits of security, equivalent to a 3072-bit RSA key. This 12:1 ratio in key size translates to faster computation, less bandwidth, and reduced storage, making ECC the preferred choice for resource-constrained environments like mobile devices, IoT, and high-performance servers. ECC is based on the algebraic structure of elliptic curves over finite fields. An elliptic curve over a prime field Z_p is defined by the equation y^2 = x^3 + ax + b (mod p), and the points on this curve form an abelian group under a geometrically motivated addition operation. Scalar multiplication (computing n*P = P + P + ... + P, n times) is efficient, but the reverse operation (given P and Q = n*P, find n) is the Elliptic Curve Discrete Logarithm Problem, which is believed to be intractable for properly chosen curves. Unlike integer factorization where sub-exponential algorithms (GNFS) exist, the best known algorithm for ECDLP is fully exponential (Pollard's rho), which is why ECC achieves equivalent security with much smaller keys. This session introduces the mathematics of elliptic curves, the group law, scalar multiplication, and the security comparison with RSA.",
+        "key_concepts": [
+          "Elliptic curve equation: y^2 = x^3 + ax + b over Z_p where 4a^3 + 27b^2 != 0 (mod p) ensures no singular points",
+          "Points on the curve: the set of (x, y) pairs satisfying the equation plus the point at infinity O (the identity element)",
+          "Point addition (P != Q): the line through P and Q intersects the curve at a third point R'; reflect R' over the x-axis to get P + Q; computed algebraically using the slope formula",
+          "Point doubling (P = Q): use the tangent line at P instead of the secant; the slope is (3x^2 + a) / (2y) mod p",
+          "Point at infinity: O serves as the identity element; P + O = O + P = P for all points P",
+          "Additive inverse: -P = (x, -y mod p); P + (-P) = O",
+          "Scalar multiplication: n*P = P + P + ... + P (n times); computed efficiently using the double-and-add algorithm (analogous to square-and-multiply for modular exponentiation)",
+          "ECDLP: given points P and Q = n*P, finding the integer n; believed to require O(sqrt(p)) operations (Pollard's rho); this is exponential in the key size",
+          "ECDH (Elliptic Curve Diffie-Hellman): Alice sends a*G, Bob sends b*G, shared secret is a*b*G; the ECDLP prevents an eavesdropper from computing a or b from a*G or b*G",
+          "Standard curves: NIST P-256, P-384, P-521; Curve25519 (designed by Bernstein for efficiency and security); Ed25519 for signatures"
+        ],
+        "demonstration": "Implement point addition and scalar multiplication on a small elliptic curve y^2 = x^3 + 2x + 3 over Z_97. Find all points on the curve, verify the group law, and compute scalar multiples. Then implement ECDH key exchange using the small curve. Compare the computation time and key sizes for ECC-256, RSA-2048, and RSA-3072 to demonstrate ECC's efficiency advantage.",
+        "setup_requirements": [
+          "Python 3 for elliptic curve arithmetic implementation",
+          "Small curve point enumeration tool",
+          "PyCryptodome or cryptography library for standard curve comparison",
+          "Timing comparison scripts"
+        ],
+        "review": [
+          {
+            "key": "Why ECC is More Efficient",
+            "value": "The best algorithm for ECDLP (Pollard's rho) runs in O(sqrt(n)) = O(2^(k/2)) for k-bit keys. The best algorithm for factoring (GNFS) runs in sub-exponential time. This means ECC needs only k/2 bits of security from a k-bit key, while RSA needs much larger keys. Result: 256-bit ECC = 3072-bit RSA = 128 bits of security."
+          },
+          {
+            "key": "Point Addition Geometry",
+            "value": "Over the reals, the line through two curve points intersects the curve at exactly one more point (by Bezout's theorem for cubics). We negate the y-coordinate of this third point to get the sum. Over finite fields, the same algebraic formula works even though the geometric intuition breaks down. The key insight is that the group law is defined algebraically, not geometrically."
+          },
+          {
+            "key": "Curve Selection Matters",
+            "value": "Not all curves are secure. The curve parameters (a, b, p) must be chosen to avoid known attacks: anomalous curves (where the curve order equals p), supersingular curves (where p divides the trace of Frobenius), and curves with smooth order (where Pohlig-Hellman reduces the ECDLP). Standard curves (P-256, Curve25519) have been vetted for these weaknesses."
+          },
+          {
+            "key": "Post-Quantum Vulnerability",
+            "value": "Shor's algorithm breaks ECC just as it breaks RSA. A quantum computer can solve ECDLP in polynomial time. ECC key sizes provide no additional protection against quantum attacks. Post-quantum cryptography uses lattice-based, hash-based, or code-based problems instead of ECDLP."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "Hash Function Mathematics",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Define the three security properties of cryptographic hash functions: pre-image resistance, second pre-image resistance, and collision resistance",
+        "Apply the birthday paradox to determine the collision resistance of hash functions",
+        "Understand the Merkle-Damgard construction and length extension attacks",
+        "Evaluate hash function security levels for SHA-256, SHA-3, and BLAKE3"
+      ],
+      "readings": [
+        "Katz and Lindell, Ch. 6 (hash functions)",
+        "Paar and Pelzl, Ch. 11",
+        "NIST FIPS 180-4 (SHA-2) and FIPS 202 (SHA-3)"
+      ],
+      "lecture_notes": {
+        "introduction": "Cryptographic hash functions map arbitrary-length inputs to fixed-length outputs with three security properties that make them foundational to modern security. Pre-image resistance means that given a hash value h, finding any message m such that H(m) = h is computationally infeasible. Second pre-image resistance means that given a message m1, finding a different message m2 such that H(m1) = H(m2) is infeasible. Collision resistance means finding any two distinct messages m1 and m2 such that H(m1) = H(m2) is infeasible. The birthday paradox is the key mathematical insight for understanding collision resistance. For a hash function with n-bit output, a brute-force pre-image attack requires approximately 2^n operations, but finding a collision requires only approximately 2^(n/2) operations due to the birthday paradox. This is why SHA-256 (256-bit output) provides 128 bits of collision resistance, not 256 bits. The birthday paradox is not a paradox but a counter-intuitive probability result: in a group of 23 people, there is a greater than 50% chance that two share a birthday. This same mathematical phenomenon determines the collision resistance of every hash function. Understanding the mathematics ensures you choose appropriate hash output sizes for your security requirements.",
+        "key_concepts": [
+          "Hash function definition: H: {0,1}* -> {0,1}^n; maps arbitrary-length input to fixed-length n-bit output; deterministic and efficiently computable",
+          "Pre-image resistance: given h = H(m), finding m requires approximately 2^n operations (brute force); prevents recovering passwords from hashes",
+          "Second pre-image resistance: given m1, finding m2 != m1 with H(m1) = H(m2) requires approximately 2^n operations; prevents substituting a different document with the same hash",
+          "Collision resistance: finding any m1 != m2 with H(m1) = H(m2) requires approximately 2^(n/2) operations (birthday attack); the weakest of the three properties",
+          "Birthday paradox: in a set of k randomly chosen elements from a space of N, the probability of a collision is approximately 1 - e^(-k^2/(2N)); 50% collision probability occurs around k = 1.2 * sqrt(N)",
+          "Birthday attack on hashes: for an n-bit hash, compute approximately 2^(n/2) hashes and look for a collision; for SHA-256, this is 2^128 operations (infeasible); for MD5 (128-bit), it is 2^64 operations (feasible)",
+          "Merkle-Damgard construction: processes the message in blocks, chaining the output of each compression through an internal state; used by SHA-1, SHA-256, SHA-512; vulnerable to length extension attacks",
+          "Length extension attack: given H(m) for unknown m, an attacker can compute H(m || padding || m') for arbitrary m' without knowing m; affects Merkle-Damgard hashes; prevented by HMAC or SHA-3",
+          "SHA-3 (Keccak): uses sponge construction instead of Merkle-Damgard; immune to length extension attacks; internal state (1600 bits) is much larger than the output; provides all three security properties at their theoretical maximum"
+        ],
+        "demonstration": "Demonstrate the birthday paradox experimentally: generate random 16-bit hashes and find a collision after approximately 2^8 = 256 attempts (versus 2^16 = 65536 for a pre-image). Plot the number of hashes computed vs the probability of having found a collision, comparing the experimental results with the theoretical prediction. Then demonstrate a length extension attack on SHA-256: given H(secret || message), compute H(secret || message || padding || attacker_data) without knowing the secret, showing why HMAC uses a different construction.",
+        "setup_requirements": [
+          "Python 3 with hashlib for hash computation",
+          "Birthday attack simulation script",
+          "Length extension attack demonstration (hlextend library or manual implementation)",
+          "matplotlib for collision probability plotting"
+        ],
+        "review": [
+          {
+            "key": "Birthday Paradox for Security",
+            "value": "For a 256-bit hash, finding a collision requires approximately 2^128 operations. For a 128-bit hash, only 2^64 operations (feasible with modern hardware). This is why MD5 (128-bit) has practical collision attacks but SHA-256 (256-bit) does not. Always choose hash output at least 2x your desired security level."
+          },
+          {
+            "key": "MD5 and SHA-1 are Broken",
+            "value": "MD5 collisions can be found in seconds on a laptop (Xiaoyun Wang, 2004). SHA-1 collisions were demonstrated by Google in 2017 (SHAttered attack). Both are considered insecure for collision resistance. SHA-1 is still used in legacy systems but should be replaced with SHA-256 or SHA-3."
+          },
+          {
+            "key": "Length Extension Vulnerability",
+            "value": "If an API authenticates messages with tag = SHA256(secret || message), an attacker who knows the tag and message (but not the secret) can compute a valid tag for message || padding || attacker_data. This is because Merkle-Damgard's final state can be used as the starting state for additional data. HMAC prevents this by using H(K XOR opad || H(K XOR ipad || message))."
+          },
+          {
+            "key": "Hash Selection Guide",
+            "value": "SHA-256: standard choice, 128 bits of collision resistance, Merkle-Damgard (use HMAC for authentication). SHA-3 (Keccak): sponge construction, no length extension, good for hardware. BLAKE3: extremely fast, tree-structured for parallelism, 128 bits of security. MD5/SHA-1: insecure, use only for non-security purposes (checksums)."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "Random Number Generation",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Distinguish between true random, pseudorandom, and cryptographically secure pseudorandom number generators",
+        "Evaluate the security of PRNGs using statistical tests and entropy assessment",
+        "Understand how CSPRNG failures have led to real-world security breaches",
+        "Apply proper random number generation practices for cryptographic key generation"
+      ],
+      "readings": [
+        "Katz and Lindell, Ch. 3.3-3.4 (pseudorandom generators)",
+        "NIST SP 800-90A (DRBG recommendation)",
+        "Debian OpenSSL PRNG vulnerability analysis"
+      ],
+      "lecture_notes": {
+        "introduction": "Random number generation is the unsung foundation of all cryptographic security. Every cryptographic key, every initialization vector, every nonce, and every challenge in an authentication protocol depends on random numbers being truly unpredictable. If an attacker can predict the random numbers used in key generation, they can recover the key. If they can predict the nonce in a digital signature, they can extract the private key. The history of cryptographic failures includes many cases where the cryptographic algorithms were mathematically perfect but the random number generator was flawed. The 2008 Debian OpenSSL bug reduced the entropy of generated keys to approximately 15 bits (only 32,768 possible keys), making all SSL certificates and SSH keys generated on affected systems trivially breakable. The 2010 PlayStation 3 signing key was extracted because Sony used the same random number for every ECDSA signature. The Dual EC DRBG backdoor allegedly allowed the NSA to predict the output of a NIST-recommended random number generator. These examples demonstrate that random number generation is not a theoretical concern but a practical security requirement that demands careful implementation. This session covers the mathematics of random number generation, the distinction between statistical randomness and cryptographic security, and the proper use of entropy sources and CSPRNGs in security applications.",
+        "key_concepts": [
+          "True Random Number Generators (TRNGs): harvest entropy from physical processes (thermal noise, radioactive decay, timing jitter); produce genuinely unpredictable bits; limited throughput",
+          "Pseudorandom Number Generators (PRNGs): deterministic algorithms that produce statistically random-looking output from a seed; output is completely determined by the seed; not suitable for cryptography",
+          "Cryptographically Secure PRNGs (CSPRNGs): PRNGs where predicting future output from past output is computationally infeasible, even knowing the algorithm; examples: /dev/urandom, CryptGenRandom, HMAC-DRBG",
+          "Entropy: the measure of unpredictability in a random source; a CSPRNG needs at least 128 bits of true entropy in its seed to produce cryptographically secure output",
+          "Entropy sources in computers: hardware RNG (Intel RDRAND, ARM TRNG), interrupt timing jitter, disk seek times, mouse movements, network packet timing; combined and conditioned before use",
+          "DRBG (Deterministic Random Bit Generator): NIST SP 800-90A specifies three approved DRBGs: HMAC-DRBG, CTR-DRBG, and Hash-DRBG; all require seeding from an entropy source",
+          "Statistical randomness tests: NIST SP 800-22 test suite includes frequency test, runs test, serial test, approximate entropy test, and others; passing tests is necessary but not sufficient for cryptographic security",
+          "Debian OpenSSL bug: a code change in 2006 removed most entropy from the PRNG seed, reducing the key space to about 32,768 possible keys for 2 years before discovery; all keys generated during this period were compromised",
+          "Proper key generation: use OS-provided CSPRNG (secrets module in Python, /dev/urandom on Linux, CryptGenRandom on Windows); never use math.random(), rand(), or similar non-cryptographic PRNGs for security"
+        ],
+        "demonstration": "Compare the output of Python's random module (Mersenne Twister, not cryptographically secure) with the secrets module (CSPRNG). Show that the Mersenne Twister's state can be reconstructed from 624 consecutive outputs, allowing prediction of all future outputs. Then demonstrate the NIST SP 800-22 statistical test suite on both outputs (both pass), showing that statistical tests alone cannot distinguish a weak PRNG from a CSPRNG. Simulate the Debian OpenSSL vulnerability: generate RSA keys using only 15 bits of entropy and show that all possible keys can be enumerated in seconds.",
+        "setup_requirements": [
+          "Python 3 with random and secrets modules",
+          "Mersenne Twister state recovery implementation",
+          "NIST SP 800-22 statistical test suite (or Python implementation)",
+          "Debian vulnerability simulation script"
+        ],
+        "review": [
+          {
+            "key": "PRNG vs CSPRNG",
+            "value": "Python's random.random() uses the Mersenne Twister: fast, statistically good, but its internal state can be recovered from 624 outputs, making all future outputs predictable. Python's secrets.token_bytes() uses the OS CSPRNG: slower, but output is unpredictable even to an attacker who has seen all previous outputs. Always use secrets for anything security-related."
+          },
+          {
+            "key": "Entropy is Not Output Quality",
+            "value": "A CSPRNG with 128 bits of entropy in its seed can produce gigabytes of cryptographically secure output. The entropy is in the seed, not in the output. Statistical tests measure output quality but cannot measure the entropy of the seed. A perfectly seeded CSPRNG and a badly seeded CSPRNG produce output that looks identical statistically."
+          },
+          {
+            "key": "Real-World PRNG Failures",
+            "value": "Debian OpenSSL (2008): 15 bits of entropy, all keys breakable. PlayStation 3 (2010): static random number in ECDSA signatures, private key extracted. Dual EC DRBG: potential NSA backdoor in a NIST standard. These are not theoretical attacks; they caused real security breaches affecting millions of systems."
+          },
+          {
+            "key": "Proper Usage",
+            "value": "For cryptographic keys: use secrets.token_bytes(32) in Python, or /dev/urandom on Linux. For nonces: use a counter or random value from CSPRNG, never reuse. For IVs: use random value from CSPRNG, different for each encryption. Never seed a PRNG with the current time (predictable), process ID (limited range), or any other low-entropy source."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Combinatorics for Security Analysis",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Apply combinatorial counting to enumerate attack surfaces and key spaces",
+        "Compute the probability of guessing attacks using combinatorial analysis",
+        "Analyze password policies and authentication systems using combinatorics",
+        "Evaluate the combinatorial complexity of cryptographic attacks"
+      ],
+      "readings": [
+        "Rosen, Ch. 6.1-6.5 (counting principles)",
+        "Katz and Lindell, relevant sections on security parameters",
+        "Florencio and Herley, A Large-Scale Study of Web Password Habits (password statistics)"
+      ],
+      "lecture_notes": {
+        "introduction": "Combinatorics, the mathematics of counting, is essential for security analysis because security fundamentally depends on the size of spaces that attackers must search. How many possible passwords satisfy a given policy? How many possible keys does an algorithm have? How many attempts does an attacker need to find a collision, a pre-image, or a valid authentication token? Combinatorial analysis provides precise answers to these questions, enabling quantitative security assessment rather than qualitative guesswork. This final session brings together all the mathematical tools from the course into a comprehensive framework for security analysis. We use number theory to understand cryptographic algorithms, probability to model attacker success, information theory to measure randomness and leakage, and combinatorics to count possibilities and compute attack complexities. The session applies these tools to analyze real security systems: password policies, multi-factor authentication, key derivation functions, token-based authentication, and certificate transparency. By combining all the mathematical disciplines covered in this course, you will be able to perform the quantitative security analysis that distinguishes rigorous security engineering from security theater.",
+        "key_concepts": [
+          "Multiplication principle: if a process has k independent steps with n_1, n_2, ..., n_k choices per step, the total number of outcomes is n_1 * n_2 * ... * n_k",
+          "Permutations with repetition: choosing r items from n with replacement and order mattering gives n^r outcomes; an r-character password from an n-character alphabet has n^r possibilities",
+          "Combinations: choosing r items from n without replacement and order not mattering gives C(n,r) = n! / (r!(n-r)!) outcomes; relevant for selecting subset attacks",
+          "Password policy analysis: a policy requiring 8-12 characters from lowercase (26), uppercase (26), digits (10), and at least one from each category; the actual count is less than 62^12 due to the constraints",
+          "Multi-factor authentication combinatorics: if factor 1 has N_1 possibilities and factor 2 has N_2 possibilities and they are independent, brute-forcing both requires N_1 * N_2 attempts; independence is crucial",
+          "Token space analysis: a 6-digit TOTP code has 10^6 = 1,000,000 possibilities per 30-second window; with rate limiting (3 attempts per window), the probability of guessing correctly is 3/1,000,000 = 0.0003%",
+          "Birthday attack combinatorics: the number of pairs among k items is C(k, 2) = k(k-1)/2; the probability of a collision grows quadratically with the number of attempts, not linearly",
+          "Pigeonhole principle: if more than N items are placed in N containers, at least one container has more than one item; applied to hash functions: 2^256 + 1 distinct messages must produce at least one collision for SHA-256",
+          "Inclusion-exclusion principle: for counting elements in the union of sets while avoiding double-counting; useful for analyzing complex password policies with multiple requirements"
+        ],
+        "demonstration": "Analyze the security of a complete authentication system using combinatorics. Calculate: (1) the password space for a policy requiring 8+ characters with complexity requirements (using inclusion-exclusion to handle the 'at least one from each category' constraint), (2) the TOTP brute-force probability with rate limiting, (3) the combined MFA strength (password + TOTP), and (4) the expected time for an attacker to compromise the system under various attack models (online brute force, offline with stolen hash, social engineering). Compare with NIST SP 800-63 requirements for authentication assurance levels.",
+        "setup_requirements": [
+          "Python 3 for combinatorial calculations",
+          "Inclusion-exclusion computation scripts",
+          "NIST SP 800-63 authentication assurance level reference",
+          "Attack complexity estimation framework"
+        ],
+        "review": [
+          {
+            "key": "Password Policy Reality",
+            "value": "A policy requiring at least one uppercase, one lowercase, one digit, and one symbol from 8 characters: the total space is not simply 72^8. By inclusion-exclusion, subtract passwords missing each category: 72^8 - C(4,1)*62^8 + C(4,2)*52^8 - C(4,3)*42^8 + ... This gives approximately 3.0 x 10^14, less than 72^8 = 7.2 x 10^14. But human behavior reduces effective entropy far more than this mathematical reduction."
+          },
+          {
+            "key": "MFA Multiplication",
+            "value": "If a password has 2^40 possibilities and a TOTP has 10^6, the combined brute force space is 2^40 * 10^6 = approximately 2^60. An attacker who steals the password hash and brute-forces the password (2^40) still needs the TOTP (10^6 online guesses, rate-limited to 3 per 30 seconds). MFA forces the attacker to defeat both factors, multiplying the attack cost."
+          },
+          {
+            "key": "Rate Limiting as Defense Multiplier",
+            "value": "Without rate limiting, brute-forcing a 6-digit code requires at most 10^6 attempts, achievable in seconds. With rate limiting (3 attempts per 30-second window), exhausting the code space requires 10^6/3 * 30 seconds = approximately 115 days. Rate limiting transforms a trivially breakable system into a practically secure one."
+          },
+          {
+            "key": "Course Summary: Math Protects Everything",
+            "value": "Number theory makes RSA and ECC possible. Modular arithmetic enables efficient encryption. Probability quantifies security levels. Statistics enables anomaly detection. Information theory measures randomness. Boolean algebra structures security policies. Combinatorics counts attack spaces. Every security decision has a mathematical foundation. Understanding the math enables rigorous security engineering."
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 3,
+        "topic": "Number Theory, Modular Arithmetic, and Primes",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "In RSA, n = p * q where p = 61 and q = 53. Calculate: (a) n, (b) phi(n), (c) verify that e = 17 is a valid public exponent, and (d) compute the private exponent d such that e * d mod phi(n) = 1 using the Extended Euclidean Algorithm.",
+            "type": "calculation",
+            "points": 8,
+            "answer": "(a) n = 61 * 53 = 3233. (b) phi(n) = (61-1)(53-1) = 60 * 52 = 3120. (c) e = 17 is valid because gcd(17, 3120) = 1 (17 is prime and does not divide 3120). Verify: 3120 / 17 = 183.5... (not divisible), and 17 does not divide 60 or 52, so gcd(17, 3120) = 1. (d) Extended Euclidean Algorithm to find d = 17^(-1) mod 3120: 3120 = 183 * 17 + 9; 17 = 1 * 9 + 8; 9 = 1 * 8 + 1; 8 = 8 * 1 + 0. GCD = 1 (confirmed coprime). Back-substitute: 1 = 9 - 1*8 = 9 - 1*(17 - 1*9) = 2*9 - 17 = 2*(3120 - 183*17) - 17 = 2*3120 - 367*17. So 17*(-367) + 3120*2 = 1. d = -367 mod 3120 = 3120 - 367 = 2753. Verification: 17 * 2753 = 46801. 46801 mod 3120 = 46801 - 15*3120 = 46801 - 46800 = 1. Confirmed: 17 * 2753 = 1 (mod 3120).",
+            "rubric": [
+              {
+                "key": "Correct n and phi(n) calculation",
+                "value": 2
+              },
+              {
+                "key": "Valid coprimality check for e",
+                "value": 2
+              },
+              {
+                "key": "Correct Extended Euclidean computation yielding d = 2753 with verification",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "A company's password policy requires 8-character passwords using lowercase (26), uppercase (26), digits (10), and special characters (10). Calculate the entropy of a randomly generated password under this policy. How long would a GPU cluster performing 10 billion hashes per second take to exhaust the keyspace? How does bcrypt at 4 hashes/second change this analysis?",
+            "type": "calculation",
+            "points": 8,
+            "answer": "Character set size = 26 + 26 + 10 + 10 = 72. Total possible passwords = 72^8 = 722,204,136,308,736 (approximately 7.22 x 10^14). Entropy = log2(72^8) = 8 * log2(72) = 8 * 6.17 = 49.4 bits. GPU cluster at 10 billion (10^10) hashes/second: Time to exhaust = 7.22 x 10^14 / 10^10 = 72,220 seconds = approximately 20 hours. Time to find on average (half the keyspace) = approximately 10 hours. This means SHA-256-hashed passwords with this policy are crackable in under a day with a GPU cluster. With bcrypt at 4 hashes/second per core (cost factor 12): Time to exhaust = 7.22 x 10^14 / 4 = 1.81 x 10^14 seconds = approximately 5.7 million years. Even with 1000 parallel cores: 5,700 years. bcrypt's key stretching makes brute force infeasible even for this moderate-entropy password. Analysis: The password policy provides 49.4 bits of entropy, which is insufficient against fast hash functions but adequate against slow key derivation functions like bcrypt. The takeaway: password security depends on both the entropy of the password and the computational cost of the hash function.",
+            "rubric": [
+              {
+                "key": "Correct entropy calculation",
+                "value": 2
+              },
+              {
+                "key": "Correct time-to-exhaust for GPU cluster with SHA-256",
+                "value": 3
+              },
+              {
+                "key": "Meaningful bcrypt comparison showing the transformative effect of key stretching",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain why the Miller-Rabin primality test is preferred over the Fermat test for generating RSA primes, and calculate the maximum probability of error when using Miller-Rabin with 64 rounds.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "The Fermat primality test has a fundamental weakness: Carmichael numbers are composite numbers that pass the Fermat test for all bases coprime to them. The smallest Carmichael number is 561 = 3 * 11 * 17. For any base a with gcd(a, 561) = 1, a^560 = 1 (mod 561), so the Fermat test always says 'probably prime' despite 561 being composite. There are infinitely many Carmichael numbers, so the Fermat test can never provide certainty. The Miller-Rabin test adds an additional check: after computing a^d mod n (where n-1 = 2^s * d), it checks a sequence of squarings. For a true prime, the sequence must follow a specific pattern (the value must be 1 or n-1 at certain points). Carmichael numbers fail this additional check with high probability. Miller-Rabin correctly identifies 561 as composite. Error probability: Each round of Miller-Rabin has error probability at most 1/4 (it declares a composite number as 'probably prime' with probability at most 1/4). With 64 independent rounds, the error probability is at most (1/4)^64 = 2^(-128) = approximately 2.94 x 10^(-39). For comparison, the probability of a cosmic ray flipping a bit in your computer's memory during the computation is much higher. The 2^(-128) error bound is considered more than sufficient for cryptographic applications.",
+            "rubric": [
+              {
+                "key": "Correct explanation of Carmichael number weakness in Fermat test",
+                "value": 3
+              },
+              {
+                "key": "Description of how Miller-Rabin overcomes this weakness",
+                "value": 2
+              },
+              {
+                "key": "Correct error probability calculation with practical interpretation",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 2,
+        "week": 5,
+        "topic": "GCD, Probability, and Conditional Probability",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "An intrusion detection system has a true positive rate (sensitivity) of 99.5% and a false positive rate of 0.1%. On this network, 0.001% of connections are actual attacks. Calculate P(attack | alert) using Bayes' theorem. Interpret the result and explain its implications for the SOC team.",
+            "type": "calculation",
+            "points": 8,
+            "answer": "Using Bayes' theorem: P(attack | alert) = P(alert | attack) * P(attack) / P(alert). P(alert | attack) = 0.995 (true positive rate). P(attack) = 0.00001 (base rate = 0.001%). P(no attack) = 0.99999. P(alert | no attack) = 0.001 (false positive rate = 0.1%). P(alert) = P(alert | attack) * P(attack) + P(alert | no attack) * P(no attack) = 0.995 * 0.00001 + 0.001 * 0.99999 = 0.00000995 + 0.00099999 = 0.00100994. P(attack | alert) = 0.00000995 / 0.00100994 = 0.00985 = approximately 0.99%. Interpretation: Despite the IDS having a 99.5% detection rate and only a 0.1% false positive rate, fewer than 1% of alerts represent real attacks. For every genuine attack alert, there are approximately 100 false positives. SOC implications: (1) The SOC team will experience severe alert fatigue, spending 99% of their investigation time on false positives. (2) The IDS should be tuned for higher precision, potentially accepting a lower detection rate in exchange for fewer false positives. (3) Alerts should be correlated with other indicators (multiple IDS rules, threat intelligence, behavioral analysis) to increase the posterior probability before escalation. (4) Automation should handle initial triage, escalating only alerts that pass multiple evidence checks. (5) The key insight: the extremely low base rate of attacks dominates the calculation despite the high-quality detector.",
+            "rubric": [
+              {
+                "key": "Correct Bayes' theorem calculation",
+                "value": 3
+              },
+              {
+                "key": "Correct interpretation of the low precision despite high sensitivity",
+                "value": 3
+              },
+              {
+                "key": "Practical SOC implications including alert fatigue and correlation strategies",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Use the Extended Euclidean Algorithm to compute gcd(252, 198) and find integers x, y such that 252x + 198y = gcd(252, 198). Show all steps of the algorithm.",
+            "type": "calculation",
+            "points": 8,
+            "answer": "Euclidean Algorithm (forward): 252 = 1 * 198 + 54; 198 = 3 * 54 + 36; 54 = 1 * 36 + 18; 36 = 2 * 18 + 0. gcd(252, 198) = 18. Back-substitution (Extended): 18 = 54 - 1 * 36 (from step 3). 36 = 198 - 3 * 54 (from step 2), so: 18 = 54 - 1 * (198 - 3 * 54) = 54 - 198 + 3 * 54 = 4 * 54 - 198. 54 = 252 - 1 * 198 (from step 1), so: 18 = 4 * (252 - 198) - 198 = 4 * 252 - 4 * 198 - 198 = 4 * 252 - 5 * 198. Therefore: x = 4, y = -5. Verification: 252 * 4 + 198 * (-5) = 1008 - 990 = 18 = gcd(252, 198). Confirmed.",
+            "rubric": [
+              {
+                "key": "Correct forward Euclidean algorithm steps yielding gcd = 18",
+                "value": 3
+              },
+              {
+                "key": "Correct back-substitution yielding Bezout coefficients",
+                "value": 3
+              },
+              {
+                "key": "Verification step confirming 252x + 198y = 18",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A security system uses a 6-digit numeric code that changes every 30 seconds (TOTP). An attacker can make at most 3 attempts per 30-second window before lockout. Calculate: (a) the probability of a successful guess in one window, (b) the expected number of windows to succeed, and (c) how rate limiting compares to no rate limiting.",
+            "type": "calculation",
+            "points": 7,
+            "answer": "(a) Total possible codes: 10^6 = 1,000,000. Attempts per window: 3. Probability of success in one window: 3/1,000,000 = 0.000003 = 0.0003%. (b) The number of windows to succeed follows a geometric distribution with p = 3/10^6. Expected number of windows = 1/p = 10^6/3 = 333,333 windows. At 30 seconds per window: 333,333 * 30 = 10,000,000 seconds = approximately 115.7 days. On average, the attacker needs about 116 days of continuous attempts to guess the code. However, the code changes every 30 seconds, so each window is independent, and the attacker never makes progress. (c) Without rate limiting, the attacker can make unlimited attempts per window. If they can attempt 100,000 codes per second (automated attack), they exhaust the 1,000,000-code space in 10 seconds, well within the 30-second window. Success probability per window approaches 100%. With rate limiting (3 attempts per window), the attacker's throughput drops to 3/30 = 0.1 attempts per second, and the expected time to success increases from ~10 seconds to ~116 days. Rate limiting provides a factor of approximately 10^6 increase in attack difficulty.",
+            "rubric": [
+              {
+                "key": "Correct probability calculation for one window",
+                "value": 2
+              },
+              {
+                "key": "Correct expected time calculation using geometric distribution",
+                "value": 3
+              },
+              {
+                "key": "Clear comparison of rate-limited vs unlimited showing the security multiplication factor",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "Statistics, Set Theory, and Information Theory",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "A network IDS uses z-score anomaly detection. The baseline shows average daily outbound data transfer of 500 MB with a standard deviation of 100 MB. Today's transfer is 950 MB. Calculate the z-score, determine whether it triggers an alert at threshold z > 3, and discuss the limitations of this approach for network traffic data.",
+            "type": "calculation",
+            "points": 8,
+            "answer": "z = (x - mean) / std_dev = (950 - 500) / 100 = 450 / 100 = 4.5. Since z = 4.5 > 3 (threshold), this triggers an alert. Statistical significance: assuming a normal distribution, a z-score of 4.5 corresponds to a probability of approximately 3.4 x 10^(-6). This level of traffic occurs by chance about once every 294,000 days (approximately 805 years). This is statistically highly anomalous and warrants investigation as potential data exfiltration. Limitations of z-score detection for network traffic: (1) Network traffic is typically NOT normally distributed. It follows heavy-tailed distributions (log-normal or Pareto) where large values are much more common than a normal distribution predicts. Using z-scores with normal assumptions will produce excessive false positives for heavy-tailed data. (2) Traffic has strong temporal patterns: weekday vs weekend, business hours vs nights, end-of-month reporting spikes. A single global baseline ignores these patterns. The 950 MB might be normal for end-of-quarter financial reporting but anomalous on a regular Tuesday. (3) The mean and standard deviation are sensitive to outliers in the training data. A few large transfers in the baseline period can inflate the standard deviation, making future anomalies harder to detect. (4) A sophisticated attacker can slowly increase their data transfer rate over time, causing the baseline to shift and the exfiltration to appear normal. Better approaches: use time-of-day and day-of-week specific baselines, use percentile-based thresholds instead of z-scores, and apply log-transformation before computing z-scores to handle heavy tails.",
+            "rubric": [
+              {
+                "key": "Correct z-score calculation and alert determination",
+                "value": 2
+              },
+              {
+                "key": "Statistical significance interpretation",
+                "value": 2
+              },
+              {
+                "key": "Multiple well-explained limitations specific to network traffic",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "Calculate the entropy of the following probability distribution over passwords: P('123456') = 0.10, P('password') = 0.08, P('qwerty') = 0.05, P(other) = 0.77 (uniform over 10 million other passwords). What does the entropy tell you about the security of this password distribution?",
+            "type": "calculation",
+            "points": 8,
+            "answer": "H(X) = -sum(p(x) * log2(p(x))). Top passwords: H_top = -(0.10 * log2(0.10) + 0.08 * log2(0.08) + 0.05 * log2(0.05)). log2(0.10) = -3.322, so -0.10 * (-3.322) = 0.3322. log2(0.08) = -3.644, so -0.08 * (-3.644) = 0.2915. log2(0.05) = -4.322, so -0.05 * (-4.322) = 0.2161. H_top = 0.3322 + 0.2915 + 0.2161 = 0.8398 bits. Remaining passwords: Each of the 10 million other passwords has probability 0.77 / 10,000,000 = 7.7 x 10^(-8). Each contributes: -7.7 x 10^(-8) * log2(7.7 x 10^(-8)) = -7.7 x 10^(-8) * (-23.63) = 1.82 x 10^(-6) bits. Total for all 10 million: 10^7 * 1.82 x 10^(-6) = 18.2 bits. H_other = -0.77 * log2(0.77) + 0.77 * log2(10^7) (conditional entropy approach). Actually, more precisely: H_other = sum over all 10M passwords of -(p_i * log2(p_i)). Each p_i = 0.77/10^7. H_other = 10^7 * (-(0.77/10^7) * log2(0.77/10^7)) = -0.77 * log2(0.77/10^7) = -0.77 * (log2(0.77) - log2(10^7)) = -0.77 * (-0.378 - 23.25) = -0.77 * (-23.63) = 18.20 bits. Total entropy: H = H_top + H_other = 0.84 + 18.20 = 19.04 bits. Security interpretation: The entropy is approximately 19 bits, meaning on average an attacker needs about 2^19 = 524,288 guesses with an optimal strategy (trying the most probable passwords first). This is extremely low security. Compared to a uniform distribution over 10 million passwords (entropy = log2(10^7) = 23.25 bits), the skewed distribution loses about 4 bits of entropy. An attacker trying just the top 3 passwords has a 23% chance of success. The effective security is determined by the weakest users: even if 77% of users choose from 10 million passwords, the 23% using common passwords compromise the system for targeted attacks.",
+            "rubric": [
+              {
+                "key": "Correct entropy calculation with proper handling of the mixed distribution",
+                "value": 4
+              },
+              {
+                "key": "Meaningful security interpretation comparing with uniform distribution",
+                "value": 2
+              },
+              {
+                "key": "Recognition that top passwords dominate attack strategy",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain why Shor's quantum algorithm threatens RSA and ECC but not AES, referencing the specific mathematical problems each relies on and the impact of quantum computing on each.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "RSA relies on the hardness of integer factorization: given n = p*q, finding p and q. Shor's algorithm solves integer factorization in polynomial time O((log n)^3) on a quantum computer, completely breaking RSA regardless of key size. A 2048-bit RSA modulus would be factored in hours on a sufficiently large quantum computer. ECC relies on the hardness of the Elliptic Curve Discrete Logarithm Problem: given points P and Q = n*P, finding n. Shor's algorithm (adapted for discrete logarithms) also solves ECDLP in polynomial time, breaking ECC of all key sizes. A 256-bit ECC key would fall as easily as RSA-2048. AES is a symmetric cipher that does not rely on a number-theoretic hard problem. Its security comes from the difficulty of searching through the keyspace (brute force). Grover's quantum algorithm provides a quadratic speedup for unstructured search: it finds a target in a space of N elements using O(sqrt(N)) queries instead of O(N). For AES-256, Grover reduces the effective security from 256 bits to 128 bits (2^128 quantum operations). Since 2^128 operations remain computationally infeasible even for quantum computers, AES-256 is considered quantum-safe. AES-128 would be reduced to 64 bits of quantum security, which is marginal and may become feasible, so AES-256 is recommended. The fundamental difference: RSA and ECC rely on structured mathematical problems with efficient quantum solutions. AES relies on unstructured search with only a quadratic quantum speedup. This is why post-quantum research focuses on replacing RSA/ECC (asymmetric) while doubling key sizes for AES (symmetric).",
+            "rubric": [
+              {
+                "key": "Correct explanation of Shor's polynomial-time impact on RSA and ECC",
+                "value": 3
+              },
+              {
+                "key": "Correct explanation of Grover's quadratic speedup impact on AES",
+                "value": 2
+              },
+              {
+                "key": "Clear distinction between structured problems (RSA/ECC) and unstructured search (AES)",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "Symmetric Crypto Math, RSA, and ECC",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "In RSA with p = 11, q = 13, e = 7: (a) compute n and phi(n), (b) compute d, (c) encrypt m = 5, (d) decrypt the ciphertext to recover m. Show all modular arithmetic steps.",
+            "type": "calculation",
+            "points": 8,
+            "answer": "(a) n = 11 * 13 = 143. phi(n) = (11-1)(13-1) = 10 * 12 = 120. (b) d = e^(-1) mod phi(n) = 7^(-1) mod 120. Using Extended Euclidean: 120 = 17 * 7 + 1, so 1 = 120 - 17 * 7. Therefore 7 * (-17) = 1 (mod 120), so d = -17 mod 120 = 103. Verify: 7 * 103 = 721. 721 mod 120 = 721 - 6*120 = 721 - 720 = 1. Confirmed. (c) Encrypt m = 5: c = m^e mod n = 5^7 mod 143. Using square-and-multiply: 5^1 = 5; 5^2 = 25; 5^4 = 25^2 = 625 mod 143 = 625 - 4*143 = 625 - 572 = 53; 5^7 = 5^4 * 5^2 * 5^1 = 53 * 25 * 5. 53 * 25 = 1325 mod 143 = 1325 - 9*143 = 1325 - 1287 = 38. 38 * 5 = 190 mod 143 = 190 - 143 = 47. c = 47. (d) Decrypt c = 47: m = c^d mod n = 47^103 mod 143. This is computationally intensive by hand, so we use square-and-multiply with key intermediate steps: 103 in binary = 1100111. 47^1 = 47; 47^2 = 2209 mod 143 = 2209 - 15*143 = 2209 - 2145 = 64; 47^4 = 64^2 = 4096 mod 143 = 4096 - 28*143 = 4096 - 4004 = 92; 47^8 = 92^2 = 8464 mod 143 = 8464 - 59*143 = 8464 - 8437 = 27; 47^16 = 27^2 = 729 mod 143 = 729 - 5*143 = 729 - 715 = 14; 47^32 = 14^2 = 196 mod 143 = 53; 47^64 = 53^2 = 2809 mod 143 = 2809 - 19*143 = 2809 - 2717 = 92. 103 = 64 + 32 + 4 + 2 + 1. 47^103 = 47^64 * 47^32 * 47^4 * 47^2 * 47^1 = 92 * 53 * 92 * 64 * 47. Compute step by step mod 143: 92 * 53 = 4876 mod 143 = 4876 - 34*143 = 4876 - 4862 = 14. 14 * 92 = 1288 mod 143 = 1288 - 9*143 = 1288 - 1287 = 1. 1 * 64 = 64. 64 * 47 = 3008 mod 143 = 3008 - 21*143 = 3008 - 3003 = 5. m = 5. Decryption recovers the original message.",
+            "rubric": [
+              {
+                "key": "Correct n, phi(n), and d computation",
+                "value": 2
+              },
+              {
+                "key": "Correct encryption using modular exponentiation",
+                "value": 3
+              },
+              {
+                "key": "Correct decryption recovering m = 5",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain why textbook RSA (without padding) is insecure by describing two specific attacks, and explain how RSA-OAEP prevents each attack.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Attack 1: Deterministic encryption. Textbook RSA encrypts the same plaintext to the same ciphertext every time: c = m^e mod n is a deterministic function. An attacker who intercepts ciphertext c can test whether a guessed message m' is the plaintext by computing m'^e mod n and comparing with c. For messages from a small space (yes/no, buy/sell, specific dollar amounts), the attacker can enumerate all possible messages and find the match. Prevention by OAEP: OAEP adds random padding to the message before encryption. The padded message is m' = OAEP(m, random_padding), and different random padding produces different ciphertexts for the same message. The attacker cannot enumerate messages because each message has 2^256 possible padded forms (with 256 bits of randomness). Attack 2: Multiplicative homomorphism. Textbook RSA is homomorphic: E(m1) * E(m2) = m1^e * m2^e = (m1 * m2)^e = E(m1 * m2) mod n. An attacker can manipulate ciphertexts without knowing the plaintexts. For example, if the attacker intercepts c = E(m) and wants to learn m, they can compute c' = c * r^e mod n = E(m * r) for a known random r, submit c' for decryption (chosen-ciphertext attack), receive m * r, and compute m = (m * r) * r^(-1) mod n. Prevention by OAEP: OAEP includes a structured padding with hash-based integrity checks. After decryption of a manipulated ciphertext, the OAEP padding check fails (the hash does not match), and the decryption returns an error rather than the manipulated plaintext. This makes chosen-ciphertext attacks impossible because the attacker cannot construct a valid OAEP-padded ciphertext from a manipulated one.",
+            "rubric": [
+              {
+                "key": "Correct description of deterministic encryption attack with example",
+                "value": 2
+              },
+              {
+                "key": "Correct description of homomorphism/CCA attack with specific exploitation",
+                "value": 3
+              },
+              {
+                "key": "Clear explanation of how OAEP prevents each attack",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "A 256-bit ECC key provides approximately 128 bits of security, while a 3072-bit RSA key also provides approximately 128 bits of security. Explain mathematically why ECC achieves the same security level with a much smaller key, referencing the best known attacks against each system.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "The difference is in the computational complexity of the best known attacks against each mathematical problem. RSA (integer factorization): The best known classical algorithm for factoring n-bit integers is the General Number Field Sieve, with complexity approximately L_n[1/3, 1.923] = exp(1.923 * (ln n)^(1/3) * (ln ln n)^(2/3)). This is sub-exponential: faster than exponential but slower than polynomial. For 3072-bit RSA, GNFS requires approximately 2^128 operations. Because the attack is sub-exponential, achieving more security requires disproportionately larger keys: doubling the security level requires more than doubling the key size. ECC (elliptic curve discrete logarithm): The best known classical algorithm for ECDLP is Pollard's rho, with complexity O(sqrt(#E)) where #E is approximately 2^k for k-bit keys. This is fully exponential: O(2^(k/2)). For 256-bit ECC, Pollard's rho requires approximately 2^128 operations. Because the attack is exponential, achieving more security requires only proportionally larger keys: doubling the security level doubles the key size. Mathematical comparison: at 128 bits of security, RSA needs 3072 bits (sub-exponential attack, need much larger key to compensate) while ECC needs only 256 bits (exponential attack, key size directly maps to security level). The ratio gets worse for RSA at higher security levels: 256-bit security requires 15360-bit RSA but only 512-bit ECC. This efficiency advantage makes ECC preferred for modern cryptographic applications, especially in constrained environments.",
+            "rubric": [
+              {
+                "key": "Correct explanation of GNFS sub-exponential complexity for RSA",
+                "value": 2
+              },
+              {
+                "key": "Correct explanation of Pollard's rho exponential complexity for ECC",
+                "value": 3
+              },
+              {
+                "key": "Clear mathematical reasoning for why the complexity difference leads to key size difference",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "Hash Functions, RNG, and Combinatorics",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "For a hash function with 160-bit output (like SHA-1): (a) how many hash computations are needed for a 50% probability of finding a collision (birthday attack), (b) how many for a pre-image attack, and (c) explain why SHA-1 is considered broken for collision resistance but not for pre-image resistance.",
+            "type": "calculation",
+            "points": 8,
+            "answer": "(a) Birthday attack for collision: The birthday bound for 50% collision probability is approximately sqrt(pi/2 * N) = 1.177 * sqrt(N) where N = 2^160. Number of hashes = 1.177 * 2^80 = approximately 2^80. So approximately 2^80 hash computations are needed for a 50% probability of finding a collision. (b) Pre-image attack: Finding m such that H(m) = h for a given h requires approximately N/2 = 2^160/2 = 2^159 hash computations on average (half the space by expected value), or 2^160 for near-certainty. (c) Why SHA-1 is broken for collisions but not pre-images: SHA-1's collision resistance is broken because researchers (Wang et al., 2005) found analytical techniques that exploit the internal structure of SHA-1's compression function to find collisions in approximately 2^63 operations, far less than the 2^80 birthday bound. Google demonstrated a practical collision (SHAttered) in 2017 using approximately 2^63.1 SHA-1 computations. However, pre-image resistance requires a fundamentally different attack: recovering the input from the output. The known attacks on SHA-1 exploit differential path analysis in the compression function to find two inputs with the same output, but these techniques do not help find a specific input that produces a given output. The best known pre-image attack on SHA-1 has complexity approximately 2^159.3, which is negligibly better than brute force (2^160) and completely infeasible. The distinction: collision attacks exploit the birthday paradox structure (finding any pair) and internal differential analysis. Pre-image attacks require inverting the hash, which is a harder problem not aided by these techniques.",
+            "rubric": [
+              {
+                "key": "Correct birthday bound calculation yielding approximately 2^80",
+                "value": 2
+              },
+              {
+                "key": "Correct pre-image complexity of approximately 2^160",
+                "value": 2
+              },
+              {
+                "key": "Clear explanation of why collision attacks succeed while pre-image attacks do not, referencing differential analysis",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "The Debian OpenSSL bug (2008) reduced the entropy of generated RSA keys to approximately 15 bits. Calculate how many possible unique 1024-bit RSA key pairs could be generated by affected systems, and estimate the time needed to enumerate all of them at 1000 key generations per second.",
+            "type": "calculation",
+            "points": 8,
+            "answer": "The Debian OpenSSL bug initialized the PRNG seed using only the process ID (PID). On Linux, PIDs range from 1 to 32768 (2^15 = 32768 values). Since the PRNG is deterministic given its seed, each PID produces a deterministic sequence of random numbers, and therefore a deterministic RSA key pair for each key size and architecture. Number of possible unique 1024-bit RSA key pairs: Approximately 32,768 (one per PID) per architecture (32-bit vs 64-bit). For a single architecture: 2^15 = 32,768 possible keys. At 1000 key generations per second: Time to enumerate all = 32,768 / 1000 = 32.8 seconds. In reality, HDMoore generated all possible keys for common key sizes and architectures and published them in a database. Any SSL certificate or SSH key generated on a Debian/Ubuntu system between September 2006 and May 2008 could be checked against this database in milliseconds. Impact: approximately 600,000 SSL certificates and millions of SSH keys were generated during the affected period. Any of these could be factored (the private key recovered) by looking up the public key in the pre-computed database. The fix required regenerating all affected keys and revoking all affected certificates. Security lesson: the entropy of the PRNG seed determines the security of every cryptographic key generated from it. Reducing entropy from 128 bits to 15 bits transforms a computationally secure system into one broken in seconds.",
+            "rubric": [
+              {
+                "key": "Correct calculation of possible key pairs from PID space",
+                "value": 3
+              },
+              {
+                "key": "Correct time estimate for enumeration",
+                "value": 2
+              },
+              {
+                "key": "Understanding of the real-world impact and security lesson",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "A multi-factor authentication system uses: (1) an 8-character password from a 62-character alphabet, (2) a 6-digit TOTP code, and (3) a hardware security key (FIDO2). If an attacker has stolen the password hash (and can attempt offline cracking at 10 billion hashes/second) but does not have the TOTP secret or the hardware key, analyze the effective security of each factor and the combined system.",
+            "type": "analysis",
+            "points": 7,
+            "answer": "Factor 1 - Password (offline attack with stolen hash): Key space = 62^8 = 2.18 x 10^14 possible passwords. At 10 billion (10^10) hashes/second: time to exhaust = 2.18 x 10^14 / 10^10 = 21,800 seconds = approximately 6 hours. Expected time (average) = approximately 3 hours. With bcrypt (cost 12, approximately 4 hashes/second): 2.18 x 10^14 / 4 = 5.45 x 10^13 seconds = approximately 1.7 million years. Assessment: weak with fast hashes, strong with bcrypt. Factor 2 - TOTP (online attack only, since the secret is not stolen): Key space = 10^6 = 1,000,000 per 30-second window. With typical rate limiting (3 attempts per window): P(success per window) = 3/10^6 = 0.0003%. Expected windows to success = 333,333 windows = approximately 116 days of continuous attempts. Account lockout after N failures would prevent this entirely. Assessment: strong against online attack, impossible offline without the TOTP secret. Factor 3 - Hardware security key (FIDO2): Cannot be brute-forced. The private key never leaves the hardware token. Authentication requires physical possession and user presence verification. The attacker must physically steal the hardware key. Assessment: provides the strongest factor; resistant to all remote attacks. Combined system: The attacker must defeat ALL three factors. Having cracked the password (Factor 1), they still need both the TOTP code and physical possession of the hardware key. The TOTP requires either stealing the TOTP secret (requires access to the authentication server or the user's TOTP app) or performing an online guessing attack (116+ days, detectable). The hardware key requires physical theft. The combined security is multiplicative for independent factors, but the practical security is determined by the weakest path: if the attacker can phish all three factors simultaneously (real-time phishing proxy), MFA can be defeated. FIDO2 hardware keys resist phishing because they verify the origin domain, making them the most critical factor.",
+            "rubric": [
+              {
+                "key": "Correct analysis of password security with and without key stretching",
+                "value": 2
+              },
+              {
+                "key": "Correct analysis of TOTP security with rate limiting",
+                "value": 2
+              },
+              {
+                "key": "Understanding that FIDO2 provides the strongest factor and recognition of phishing limitations of non-FIDO MFA",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Cryptographic Mathematics Implementation",
+        "week_assigned": 3,
+        "week_due": 7,
+        "points": 175,
+        "description": "Implement core mathematical algorithms used in cryptography from scratch (no crypto library functions for the core algorithms). Build RSA and Diffie-Hellman from mathematical primitives, analyze their security properties, and demonstrate both correct operation and vulnerability to implementation flaws.",
+        "objectives": [
+          "Implement the Extended Euclidean Algorithm, modular exponentiation, and Miller-Rabin primality testing",
+          "Build RSA key generation, encryption, and decryption from these mathematical primitives",
+          "Implement Diffie-Hellman key exchange from scratch",
+          "Demonstrate a textbook RSA vulnerability (deterministic encryption or homomorphism attack)",
+          "Analyze the mathematical security properties with timing experiments across key sizes"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Python implementations of all mathematical primitives with unit tests",
+          "Working RSA implementation (key generation, encryption, decryption) with 1024-bit keys",
+          "Working Diffie-Hellman implementation with 2048-bit parameters",
+          "Attack demonstration showing textbook RSA vulnerability and OAEP prevention",
+          "Performance analysis report (5-7 pages) with timing data across key sizes and security analysis"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 55,
+            "criteria": [
+              "Extended Euclidean Algorithm correctly computes GCD and Bezout coefficients",
+              "Modular exponentiation uses square-and-multiply and handles 2048-bit numbers",
+              "Miller-Rabin correctly identifies primes and composites including Carmichael numbers",
+              "RSA key generation, encryption, and decryption produce correct results for 1024-bit keys",
+              "Diffie-Hellman produces matching shared secrets for both parties"
+            ]
+          },
+          "visual_quality": {
+            "points": 40,
+            "criteria": [
+              "Textbook RSA attack demonstrated with clear explanation of the vulnerability",
+              "OAEP padding shown to prevent the demonstrated attack",
+              "Correctness verified against PyCryptodome for all implementations",
+              "Edge cases handled: small messages, large messages, invalid parameters"
+            ]
+          },
+          "performance_optimization": {
+            "points": 40,
+            "criteria": [
+              "Timing analysis across key sizes (512, 1024, 2048, 4096 bits)",
+              "Key generation time vs key size relationship analyzed",
+              "Encryption/decryption time vs key size relationship analyzed",
+              "Comparison with library implementations showing overhead of from-scratch code"
+            ]
+          },
+          "documentation": {
+            "points": 40,
+            "criteria": [
+              "Mathematical correctness proofs for RSA (Euler's theorem application)",
+              "Security analysis: key size vs factoring difficulty with GNFS complexity estimates",
+              "Clear explanation of why each primitive is needed for the overall system",
+              "Report quality suitable for a technical audience"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 175,
+              "criteria": [
+                "Correct implementations of all cryptographic mathematical primitives",
+                "Working RSA and Diffie-Hellman built from scratch",
+                "Demonstrated understanding of vulnerabilities and defenses",
+                "Thorough performance and security analysis"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Security Analysis with Probability and Statistics",
+        "week_assigned": 7,
+        "week_due": 11,
+        "points": 175,
+        "description": "Apply probability, statistics, and information theory to analyze real security systems. Build a statistical anomaly detection system, analyze password security using entropy and combinatorics, and evaluate the effectiveness of a multi-factor authentication system using Bayesian analysis.",
+        "objectives": [
+          "Build a statistical anomaly detection system for network traffic with time-dependent baselines",
+          "Analyze a leaked password dataset using entropy, frequency analysis, and brute-force time estimates",
+          "Evaluate MFA effectiveness using conditional probability and Bayesian analysis",
+          "Design optimal detection thresholds using ROC analysis",
+          "Connect mathematical analysis to practical security recommendations"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Anomaly detection system with time-dependent baselines, z-score and percentile detection, and ROC analysis",
+          "Password security analysis with entropy calculations, dictionary attack simulations, and policy recommendations",
+          "MFA effectiveness analysis with Bayesian calculation of post-MFA security levels",
+          "Written report (5-7 pages) connecting mathematical analysis to actionable security recommendations"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 55,
+            "criteria": [
+              "Anomaly detection correctly builds time-dependent baselines and detects injected anomalies",
+              "Password analysis correctly computes entropy for multiple password policies and distributions",
+              "MFA analysis correctly applies Bayes' theorem with realistic base rates",
+              "ROC analysis identifies optimal detection threshold for given false positive cost"
+            ]
+          },
+          "visual_quality": {
+            "points": 40,
+            "criteria": [
+              "Anomaly detection visualizations show baselines, anomalies, and threshold effects",
+              "Password entropy comparison across policies is clear and informative",
+              "ROC curves properly generated with AUC calculation",
+              "All visualizations are publication-quality with labels and legends"
+            ]
+          },
+          "performance_optimization": {
+            "points": 40,
+            "criteria": [
+              "Anomaly detection evaluated with precision, recall, and F1 metrics",
+              "Password cracking time estimates validated against actual cracking benchmarks",
+              "MFA analysis considers realistic attack scenarios (phishing, SIM swap, device theft)",
+              "Sensitivity analysis shows how results change with different assumptions"
+            ]
+          },
+          "documentation": {
+            "points": 40,
+            "criteria": [
+              "Mathematical derivations are correct and clearly presented",
+              "Security recommendations are specific, actionable, and supported by analysis",
+              "Report distinguishes between theoretical security and practical security",
+              "Limitations of each analysis method are explicitly discussed"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 175,
+              "criteria": [
+                "Working anomaly detection with statistical foundation",
+                "Rigorous password security analysis with entropy calculations",
+                "Bayesian MFA effectiveness analysis with realistic scenarios",
+                "Actionable security recommendations supported by mathematical analysis"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Comprehensive Cryptographic Security Assessment",
+        "week_assigned": 11,
+        "week_due": 15,
+        "points": 150,
+        "description": "Perform a mathematical security assessment of a complete cryptographic system. Analyze the hash function security, random number generation quality, key size adequacy, and protocol security for a provided system specification. Identify mathematical weaknesses and provide quantified recommendations.",
+        "objectives": [
+          "Evaluate hash function selection against birthday attack bounds and known weaknesses",
+          "Assess random number generation entropy and CSPRNG compliance",
+          "Analyze key sizes against current and projected computational capabilities",
+          "Identify protocol-level mathematical vulnerabilities (padding, nonce reuse, weak parameters)",
+          "Provide quantified security recommendations with mathematical justification"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Hash function assessment with collision and pre-image resistance analysis",
+          "RNG assessment with entropy analysis and statistical testing results",
+          "Key size assessment with GNFS/Pollard's rho complexity calculations for each algorithm",
+          "Protocol vulnerability analysis with mathematical exploitation demonstrations where applicable",
+          "Security assessment report (8-12 pages) with findings, risk ratings, and quantified recommendations"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 45,
+            "criteria": [
+              "Hash function analysis correctly applies birthday bounds and identifies weaknesses",
+              "RNG analysis includes entropy estimation and statistical test results",
+              "Key size analysis uses correct complexity formulas for GNFS and Pollard's rho",
+              "Protocol analysis identifies all planted mathematical vulnerabilities"
+            ]
+          },
+          "visual_quality": {
+            "points": 35,
+            "criteria": [
+              "Security levels quantified in bits for each component",
+              "Vulnerability demonstrations include mathematical proof of exploitation",
+              "Risk ratings justified with probability and complexity calculations",
+              "Recommendations include specific parameter values with mathematical justification"
+            ]
+          },
+          "performance_optimization": {
+            "points": 35,
+            "criteria": [
+              "Assessment considers both current and projected future computational capabilities",
+              "Quantum computing impact analyzed for each cryptographic component",
+              "Recommendations provide migration path with timeline",
+              "Cost-benefit analysis of security improvements"
+            ]
+          },
+          "documentation": {
+            "points": 35,
+            "criteria": [
+              "Report follows professional security assessment format",
+              "Mathematical notation is correct and consistent throughout",
+              "Executive summary communicates findings to non-mathematical audience",
+              "All claims are supported by mathematical derivations or references"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Comprehensive mathematical security assessment covering all components",
+                "Vulnerabilities identified with mathematical proof of exploitation",
+                "Quantified recommendations with bits-of-security analysis",
+                "Professional report suitable for cryptographic security review"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 20,
+      "description": "Five quizzes assessing mathematical computation, security analysis, and cryptographic reasoning"
+    },
+    "lab_assignments": {
+      "percentage": 15,
+      "description": "Weekly mathematical programming exercises and proof-based problem sets"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "Three major projects: cryptographic implementation, statistical security analysis, and comprehensive cryptographic assessment"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Written exam covering number theory, modular arithmetic, probability, and information theory"
+    },
+    "final_project": {
+      "percentage": 20,
+      "description": "Comprehensive cryptographic security assessment demonstrating full breadth of mathematical security analysis"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is mandatory for all class sessions. More than 2 unexcused absences may result in a grade reduction. Mathematical concepts build cumulatively and missing sessions creates gaps.",
+    "late_submissions": "Late assignments are penalized 10% per day. No submissions accepted more than 5 days late without prior arrangement with the instructor.",
+    "collaboration": "Problem set discussion is encouraged. All proofs, implementations, and written analyses must be individually authored. Cite any references or discussions that influenced your work.",
+    "academic_integrity": "Mathematical proofs must be your own work. Using computer algebra systems (sympy, SageMath) for computation is permitted and encouraged; using them to generate proofs is not.",
+    "technology_requirements": "Students need a laptop with Python 3, NumPy, SciPy, sympy, and matplotlib. Scientific calculators are permitted during exams. Programmable calculators and internet-connected devices are not permitted during exams."
+  }
+}

@@ -1,0 +1,1498 @@
+{
+  "course_info": {
+    "course_id": "BA401",
+    "title": "Business Analytics",
+    "credit_hours": 3,
+    "duration": "15 weeks",
+    "meeting_schedule": "Tuesday, Thursday - 3 hours per week",
+    "prerequisites": [
+      "BA202 - Managerial Accounting",
+      "STAT301 - Applied Statistics"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "topic": "The Four Types of Analytics and the Business Analytics Mindset",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Distinguish between descriptive, diagnostic, predictive, and prescriptive analytics with a real business example for each",
+        "Frame a business question as a data question that can be answered with available or obtainable data",
+        "Identify the value chain from raw data to decision and recognize where each analytics type adds value",
+        "Recognize common pitfalls: correlation vs causation, survivorship bias, and overfitting to past data"
+      ],
+      "readings": [
+        "Provost & Fawcett, Data Science for Business (2013), Ch. 1 - Data-Analytic Thinking",
+        "Camm, Cochran, Fry, Ohlmann, Business Analytics (5th ed.), Ch. 1 - Introduction to Business Analytics",
+        "Harvard Business Review, 'Data Scientist: The Sexiest Job of the 21st Century' (Davenport & Patil, 2012)",
+        "Thomas Davenport, 'Competing on Analytics' HBR (2006) - the framework article"
+      ],
+      "lecture_notes": {
+        "introduction": "In 2002, Billy Beane, general manager of the Oakland Athletics baseball team, had the smallest payroll in Major League Baseball and a mandate to win. Conventional baseball wisdom said he needed batting average, speed, and veteran leadership. Instead, working with a young Harvard economics graduate named Paul DePodesta, Beane used statistical analysis to identify players who were undervalued by the market: players with high on-base percentage who did not fit the traditional scout's eye test. The A's won 20 games in a row and made the playoffs, and the book and film Moneyball introduced the world to the idea that data-driven decisions could beat intuition in a domain that had resisted analytics for a century. Twenty years later, every major league team has an analytics department, every retailer runs pricing algorithms, every hospital tracks readmission rates, and every bank scores credit applications with machine learning. But the majority of analytics projects still fail to deliver business value, and a surprising number of 'data-driven' decisions are built on flawed data, flawed reasoning, or the wrong question. This course teaches you to recognize which kind of analytics your problem actually needs, how to collect and prepare the right data, how to visualize and communicate findings, and how to build models that predict the future without fooling yourself about accuracy. We will cover the four types of analytics (descriptive, diagnostic, predictive, prescriptive) from a practitioner standpoint, working through real cases from Target, Netflix, Zillow, Amazon, and others where the analytics either delivered enormous value or failed in instructive ways.",
+        "key_concepts": [
+          "Descriptive analytics: 'what happened?' - sales reports, dashboards, KPIs, time-series of revenue; answers the past with aggregation and visualization",
+          "Diagnostic analytics: 'why did it happen?' - drill-downs, cohort analysis, attribution, root-cause analysis; goes beyond description to explain causes",
+          "Predictive analytics: 'what will happen?' - forecasting, classification, regression, recommendation engines; uses historical patterns to estimate future outcomes",
+          "Prescriptive analytics: 'what should we do?' - optimization, simulation, decision models; goes beyond prediction to recommend actions under constraints",
+          "The value chain: raw data -> cleaned data -> analysis -> insight -> decision -> action -> outcome; each step adds or subtracts value",
+          "Framing: 'what is our churn rate?' (descriptive) vs 'why are customers churning?' (diagnostic) vs 'which customers will churn next month?' (predictive) vs 'what offer should we make to at-risk customers?' (prescriptive)",
+          "Correlation vs causation: two variables may move together without one causing the other; classic example is ice cream sales and drowning (both driven by summer)",
+          "Survivorship bias: analyzing only successful cases and missing the lessons from failures; Abraham Wald's WWII bomber analysis",
+          "Overfitting: a model that fits historical data perfectly but fails on new data; the most common technical error in business analytics",
+          "Davenport's five levels of analytical competitors: analytically impaired, localized analytics, analytical aspirations, analytical companies, analytical competitors"
+        ],
+        "demonstration": "Walk through a real example from Moneyball: the A's bought on-base percentage (OBP) because the market systematically underpriced it. Show the math: OBP correlates with runs scored at approximately r = 0.89, while batting average correlates at about r = 0.81. The difference seems small but produces real wins. Then contrast with a predictive model: given a player's 2024 stats, predict their 2025 on-base percentage using regression. Then a prescriptive question: given a $90M budget, which combination of players maximizes projected wins subject to the payroll constraint? Each question requires a different analytics type and a different level of sophistication.",
+        "setup_requirements": [
+          "Laptop with Python 3.11+ and pandas, numpy, matplotlib, scikit-learn installed",
+          "Access to Tableau Public (free) or Power BI Desktop (free) for visualization",
+          "Sample dataset: Lahman Baseball Database or MLB stats for Moneyball exercise",
+          "Access to course GitHub repo with starter notebooks"
+        ],
+        "review": [
+          {
+            "key": "Four Analytics Types Answer Four Questions",
+            "value": "Descriptive answers 'what happened', diagnostic answers 'why', predictive answers 'what will happen', prescriptive answers 'what should we do'. Most organizations stop at descriptive and occasionally dabble in predictive; the prescriptive layer is where optimization delivers the highest ROI"
+          },
+          {
+            "key": "Framing Is Half the Battle",
+            "value": "The biggest failures in business analytics come from answering the wrong question precisely. Before any SQL or Python, clarify what decision the analysis will inform and what change in that decision would be material to the business"
+          },
+          {
+            "key": "Correlation Is Not Causation",
+            "value": "Storks nest on chimneys in European towns that also have more babies - both are explained by town size, not that storks deliver babies. In business analytics, always ask: is there a confounding variable explaining both my inputs and my outputs?"
+          },
+          {
+            "key": "Overfitting Is the Silent Killer",
+            "value": "A model that perfectly explains 100 historical data points is usually useless for predicting the 101st. Always hold out test data, cross-validate, and prefer simpler models when they perform comparably to complex ones"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 2,
+      "topic": "Data Collection, Cleaning, and Exploratory Data Analysis",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Load data from CSV, Excel, and database sources into pandas DataFrames",
+        "Identify and handle missing values, duplicates, outliers, and inconsistent formatting",
+        "Conduct exploratory data analysis using summary statistics, histograms, and scatter plots",
+        "Apply the 80/20 rule of analytics: 80% of time is data cleaning, 20% is modeling"
+      ],
+      "readings": [
+        "Provost & Fawcett, Data Science for Business, Ch. 2 - Business Problems and Data Science Solutions",
+        "McKinney, Python for Data Analysis (3rd ed., 2022), Ch. 6-7 - Data Loading and Cleaning",
+        "Tidy Data paper (Wickham, 2014) - foundational data shape framework",
+        "Camm et al., Business Analytics (5th ed.), Ch. 2 - Descriptive Statistics"
+      ],
+      "lecture_notes": {
+        "introduction": "If you read blog posts about data science, you might think analysts spend their days building neural networks and tuning XGBoost hyperparameters. The reality is that 70-80% of a working analyst's time is spent getting data into a usable state: finding it, cleaning it, deduplicating it, joining it, fixing inconsistent formats, handling missing values, and dealing with edge cases that were never documented. A 2021 Anaconda survey of 2,300 data scientists confirmed that data preparation and cleaning together consume roughly 45% of work time, and exploration another 20%, while model building is only about 11%. The analysts who deliver value quickly are the ones who have mastered the 'boring' work of data wrangling, not the ones who jump straight to fancy models. This session introduces the tools and discipline of data preparation in Python using pandas, the industry-standard library created by Wes McKinney at AQR Capital in 2008. You will learn to load data from multiple sources, handle the five main data problems (missing, duplicate, outlier, inconsistent, wrong type), and perform exploratory data analysis (EDA) that reveals the structure and quirks of a new dataset before you model anything. We will apply these skills to a real sales dataset from a retailer with 300,000 transactions, 50,000 customers, and all the messiness of real data.",
+        "key_concepts": [
+          "Data sources: CSV, Excel, databases (SQL), APIs (JSON), web scraping; each has different parsing challenges and type inference rules",
+          "pandas DataFrame: two-dimensional labeled data structure; columns are Series; the workhorse of Python data analysis",
+          "Missing values: represented as NaN in pandas; strategies include drop (losing rows), impute (mean, median, model-based), or indicator variable (is_missing = 1)",
+          "Duplicates: exact duplicates removed with df.drop_duplicates(); near-duplicates require fuzzy matching (record linkage)",
+          "Outliers: values far from the bulk of the data; may be real extremes or data errors; handle with investigation, winsorization, or robust methods",
+          "Inconsistent formatting: 'USA' vs 'U.S.A.' vs 'United States'; requires standardization via regex or lookup tables",
+          "Data types: numeric (int, float), string (object), datetime, categorical; wrong types cause silent errors (string sorting of dates)",
+          "Summary statistics: mean, median, std, min, max, quartiles via df.describe(); first line of EDA",
+          "Visualization: histograms for distributions, boxplots for outliers, scatter plots for relationships, correlation matrices for overview",
+          "Tidy data (Hadley Wickham): each variable forms a column, each observation forms a row, each type of unit forms a table - the standard shape for analysis"
+        ],
+        "demonstration": "Load a sample retail dataset with 300,000 rows in pandas. Run df.info() to see column types and non-null counts; discover that 'date' is stored as string and 'customer_id' has 15,000 nulls. Run df.describe() to see numeric summaries; notice that one product has a max price of $99,999 (obvious data entry error). Convert date column to datetime. Impute missing customer IDs as 'guest'. Plot histograms of price and quantity to see distribution shape. Build a correlation matrix to preview which variables move together. Discuss what you have learned about the data in 10 minutes before writing any model code.",
+        "setup_requirements": [
+          "Jupyter notebook environment (JupyterLab or VS Code with Python extension)",
+          "pandas, numpy, matplotlib, seaborn installed",
+          "Sample retail transactions dataset (course GitHub)",
+          "Reference card for common pandas operations"
+        ],
+        "review": [
+          {
+            "key": "Most Work Is Preparation",
+            "value": "Budget 60-80% of project time for data preparation, not modeling. Analysts who underestimate this consistently miss deadlines and deliver low-quality results. Leadership that demands fast model delivery without budgeting for data work is setting projects up to fail"
+          },
+          {
+            "key": "Tidy Data Saves Time",
+            "value": "A dataset in tidy form (one variable per column, one observation per row) works with every pandas function, every SQL query, and every visualization tool. Data in a non-tidy shape requires custom code for every operation. Spending time reshaping to tidy format pays back every subsequent analysis"
+          },
+          {
+            "key": "EDA Before Modeling",
+            "value": "Always run df.info(), df.describe(), histograms, and a correlation matrix before building any model. This catches data quality problems, reveals unexpected relationships, and tells you which variables are worth modeling"
+          },
+          {
+            "key": "Missingness Is Information",
+            "value": "Missing values are not just noise - the pattern of missingness often reveals something important. If high-income customers are missing from your income column, dropping them biases your model. Always investigate WHY values are missing before deciding how to handle them"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 3,
+      "topic": "Descriptive Statistics and Summarization",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Compute and interpret measures of central tendency (mean, median, mode) and dispersion (variance, standard deviation, IQR)",
+        "Distinguish when to use the mean vs median based on distribution shape and outliers",
+        "Compute and interpret percentiles, quantiles, and boxplots for practical business summaries",
+        "Apply descriptive statistics to compare groups (customers by segment, products by category, stores by region)"
+      ],
+      "readings": [
+        "Camm et al., Business Analytics (5th ed.), Ch. 2 - Descriptive Statistics",
+        "Provost & Fawcett, Data Science for Business, Ch. 3 - Introduction to Predictive Modeling (statistics review)",
+        "Nassim Taleb, The Black Swan (2007), Ch. 3 - The Speculator and the Prostitute (on Mediocristan vs Extremistan distributions)",
+        "Jeffrey Leek, 'The Elements of Data Analytic Style' (2015)"
+      ],
+      "lecture_notes": {
+        "introduction": "If a Silicon Valley bar has 10 software engineers earning $150K and Jeff Bezos walks in, the mean income in the bar becomes $10 billion per person, but the median is still $150K. This is not a joke; it is the single most important lesson in descriptive statistics for business analytics. In any business dataset with skewed distributions (customer spending, product revenue, employee salaries, website session duration), the mean can be dramatically misleading, and relying on the mean instead of the median or a percentile distribution can lead to catastrophic decisions. When Amazon reports 'average customer value,' which Amazon customer is that? The 1 million bulk buyers pulling the mean up, or the 300 million light users the company actually depends on? When a SaaS company reports 'average revenue per user,' does that tell you anything about the median user? This session teaches you to compute the full set of descriptive statistics, understand when each applies, and think skeptically about the summary statistics you encounter in dashboards and decks. We will work through real examples showing how a single summary number can hide completely different underlying distributions, and how to use percentiles and visualizations to communicate the full picture without drowning your audience in data.",
+        "key_concepts": [
+          "Mean (average): sum divided by count; sensitive to outliers; appropriate for symmetric distributions",
+          "Median: middle value when data is sorted; robust to outliers; appropriate for skewed distributions (income, house prices, session duration)",
+          "Mode: most frequent value; useful for categorical data and discrete distributions",
+          "Variance: average squared deviation from mean; same units squared; rarely interpretable directly",
+          "Standard deviation: square root of variance; same units as data; the standard measure of spread",
+          "Interquartile range (IQR): 75th percentile minus 25th percentile; robust measure of spread; used in boxplot whiskers",
+          "Percentiles and quantiles: value below which a given percentage of observations fall; 25th, 50th (median), 75th, 90th, 95th, 99th percentiles are standard",
+          "Skewness: asymmetry of a distribution; positive skew (long right tail) common for income, product sales, and session duration",
+          "Kurtosis: tailedness; leptokurtic (fat tails) vs platykurtic (thin tails); matters for risk analytics",
+          "Group comparisons: compare descriptive stats across segments using groupby() in pandas; reveals where differences live"
+        ],
+        "demonstration": "Load a real customer transaction dataset. Compute mean and median order value by customer. Show that mean is $82 but median is $38 - a common pattern where a few whales pull the mean far above the typical customer. Build a boxplot of order values by customer segment (new, returning, VIP). Show that the VIP segment has much higher variance, and the 95th percentile of VIP orders is $400+ while the median new-customer order is $28. Demonstrate how a product manager could use these stats to set reasonable shipping thresholds: if free shipping at $50 covers the 75th percentile of new customers but only the 30th percentile of VIPs, the policy is poorly targeted.",
+        "setup_requirements": [
+          "pandas and matplotlib",
+          "Customer transaction sample dataset",
+          "Jupyter notebook with EDA starter code",
+          "Reference card: pandas .mean(), .median(), .quantile(), .describe()"
+        ],
+        "review": [
+          {
+            "key": "Mean vs Median Choice",
+            "value": "Use the mean only when the distribution is roughly symmetric. Use the median for skewed data (income, prices, durations). Most business data is skewed, so the median is more often the right default than the mean"
+          },
+          {
+            "key": "Never Trust a Single Number",
+            "value": "A single summary statistic hides as much as it reveals. Always report the median, IQR, and the 90th/95th percentile together for a skewed distribution. Or better, show a histogram or boxplot"
+          },
+          {
+            "key": "Compare Groups, Not Populations",
+            "value": "Descriptive statistics become diagnostic when you compare groups. Mean order value across all customers is flat; mean order value by segment shows that new customers are 40% below existing customers. This is where insight lives"
+          },
+          {
+            "key": "Outliers Are Either Errors or Signal",
+            "value": "An outlier is either a data entry mistake, a real edge case, or a rare but important event. Never silently discard outliers; investigate them. Sometimes the outlier is the story"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 4,
+      "topic": "Data Visualization Principles and Practice",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Apply Tufte's principles: data-ink ratio, chartjunk, small multiples, and truthful scaling",
+        "Choose the right chart type for the data type and the question (bar, line, scatter, histogram, boxplot, heatmap)",
+        "Avoid common visualization errors: truncated axes, misleading pie charts, 3D distortion, and excessive color",
+        "Build effective charts in Python (matplotlib, seaborn) and in Tableau for dashboards"
+      ],
+      "readings": [
+        "Tufte, The Visual Display of Quantitative Information (2nd ed., 2001), Ch. 2-4",
+        "Stephen Few, Show Me the Numbers (2nd ed., 2012), Ch. 1-4",
+        "Cole Nussbaumer Knaflic, Storytelling with Data (2015), Ch. 1-3",
+        "Few, 'Tapping the Power of Visual Perception' (2004) white paper"
+      ],
+      "lecture_notes": {
+        "introduction": "In 1986, the space shuttle Challenger exploded 73 seconds after launch, killing seven astronauts. The engineers at Morton Thiokol had data showing that the O-rings sealing the solid rocket boosters were unreliable at low temperatures, and the night before launch, they argued against the flight in a conference call with NASA management. They lost the argument partly because the data they presented was visualized poorly: it was a scatter plot of O-ring damage against launch temperature, but it only included launches where damage had occurred. The launches with no damage were omitted, so the critical pattern (all high-damage launches were cold) was invisible. Tufte later reanalyzed the data with a better visualization that included every launch and made the temperature dependence obvious. This story, told in Tufte's book Visual Explanations, is the most important lesson in data visualization: how you draw the picture determines what decision gets made, and choices that seem like aesthetics can literally kill people. This session covers the principles of effective data visualization from Tufte, Few, and Knaflic, the practical skill of choosing the right chart type for the question, and the common errors that produce misleading or useless graphs. We will use both matplotlib/seaborn for analytical work and Tableau for dashboard delivery, and we will critique real charts from the Wall Street Journal, FiveThirtyEight, and corporate earnings decks.",
+        "key_concepts": [
+          "Data-ink ratio (Tufte): maximize the fraction of ink devoted to displaying data, not decoration; remove gridlines, borders, 3D effects",
+          "Chartjunk: decorative elements that add no information; includes heavy gridlines, unnecessary colors, drop shadows, 3D effects",
+          "Small multiples: a grid of small charts showing the same variables across different categories; enables comparison",
+          "Truthful scaling: never truncate the y-axis to exaggerate differences; a bar chart starting at 95 instead of 0 turns a 1% difference into a dramatic visual difference",
+          "Chart types by question: bar (comparison of discrete categories), line (change over time), scatter (relationship between two variables), histogram (distribution shape), boxplot (distribution comparison), heatmap (two-dimensional relationships)",
+          "Color use: limit to 5-7 distinct colors; use sequential colormaps for ordered data, diverging for centered data, categorical only for categories",
+          "Pie chart problems: hard to compare angles; use bar charts for more than 3-4 categories",
+          "Preattentive attributes (Few): length, position, color, shape - used by the visual system in milliseconds; design dashboards to leverage these",
+          "Storytelling (Knaflic): every chart should have a single clear message; use annotations, color emphasis, and title to guide the reader",
+          "Dashboard design: one page, key metrics visible, drill-down available, no clutter; the best dashboards answer 3-5 questions, not 50"
+        ],
+        "demonstration": "Recreate Tufte's Challenger analysis in Python. Load the O-ring data (all launches, with damage and temperature). First, draw a bad chart: scatter plot of damage vs temperature with only the damaged launches, showing no clear pattern. Then draw the good chart: scatter plot with all launches, showing damage on y-axis and temperature on x-axis, with the prediction zone at launch-day temperature (31F) shaded. The pattern becomes obvious: all previous cold launches had damage, and the planned launch was far colder than any previous one. Discuss how this single visualization could have changed the decision. Then critique a real earnings chart from a public company's investor deck, identifying truncated axes, misleading comparisons, and chartjunk.",
+        "setup_requirements": [
+          "Python with matplotlib, seaborn",
+          "Tableau Public (free) for dashboard exercise",
+          "Challenger O-ring dataset and sample corporate earnings charts",
+          "Tufte and Few book excerpts"
+        ],
+        "review": [
+          {
+            "key": "Remove Ink Until It Hurts",
+            "value": "The default matplotlib and Excel charts have too much ink. Remove gridlines, borders, legends when redundant, 3D effects, and unnecessary colors. Keep removing until the chart starts losing information. The minimalist result is almost always better than the default"
+          },
+          {
+            "key": "Always Start the Y-Axis at Zero for Bar Charts",
+            "value": "A bar chart is a comparison of lengths, and truncating the y-axis turns a 1% difference into a 50% apparent difference. This is the single most common dishonest chart in business. Line charts can start above zero if the range is narrow and consistent"
+          },
+          {
+            "key": "Choose Chart Type by Question",
+            "value": "The question dictates the chart. 'How has revenue changed over time?' is a line chart. 'Which product category sells most?' is a bar chart. 'Is price related to sales?' is a scatter plot. Using the wrong chart wastes the reader's time"
+          },
+          {
+            "key": "Annotate, Don't Explain",
+            "value": "A good chart tells the story in the graphic; a bad chart requires the reader to read a paragraph to understand. Use titles that state the finding ('Revenue fell 12% in Q3'), annotations that point at key moments, and color to emphasize the takeaway"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 5,
+      "topic": "Dashboards, KPIs, and Business Storytelling",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Design a dashboard that supports a specific business role (CEO, marketing manager, operations lead)",
+        "Select and define KPIs using the SMART framework and the leading-vs-lagging indicator distinction",
+        "Structure a data story following the situation-complication-resolution pattern",
+        "Build a functional Tableau dashboard with filters, drill-downs, and formatted visuals"
+      ],
+      "readings": [
+        "Few, Information Dashboard Design (2nd ed., 2013), Ch. 1-3",
+        "Knaflic, Storytelling with Data (2015), Ch. 7 - Lessons in Storytelling",
+        "Camm et al., Business Analytics (5th ed.), Ch. 3 - Data Visualization",
+        "Tableau whitepaper: 'Visual Analysis Best Practices'"
+      ],
+      "lecture_notes": {
+        "introduction": "A dashboard is not a report. A report is retrospective - it describes what happened during a period. A dashboard is operational - it tells a specific user what to DO next based on current conditions. This distinction, from Stephen Few's Information Dashboard Design, is ignored by most organizations, which build dashboards that display every metric anyone has ever asked for and end up being used by nobody. The Bloomberg Terminal, the most expensive and widely used dashboard in the world, is built for a specific user (a financial trader) doing a specific task (deciding what to buy and sell in the next minute). Every pixel serves that user. By contrast, the typical corporate dashboard has 40 tiles, 30 filters, and zero clear audience, because each stakeholder added their pet metric. This session teaches you to design dashboards the way Bloomberg does: start with the user, define the decision, identify the 3-5 metrics that drive that decision, and ruthlessly remove everything else. You will also learn to structure analytics findings as stories using the situation-complication-resolution pattern, because even the best data means nothing if you cannot make an executive care about it in three minutes. We will build a real dashboard in Tableau for a mid-sized retailer scenario and critique existing dashboards from Fortune 500 companies.",
+        "key_concepts": [
+          "Dashboard definition: a single-view display of the information needed to achieve one or more objectives, consolidated on a single screen so the information can be monitored at a glance",
+          "Dashboard types: strategic (C-suite, monthly view, high-level), operational (manager, real-time, actionable), analytical (analyst, deep drill-down)",
+          "KPI (Key Performance Indicator): a measurable value that indicates how effectively a business or individual is achieving key objectives",
+          "Leading vs lagging indicators: leading indicators predict future outcomes (pipeline value, customer NPS, lead conversion rate); lagging indicators describe past outcomes (revenue, profit, churn rate)",
+          "SMART KPIs: Specific, Measurable, Achievable, Relevant, Time-bound",
+          "Common KPI mistakes: too many KPIs (signal gets lost), vanity metrics (big number but no decision), misaligned with strategy, outdated",
+          "Small multiples on a dashboard: one metric broken out by product line, region, or time - enables comparison without clutter",
+          "Filters and interactivity: drop-downs, date ranges, drill-downs; too much interactivity hides data from users who never click",
+          "Color consistency: same color means the same thing everywhere on the dashboard; red usually means attention, green means good",
+          "Storytelling: situation (current context), complication (what is going wrong or different), resolution (what should we do about it)"
+        ],
+        "demonstration": "Open Tableau Public and build a marketing dashboard for a retail client. Start with the question: 'Is our marketing working?' Identify 4 KPIs: total revenue, CAC by channel, LTV:CAC, and conversion rate trend. Lay them out in a 2x2 grid with clear titles, consistent color, and a date filter. Add a small multiple showing revenue by channel as a stacked bar. Add a drill-down from channel to individual campaigns. Remove everything else. Then contrast with a bad dashboard example (from an online gallery) showing 30 tiles with no clear story and discuss why it fails.",
+        "setup_requirements": [
+          "Tableau Public account and software",
+          "Sample retail marketing dataset",
+          "Examples of good and bad dashboards for critique",
+          "Few's Information Dashboard Design book excerpts"
+        ],
+        "review": [
+          {
+            "key": "Start With the User",
+            "value": "Before opening Tableau, answer: who will use this dashboard, what decision will they make, and how often? If you cannot answer these in one sentence each, you are not ready to build. Most bad dashboards exist because this question was skipped"
+          },
+          {
+            "key": "Three to Five KPIs Maximum",
+            "value": "A dashboard with 20 metrics tells the user nothing; a dashboard with 4 metrics forces you to choose what actually matters. If everything is important, nothing is"
+          },
+          {
+            "key": "Leading Beats Lagging for Action",
+            "value": "Lagging indicators tell you what has already happened; leading indicators tell you what is about to happen and let you change it. An operational dashboard should emphasize leading metrics (pipeline, queue depth, lead velocity) over lagging metrics (revenue, closed deals)"
+          },
+          {
+            "key": "Tell a Story, Not a Summary",
+            "value": "The most memorable analytics presentations follow a narrative arc: here is where we are, here is what is different, here is what it means for us. A dashboard alone is not a story; it is evidence for the story you tell in the meeting"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Correlation, Simple Linear Regression, and Interpretation",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Compute and interpret Pearson correlation between two numeric variables and recognize its limitations",
+        "Build a simple linear regression model and interpret slope, intercept, R-squared, and p-values",
+        "Check regression assumptions (linearity, normality of residuals, homoscedasticity, independence)",
+        "Apply regression to real business questions and explain the output in plain business language"
+      ],
+      "readings": [
+        "Camm et al., Business Analytics (5th ed.), Ch. 4 - Linear Regression",
+        "Provost & Fawcett, Data Science for Business, Ch. 4 - Fitting a Model to Data",
+        "James, Witten, Hastie, Tibshirani, An Introduction to Statistical Learning (2nd ed., 2021), Ch. 3",
+        "Anscombe, 'Graphs in Statistical Analysis' (1973) - the famous Anscombe's quartet paper"
+      ],
+      "lecture_notes": {
+        "introduction": "In 1973, statistician Frank Anscombe published four datasets that have identical means, identical variances, identical correlations, and identical regression lines - yet look completely different when plotted. One dataset is a well-behaved linear relationship. One has a nonlinear pattern. One has a single extreme outlier. One has a vertical alignment that suddenly jumps. These four datasets, now called Anscombe's Quartet, are the most important warning about regression in business analytics: the numeric summary can look great while the underlying relationship is completely different from what the model assumes. Always plot your data before fitting a regression, and always plot the residuals after. Linear regression is the workhorse of business analytics: marketing mix models, pricing elasticity, forecasting, credit scoring, and academic economics all lean on variants of regression. Understanding how it works, how to interpret its output in business terms, and where it can fool you is essential. In this session we will build simple linear regression models in Python, interpret slope and intercept as business quantities (how much does an additional $1 of ad spend produce in sales?), and rigorously check assumptions. We will work through a pricing elasticity example: given historical price and quantity data, estimate how much sales change when price changes, and predict the revenue-maximizing price.",
+        "key_concepts": [
+          "Correlation coefficient (Pearson r): ranges from -1 to +1; measures linear relationship only; +1 perfect positive, -1 perfect negative, 0 no linear relationship",
+          "Correlation does not imply causation: ice cream sales and drowning both rise in summer; neither causes the other",
+          "Simple linear regression: y = B0 + B1*x + error; fits a line to minimize sum of squared residuals",
+          "Slope (B1): the change in y for a one-unit change in x; the business interpretation is the 'elasticity' or marginal effect",
+          "Intercept (B0): predicted y when x = 0; often not meaningful in business context if x = 0 is outside the data range",
+          "R-squared: fraction of variance in y explained by x; ranges 0 to 1; a high R-squared does not mean the model is correct, just that it fits",
+          "p-values: probability of seeing the observed relationship if the true slope is zero; p < 0.05 commonly used as 'statistically significant'",
+          "Assumptions: linearity (y is a linear function of x), independence (observations are independent), normality (residuals are normally distributed), homoscedasticity (residual variance is constant)",
+          "Residual analysis: plot residuals vs fitted values; any pattern indicates a missed structure in the data",
+          "Prediction intervals: range of likely values for a new prediction; always wider than the confidence interval because of the unknown individual error"
+        ],
+        "demonstration": "Load a hypothetical retail pricing dataset: 200 weeks of price and unit sales for a single product. Compute Pearson correlation: -0.82 (strong negative). Build a linear regression in Python (sklearn or statsmodels): units = 5000 - 60*price. Interpret: at $0 the model would predict 5,000 units (meaningless); at $80 the model predicts 200 units; each $1 increase in price reduces weekly sales by 60 units. Compute revenue = price * units and find the price that maximizes revenue: around $42. Plot the residuals and notice a slight curvature - the relationship is probably not perfectly linear, which suggests either adding a quadratic term or using a log transformation. Then run Anscombe's quartet to show how four identical-looking summaries hide very different underlying patterns.",
+        "setup_requirements": [
+          "Python with statsmodels, scikit-learn, matplotlib",
+          "Sample retail pricing dataset",
+          "Anscombe's quartet dataset (available in seaborn)",
+          "Regression output reference sheet"
+        ],
+        "review": [
+          {
+            "key": "Always Plot the Data",
+            "value": "Run a scatter plot before fitting a regression and a residual plot after. Anscombe's quartet shows four datasets with identical regression output and completely different shapes. The numbers alone can fool you; the plots cannot"
+          },
+          {
+            "key": "Interpret in Business Units",
+            "value": "A slope of -60 is not useful; 'each $1 price increase reduces weekly sales by 60 units, or about $2,400 in revenue at current prices' is useful. Always translate model output into the business decision being informed"
+          },
+          {
+            "key": "High R-squared Does Not Mean Correct",
+            "value": "A nonsense regression (monthly ice cream sales predicting stock market returns, or spurious correlations from coincidence) can have high R-squared. R-squared measures fit, not correctness. Always check assumptions and domain reasoning"
+          },
+          {
+            "key": "Statistical vs Business Significance",
+            "value": "A statistically significant effect (p < 0.05) may be too small to matter for business decisions. A $0.01 sales lift per customer that is statistically significant is not actionable; a $5 lift that is borderline significant might be. Always ask: is this difference big enough to change a decision?"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Multiple Regression and Feature Engineering",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Extend simple linear regression to multiple predictors and interpret coefficients with 'holding other variables constant'",
+        "Handle categorical variables using one-hot encoding and interpret the resulting coefficients",
+        "Detect and address multicollinearity using correlation matrices and variance inflation factors (VIF)",
+        "Apply feature engineering: polynomial terms, interaction terms, log transformations, and standardization"
+      ],
+      "readings": [
+        "Camm et al., Business Analytics (5th ed.), Ch. 4 - Multiple Regression",
+        "James et al., Introduction to Statistical Learning (2nd ed.), Ch. 3.2-3.3 - Multiple Linear Regression",
+        "Gelman & Hill, Data Analysis Using Regression and Multilevel/Hierarchical Models (2007), Ch. 3-4",
+        "Kuhn & Johnson, Feature Engineering and Selection (2019), selected chapters"
+      ],
+      "lecture_notes": {
+        "introduction": "Simple linear regression (one predictor) is a useful teaching tool but rarely sufficient in practice. A retailer's sales depend on price, promotion, weather, season, competitor prices, and marketing spend - all simultaneously. Multiple regression lets us model all these effects together, isolating the marginal effect of each predictor while holding the others constant. This 'holding constant' is the most important concept: a multiple regression coefficient tells you the effect of a variable that CANNOT be attributed to the other variables in the model. The coefficient on price is not the raw correlation between price and sales; it is the price effect AFTER accounting for promotion, weather, and everything else in the model. This makes multiple regression both much more powerful and much more subtle. You can easily build a multiple regression in three lines of Python, but understanding what you have built and why the coefficients mean what they mean takes practice. This session covers the mechanics (how to add predictors, handle categorical variables, interpret output), the diagnostics (how to check for multicollinearity and nonlinearity), and the art of feature engineering - the creative process of constructing good predictors from raw data. Well-engineered features often beat fancy algorithms; poorly engineered features can make even the best model useless.",
+        "key_concepts": [
+          "Multiple regression model: y = B0 + B1*x1 + B2*x2 + ... + Bk*xk + error; each coefficient is a partial effect",
+          "Partial effect interpretation: Bj = change in y for a one-unit change in xj, holding all other xs constant",
+          "One-hot encoding for categorical variables: a K-category variable becomes K-1 binary indicators (one dropped as reference)",
+          "Reference category: the dropped category becomes the baseline; coefficients on other categories represent differences from baseline",
+          "Multicollinearity: when predictors are highly correlated with each other, coefficients become unstable and hard to interpret",
+          "Variance inflation factor (VIF): measure of multicollinearity; VIF > 5 is concerning, > 10 is a problem; drop or combine correlated features",
+          "Feature engineering: creating new predictors from raw data - ratios, differences, logs, interactions, polynomials",
+          "Polynomial terms: x^2, x^3 to capture nonlinear relationships while still using linear regression mechanics",
+          "Interaction terms: x1*x2 to capture effects that depend on the combination of two variables (e.g., price effect depends on season)",
+          "Log transformations: log(y) or log(x) when the relationship is multiplicative rather than additive; common for revenue, prices, populations"
+        ],
+        "demonstration": "Load a retail sales dataset with columns: date, price, promotion_flag, weather_temp, day_of_week, revenue. Build a multiple regression: revenue ~ price + promotion_flag + weather_temp + day_of_week (one-hot encoded). Fit in statsmodels and read the coefficients: price coefficient is -250 (each $1 increase reduces daily revenue by $250, holding promotion and weather constant), promotion coefficient is +1500 (promotion days have $1500 more revenue), weather coefficient is +20 per degree F, Saturday coefficient is +800 (relative to Sunday baseline). Compute VIF for each predictor; notice that price and promotion are moderately correlated (VIF = 4.2, acceptable). Add a price * promotion interaction term and observe that price elasticity is stronger during promotion periods. Discuss the business implication: discounting during non-promotion days has less effect than discounting during promotion days.",
+        "setup_requirements": [
+          "Python with statsmodels, scikit-learn, pandas",
+          "Retail sales dataset with multiple predictors",
+          "VIF calculation utility",
+          "Reference on feature engineering techniques"
+        ],
+        "review": [
+          {
+            "key": "Holding Other Variables Constant",
+            "value": "The coefficient on price in a multiple regression is NOT the simple price-sales correlation. It is the effect of price after removing the effects of everything else in the model. This is both the power of regression and its most commonly misinterpreted feature"
+          },
+          {
+            "key": "Multicollinearity Destabilizes Coefficients",
+            "value": "When two predictors are highly correlated, the model struggles to attribute effects between them, and coefficients can swing wildly from sample to sample or when a tiny amount of data is added. Check VIF before trusting any multiple regression output"
+          },
+          {
+            "key": "Feature Engineering Beats Algorithms",
+            "value": "A well-engineered feature (log of income, interaction between season and price, days since last purchase) often improves model performance more than switching from linear regression to XGBoost. Spend time understanding your variables and creating better ones"
+          },
+          {
+            "key": "Transform When Distributions Are Skewed",
+            "value": "Revenue, income, and population are naturally skewed right. Taking the log transforms the multiplicative relationships (percent changes) into additive ones, which linear regression handles well. Log transformations are often the single best improvement to a regression fit"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Classification: Logistic Regression, Decision Trees, and k-NN",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Distinguish regression (predicting a number) from classification (predicting a class label)",
+        "Build and interpret a logistic regression model for a binary outcome (churn, fraud, conversion)",
+        "Build and interpret a decision tree model and explain splits in business terms",
+        "Evaluate classifier performance using accuracy, precision, recall, F1, and ROC/AUC"
+      ],
+      "readings": [
+        "Provost & Fawcett, Data Science for Business, Ch. 3 - Introduction to Predictive Modeling, Ch. 4",
+        "James et al., Introduction to Statistical Learning (2nd ed.), Ch. 4 - Classification",
+        "Camm et al., Business Analytics (5th ed.), Ch. 9 - Data Mining",
+        "scikit-learn documentation: Logistic Regression, Decision Trees, KNN classifiers"
+      ],
+      "lecture_notes": {
+        "introduction": "In 2012, The New York Times published a story by Charles Duhigg titled 'How Companies Learn Your Secrets,' which told the story of a Minneapolis father who stormed into a Target store demanding to know why his teenage daughter was being sent baby coupons. A week later, the father called back and apologized: there had been activities in the household he had not been aware of. Target's analytics team, led by statistician Andrew Pole, had built a pregnancy prediction model based on purchase patterns (unscented lotion, cotton balls, large handbags). The model was classification: given a customer's recent purchases, predict probability of pregnancy. The model was accurate enough to identify pregnancies before family members knew. It was also creepy enough that Target had to mask its outputs by mixing baby coupons with lawnmower coupons to make it seem like the pregnancy coupons were random. This case is the perfect illustration of the power and ethics of classification modeling, which is the most common form of business predictive analytics: churn prediction, fraud detection, credit scoring, ad click prediction, email spam filtering. Most business predictive problems reduce to 'given these features, predict this category.' This session covers the three most important classification algorithms (logistic regression, decision trees, k-nearest neighbors), how to evaluate their performance honestly, and the ethical considerations that classification inevitably raises.",
+        "key_concepts": [
+          "Classification vs regression: classification predicts a category (yes/no, spam/ham, churn/retain), regression predicts a number (price, quantity, temperature)",
+          "Logistic regression: predicts probability of a class using the logistic function 1/(1+e^-z) where z is a linear combination of features",
+          "Log-odds interpretation: a coefficient of 0.5 means each one-unit increase in x raises the log-odds of the positive class by 0.5",
+          "Decision trees: splits data recursively on feature thresholds; produces interpretable if-then rules",
+          "k-Nearest Neighbors (k-NN): classifies a new point by majority vote of its k closest neighbors; simple but requires all data at prediction time",
+          "Confusion matrix: 2x2 table of true/false positives and negatives; the source of every other classification metric",
+          "Accuracy: (TP + TN) / total; misleading when classes are imbalanced (99% accuracy on a 99% negative class is trivial)",
+          "Precision: TP / (TP + FP); of predicted positives, how many are correct? Important when false positives are costly",
+          "Recall (sensitivity): TP / (TP + FN); of actual positives, how many did we catch? Important when false negatives are costly",
+          "ROC curve and AUC: ROC plots true positive rate vs false positive rate across thresholds; AUC is the area under the curve (0.5 = random, 1.0 = perfect); good for comparing classifiers"
+        ],
+        "demonstration": "Build a churn prediction model for a SaaS company. Load 10,000 customers with features: monthly spend, tenure, support tickets, last login days ago, plan tier, and a churn label. Fit a logistic regression in Python. Interpret coefficients: tenure coefficient is -0.05 (each additional month of tenure lowers log-odds of churn), support_tickets is +0.3 (each ticket raises churn log-odds - a warning sign). Split data 80/20 train/test. Evaluate: accuracy 92%, precision 85%, recall 60%. Build confusion matrix: we catch 60% of churners but miss 40%. Raise the threshold from 0.5 to 0.3 to prioritize recall: now recall = 80%, precision = 70%. Discuss the threshold choice: if retention offers cost $20 and saving a churner is worth $500, false positives (offering a retention discount to someone who would not churn) are cheap and false negatives are expensive, so lower threshold is better. Then fit a decision tree on the same data, visualize it, and read the business rules: 'if tenure < 3 months AND support_tickets > 2, churn probability = 0.78.'",
+        "setup_requirements": [
+          "Python with scikit-learn, pandas, matplotlib",
+          "Sample SaaS churn dataset",
+          "ROC curve plotting code template",
+          "scikit-learn documentation bookmarks"
+        ],
+        "review": [
+          {
+            "key": "Accuracy Is Misleading for Imbalanced Classes",
+            "value": "A fraud detection model with 99.5% accuracy sounds great until you realize 99.5% of transactions are non-fraud, so predicting 'always non-fraud' gets 99.5% accuracy. Always use precision, recall, and F1 for imbalanced classes"
+          },
+          {
+            "key": "Threshold Is a Business Decision",
+            "value": "The default classification threshold (0.5) is almost never optimal for business. Choose the threshold by comparing the cost of false positives to the cost of false negatives; the optimal is where the marginal cost equals the marginal benefit"
+          },
+          {
+            "key": "Interpretable Models Matter",
+            "value": "Decision trees and logistic regression can be explained to business stakeholders; black-box models (deep nets, large random forests) cannot. In regulated industries (lending, insurance, hiring) interpretability is often legally required"
+          },
+          {
+            "key": "Prediction Is Not Causation",
+            "value": "Target's pregnancy model predicted pregnancy without understanding WHY lotion purchases correlated with pregnancy. A predictive model can be accurate without being causal, and using it to design interventions requires extra care"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "Clustering and Unsupervised Learning",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Distinguish supervised (labeled outcomes) from unsupervised (no labels) learning",
+        "Apply k-means clustering to segment customers or products and choose k using the elbow method",
+        "Interpret cluster centroids and profile clusters with descriptive statistics",
+        "Compare k-means to hierarchical clustering and recognize when each is appropriate"
+      ],
+      "readings": [
+        "Provost & Fawcett, Data Science for Business, Ch. 6 - Similarity, Neighbors, and Clusters",
+        "James et al., Introduction to Statistical Learning (2nd ed.), Ch. 12 - Unsupervised Learning",
+        "Camm et al., Business Analytics (5th ed.), Ch. 9 - Data Mining (clustering section)",
+        "Harvard Business Review, 'Segmentation and Lifestage' (Weinstein, 2014)"
+      ],
+      "lecture_notes": {
+        "introduction": "Netflix recommends shows, but before recommending, it has to understand what types of viewers exist. Spotify creates Discover Weekly, but first has to group users by taste profile. Airlines price tickets differently for business vs leisure travelers, but first have to identify which is which from purchase patterns. These are all clustering problems: given a collection of customers with many features (purchase history, demographics, behavior), find natural groupings without knowing the groupings in advance. Clustering is unsupervised learning - you have inputs but no labeled outputs to train against. This makes it both more flexible (no labels needed) and less reliable (no ground truth to verify against). The most famous clustering technique, k-means, was developed by Stuart Lloyd at Bell Labs in 1957 but not published until 1982; it is still the most common clustering method in business analytics 65 years later. This session covers k-means and its main alternative, hierarchical clustering, applied to the canonical business problem of customer segmentation. We will build an RFM segmentation (Recency, Frequency, Monetary) for a retailer, identify 5 natural customer clusters, and profile each cluster with business-relevant language ('high-value loyalists,' 'one-time buyers,' 'dormant VIPs'). The goal is not just the algorithm but the judgment about when and how clustering adds business value.",
+        "key_concepts": [
+          "Supervised vs unsupervised: supervised has labeled outcomes to predict (classification, regression); unsupervised has no labels, seeks structure (clustering, dimensionality reduction)",
+          "k-means clustering: partition n observations into k clusters where each observation belongs to the cluster with the nearest mean",
+          "k-means algorithm: (1) initialize k centroids randomly, (2) assign each point to nearest centroid, (3) update centroids to the mean of assigned points, (4) repeat until stable",
+          "Choosing k: elbow method (plot within-cluster sum of squares vs k, pick the 'elbow'), silhouette score, business meaning",
+          "Feature scaling: k-means uses Euclidean distance, so variables must be on comparable scales; always standardize (z-score) before clustering",
+          "Cluster profiling: after clustering, compute descriptive statistics for each cluster to give them business meaning ('this cluster has high RFM scores, they are VIPs')",
+          "Hierarchical clustering: build a tree of clusters by merging closest pairs iteratively; does not require specifying k in advance; visualized as a dendrogram",
+          "Agglomerative vs divisive: agglomerative starts with each point as its own cluster and merges; divisive starts with one cluster and splits",
+          "Cluster linkage: how to measure distance between clusters (single, complete, average, Ward) - affects cluster shape",
+          "RFM segmentation: Recency (days since last purchase), Frequency (orders per period), Monetary (total spend) - the classic retail segmentation framework"
+        ],
+        "demonstration": "Build an RFM segmentation for a retailer with 50,000 customers. Compute R, F, M for each customer from transaction history. Standardize the three columns. Run k-means with k=5. Plot cluster centroids: Cluster 1 has low R, high F, high M - these are active VIPs. Cluster 2 has high R, low F, low M - these are lost one-time buyers. Cluster 3 has medium everything - the middle market. Name each cluster in plain English. Then design a targeted marketing action for each cluster: retain VIPs with early access to products, win back lost one-timers with discount, upsell the middle market with bundles. Discuss how this segmentation is more actionable than a single 'average customer' model.",
+        "setup_requirements": [
+          "Python with scikit-learn, pandas, matplotlib, seaborn",
+          "Retail transaction dataset for RFM construction",
+          "Elbow plot code template",
+          "Standardization and profiling utility functions"
+        ],
+        "review": [
+          {
+            "key": "Standardize Before Clustering",
+            "value": "k-means uses Euclidean distance, which is dominated by variables with large scales. If one feature is 'income in dollars' (range 0-200,000) and another is 'age in years' (range 18-80), income will dominate the distance. Always standardize (z-score) first"
+          },
+          {
+            "key": "k Is Subjective",
+            "value": "There is no correct number of clusters. The elbow method gives a technical hint, but the best k is the one that produces business-meaningful segments. Too few k misses distinctions; too many k produces clusters too small to act on"
+          },
+          {
+            "key": "Profile Before You Act",
+            "value": "Clustering is useless if you cannot explain the clusters in plain business language. Always profile each cluster with descriptive statistics, give it a name, and describe the customers in it before using the clusters for any action"
+          },
+          {
+            "key": "Clustering Is Not Causal",
+            "value": "A cluster of 'high-value loyalists' does not mean that loyalty caused the high value - it may be that high-value customers become loyal or that both are explained by a third factor. Clustering describes; it does not explain"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "Time Series Forecasting",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Decompose a time series into trend, seasonality, and residual components",
+        "Apply moving averages and exponential smoothing for short-term forecasting",
+        "Introduce ARIMA models and their components (p, d, q)",
+        "Evaluate forecast accuracy using MAE, MAPE, and RMSE on holdout data"
+      ],
+      "readings": [
+        "Camm et al., Business Analytics (5th ed.), Ch. 8 - Time Series and Forecasting",
+        "Hyndman & Athanasopoulos, Forecasting: Principles and Practice (3rd ed., free online)",
+        "Chatfield, The Analysis of Time Series (7th ed.), selected chapters",
+        "Amazon Science blog: 'Forecasting at Amazon scale'"
+      ],
+      "lecture_notes": {
+        "introduction": "Every business forecasts. Retailers forecast demand to order inventory. Airlines forecast passenger counts to set fares. Utilities forecast energy usage to plan capacity. Call centers forecast call volume to staff agents. SaaS companies forecast revenue to plan hiring and fundraising. The difference between a good forecast and a bad forecast shows up in warehouses full of unsold inventory or stockouts that send customers to competitors. Rob Hyndman, professor at Monash University and one of the world's leading forecasters, opens his textbook with the observation that 'forecasting is required in many situations: deciding whether to build another power generation plant in the next five years requires forecasts of future demand; scheduling staff in a call center next week requires forecasts of call volumes; stocking an inventory requires forecasts of stock requirements.' The horizons are different, the methods differ, but the core question is the same: given past data, what will happen next? This session covers the fundamentals of time series forecasting in order of increasing sophistication: simple moving averages, exponential smoothing (the workhorse of retail demand forecasting), and ARIMA models. We will also cover the discipline of forecast evaluation - because a forecast you cannot evaluate is a guess dressed up in fancy math.",
+        "key_concepts": [
+          "Time series: a sequence of observations indexed in time order (daily sales, monthly revenue, hourly website traffic)",
+          "Components: trend (long-term direction), seasonality (recurring patterns at fixed periods), cyclicity (longer-term ups and downs not at fixed periods), residual (noise)",
+          "Decomposition: additive (y = trend + seasonality + residual) or multiplicative (y = trend * seasonality * residual)",
+          "Moving average: average of last k observations; smooths noise but lags behind changes",
+          "Exponential smoothing: weighted average giving more weight to recent observations; parameter alpha controls responsiveness",
+          "Holt-Winters (triple exponential smoothing): handles trend and seasonality in addition to level; standard for retail forecasting",
+          "ARIMA (AutoRegressive Integrated Moving Average): p = AR order, d = differencing order, q = MA order; flexible and widely used",
+          "Stationarity: a stationary series has constant mean and variance; required for ARIMA; checked with ADF test",
+          "Forecast accuracy metrics: MAE (mean absolute error), MAPE (mean absolute percentage error), RMSE (root mean squared error)",
+          "Walk-forward validation: train on past data, forecast next period, move forward one step, repeat; simulates real forecasting"
+        ],
+        "demonstration": "Load 3 years of daily sales data for a retail chain. Plot it: visible upward trend, strong weekly seasonality (weekend peaks), December spike (holiday). Decompose the series with statsmodels seasonal_decompose. Fit Holt-Winters with additive trend and weekly seasonality. Forecast the next 30 days. Compute forecast accuracy on the last 30 days of training data (held out): MAPE = 8.5%. Then fit ARIMA(1,1,1) and compare: MAPE = 9.2%. Discuss why Holt-Winters outperformed for this data (strong seasonality). Then show an Amazon-scale forecasting example: they use hierarchical forecasting across millions of SKUs and reconcile forecasts up and down the hierarchy to ensure consistency. This is far more complex than single-series forecasting but uses the same foundations.",
+        "setup_requirements": [
+          "Python with statsmodels and pandas",
+          "Retail daily sales dataset with 3+ years of history",
+          "Forecast evaluation utility functions",
+          "Hyndman textbook free online version"
+        ],
+        "review": [
+          {
+            "key": "Decompose Before Forecasting",
+            "value": "A time series plot and decomposition tells you what structure exists (trend, seasonality, outliers) before you choose a model. Jumping straight to ARIMA without looking at the data is a common failure mode"
+          },
+          {
+            "key": "Exponential Smoothing Is Underrated",
+            "value": "Academic papers focus on complex models, but in industry exponential smoothing and its variants still deliver the best forecast accuracy for most retail and operational forecasting problems. Start simple before reaching for neural networks"
+          },
+          {
+            "key": "Evaluate on Holdout",
+            "value": "Never report in-sample fit as forecast accuracy. Always hold out the last N periods, forecast them from models trained only on earlier data, and report MAPE/MAE on the holdout. Anything else is cheating yourself"
+          },
+          {
+            "key": "Forecast Horizon Matters",
+            "value": "A one-step-ahead forecast is usually much more accurate than a 30-step-ahead forecast. Always report accuracy at the horizon that matters for the business decision, not at an artificially short horizon that flatters the model"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "A/B Testing and Experimental Design",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Design an A/B test with clear hypothesis, primary metric, and success criterion",
+        "Calculate sample size and test duration using power analysis",
+        "Interpret test results using p-values, confidence intervals, and practical significance",
+        "Identify common A/B testing errors: peeking, multiple testing, novelty effects, and Simpson's paradox"
+      ],
+      "readings": [
+        "Kohavi, Tang, Xu, Trustworthy Online Controlled Experiments (2020) - the definitive book",
+        "Provost & Fawcett, Data Science for Business, Ch. 5 section on evaluating classifiers (overlap with experimentation)",
+        "Andrew Gelman, 'The Garden of Forking Paths' (2013) - on multiple testing",
+        "Ron Kohavi, 'Trustworthy A/B Testing at Scale' (Microsoft Research paper)"
+      ],
+      "lecture_notes": {
+        "introduction": "Netflix runs thousands of A/B tests per year, testing everything from recommendation algorithms to poster art on each show. Microsoft, Google, Amazon, Airbnb, and Uber similarly run massive experimentation programs, with the largest running 20,000+ experiments per year. Ron Kohavi, who built experimentation platforms at Amazon, Microsoft, and Airbnb, argues that rigorous experimentation is the single most valuable analytics capability a company can build, and yet most companies do it poorly. The most common mistakes include: stopping tests early when results look favorable (peeking), running so many tests that some are significant by chance (multiple testing), confusing statistical significance with practical significance, and ignoring seasonality or novelty effects. Facebook famously published a 2014 paper showing that users shown happier news feed items became more positive in their own posts - an experiment that caused a public outcry about the ethics of manipulation without consent. The ethical and statistical rigor of experimentation is a first-class discipline, and this session will introduce you to the principles. You will learn how to design a test, calculate sample size, interpret results honestly, and avoid the traps that cost companies real money when they make decisions on bad evidence. We will work through real examples from Booking.com, Microsoft, and Netflix experimentation programs.",
+        "key_concepts": [
+          "Hypothesis: null hypothesis (no difference between treatment and control) and alternative hypothesis (difference exists)",
+          "Primary metric: the single most important outcome; defined before the test starts",
+          "Guardrail metrics: metrics that should not move in a bad direction (revenue when testing UX, performance when testing features)",
+          "Sample size calculation: depends on baseline rate, minimum detectable effect, power (typically 80%), and alpha (typically 0.05)",
+          "p-value: probability of observing a result as extreme as the actual result if the null is true; p < 0.05 commonly used but frequently misinterpreted",
+          "Confidence interval: range of plausible values for the treatment effect; more informative than p-value alone",
+          "Peeking: checking test results before the predetermined sample size is reached; inflates false positive rate",
+          "Multiple testing: when many tests are run, some are significant by chance; Bonferroni correction or false discovery rate control needed",
+          "Simpson's paradox: a trend in groups reverses when groups are combined; always check for heterogeneous treatment effects",
+          "Practical significance: a statistically significant result may be too small to matter; always ask if the effect size is actionable"
+        ],
+        "demonstration": "Design an A/B test for an e-commerce site testing a new checkout flow. Hypothesis: the new flow will increase checkout completion from 35% to 37%. Calculate sample size: baseline 35%, MDE 2pp, alpha 0.05, power 80%. Using an online calculator, n = about 9,400 per variant, total 18,800. At 5,000 daily checkout starts, the test runs for 4 days. Run the test, get 38.1% vs 35.2% at day 2 - tempting to call it a win, but peeking inflates false positive rate. Wait the full duration. Final: 37.1% vs 35.0%, p = 0.003, lift = 2.1pp. Compute confidence interval: 95% CI = [0.7pp, 3.5pp]. Discuss: the lower bound of 0.7pp still represents meaningful revenue impact, so the decision is clear. Then discuss a case where p < 0.05 but the CI is [0.01pp, 3.99pp] - statistically significant but the lower bound is negligible, so the win is less certain than the p-value suggests.",
+        "setup_requirements": [
+          "Sample size calculator (Evan Miller or scipy.stats)",
+          "A/B test simulation code in Python",
+          "Kohavi textbook excerpts",
+          "Historical test data for re-analysis exercises"
+        ],
+        "review": [
+          {
+            "key": "Plan Before You Peek",
+            "value": "Decide in advance: primary metric, sample size, duration, and success criterion. Then run the test to completion. Peeking inflates false positive rates dramatically and is the single most common cause of bad A/B testing decisions"
+          },
+          {
+            "key": "p-value Is Not the Effect Size",
+            "value": "A p-value of 0.001 does not mean the effect is large; it means you are confident the effect is not zero. Always look at the point estimate and confidence interval together with the p-value"
+          },
+          {
+            "key": "Multiple Tests Multiply False Positives",
+            "value": "If you run 20 A/B tests all with alpha 0.05, you expect 1 to be significant by chance even if none have real effects. Use Bonferroni or FDR corrections when running many tests"
+          },
+          {
+            "key": "Practical Significance Matters Most",
+            "value": "A 0.1% lift with p < 0.001 may be too small to justify the implementation cost. A 5% lift with p = 0.06 may be worth shipping while running a confirmation test. Statistical significance is a filter, not the decision"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Advanced Techniques: Random Forests, Gradient Boosting, and Neural Networks",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Explain how ensemble methods (bagging and boosting) improve on single decision trees",
+        "Compare random forests and gradient boosting (XGBoost, LightGBM) in accuracy and interpretability",
+        "Introduce neural networks at a conceptual level and explain when they are and are not appropriate",
+        "Evaluate the interpretability vs performance trade-off and the role of explainable AI (SHAP, LIME)"
+      ],
+      "readings": [
+        "Provost & Fawcett, Data Science for Business, Ch. 12 - Other Data Science Tasks and Techniques",
+        "James et al., Introduction to Statistical Learning (2nd ed.), Ch. 8-10",
+        "Chen & Guestrin, 'XGBoost: A Scalable Tree Boosting System' (KDD 2016)",
+        "Molnar, Interpretable Machine Learning (2022, free online)"
+      ],
+      "lecture_notes": {
+        "introduction": "In 2006, Netflix announced a $1 million prize for anyone who could improve its recommendation algorithm by 10%. The competition ran for three years and attracted thousands of teams. The winning entry, announced in 2009, was not a single algorithm but an ensemble of more than 100 different models blended together. This was the moment that ensemble methods went from academic curiosity to industry standard, and today almost every production machine learning system is an ensemble of decision trees - usually random forests or gradient boosting. XGBoost, released in 2014 by Tianqi Chen at the University of Washington, dominated Kaggle competitions for years and is still the default choice for tabular data in many industries. LightGBM, released by Microsoft in 2016, is faster and often as accurate. Neural networks, the other branch of modern machine learning, dominate image, audio, and text tasks but rarely beat gradient boosting on structured tabular data (the kind of data most business analytics works with). This session covers the concepts behind ensemble methods, the practical choice between random forest and gradient boosting, and the role of neural networks in business analytics (rarely, but sometimes, with specific use cases). Critically, we also cover the interpretability problem: a 500-tree gradient boosting model can predict accurately but cannot explain its predictions the way a linear regression can, and regulated industries (lending, hiring, insurance) require explainability.",
+        "key_concepts": [
+          "Ensemble methods: combine predictions from multiple models to get a more accurate single prediction",
+          "Bagging: bootstrap aggregating; train multiple models on random subsets of data and average predictions",
+          "Random forest: bagging applied to decision trees plus random feature selection at each split; robust and easy to tune",
+          "Boosting: train models sequentially where each model focuses on the errors of the previous ones",
+          "Gradient boosting: boosting where each tree fits the gradient of a loss function; XGBoost and LightGBM are scalable implementations",
+          "Hyperparameters: for tree ensembles, key ones are number of trees, max depth, learning rate, subsampling rate",
+          "Overfitting protection: early stopping on a validation set, regularization, limiting tree depth",
+          "Neural networks: layered compositions of linear transformations and nonlinear activations; dominate image and text tasks",
+          "Feature importance: ensemble methods can report which features contributed most to predictions; rough but useful",
+          "SHAP (SHapley Additive exPlanations): explains individual predictions by attributing contribution to each feature; the current standard for explainable ML"
+        ],
+        "demonstration": "Return to the SaaS churn prediction problem from Week 8. Fit a logistic regression (AUC 0.78), a random forest (AUC 0.83), and XGBoost (AUC 0.86). The more complex models are slightly more accurate but harder to interpret. Use SHAP to explain individual predictions: 'this customer was predicted to churn because they had 3 support tickets in the last month (+0.25 to churn probability), short tenure (+0.15), and recently downgraded (+0.10).' Discuss the trade-off: for a CRM system that generates retention offers, the extra accuracy of XGBoost is worth it because SHAP provides per-prediction explanations. For a regulated industry like lending, the less-accurate logistic regression might still be preferred because it is easier to explain and audit.",
+        "setup_requirements": [
+          "Python with scikit-learn, XGBoost, LightGBM, SHAP",
+          "SaaS churn dataset",
+          "SHAP documentation and example notebooks",
+          "Model comparison template"
+        ],
+        "review": [
+          {
+            "key": "Ensembles Beat Single Models",
+            "value": "For tabular data, a gradient boosting ensemble nearly always beats a single decision tree or a single linear model. This is why XGBoost dominated Kaggle for years and is still the default for business ML"
+          },
+          {
+            "key": "Neural Networks Are Overused on Tabular Data",
+            "value": "Neural networks are great for images, audio, and text. They rarely beat gradient boosting on tabular business data and are harder to train, tune, and explain. Resist the temptation to reach for a neural network because it is fashionable"
+          },
+          {
+            "key": "Interpretability Is a Real Cost",
+            "value": "A model you cannot explain to a regulator, an executive, or a customer has hidden costs: compliance risk, trust erosion, and debugging difficulty. Choose the simplest model that meets the accuracy requirement, not the most accurate model possible"
+          },
+          {
+            "key": "SHAP Helps But Is Not a Panacea",
+            "value": "SHAP values explain individual predictions by attributing contributions to features, but they are an approximation and can still mislead. Use them as a communication tool, not a ground truth about how the model works"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "Ethics of Data and Analytics: Privacy, Bias, and Fairness",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Analyze the COMPAS recidivism case as a study of algorithmic bias and fairness",
+        "Explain sources of bias: data bias, label bias, sampling bias, and measurement bias",
+        "Compare fairness definitions: demographic parity, equalized odds, calibration - and why they cannot all be satisfied simultaneously",
+        "Apply privacy-preserving techniques: anonymization, differential privacy, and data minimization"
+      ],
+      "readings": [
+        "Cathy O'Neil, Weapons of Math Destruction (2016), Ch. 1-3",
+        "Angwin et al., 'Machine Bias' ProPublica (2016) - the COMPAS expose",
+        "Barocas, Hardt, Narayanan, Fairness and Machine Learning (2023, free online), Ch. 2-3",
+        "Dwork et al., 'The Algorithmic Foundations of Differential Privacy' (2014)"
+      ],
+      "lecture_notes": {
+        "introduction": "In 2016, ProPublica published an investigation titled 'Machine Bias' showing that COMPAS, a criminal risk assessment tool used by courts across the United States to inform bail and sentencing decisions, was twice as likely to falsely label Black defendants as high-risk compared to White defendants, even when controlling for past crime and other factors. The tool's maker, Northpointe, responded that the tool was calibrated equally for both groups - meaning that when it said a defendant was high risk, the actual reoffense rate was similar for Black and White defendants. Both ProPublica and Northpointe were right. And that is the point. Researchers later proved that several common definitions of fairness cannot be simultaneously satisfied when base rates differ between groups. You can make your model equally calibrated, OR equally balanced in false positive rates, but not both. This mathematical impossibility, known as the 'impossibility of fairness,' means every predictive model used in consequential decisions embeds a value judgment about which type of fairness matters more. And that judgment cannot be delegated to an algorithm - it is a human and social decision. This session covers the ethics of data and analytics: bias in data and models, competing definitions of fairness, privacy-preserving techniques, and the regulatory landscape. You will work through real cases (COMPAS, Amazon's scrapped hiring algorithm, Facebook's Cambridge Analytica incident, healthcare algorithm bias) and develop your own framework for responsible analytics practice.",
+        "key_concepts": [
+          "Sources of bias: data bias (training data reflects historical discrimination), label bias (labels encode biased decisions), sampling bias (subgroups underrepresented), measurement bias (proxies don't capture what they claim)",
+          "COMPAS case: calibration equal across groups but false positive rate disparate; the 'impossibility of fairness' theorem (Chouldechova 2017, Kleinberg et al. 2017)",
+          "Fairness definitions: demographic parity (equal prediction rates across groups), equalized odds (equal true/false positive rates), calibration (prediction corresponds to true rate within groups)",
+          "Amazon hiring model (2018): trained on historical hires, learned to prefer male candidates; scrapped after bias was discovered",
+          "Healthcare algorithm bias (Obermeyer et al. 2019): algorithm used to identify high-risk patients used healthcare spending as a proxy for need; systematically under-identified Black patients because they historically received less care",
+          "Privacy techniques: anonymization (remove direct identifiers but vulnerable to re-identification), k-anonymity, differential privacy (formal guarantee based on noise addition)",
+          "GDPR rights: access, rectification, erasure, portability, objection; applied to any automated decision-making",
+          "Model cards and datasheets: documentation standards for ML models and datasets proposed by Mitchell et al. and Gebru et al.",
+          "Red teaming: systematically probing a model for failure modes, bias, and misuse before deployment",
+          "Informed consent: customers must understand how their data is used and have meaningful opt-out; T&C checkboxes rarely satisfy this standard"
+        ],
+        "demonstration": "Walk through the COMPAS dataset (publicly available) and replicate the ProPublica analysis. Fit a logistic regression on the same features they used. Measure calibration by race: equal. Measure false positive rate by race: Black defendants falsely labeled high-risk at 45%, White at 23%. Both numbers are correct. Discuss: which fairness definition matters more? If the purpose is predictive accuracy for judges, calibration matters. If the purpose is avoiding over-sentencing of Black defendants who would not actually reoffend, equalized odds matters. Neither is 'correct' without a value judgment. Then show the healthcare algorithm bias case: the original paper retrained the model using actual health metrics instead of spending and the bias largely disappeared.",
+        "setup_requirements": [
+          "COMPAS dataset (publicly available from ProPublica)",
+          "Python with scikit-learn",
+          "O'Neil and Barocas textbook excerpts",
+          "Case study handouts: Amazon hiring, healthcare algorithm bias, Cambridge Analytica"
+        ],
+        "review": [
+          {
+            "key": "Fairness Is a Value Choice",
+            "value": "Mathematically, multiple competing definitions of fairness cannot all be satisfied. Choosing which to prioritize is a human and social decision, not a technical one. Refusing to make the choice just means the choice is made for you by the default behavior of the algorithm"
+          },
+          {
+            "key": "Biased Data Produces Biased Models",
+            "value": "A model is only as fair as its training data. If historical hiring data reflects discrimination, a model trained on it will perpetuate discrimination. Cleaning this is a data problem and a social problem, not just a modeling problem"
+          },
+          {
+            "key": "Proxies Can Hide Discrimination",
+            "value": "The healthcare algorithm used spending as a proxy for need. Spending was lower for Black patients not because they needed less but because they got less - a proxy bias. Always ask: does this proxy actually measure what we think it does, for all groups equally?"
+          },
+          {
+            "key": "Privacy by Design",
+            "value": "The best privacy protection is not collecting sensitive data in the first place. Minimize data collection, anonymize early, use differential privacy for aggregate publication, and limit retention. Retrofitting privacy onto a system built without it is expensive and incomplete"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "Tool Ecosystem: Excel, SQL, Python, R, Tableau, and When to Use Each",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Compare the analytical strengths and weaknesses of Excel, SQL, Python, R, and Tableau",
+        "Choose the right tool for a given task based on data size, reproducibility, and audience",
+        "Understand the modern data stack: data warehouse (Snowflake, BigQuery), ETL (dbt, Airflow), BI (Looker, Tableau)",
+        "Recognize when to escalate from Excel to SQL to Python as analyses grow in scope"
+      ],
+      "readings": [
+        "Camm et al., Business Analytics (5th ed.), tool chapters",
+        "dbt Labs, 'The Analytics Engineering Guide' (2023, free)",
+        "Lauren Balik, 'The Modern Data Stack' (Medium article series)",
+        "Tristan Handy, 'Building a Mature Analytics Workflow' (Locally Optimistic blog)"
+      ],
+      "lecture_notes": {
+        "introduction": "The single most common question I get from students starting their first analytics job is: 'should I use Excel or Python or R or Tableau?' The honest answer is: whichever gets the job done most reliably for that specific task. A simple pivot table in Excel often beats a 50-line pandas script for a one-off question from a manager. A SQL query against the data warehouse beats downloading 10 million rows into Excel. A Python script beats a manual process if you will run it more than three times. Tableau beats all of them for an interactive dashboard a stakeholder will browse weekly. The analyst who knows only Python ships more slowly than the analyst who can choose the right tool for each problem. This session is about tool judgment: the strengths and weaknesses of each major analytics tool, when to use each, and the emerging 'modern data stack' that ties them together in mature organizations. We will cover Excel (still the most widely used business analytics tool), SQL (the language of data warehouses and databases), Python and pandas (the research workhorse for most advanced analytics), R (dominant in academic statistics and some industries), and Tableau/PowerBI/Looker for visualization and dashboards. By the end, you will be able to choose confidently and explain your choice.",
+        "key_concepts": [
+          "Excel: ubiquitous, easy, fast for small datasets; fails on reproducibility, version control, and data above ~1 million rows",
+          "SQL: the lingua franca of data; fast for aggregation and joins on large datasets; every data analyst should know SQL regardless of other tools",
+          "Python with pandas, numpy, scikit-learn: the dominant advanced analytics stack; general-purpose programming, reproducibility, integration with ML",
+          "R with tidyverse, dplyr, ggplot2: elegant statistical analysis; dominant in academic statistics and parts of pharma, insurance, and finance",
+          "Tableau: industry-standard interactive visualization and dashboards; excellent for stakeholder delivery; less flexible for custom analysis",
+          "PowerBI: Microsoft's Tableau competitor, tightly integrated with Excel and Azure; strong for Microsoft-centric enterprises",
+          "Looker: SQL-based BI tool now part of Google Cloud; popular with data engineering teams because it promotes modeling in LookML",
+          "Data warehouse: Snowflake, BigQuery, Redshift, Databricks; columnar storage optimized for analytical queries at scale",
+          "ETL/ELT: Airflow, dbt, Fivetran, Stitch; move and transform data from source systems into the warehouse",
+          "The modern data stack: source systems -> Fivetran (ingestion) -> Snowflake (warehouse) -> dbt (transformation) -> Looker (BI) - the dominant architecture 2020+"
+        ],
+        "demonstration": "Walk through the same analysis in four tools: (1) Excel: pivot table of sales by region and product from 10,000 rows; quick and easy for small one-off questions. (2) SQL: same aggregation against a BigQuery table with 100M rows; runs in 3 seconds. (3) Python pandas: same aggregation with custom derived metrics and a regression on top; more flexibility but more code. (4) Tableau: same aggregation as an interactive dashboard that the sales manager can filter; less flexibility but much better for stakeholder delivery. Discuss: Excel wins for quick manual work, SQL wins for large-scale aggregation, Python wins for custom analysis and modeling, Tableau wins for stakeholder delivery. Then show a modern data stack architecture diagram with Fivetran pulling from Salesforce and Stripe into Snowflake, dbt transforming into analytics-ready tables, and Tableau reading from the warehouse.",
+        "setup_requirements": [
+          "Excel or Google Sheets",
+          "SQL client (DBeaver or BigQuery console)",
+          "Python with pandas and Jupyter",
+          "Tableau Public or Desktop",
+          "Sample dataset accessible in all four tools"
+        ],
+        "review": [
+          {
+            "key": "Right Tool for the Job",
+            "value": "The best analyst is not the one who uses the fanciest tool but the one who chooses the right tool for each task. Excel is fine for small one-offs. SQL is essential for large data. Python is needed for custom analysis. Tableau is for stakeholder delivery"
+          },
+          {
+            "key": "SQL Is Underrated",
+            "value": "Every analyst should be fluent in SQL regardless of their Python or R skills. Most business data lives in databases, and SQL is almost always the fastest way to extract, filter, and aggregate at scale"
+          },
+          {
+            "key": "Reproducibility Beats Speed",
+            "value": "A one-click Excel analysis that cannot be reproduced next quarter is worse than a 10-line SQL query that always produces the same result. As analyses become repeated, move from Excel to SQL to notebooks to scheduled jobs"
+          },
+          {
+            "key": "The Modern Data Stack",
+            "value": "The winning architecture is: Fivetran ingestion, Snowflake or BigQuery warehouse, dbt transformation, Looker or Tableau BI. Knowing this stack and its components is essential for working at any modern data-forward company"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Data Storytelling, Career Paths, and Putting It All Together",
+      "duration": "75 minutes",
+      "learning_objectives": [
+        "Structure a data analysis presentation using the pyramid principle (Minto)",
+        "Distinguish analyst, data scientist, and data engineer roles and the skills each requires",
+        "Apply the course framework to real business problems from start to finish",
+        "Identify the most valuable next steps for continued learning"
+      ],
+      "readings": [
+        "Barbara Minto, The Pyramid Principle (revised 2009), Ch. 1-3",
+        "Knaflic, Storytelling with Data (2015), Ch. 8-10",
+        "DJ Patil and Hilary Mason, Data Driven (2015) - short essay book",
+        "Stephen Few, 'Data Storytelling' (perceptualedge.com articles)"
+      ],
+      "lecture_notes": {
+        "introduction": "A perfect analysis that fails to influence a decision has zero business value. This is the most important and least taught lesson in analytics education. You can build the most accurate churn prediction model in your company's history, but if you present it in a 40-slide deck with no clear recommendation, the CEO will thank you and change nothing. Meanwhile, the consultant who shows a single chart and says 'churn is driven by response time; we should double our support team for one quarter and measure the effect' gets the decision made. The difference is storytelling: structuring the analysis so that the decision-maker understands the situation, the complication, and the recommended action in the first three sentences. Barbara Minto, a McKinsey consultant in the 1960s, formalized this as the Pyramid Principle: start with the answer (top of the pyramid), then provide supporting arguments, then evidence for each argument. This is the opposite of how analyses are usually written - bottom up from data to conclusion. But it is how executives consume analyses: they want the answer first, and they stop listening if they have to wait. This closing session synthesizes the course: how to tell data stories that move decisions, what analytics career paths look like (analyst, data scientist, data engineer, analytics manager), and what to learn next. We will close with a synthesis exercise: given a real business case, you design the full analytics approach from framing to data collection to modeling to presentation.",
+        "key_concepts": [
+          "Pyramid principle (Minto): top-down structure starting with the answer, then supporting arguments, then evidence",
+          "Situation-Complication-Resolution (SCR): the narrative arc that grabs executive attention",
+          "Executive summary discipline: a single-page summary that stands alone for a non-expert reader",
+          "Data analyst role: SQL, Excel, Tableau, some Python; translates business questions into queries and dashboards",
+          "Data scientist role: Python, statistics, ML, experimentation; builds models and does exploratory research",
+          "Data engineer role: pipelines, warehouses, dbt, Airflow, Spark; builds the infrastructure analysts use",
+          "Analytics engineer role (newer): sits between data engineer and analyst; writes dbt models and maintains analytics-ready data",
+          "Soft skills: communication, business sense, curiosity, skepticism - often matter more than technical skills at the margin",
+          "Continued learning: books (Kohavi for experimentation, Hyndman for forecasting, James et al. for ML), communities (Locally Optimistic, Data Engineering Weekly), courses (Kaggle for ML, DataCamp for tools)",
+          "Portfolio: GitHub notebooks with end-to-end analyses on public datasets; the portable proof of your skills"
+        ],
+        "demonstration": "Walk through a full end-to-end case: a mid-sized SaaS company has rising churn. Frame the question (descriptive: what is churn doing? diagnostic: why? predictive: who will churn next? prescriptive: what to do?). Collect data (sub queries and joins against data warehouse). EDA (histograms, correlation matrix). Build a logistic regression churn model (week 8) and interpret coefficients. Profile the at-risk customers (week 9 clustering). Design an A/B test for a retention intervention (week 11). Present findings using Pyramid Principle: 'We can reduce churn by 15% over 6 months by giving customers with fewer than 2 engagement events a proactive health check in week 4. Here is the evidence, here is the proposed rollout, here is the expected impact.' Discuss how each week of the course contributed one piece of this end-to-end solution.",
+        "setup_requirements": [
+          "Course synthesis handout",
+          "Sample end-to-end case study dataset",
+          "Career path reference material",
+          "Recommended reading list"
+        ],
+        "review": [
+          {
+            "key": "Start With the Answer",
+            "value": "Minto's Pyramid Principle says start with the conclusion, then support it. Executives read the first line of every email and decide whether to continue. Your analysis deserves the same structure: the recommendation first, the evidence second, the methodology last"
+          },
+          {
+            "key": "Analysis Without Decision Is Zero Value",
+            "value": "The purpose of business analytics is to inform decisions that would not otherwise be made. If your analysis does not change a decision, it was not worth doing. Always ask up front: what decision will this inform, and what outcome change would make it material?"
+          },
+          {
+            "key": "Tool Skills Are Table Stakes",
+            "value": "Python, SQL, Tableau are table stakes for an analytics job - every applicant has them. The differentiators are business judgment, communication, and the ability to solve ambiguous problems end to end. Invest in those skills at least as much as in tools"
+          },
+          {
+            "key": "Build a Portfolio",
+            "value": "The single most effective way to get an analytics job is a public portfolio on GitHub with 3-5 well-documented end-to-end analyses on real datasets. Resume bullets describe; portfolios prove. Start building yours now, regardless of your career stage"
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 3,
+        "topic": "Analytics Framing, Data Cleaning, and Descriptive Statistics",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "A retailer reports 'average customer order value of $82' based on their CRM. After you load the raw transaction data, you find the median order is $38, the 90th percentile is $145, and the 99th percentile is $820. (a) Explain why the mean is so much higher than the median. (b) Which statistic should the CFO use for inventory planning, and which for customer support staffing? (c) What is one additional statistic or visualization you would produce before drawing any conclusion?",
+            "type": "analysis",
+            "points": 10,
+            "answer": "(a) The mean is pulled above the median by a small number of large orders (the right tail). With a 99th percentile of $820 and a median of $38, the distribution is heavily right-skewed: a minority of large-order customers (possibly wholesale accounts, high-end buyers, or data-entry errors) pull the mean up while the typical customer orders around $38. This pattern is universal in business data: revenue, time on site, session duration, employee salaries all have right-skewed distributions.\n\n(b) Inventory planning: use the mean. Inventory is driven by total volume, and the mean times the number of orders gives total expected revenue, which is what inventory must support. The CFO wants the total, and mean * count = total.\n\nCustomer support staffing: use the median or a lower percentile. Most customer interactions will come from the typical customer (median $38 orders), and staffing for the mean would overstate the typical interaction complexity. Alternatively, segment the customer base: high-value customers may warrant a dedicated support team staffed using the high-end stats, while the general population is staffed using the median.\n\n(c) Additional statistic or visualization: a histogram of order values on a log scale, or a boxplot by customer segment. The histogram would reveal whether the distribution is a simple right skew or a multi-modal distribution (two peaks suggest two distinct customer types). A boxplot by segment would show whether the right tail is dominated by one identifiable customer type. Either plot would reveal structure that the single summary statistics hide.",
+            "rubric": [
+              {
+                "key": "Correctly explains why mean > median for right-skewed distribution",
+                "value": 4
+              },
+              {
+                "key": "Correct statistic choice for each decision with reasoning",
+                "value": 4
+              },
+              {
+                "key": "Reasonable additional statistic or visualization with justification",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "You are loading a sales CSV with 500,000 rows. After running df.info() and df.describe(), you notice: (1) 'order_date' is loaded as string, (2) 'price' has 12 rows with value $999,999, (3) 'customer_id' has 45,000 nulls, (4) 'city' has entries like 'New York', 'new york', 'NEW YORK', and 'NYC'. Describe how you would handle each issue and what investigation each requires before deciding.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "1. order_date as string: Convert to datetime using pd.to_datetime(df['order_date']). Investigation needed: check the source format (MM/DD/YYYY vs YYYY-MM-DD), verify no invalid dates, and check for timezone consistency. If some dates fail to parse, investigate the source before silently discarding. Action: df['order_date'] = pd.to_datetime(df['order_date'], errors='raise').\n\n2. price with 12 rows at $999,999: These are likely data entry errors or sentinel values used by the source system to indicate 'missing' or 'unknown'. Investigation: look at those 12 rows to see if there is a pattern (all from one store? one day? one product category?). If they are sentinels, replace with NaN. If they are real high-end orders, keep them but flag them for separate analysis. Never silently delete outliers without investigation. Action: review rows, then either df.loc[df['price'] == 999999, 'price'] = np.nan or flag and keep.\n\n3. 45,000 null customer_ids (9% of data): This is significant and needs understanding before any fix. Possibilities: guest checkouts (valid, no customer account), anonymization of old data, or upstream data pipeline errors. Check if nulls cluster by date, channel, or region. If guest checkouts, create a synthetic 'guest' customer ID or drop from customer-level analysis but keep for order-level. Action: investigate nulls by groupby and decide based on business meaning. Do not impute customer_id - that would be making up data.\n\n4. inconsistent city strings ('New York', 'new york', 'NEW YORK', 'NYC'): Normalize to a canonical form. Basic approach: apply .str.lower().str.strip() and then a lookup table mapping abbreviations to full names ('nyc' -> 'new york'). Investigation: how many distinct values are there total? Are there other abbreviations or typos? Build a lookup table from the top 50 most common values covering 90%+ of rows. Action: create a canonical_city column via mapping and keep the raw city column for audit.\n\nGeneral principle: never silently fix data problems. Every cleaning step should be documented, investigated, and reversible. The 80/20 rule is that these investigations take most of the analysis time but are the difference between trustworthy and garbage results.",
+            "rubric": [
+              {
+                "key": "Correct handling of datetime conversion with investigation step",
+                "value": 2
+              },
+              {
+                "key": "Correct handling of outlier prices with investigation before action",
+                "value": 3
+              },
+              {
+                "key": "Correct handling of null customer_ids with business understanding",
+                "value": 3
+              },
+              {
+                "key": "Correct approach to inconsistent city strings with normalization plan",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A marketing manager says 'our email open rate is 22%, which is above the industry average of 18%, so our email program is working.' Frame this as a diagnostic analytics question: what follow-up analysis would you do to determine whether the email program is actually driving business value?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "The claim that open rate > industry average = working is a classic vanity metric. Open rate is an activity measure, not a value measure, and several diagnostic questions must be answered before concluding the email program is effective.\n\nDiagnostic follow-up analyses:\n\n1. Click-through rate (CTR): opens are a minimal signal; clicks indicate actual engagement. What is the CTR and how does it compare to industry benchmarks (typically 2-5%)? A 22% open rate with a 0.5% CTR is worse than a 15% open rate with a 3% CTR.\n\n2. Conversion rate from email: of customers who clicked, how many took the desired action (purchase, signup, registration)? Revenue per email sent is the ultimate metric.\n\n3. Attribution analysis: are customers who open emails actually driven by the email, or were they going to purchase anyway? The only way to know is experimental: hold out a random control group that does not receive the email and compare their purchase rate. Without this, correlation does not prove causation.\n\n4. Unsubscribe rate and spam complaints: a high open rate with a rising unsubscribe rate or spam complaints suggests the emails are attention-grabbing but annoying - short-term wins at long-term cost.\n\n5. Segmentation: are all segments opening equally, or is the 22% driven by a small engaged subset? If 90% of opens come from 20% of the list, the 'average' is misleading and the program is only working for a minority.\n\n6. Baseline context: what was the open rate last quarter? Last year? Is 22% actually an improvement or a decline? 'Above industry average' is meaningless if the trend is downward.\n\n7. Business outcome metrics: what is the email program's contribution to revenue, retention, and CAC? If it costs $50K/quarter to run and drives $30K in incremental revenue (per holdout test), it is losing money regardless of open rate.\n\nConclusion: open rate is a weak proxy for business value. The manager's claim is a vanity metric that sounds good but does not answer whether the email program is actually creating value. A proper evaluation requires (a) an experimental holdout to measure incremental impact, (b) a full funnel analysis from open to purchase, and (c) a cost-benefit calculation of the program as a whole.",
+            "rubric": [
+              {
+                "key": "Identifies open rate as a vanity metric that does not prove value",
+                "value": 3
+              },
+              {
+                "key": "At least three concrete diagnostic analyses to run",
+                "value": 4
+              },
+              {
+                "key": "Mentions experimental holdout as the gold standard for causation",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      },
+      {
+        "quiz": 2,
+        "week": 6,
+        "topic": "Visualization, Dashboards, and Simple Regression",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "You fit a simple linear regression on 104 weeks of data: weekly_revenue = 50000 + 3.2 * ad_spend, R-squared = 0.68, p-value on slope < 0.001. (a) Interpret the slope in business language. (b) Interpret the R-squared. (c) A marketing manager says 'this proves we should spend $1M on ads next month.' What are three reasons to be cautious about that conclusion?",
+            "type": "analysis",
+            "points": 10,
+            "answer": "(a) Slope interpretation: each additional $1 of ad spend is associated with $3.20 of additional weekly revenue, on average, across the range of historical ad spend in the data. In business language: our historical data shows that when we spent an extra dollar on ads, we observed $3.20 of incremental revenue. The ROI on ad spend in this range appears to be about 3.2:1.\n\n(b) R-squared = 0.68: 68% of the variation in weekly revenue is explained by ad spend. The other 32% is unexplained by this single variable and could come from price, season, competitor activity, weather, macroeconomic conditions, or other factors. An R-squared of 0.68 is moderately strong for a single-variable marketing model but leaves room for missing variables.\n\n(c) Three reasons to be cautious about 'spend $1M next month':\n\n1. Extrapolation beyond the data range. If historical ad spend was $50K-$200K per week, extrapolating to $1M per MONTH (potentially $250K/week) may be inside the data range, but extrapolating to $500K/week would be far outside. Linear relationships rarely hold outside the range they were fit on. Diminishing returns, saturation, and audience fatigue kick in at higher spend levels.\n\n2. Correlation is not causation. The $3.20 slope may reflect confounding variables. Maybe the weeks of high ad spend were also weeks of seasonal demand or promotional activity - the model would attribute the extra revenue to ads when it was really driven by the concurrent season. A proper answer would require an A/B test or a geo-experiment, not just correlation.\n\n3. Diminishing returns and saturation. Even if the linear model held approximately, the true response curve for advertising is typically concave: the first dollars are cheap and effective (low CAC), while each additional dollar reaches a less responsive audience. A log-linear or diminishing-returns model would likely predict much less revenue at $1M than the linear extrapolation.\n\n4. (Bonus) Missing variables. If the model does not include price, inventory, or competitor activity, it cannot control for them. The $3.20 slope might be contaminated by any of these. Moving to a multiple regression with other controls would give a more reliable coefficient.\n\nRecommendation: before committing $1M, run a targeted experiment with geography or holdout groups to test the incremental response at higher spend levels. The linear regression on historical data is a starting hypothesis, not a decision.",
+            "rubric": [
+              {
+                "key": "Correct slope interpretation in business language",
+                "value": 3
+              },
+              {
+                "key": "Correct R-squared interpretation",
+                "value": 2
+              },
+              {
+                "key": "Three or more valid reasons to be cautious with reasoning",
+                "value": 5
+              }
+            ]
+          },
+          {
+            "question": "You are designing a weekly dashboard for a retail operations manager. What are the 4-5 KPIs you would include, and why each? Distinguish leading vs lagging where possible.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "A retail operations manager is responsible for store-level execution: making sure products are on shelves, customers get served, and operating costs stay in line. A dashboard for this role should prioritize operational (often leading) metrics that the manager can directly influence within a week, rather than lagging financial metrics owned by finance.\n\nRecommended 5 KPIs:\n\n1. Inventory stock-out rate (leading, operational): percentage of SKUs out of stock on shelf. If this rises, sales will fall next week, so it is leading. The manager can act on it by expediting orders, redistributing from other stores, or pulling from backroom stock. Benchmark: target below 2%.\n\n2. Shrink rate (lagging, operational): inventory loss as a percentage of sales, from theft, damage, or counting errors. Weekly shrink shows how well the store is controlling loss. Benchmark: target below 1.5% for mass retail.\n\n3. Labor cost as % of sales (lagging, operational): total store labor cost divided by weekly sales. Rising means either labor is bloated or sales are declining. Benchmark: industry 12-18% depending on retail type.\n\n4. Customer wait time or queue length (leading, operational): average time to checkout or longest observed queue. Rising means customers may abandon purchases. Leading indicator of sales shortfall and NPS. Benchmark: target under 3 minutes peak.\n\n5. Same-store sales vs last year (lagging, financial): the main business outcome the manager is responsible for. A single headline number that the manager and their supervisor care about. Shown as trend vs last year for context.\n\nDesign notes:\n- All 5 visible on one page.\n- Each metric has a color (green/yellow/red) based on threshold.\n- Each has a sparkline showing 12-week trend for context.\n- Drill-down into each metric available but not required.\n- Date filter for week selection.\n- No vanity metrics (foot traffic count alone, email open rate, etc.) unless they lead to a specific action.\n\nThe distinction between leading and lagging matters because a dashboard full of lagging metrics (revenue, profit) tells the manager what has already happened but gives no handle for action. Leading metrics (stockout, wait time, labor) are things the manager can influence this week before the damage shows up in next week's lagging metrics.",
+            "rubric": [
+              {
+                "key": "4-5 substantive KPIs with business rationale",
+                "value": 5
+              },
+              {
+                "key": "Distinguishes leading vs lagging with correct classification",
+                "value": 3
+              },
+              {
+                "key": "Dashboard design notes including layout, color, filters",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain Anscombe's Quartet and what it teaches us about regression. Given the four datasets have identical means, variances, correlations, and regression lines, what would you do before trusting any regression model you fit?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Anscombe's Quartet is a set of four datasets published by statistician Frank Anscombe in 1973. Each dataset has 11 points and identical (or nearly identical) summary statistics: mean of x, mean of y, variance of x, variance of y, Pearson correlation, and linear regression line. A table of summary statistics would show the four datasets as indistinguishable. But when plotted, they look completely different:\n\n1. Dataset 1: a classic linear relationship with modest scatter. The regression line genuinely captures the pattern. The model is appropriate.\n\n2. Dataset 2: a clear non-linear (quadratic) relationship. A straight line passes through the points but misses the curvature. A polynomial or transformed model would fit better.\n\n3. Dataset 3: a linear relationship with one extreme outlier that pulls the regression line and inflates the correlation. Without the outlier, the relationship would be even stronger and the line different. The outlier is either bad data or a single influential point that dominates the fit.\n\n4. Dataset 4: eight points at the same x value and one point at a very different x value. The regression line is determined almost entirely by that one point - the 'leverage' case where a single observation dictates the fit. Any small change in that point changes the model dramatically.\n\nLesson: identical summary statistics hide completely different structures. A regression output alone tells you nothing about whether the model is appropriate. The same mean, same variance, same R-squared, and same regression line can correspond to a well-behaved dataset, a curved relationship, an outlier-driven fit, or a leverage point.\n\nWhat to do before trusting a regression model:\n\n1. Always plot the raw data before fitting. A scatter plot reveals linearity, outliers, and clusters that summaries cannot.\n\n2. Always plot the residuals vs fitted values after fitting. Any pattern in the residuals (curvature, funnel shape, structured clumps) indicates the model is missing structure.\n\n3. Check for outliers and leverage points. Use standardized residuals, Cook's distance, or leverage plots to identify observations that dominate the fit.\n\n4. Check the residual distribution for normality (QQ plot). Major deviations suggest the model assumptions are violated.\n\n5. Consider transformations (log, polynomial, interactions) if the plotted relationship is not linear.\n\n6. Validate on holdout data. A model that fits the training data perfectly but fails on new data is overfit. Always report holdout performance, not in-sample R-squared alone.\n\nThe meta-lesson: statistical summaries are compression. Compression loses information. Always look at the actual data in addition to the summaries.",
+            "rubric": [
+              {
+                "key": "Correctly explains Anscombe's Quartet concept and significance",
+                "value": 4
+              },
+              {
+                "key": "Describes at least 2-3 different pattern types hidden by identical summaries",
+                "value": 3
+              },
+              {
+                "key": "Three or more concrete diagnostic steps before trusting a regression",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      },
+      {
+        "quiz": 3,
+        "week": 9,
+        "topic": "Multiple Regression, Classification, and Clustering",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "You build a logistic regression to predict customer churn for a SaaS company. Baseline churn rate is 8%. Your test-set results: accuracy 92%, precision 55%, recall 30%, AUC 0.78. (a) Interpret each metric. (b) Is this model useful for driving retention offers? (c) How might you improve it?",
+            "type": "analysis",
+            "points": 12,
+            "answer": "(a) Metric interpretation:\n\nAccuracy (92%): the model predicts correctly on 92% of test customers. However, because the baseline churn rate is only 8%, a trivial model that predicts 'no churn' for everyone would get 92% accuracy. So 92% is exactly the no-skill baseline and tells us nothing about the model's skill.\n\nPrecision (55%): of the customers the model predicts will churn, 55% actually churn. In other words, 45% of 'predicted churners' are false alarms. This matters because if we send retention offers to predicted churners, 45% of offers go to customers who would have stayed anyway.\n\nRecall (30%): of the customers who actually churn, the model catches 30%. That means 70% of real churners are missed by the model. If the purpose is to prevent churn, we are missing most of the problem.\n\nAUC (0.78): Area Under the ROC Curve. 0.5 is random, 1.0 is perfect; 0.78 suggests moderate discriminative power. The model can distinguish churners from non-churners better than random but not dramatically.\n\n(b) Is this useful?\n\nPartially. The accuracy headline is misleading (92% is the no-skill baseline). The real question is whether the 30% recall at 55% precision is good enough to justify retention offers. It depends on the cost of offers vs value of retention:\n\nExample economics: suppose retention offer = $20, value of saved customer = $500, 8% base churn rate, 10,000 customers per month.\n\nWith the model at 0.5 threshold: 55% precision means offers go to 1820 customers (30% of 800 churners + some false positives). Of those, 30% * 800 = 240 actual churners caught. If the offer retains 50% of them, 120 saved * $500 = $60,000 value. Cost of offers = 1820 * $20 = $36,400. Net = $23,600. Positive but modest.\n\nWithout the model (offer to all): 10,000 * $20 = $200,000. Retained = 8% * 10,000 * 50% = 400. Value = 400 * $500 = $200,000. Net = $0.\n\nSo the model creates positive value by targeting offers, but the 30% recall is low enough that much of the churn goes uncaught.\n\n(c) Improvements:\n\n1. Feature engineering: current features may not capture engagement well. Add: days since last login, feature usage trend, support ticket sentiment, contract renewal dates.\n\n2. Try ensemble methods: random forest or XGBoost on the same features often produce 5-15% improvement in AUC for tabular classification.\n\n3. Address class imbalance: with 8% positives, the model is biased toward the majority class. Use class weights, SMOTE, or threshold tuning to improve recall at the cost of precision.\n\n4. Threshold tuning: the default 0.5 threshold may not be optimal. If false negatives are expensive (missed churners) and false positives are cheap (cheap retention offers), lower the threshold to increase recall.\n\n5. Segment-specific models: customer segments may have different churn dynamics. A separate model for enterprise vs SMB might outperform a single general model.\n\n6. More recent training data: if the business has changed, old training data may not reflect current churn patterns. Retrain on fresh data.\n\n7. Active learning: after deploying the model, collect feedback on which predictions were right and which were wrong, and use this to improve the next iteration.",
+            "rubric": [
+              {
+                "key": "Correct interpretation of all four metrics including the accuracy trap",
+                "value": 4
+              },
+              {
+                "key": "Reasonable cost-benefit analysis of model usefulness",
+                "value": 4
+              },
+              {
+                "key": "Three or more substantive improvement ideas",
+                "value": 4
+              }
+            ]
+          },
+          {
+            "question": "You run k-means with k=5 on customer RFM data and get clusters. How do you determine whether the clustering is meaningful, and how do you profile each cluster for business action?",
+            "type": "short_answer",
+            "points": 9,
+            "answer": "Determining whether clustering is meaningful:\n\n1. Technical validation: use the silhouette score (ranges -1 to 1; higher is better). Scores above 0.5 indicate reasonably well-separated clusters. Scores below 0.2 indicate clusters are not meaningfully separated from each other.\n\n2. Elbow method for k selection: plot within-cluster sum of squares vs k. Look for the elbow - the point where adding more clusters stops meaningfully reducing WCSS. If the curve is smooth with no elbow, the data may not have natural clusters.\n\n3. Stability check: re-run k-means with different random initializations. If cluster assignments change dramatically across runs, the clusters are not stable and probably not meaningful.\n\n4. Business meaning test: can you describe each cluster in plain business language? 'High-RFM VIPs, mid-RFM regulars, one-time buyers, dormant customers, churned customers.' If you cannot name a cluster in one phrase, it probably is not a useful cluster.\n\n5. Cross-validation with holdout: train clustering on 80% of data, assign the remaining 20% to nearest cluster, verify that holdout assignments look similar in distribution to training.\n\nProfiling clusters for business action:\n\n1. Compute descriptive statistics for each cluster: mean and median R, F, M; count of customers; total revenue contribution; average age/tenure; demographic distribution if available.\n\n2. Visualize clusters: boxplot of R, F, M by cluster; heatmap of cluster centroids vs features.\n\n3. Name each cluster in plain language based on the profile:\n- Cluster with low R, high F, high M = 'Active Loyalists'\n- Cluster with high R, low F, low M = 'Lost One-Timers'\n- Cluster with mid R, mid F, mid M = 'Regular Customers'\n- Cluster with high R, high F, high M (haven't bought recently but were VIPs) = 'Lapsed VIPs'\n- Cluster with low R, low F, high M = 'Recent Big Spenders'\n\n4. Assess business significance: how big is each cluster (customer count and revenue share)? A cluster with 3 customers is not worth a separate strategy. A cluster with 10,000 customers and 40% of revenue deserves dedicated attention.\n\n5. Design cluster-specific actions:\n- Active Loyalists: early product access, VIP events, referral bonuses\n- Lost One-Timers: win-back campaign with discount\n- Regular Customers: upsell bundles, loyalty program\n- Lapsed VIPs: personalized outreach with reason for absence\n- Recent Big Spenders: cross-sell to complementary products\n\n6. Test before rollout: A/B test the new cluster-based targeting against the old non-segmented approach. Measure incremental revenue and cost. Clustering that does not produce measurable lift is not worth the complexity.\n\n7. Revisit regularly: customer behavior changes, and clusters drift. Re-cluster quarterly or after major product or market changes.",
+            "rubric": [
+              {
+                "key": "Three or more technical validation approaches",
+                "value": 3
+              },
+              {
+                "key": "Clear profiling process with cluster-specific actions",
+                "value": 4
+              },
+              {
+                "key": "Recognition that testing and iteration are required",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A marketing manager asks you to add 12 more features to a multiple regression model because 'more data is better.' What is wrong with this reasoning, and how do you respond?",
+            "type": "short_answer",
+            "points": 9,
+            "answer": "The reasoning is wrong for multiple reasons. Adding features blindly to a regression is one of the most common and most damaging errors in business analytics.\n\nProblems with adding 12 more features:\n\n1. Overfitting: each additional feature gives the model more degrees of freedom to fit the training data. With enough features, the model can fit any random pattern in the training data, including noise. R-squared will rise and apparent fit will improve, but predictive performance on new data will DECLINE. The model is learning the noise in the training set and calling it signal.\n\n2. Multicollinearity: as features are added, the chance that some are correlated with each other rises. Correlated features make regression coefficients unstable and uninterpretable. The coefficient on 'price' might swing from -250 to +400 depending on which other correlated features are included.\n\n3. Spurious significance: with 12 more features and alpha = 0.05, you expect 0.05 * 12 = 0.6 features to appear significant by random chance even if none have real effects. Without multiple-testing correction, some of those spurious significances will drive bad decisions.\n\n4. Interpretability loss: a regression with 20 features is much harder to explain to stakeholders than one with 5. Each coefficient must be interpreted 'holding all others constant,' and that meaning becomes more strained as the number of 'others' grows.\n\n5. Data quality tax: every additional feature is additional data that must be cleaned, validated, and kept up to date in production. Adding features increases operational complexity and failure risk.\n\n6. Diminishing returns: in most business applications, a small number of well-chosen features captures most of the signal. The 5th feature usually adds much less than the 1st, and the 20th usually adds almost nothing while adding complexity.\n\nThe right approach:\n\n1. Use domain knowledge to select features that have a plausible causal relationship to the outcome. A feature without a story is usually noise.\n\n2. Test each feature individually: what does it add in R-squared and in cross-validation performance? If a feature adds <1% to out-of-sample accuracy, skip it.\n\n3. Use regularization (Lasso, Ridge) to automatically penalize unnecessary features. Lasso in particular drives unnecessary coefficients to zero.\n\n4. Check VIF (Variance Inflation Factor) for every feature. Drop or combine features with VIF > 5-10.\n\n5. Validate on holdout data always. If adding features does not improve holdout performance, they are noise.\n\n6. Prefer feature engineering (constructing better features from existing ones) over feature bloat (throwing in every available column). One good engineered feature (log of income, interaction term) often beats 10 raw features.\n\nHow I would respond to the manager:\n\n'I appreciate the suggestion, but adding features indiscriminately can actually hurt model accuracy by fitting noise. Let me propose a systematic approach: I will test each of the 12 features individually, measure their impact on out-of-sample performance, and keep only the ones that materially improve the model. I will also check for collinearity with existing features. This usually results in a simpler, more accurate, and more interpretable model than adding them all at once. Can we agree on that process?'",
+            "rubric": [
+              {
+                "key": "Identifies overfitting as the core problem",
+                "value": 3
+              },
+              {
+                "key": "Mentions at least two more issues (multicollinearity, spurious significance, interpretability)",
+                "value": 3
+              },
+              {
+                "key": "Concrete alternative process with holdout validation",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "Forecasting and A/B Testing",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "You are forecasting monthly sales for the next 6 months. You fit three models on the last 3 years of data: Naive (next month = this month), Moving Average (next = average of last 3), and Holt-Winters with seasonality. Backtest MAPE: Naive 18%, MA 14%, Holt-Winters 9%. Which model should you deploy, and what additional analysis would you do before trusting it?",
+            "type": "analysis",
+            "points": 10,
+            "answer": "Model selection:\nHolt-Winters with 9% MAPE is clearly the best performer, roughly half the error of the naive baseline. This is the model I would deploy, but with caveats.\n\nAdditional analysis before trusting Holt-Winters:\n\n1. Check the decomposition: run seasonal_decompose on the training data and verify that the seasonality the model captures matches reality. If the data has a 12-month seasonal cycle (monthly data), make sure Holt-Winters was configured with m=12. A model with wrong seasonality parameter can fit in-sample and fail out-of-sample.\n\n2. Residual analysis: plot the residuals of Holt-Winters on the training data. They should look like white noise (no pattern, no autocorrelation). Use the Ljung-Box test to check for remaining autocorrelation. Patterns in residuals mean missing structure.\n\n3. Walk-forward validation: the 9% MAPE is the backtest on a single split of training and test. Run walk-forward validation: train on months 1-30, forecast month 31, then train on 1-31 forecast 32, etc. Report the average MAPE across all these rolling forecasts. This is a more honest estimate than a single holdout split.\n\n4. Check forecast horizon: MAPE often degrades with horizon. A 1-month-ahead forecast MAPE of 9% may become 15% at 6 months ahead. Report MAPE at each horizon, especially the 6-month target.\n\n5. Check for regime changes: has the business changed in the last 3 years? A major product launch, pricing change, or market event can break historical patterns. If there is a regime change, weight recent data more or split the training set.\n\n6. Compare prediction intervals: point forecasts are a central estimate, but prediction intervals show the range of likely values. Holt-Winters 80% prediction intervals at 6 months ahead may be wide (e.g., +/- 25%) even when the point forecast is accurate. Decision-makers need to see the uncertainty.\n\n7. Compare against business intuition: do the forecasts look reasonable? If Holt-Winters predicts a sudden 40% drop in March because one March was weak in training data, that is a warning sign - the model is overweighting one observation.\n\n8. Ensemble: consider averaging Holt-Winters with a simple model (naive or moving average). Ensembles often beat single models because they reduce variance. An ensemble of Holt-Winters and MA might produce MAPE of 8% instead of 9%.\n\n9. Monitor in production: once deployed, measure actual vs forecast each month. If the live MAPE exceeds the backtest MAPE by more than 2-3 percentage points, the model needs re-training or re-specification.\n\n10. Document assumptions: what assumptions does the model rely on? 'Seasonality will continue as in the past' is a critical assumption that can break. Surface this to the business so they understand the model's limits.\n\nDecision: deploy Holt-Winters but with a dashboard showing the prediction intervals, a comparison to the moving average baseline for sanity check, and monthly monitoring of actual vs forecast error.",
+            "rubric": [
+              {
+                "key": "Chooses Holt-Winters correctly and explains the reasoning",
+                "value": 2
+              },
+              {
+                "key": "Three or more substantive validation steps with reasoning",
+                "value": 5
+              },
+              {
+                "key": "Mentions prediction intervals or uncertainty quantification",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "An e-commerce team runs an A/B test on a new checkout button. After 3 days, the treatment has 4.8% conversion vs control 4.2%, p = 0.04. A PM wants to ship the winner. What would you say?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "I would recommend NOT shipping yet, for several reasons:\n\n1. Peeking problem: if the team peeks at test results before the predetermined sample size, the effective false positive rate is much higher than 5%. A p-value of 0.04 obtained via peeking may correspond to a true false positive rate of 15-30%. The canonical solution is to run the test to the predetermined sample size without peeking.\n\n2. Short duration: 3 days is almost certainly too short. Common problems with short tests:\n- Day-of-week effects: if the test started Monday, we have seen weekdays only. Weekend shoppers may behave differently.\n- Novelty effect: the new button may be performing well because it is new and eye-catching, not because it is genuinely better. The effect can fade after 1-2 weeks as users get used to it.\n- Not enough unique users: 3 days may not have captured the full population of different user types.\n\n3. Sample size check: what was the predetermined sample size? If the team planned to run for 14 days and is stopping at 3, that is peeking. If the team did not plan the sample size and duration in advance, that is a process problem that should be fixed before the next test.\n\n4. Effect size: 4.8% vs 4.2% is an absolute 0.6 percentage point lift, or 14% relative. That is meaningful for e-commerce. But the question is whether the observed 0.6pp is the true lift or inflated by day-of-week noise. The confidence interval would tell us: a 95% CI of [0.05pp, 1.15pp] is positive but close to zero; a CI of [0.3pp, 0.9pp] is more confident.\n\n5. Guardrail metrics: did any guardrail metrics move in a bad direction? Revenue per user, AOV, or return rate may have moved even if checkout completion improved. A checkout lift that comes at the cost of AOV is not a win.\n\n6. Recommendation:\n- If the planned duration was 14 days, continue the test. Do not ship early.\n- If the test was not planned, define the planned end now and commit to not peeking further. Common targets: 2 weeks minimum, plus enough sample for statistical power.\n- Verify the sample size is sufficient: for a 0.6pp lift from 4.2% baseline with 80% power and alpha 0.05, you need roughly 18,000 per variant. Check that you will reach this.\n- Check day-of-week coverage: at minimum 7 full days including a weekend.\n- Verify guardrail metrics are stable or improved.\n- Only then make a ship/no-ship decision.\n\n7. Educate the team: frame this as a process improvement, not a veto. 'We are almost there - let's wait 11 more days to make sure we are making the right call. Here is the risk of shipping now: we might be celebrating a false positive and the observed lift might disappear. Here is the risk of waiting: 11 more days of slightly-worse control experience for half the users, which is small compared to the cost of a wrong decision at scale.'\n\nThe meta-lesson: experimentation discipline is a capability, not a rule. Teams that rush tests to ship early are playing statistical roulette, and the long-term cost of a pattern of false positives is a product that does not actually improve over time.",
+            "rubric": [
+              {
+                "key": "Identifies peeking as the primary problem",
+                "value": 3
+              },
+              {
+                "key": "At least three specific concerns (duration, day-of-week, novelty, sample size)",
+                "value": 4
+              },
+              {
+                "key": "Concrete recommendation for how to proceed",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "A pricing analyst runs an A/B test with 50 variants to find the best price point. Three variants show p < 0.05 in the outcome metric. Should the analyst conclude those three are winners? Explain multiple testing and propose a correction.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "No, the analyst should NOT conclude those three are winners without a multiple testing correction. This is a textbook case of the 'garden of forking paths' problem.\n\nWhy multiple testing matters:\n\nWhen a single test is run with alpha = 0.05, the probability of falsely rejecting the null hypothesis (Type I error, a false positive) is 5%. When many tests are run, the probability that AT LEAST ONE of them is falsely significant grows rapidly.\n\nWith 50 independent tests at alpha = 0.05:\n- Expected number of false positives under the null: 50 * 0.05 = 2.5\n- Probability at least one false positive: 1 - (0.95)^50 = 92%\n\nIn other words, even if NONE of the 50 variants have any real effect, we expect 2-3 of them to show p < 0.05 by chance. The analyst is observing exactly the number expected under the null. The three 'winners' may all be false positives.\n\nThe analyst's claim is analogous to the famous 'jellybean' XKCD comic: test 20 colors of jellybeans for a link to acne, find one with p < 0.05, write a headline 'green jellybeans cause acne.' It is a false positive inflated by multiple testing.\n\nCorrection approaches:\n\n1. Bonferroni correction: adjust alpha by dividing by the number of tests. For 50 tests, new alpha = 0.05 / 50 = 0.001. Only variants with p < 0.001 are considered significant. This is conservative but simple and safe.\n\n2. False Discovery Rate (FDR) control (Benjamini-Hochberg): controls the expected fraction of false positives among the rejections, not the probability of any false positive. Less conservative than Bonferroni and the industry standard for screening experiments.\n\n3. Confirmation study: even with correction, a single test is not proof. Rerun the top candidates in a confirmation experiment with only 2-3 variants and proper power calculations. If the effect replicates, it is real.\n\n4. Hierarchical testing: test within a pre-specified subset first. If you have a prior belief that prices between $19 and $29 are plausible, test only those 10 prices, not all 50. This reduces multiple-testing burden through prior narrowing.\n\nRecommendation to the analyst:\n\n'The three variants showing p < 0.05 out of 50 tests are almost certainly false positives. With 50 tests, we would expect 2-3 to hit p < 0.05 by chance even if all variants were identical. Before declaring a winner, we need to:\n\n(1) Apply a multiple testing correction. With Bonferroni, the threshold becomes p < 0.001, and none of the three variants meet it. With FDR at 5%, we rank all p-values and accept the ones below an adjusted threshold - probably none will survive.\n\n(2) Run a confirmation test with only the top 2-3 candidates and proper statistical power. If a price truly outperforms the others, it will show significance in a focused test.\n\n(3) Next time, design the test with fewer variants (5-10 max) chosen based on prior theory, not 50 variants chosen exhaustively.\n\nShipping a price based on the current results would be making a decision on noise. The correct move is more disciplined testing.'\n\nThe meta-lesson: more tests is not better. Testing everything is testing nothing because the false positive rate approaches 100%. Rigorous experimentation requires planning which tests to run, running them to completion, and applying corrections when multiple tests are necessary.",
+            "rubric": [
+              {
+                "key": "Correctly explains multiple testing inflation of false positives",
+                "value": 3
+              },
+              {
+                "key": "Calculates expected false positives (2.5 or 92% at least one)",
+                "value": 3
+              },
+              {
+                "key": "Proposes Bonferroni or FDR correction with explanation",
+                "value": 2
+              },
+              {
+                "key": "Recommends confirmation test for replication",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "Advanced Methods, Ethics, and Tool Selection",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "A lending company wants to build a credit approval model. Their data scientist proposes XGBoost because it outperforms logistic regression on their historical data by 5% AUC. As an analyst, what concerns would you raise, and what alternative approach would you propose?",
+            "type": "analysis",
+            "points": 10,
+            "answer": "Concerns with XGBoost for credit approval:\n\n1. Regulatory interpretability requirements: lending is a heavily regulated industry in the U.S. (Fair Credit Reporting Act, Equal Credit Opportunity Act) and the EU (GDPR Article 22 on automated decisions). Lenders must be able to explain to customers WHY they were denied credit in terms of specific factors. XGBoost is a black box: while SHAP values can approximate individual explanations, regulators may not accept them as meeting the reason-code requirement.\n\n2. Fair lending and discrimination law: lending models must not discriminate on the basis of protected characteristics (race, age, sex, national origin). With XGBoost and 100+ features, it is harder to prove that the model is not using proxies for protected characteristics. A linear model is easier to audit for disparate impact.\n\n3. 5% AUC improvement may not be worth the risks: if logistic regression has AUC 0.72 and XGBoost has AUC 0.77, that is a meaningful improvement but not overwhelming. The business value of a 5% AUC improvement must be weighed against the regulatory, compliance, and explainability costs.\n\n4. Overfitting risk with complex models: XGBoost has many hyperparameters and can overfit training data in ways that logistic regression cannot. A 5% AUC improvement on historical data may not generalize to new applicants, especially if the applicant distribution shifts over time.\n\n5. Adversarial robustness: XGBoost models can be gamed by sophisticated applicants who understand feature importance. Logistic regression is also gameable but in simpler and more predictable ways.\n\n6. Bias audit complexity: checking XGBoost for fairness across demographics requires careful design (fairness metrics at the model output level, subgroup analysis). Logistic regression allows inspection of individual coefficients for direct fairness assessment.\n\n7. Deployment and monitoring: XGBoost is harder to deploy than logistic regression, requires more compute, and is harder to monitor for concept drift. Many production ML systems in finance are still logistic regression specifically for these operational reasons.\n\nAlternative approach I would propose:\n\n1. Start with logistic regression as the baseline and champion. Understand exactly why it works and where it fails. Build fair lending monitoring from day one.\n\n2. Test XGBoost as a challenger: build it alongside but do not deploy. Understand the gap - where does XGBoost win? Which features drive the improvement? Can those features be engineered into logistic regression as transformations or interactions?\n\n3. Consider explainable alternatives: models like EBM (Explainable Boosting Machines, from Microsoft Research) or GAMs (Generalized Additive Models) offer non-linear fitting with much better interpretability than XGBoost. They may close the gap with XGBoost without sacrificing explainability.\n\n4. Regulatory consultation: before deploying any model, consult with compliance and legal about the regulatory framework for automated decisions. Do not assume 5% AUC is worth any interpretability cost without expert input.\n\n5. A/B test on new applicants: if XGBoost is deployed on a subset, measure both model performance AND downstream outcomes like delinquency rate, customer complaints, regulatory findings. The 5% AUC improvement must translate to business value, not just a technical metric.\n\n6. Fairness metrics at deployment: track approval rates, default rates, and decision accuracy across demographic groups. If the more accurate model has a fairness regression, it may not be deployable even if it is technically better.\n\n7. Continuous monitoring: set up drift detection so that if applicant distributions shift (macro conditions, new customer channels), the model is re-evaluated rather than blindly trusted.\n\nBottom line: in a regulated industry, 5% AUC is rarely worth sacrificing interpretability and fairness auditability. The right approach is not 'XGBoost vs logistic regression' but 'how do we get close to XGBoost's accuracy without giving up the properties that matter for regulated deployment.'",
+            "rubric": [
+              {
+                "key": "Identifies regulatory and fair lending concerns",
+                "value": 4
+              },
+              {
+                "key": "At least two additional concerns (overfitting, monitoring, adversarial)",
+                "value": 3
+              },
+              {
+                "key": "Concrete alternative approach with explainable options",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "The COMPAS recidivism case showed that calibration and equalized odds cannot both be satisfied when base rates differ. Explain the case in your own words and propose how you would approach a similar problem if you were asked to build a risk scoring model.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "The COMPAS case:\n\nCOMPAS (Correctional Offender Management Profiling for Alternative Sanctions) is a risk assessment tool sold by Northpointe (now Equivant) to courts across the U.S. to help judges decide on bail, sentencing, and parole by predicting the probability that a defendant will reoffend.\n\nIn 2016, ProPublica published a major investigation. They obtained COMPAS predictions and outcomes for 7,000 defendants in Broward County, Florida. They found that:\n- When COMPAS incorrectly labeled a White defendant as high risk, the error was relatively rare.\n- When COMPAS incorrectly labeled a Black defendant as high risk, the error was about twice as common.\n- In other words, Black defendants were much more likely to be FALSELY flagged as high-risk - a disparate false positive rate.\n\nNorthpointe responded that COMPAS was calibrated fairly: within each risk score category, the actual reoffense rate was similar for Black and White defendants. For example, among defendants predicted 'medium risk', about the same percentage actually reoffended in each group.\n\nBoth claims were true, and neither side was lying. The math behind this was formalized by Chouldechova (2017) and Kleinberg, Mullainathan, Raghavan (2017). They proved the 'impossibility of fairness': when base rates differ between groups (in this case, observed reoffense rates differed between Black and White defendants), three common fairness criteria cannot all be simultaneously satisfied:\n\n1. Calibration: the predicted probability corresponds to the actual rate within each group.\n2. Balanced false positive rate: equal rate of falsely flagging low-risk individuals as high-risk across groups.\n3. Balanced false negative rate: equal rate of falsely labeling high-risk individuals as low-risk across groups.\n\nOnly one group can be prioritized at a time, and the choice is a value judgment, not a mathematical optimization.\n\nThe observed base rate difference in COMPAS data is itself contested. It reflects historical enforcement patterns (more policing in certain neighborhoods), not necessarily underlying 'true' crime rates. Using this biased base rate as ground truth bakes historical discrimination into the model.\n\nMy approach if asked to build a similar model:\n\n1. Question the use case: should ANY algorithm make or inform this decision? High-stakes criminal justice decisions affecting liberty deserve human judgment, due process, and accountability. Even the best algorithm may be inappropriate for the task. I would push back on the premise before writing code.\n\n2. Understand the data source: where does the training data come from? Whose decisions are reflected in the labels? Are the labels themselves biased (e.g., 'reoffense' proxied by re-arrest which reflects policing patterns, not underlying behavior)?\n\n3. Define fairness explicitly: which fairness criterion matters here, and why? Document the choice and have it approved by stakeholders including affected communities, not just the technical team. If the stakeholders cannot agree, that is a sign the algorithm should not be built.\n\n4. Validate fairness across subgroups: report all three fairness metrics (calibration, FPR, FNR) by race, gender, age, and any other relevant group. Be transparent about the trade-offs.\n\n5. Human override: never deploy the model as a final authority. A judge or decision-maker must have the ability to override the algorithm, must receive an explanation for each prediction, and must be trained to identify algorithmic errors.\n\n6. Regular audits: re-validate the model annually and after any significant change in the input distribution. Monitor outcomes by subgroup in production.\n\n7. Sunset clause: build with an explicit date for re-evaluation and potential removal. Models should not outlive the conditions they were built for.\n\n8. Consider not deploying: sometimes the ethical answer is to say 'no.' If the fairness trade-offs are unacceptable or the data is too biased, the right decision may be to decline the project. Refuse to build a tool that causes more harm than good.\n\nThe meta-lesson from COMPAS: predictive accuracy is not the only value. Fairness, due process, human dignity, and accountability are all values that must be weighed against accuracy, and sometimes they win. Analytics is a tool in service of human decisions, not a replacement for them.",
+            "rubric": [
+              {
+                "key": "Clear explanation of COMPAS case and impossibility of fairness",
+                "value": 4
+              },
+              {
+                "key": "At least four substantive steps in approach to similar problem",
+                "value": 4
+              },
+              {
+                "key": "Recognition that the right answer may be not to deploy",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A CEO asks you to 'use AI to grow the business 20% next quarter.' Walk through how you would respond as an analytics leader, including framing, scoping, and setting expectations.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "The CEO's request is a perfect example of the gap between executive expectations (AI as magic) and analytics reality (AI as one tool among many). My job as an analytics leader is to translate the ambition into a concrete, achievable plan while setting honest expectations.\n\nHow I would respond:\n\nStep 1: Reframe the question from 'AI' to 'business growth.'\n\nI would say: 'Growing the business 20% next quarter is an ambitious goal. AI and analytics can help, but they are tools, not the goal. Let me work with you to identify where we can move the needle, and then we can decide which analytics or AI investments support those levers.' This reframes the conversation from tool-first (AI) to problem-first (growth), which is the right mental model.\n\nStep 2: Diagnose the business to identify the biggest levers.\n\nWhere are we today? What is our current growth rate, customer acquisition cost, conversion rate, retention rate, AOV? Which of these is the bottleneck? A quarter-over-quarter 20% growth is approximately 80% annualized; that is almost impossible from organic optimization alone and probably requires a combination of efforts.\n\nCommon growth levers and how analytics helps each:\n- Acquisition: analytics can improve channel mix, CAC, and conversion. Typical impact: 5-15% in a quarter if well-targeted.\n- Retention: analytics can identify churn drivers and retention interventions. Typical impact: 3-8% revenue impact in a quarter if retention is the problem.\n- Pricing: analytics can optimize prices using elasticity models. Typical impact: 3-10% if pricing has been stable and there is room.\n- Cross-sell and upsell: recommendation systems can lift basket size. Typical impact: 5-15% if no system exists today.\n- New channels or markets: analytics can inform expansion but rarely delivers in one quarter; the lead time is longer.\n\nStep 3: Propose a realistic plan.\n\nBased on the diagnosis, I would identify 2-3 high-impact initiatives and rough estimates:\n\n- Initiative 1: optimize paid marketing mix via better attribution and channel-level CAC analysis. Expected lift: 5-8% incremental revenue. Timeline: 4-6 weeks.\n- Initiative 2: launch a retention playbook for at-risk customers based on a churn prediction model. Expected lift: 3-5% revenue. Timeline: 6-8 weeks.\n- Initiative 3: implement a price testing experiment on the top 20 SKUs using elasticity estimates. Expected lift: 2-4% revenue. Timeline: 8 weeks.\n\nCombined: 10-17% incremental revenue over the quarter, which is significant but does not reach 20%. This is an honest estimate and should be presented with caveats.\n\nStep 4: Set expectations honestly.\n\n'Here is what I can confidently deliver in one quarter: 10-17% incremental revenue through the three initiatives above. Reaching 20% in a single quarter would require additional levers outside analytics - product, sales, or market expansion. I can support those efforts with analytics if we define what they are.'\n\nThe wrong response would be to say 'yes, sure, AI will deliver 20%' - that is either a lie or a setup for failure. A CEO who pushes back on honest estimates is a warning sign about the organization's relationship with analytics.\n\nStep 5: Define success metrics and governance.\n\n- Primary metric: incremental revenue vs baseline trend, measured through A/B tests and holdout groups where possible.\n- Guardrails: CAC, margin, NPS, customer complaints must not regress.\n- Reporting: weekly dashboard showing progress on each initiative with forecasts to end of quarter.\n- Go/no-go: if at 6 weeks we are not on track, reassess and either redouble on what works or pivot.\n\nStep 6: Manage the AI narrative.\n\nIf the CEO specifically wants to talk about 'AI' publicly (investors, press, board), I would help craft an accurate story: 'We are deploying machine learning for churn prediction, dynamic pricing, and recommendation systems to drive quantified improvements in core KPIs.' This is truthful and avoids overpromising magic.\n\nThe meta-lesson: the best analytics leaders are translators between technical possibility and business reality. Saying yes to impossible goals erodes trust. Saying no without alternatives makes you obstructionist. The right move is to reframe the ambition, diagnose the reality, propose a concrete plan, and set honest expectations about what can and cannot be delivered.",
+            "rubric": [
+              {
+                "key": "Reframes from AI to business growth levers",
+                "value": 3
+              },
+              {
+                "key": "Concrete diagnosis and initiative proposals with timelines and expected impact",
+                "value": 4
+              },
+              {
+                "key": "Honest expectation-setting including what cannot be delivered",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 30
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "End-to-End Data Exploration and Descriptive Analysis",
+        "week_assigned": 3,
+        "week_due": 6,
+        "points": 150,
+        "description": "Select a real public dataset (Kaggle, UCI, government open data, or course-provided) with at least 50,000 rows and 10+ columns. Conduct a complete exploratory data analysis: load, clean, profile, visualize, and summarize the data. Produce a professional report that demonstrates the full descriptive and diagnostic analytics workflow from raw data to business-quality insights.",
+        "objectives": [
+          "Load and clean a real-world dataset with realistic data quality issues",
+          "Compute and interpret descriptive statistics at population and subgroup levels",
+          "Produce publication-quality visualizations following Tufte and Few principles",
+          "Draw business-relevant insights from descriptive and diagnostic analysis"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Jupyter notebook with reproducible code from raw data load to final visualizations",
+          "Data cleaning log documenting every transformation with rationale",
+          "Descriptive statistics report including group comparisons and distributions",
+          "At least 8 polished visualizations following Tufte principles with captions",
+          "Executive summary (1 page) with 3-5 key findings and business implications",
+          "README file describing the dataset, questions asked, and how to reproduce the analysis"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 50,
+            "criteria": [
+              "Code is clean, commented, and reproducible from top to bottom",
+              "Data cleaning handles missing values, outliers, and type conversion correctly",
+              "Descriptive statistics are computed and interpreted appropriately for the distribution shape",
+              "Group comparisons use the right statistics and visualizations"
+            ]
+          },
+          "visual_quality": {
+            "points": 35,
+            "criteria": [
+              "Visualizations follow data-ink ratio and avoid chartjunk",
+              "Chart types match the underlying question (bar for categories, line for time, scatter for relationships)",
+              "Axes are truthful (y-axis starts at zero for bars, consistent scales)",
+              "Each chart has a clear title stating the finding and annotations where useful"
+            ]
+          },
+          "performance_optimization": {
+            "points": 35,
+            "criteria": [
+              "Analysis addresses real business questions, not just technical metrics",
+              "Insights are supported by evidence from the data",
+              "Group-level analysis reveals patterns not visible in aggregate statistics",
+              "At least 3 insights are actionable or strategically relevant"
+            ]
+          },
+          "documentation": {
+            "points": 30,
+            "criteria": [
+              "Executive summary stands alone for a non-technical reader",
+              "Data cleaning log is thorough and honest about decisions made",
+              "README clearly describes dataset, questions, and reproduction steps",
+              "Writing is professional and free of typos"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Reproducible Jupyter notebook with complete data cleaning and EDA",
+                "Eight or more professional visualizations following Tufte principles",
+                "Executive summary with business-relevant insights and evidence",
+                "Professional documentation and clear reproduction path"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Predictive Model: Regression, Classification, or Forecasting Project",
+        "week_assigned": 7,
+        "week_due": 11,
+        "points": 150,
+        "description": "Select a predictive modeling problem on a real dataset. Build at least two models (one baseline and one more sophisticated), evaluate them on holdout data, interpret the coefficients or feature importances, and present the business implications. The project must include honest evaluation on holdout data and a clear explanation of model limitations.",
+        "objectives": [
+          "Frame a business question as a predictive modeling problem",
+          "Build and compare multiple models with appropriate baselines",
+          "Evaluate model performance honestly on holdout data",
+          "Interpret model outputs in business language and acknowledge limitations"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Jupyter notebook with reproducible code from data load to model evaluation",
+          "Baseline model (simple regression, logistic regression, naive forecast) with interpretation",
+          "Challenger model (multiple regression, random forest, XGBoost, Holt-Winters) with interpretation",
+          "Honest holdout evaluation comparing both models with appropriate metrics",
+          "Feature importance or coefficient interpretation in business language",
+          "Business report (3-5 pages) explaining the question, approach, findings, and recommendations",
+          "Model card documenting assumptions, limitations, training data, and intended use"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 50,
+            "criteria": [
+              "Data is correctly split into training and holdout with no leakage",
+              "Baseline model is appropriate for the problem type",
+              "Challenger model is justified and correctly implemented",
+              "Evaluation metrics match the problem (AUC for classification, MAE/RMSE for regression/forecasting)"
+            ]
+          },
+          "visual_quality": {
+            "points": 30,
+            "criteria": [
+              "Residual plots, confusion matrices, or forecast plots are clear and informative",
+              "Feature importance or coefficient visualizations are correctly interpreted",
+              "Model comparison is visualized (not just numeric tables)",
+              "Business report charts follow Tufte principles"
+            ]
+          },
+          "performance_optimization": {
+            "points": 40,
+            "criteria": [
+              "Models are tuned appropriately (train/val/test split, hyperparameter tuning)",
+              "Overfitting is checked and addressed",
+              "Holdout evaluation is honest and not cherry-picked",
+              "Business implications are supported by model output"
+            ]
+          },
+          "documentation": {
+            "points": 30,
+            "criteria": [
+              "Business report explains the question and approach clearly",
+              "Model card honestly describes limitations and assumptions",
+              "Code is reproducible and commented",
+              "Writing is professional and free of typos"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Working baseline and challenger models with reproducible code",
+                "Honest holdout evaluation and interpretation",
+                "Business report with findings and recommendations",
+                "Model card documenting limitations and intended use"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Capstone Analytics Project: End-to-End Business Problem",
+        "week_assigned": 12,
+        "week_due": 15,
+        "points": 150,
+        "description": "Choose a real business problem (from course case studies, your own workplace, or a public dataset) and produce an end-to-end analytics solution: problem framing, data collection, EDA, modeling (descriptive, diagnostic, predictive, or prescriptive as appropriate), visualization, storytelling, and ethical considerations. This capstone integrates the entire course and produces a portfolio-ready artifact.",
+        "objectives": [
+          "Integrate course methods into a coherent end-to-end analytics project",
+          "Demonstrate framing, technical execution, and storytelling skills together",
+          "Produce a polished deliverable suitable for a professional portfolio",
+          "Include honest ethical reflection on the analysis and its potential misuses"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Project repository on GitHub with code, data (or data source link), and documentation",
+          "README explaining the business problem, approach, findings, and how to reproduce",
+          "Jupyter notebook with full analysis from raw data to final recommendations",
+          "Tableau or Python-built dashboard showing key metrics interactively",
+          "Executive presentation (10-15 slides) using the Pyramid Principle",
+          "Ethical reflection (1-2 pages) covering bias, fairness, privacy, and potential misuse",
+          "Peer review: review one other student's project and provide substantive feedback"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 50,
+            "criteria": [
+              "Project demonstrates appropriate methods for the problem (not just fancy models for show)",
+              "Data handling is sound: cleaning, validation, holdout evaluation",
+              "Any models are tuned and evaluated correctly",
+              "Code is reproducible and professionally organized"
+            ]
+          },
+          "visual_quality": {
+            "points": 30,
+            "criteria": [
+              "Visualizations follow Tufte principles and tell clear stories",
+              "Dashboard design is purposeful and usable",
+              "Presentation slides are professional and uncluttered",
+              "Consistent visual identity across all deliverables"
+            ]
+          },
+          "performance_optimization": {
+            "points": 40,
+            "criteria": [
+              "Analysis produces actionable business insights, not just technical results",
+              "Recommendations are specific, supported by data, and prioritized",
+              "Limitations and uncertainties are honestly acknowledged",
+              "Ethical considerations are substantive, not perfunctory"
+            ]
+          },
+          "documentation": {
+            "points": 30,
+            "criteria": [
+              "README clearly orients a new reader and enables reproduction",
+              "Executive presentation follows Pyramid Principle (answer first)",
+              "Ethical reflection is thoughtful and honest",
+              "Writing is professional throughout"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "End-to-end analytics project integrating course methods",
+                "GitHub repository with reproducible code and documentation",
+                "Executive presentation and dashboard suitable for portfolio",
+                "Honest ethical reflection and peer review contribution"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 20,
+      "description": "Five quizzes covering descriptive statistics, visualization, regression, classification, clustering, forecasting, A/B testing, and ethics"
+    },
+    "lab_assignments": {
+      "percentage": 15,
+      "description": "Weekly hands-on exercises in Python, SQL, and Tableau including data cleaning, modeling, and visualization"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "Three projects: end-to-end EDA, predictive modeling, and capstone integrating the full course"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Written and computational exam covering descriptive statistics, regression, classification, and experimental design"
+    },
+    "final_project": {
+      "percentage": 20,
+      "description": "Portfolio-ready capstone analytics project with technical, visual, and storytelling components"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is expected for all lectures and mandatory for in-class lab sessions and case discussions. More than 3 unexcused absences may result in a reduced participation grade.",
+    "late_submissions": "Late assignments lose 10% per day. No submissions accepted more than 5 days late except in cases of documented emergency.",
+    "collaboration": "Discussion of concepts and approaches is encouraged. All code, analysis, and written work must be individual. Pair programming is allowed only on clearly marked lab exercises.",
+    "academic_integrity": "All submitted work must be your own. Using AI tools (ChatGPT, Claude, Copilot) for learning is allowed; using them to generate analyses you cannot explain in an oral exam is prohibited. All AI use must be disclosed in a one-paragraph statement at the end of each assignment.",
+    "technology_requirements": "Students need a laptop capable of running Python 3.11+, Jupyter, pandas, scikit-learn, matplotlib, seaborn, and Tableau Public. A GitHub account is required for the capstone project. Free accounts on Kaggle and UCI ML Repository are recommended."
+  }
+}

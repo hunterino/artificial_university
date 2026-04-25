@@ -1,0 +1,1583 @@
+{
+  "course_info": {
+    "course_id": "CS102",
+    "title": "Programming Fundamentals II",
+    "credit_hours": 4,
+    "duration": "15 weeks",
+    "meeting_schedule": "Monday, Wednesday, Friday - 4 hours per week",
+    "prerequisites": [
+      "CS101 - Programming Fundamentals I"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "topic": "OOP Deep Dive: Classes, Attributes, and Methods",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Review and deepen understanding of class definitions, __init__, and instance methods",
+        "Distinguish between instance attributes, class attributes, and static methods",
+        "Implement property decorators for controlled attribute access",
+        "Design classes with proper encapsulation using naming conventions and properties"
+      ],
+      "readings": [
+        "Think Python, Ch. 15-17 - Classes and Objects, Classes and Functions, Classes and Methods",
+        "Python Documentation: Classes Tutorial",
+        "Fluent Python, Ch. 11 - A Pythonic Object (selected sections)"
+      ],
+      "lecture_notes": {
+        "introduction": "Programming Fundamentals II begins where CS101 left off: with object-oriented programming. In CS101 you learned the basics of defining classes, creating instances, and writing methods. Now we go deeper into the mechanisms that make OOP powerful in real software systems.\n\nThis session focuses on the distinction between instance attributes and class attributes, a source of confusion for many students. Instance attributes belong to a specific object and are set in __init__ with self. Class attributes belong to the class itself and are shared by all instances. Understanding when to use each is essential for designing classes that behave correctly.\n\nWe also introduce property decorators, Python's elegant mechanism for controlled attribute access. Instead of writing explicit getter and setter methods like Java requires, Python lets you define attributes that look like simple variables from the outside but execute validation code when read or written. This is encapsulation that does not burden the user of your class with unnecessary syntax.\n\nBy the end of this session, you will be able to design classes that enforce invariants, distinguish between data that belongs to instances versus the class, and use properties to create clean interfaces that hide implementation complexity.",
+        "key_concepts": [
+          "Instance attributes are set on self in __init__ and are unique to each object",
+          "Class attributes are defined directly in the class body and shared by all instances",
+          "Modifying a class attribute through an instance creates a shadowing instance attribute",
+          "The @property decorator creates read-only attributes; @name.setter allows controlled writes",
+          "Properties enable validation on attribute assignment without changing the caller's syntax",
+          "Static methods (@staticmethod) belong to the class but do not access instance or class state",
+          "Class methods (@classmethod) receive the class as first argument and can create alternative constructors",
+          "The __slots__ optimization restricts attribute creation and reduces memory usage",
+          "Naming convention: _private suggests internal use; __mangled triggers name mangling for stronger hiding",
+          "The principle of least surprise: classes should behave the way users expect based on their interface"
+        ],
+        "demonstration": "Build a Temperature class with a Celsius value stored internally but accessible in Fahrenheit and Kelvin via properties. Demonstrate class attributes by adding a counter that tracks how many Temperature instances have been created. Show a @classmethod alternative constructor: Temperature.from_fahrenheit(212).",
+        "setup_requirements": [
+          "Python 3.12+ installed",
+          "VS Code with Python extension",
+          "Solid understanding of basic classes from CS101 (class, __init__, self, methods)"
+        ],
+        "review": [
+          {
+            "key": "What is the difference between instance and class attributes?",
+            "value": "Instance attributes are set on self and unique to each object. Class attributes are defined in the class body and shared by all instances. Modifying a class attribute through self creates a new instance attribute that shadows the class one."
+          },
+          {
+            "key": "What does @property do?",
+            "value": "The @property decorator turns a method into a read-only attribute. Combined with @name.setter, it allows controlled read/write access that executes validation code transparently."
+          },
+          {
+            "key": "When would you use a @classmethod?",
+            "value": "Class methods receive the class (not an instance) as their first argument. They are commonly used as alternative constructors: Date.from_string('2024-01-15') creates a Date object from a string rather than separate year, month, day arguments."
+          },
+          {
+            "key": "What is name mangling?",
+            "value": "Attributes prefixed with __ (double underscore) are mangled to _ClassName__attr, making accidental access from subclasses difficult. This is Python's strongest privacy mechanism but is rarely needed."
+          },
+          {
+            "key": "Why prefer properties over explicit getters and setters?",
+            "value": "Properties maintain the simple attribute access syntax (obj.name) while executing validation code behind the scenes. This is more Pythonic than Java-style get_name()/set_name() methods and lets you add validation later without changing callers."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 2,
+      "topic": "Inheritance and Code Reuse",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Implement class hierarchies using inheritance to model is-a relationships",
+        "Override methods in subclasses to specialize behavior",
+        "Use super() correctly to call parent class methods",
+        "Understand the method resolution order (MRO) in single and multiple inheritance"
+      ],
+      "readings": [
+        "Think Python, Ch. 18 - Inheritance",
+        "Python Documentation: super() function",
+        "Effective Python, Item 40 - Initialize Parent Classes with super()"
+      ],
+      "lecture_notes": {
+        "introduction": "Inheritance is the mechanism that lets you build new classes by extending existing ones. A subclass inherits all attributes and methods of its parent, then adds or overrides them to specialize behavior. This enables code reuse: common functionality lives in the parent class, and variations live in subclasses.\n\nThe relationship modeled by inheritance is 'is-a': a Dog is an Animal, a CheckingAccount is a BankAccount, a Rectangle is a Shape. If the is-a relationship does not hold, inheritance is the wrong tool — use composition instead. This distinction is one of the most important design decisions in OOP.\n\nThe super() function is how a subclass calls its parent's methods. When you override __init__ in a subclass, you almost always want to call super().__init__() to ensure the parent's initialization runs. Forgetting this is one of the most common OOP bugs and leads to objects with missing attributes.\n\nPython supports multiple inheritance — a class can inherit from more than one parent — but this introduces the diamond problem: when two parents have a method with the same name, which one does the child inherit? Python resolves this using C3 linearization, a specific algorithm that determines the method resolution order (MRO). Understanding MRO is essential for working with complex class hierarchies.",
+        "key_concepts": [
+          "Inheritance creates an is-a relationship: the subclass is a specialized version of the parent",
+          "Subclasses inherit all attributes and methods of the parent class automatically",
+          "Method overriding: a subclass can redefine a parent method to provide specialized behavior",
+          "super() calls the parent class method, ensuring proper initialization and method chaining",
+          "The __init__ chain: subclass __init__ should call super().__init__() to initialize parent attributes",
+          "isinstance() checks if an object is an instance of a class or its subclasses",
+          "issubclass() checks if a class is a subclass of another class",
+          "Multiple inheritance: a class can inherit from multiple parents, inheriting from all of them",
+          "Method Resolution Order (MRO): Python uses C3 linearization to determine method lookup order",
+          "Composition vs inheritance: prefer composition (has-a) when the is-a relationship does not hold"
+        ],
+        "demonstration": "Build a Shape hierarchy with a base Shape class and Circle, Rectangle, and Triangle subclasses. Each implements area() and perimeter() differently. Demonstrate super().__init__() for passing color and name to the parent. Show how isinstance() enables polymorphic processing of a list of mixed shapes.",
+        "setup_requirements": [
+          "Python environment configured",
+          "Understanding of classes from the previous session",
+          "Familiarity with basic OOP concepts from CS101"
+        ],
+        "review": [
+          {
+            "key": "What does super() do?",
+            "value": "super() returns a proxy object that delegates method calls to the parent class. In __init__, calling super().__init__() ensures the parent class is properly initialized before the subclass adds its own attributes."
+          },
+          {
+            "key": "What is the Method Resolution Order (MRO)?",
+            "value": "Python uses C3 linearization to determine the order in which base classes are searched when looking up a method. You can see it with ClassName.__mro__ or ClassName.mro()."
+          },
+          {
+            "key": "When should you use inheritance vs composition?",
+            "value": "Use inheritance when the relationship is genuinely is-a (a Circle is a Shape). Use composition when the relationship is has-a (a Car has an Engine). Composition is more flexible and should be the default choice."
+          },
+          {
+            "key": "What is the Liskov Substitution Principle?",
+            "value": "A subclass instance should be usable wherever a parent class instance is expected without breaking the program. If Square inherits from Rectangle but breaks when width is set independently of height, it violates LSP."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 3,
+      "topic": "Polymorphism and Abstract Classes",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Apply polymorphism to write code that works with multiple types through a shared interface",
+        "Define abstract base classes using the abc module",
+        "Implement interfaces that enforce method signatures in subclasses",
+        "Use duck typing and protocol-based design in Python"
+      ],
+      "readings": [
+        "Python Documentation: abc - Abstract Base Classes",
+        "Fluent Python, Ch. 13 - Interfaces, Protocols, and ABCs (selected sections)",
+        "Effective Python, Item 43 - Inherit from collections.abc for Custom Container Types"
+      ],
+      "lecture_notes": {
+        "introduction": "Polymorphism — from Greek meaning 'many forms' — is the ability of different classes to respond to the same method call in different ways. When you call shape.area(), the Circle computes pi*r^2 while the Rectangle computes width*height. The calling code does not need to know which type it is working with; it just calls area() and gets the right answer.\n\nThis is enormously powerful for writing extensible code. A function that processes a list of shapes and computes their total area works with any shape that implements area() — including shapes that have not been written yet. Adding a new Pentagon class requires no changes to existing code. This is the Open-Closed Principle: software should be open for extension but closed for modification.\n\nPython supports polymorphism through duck typing: if it walks like a duck and quacks like a duck, treat it like a duck. Any object that implements the expected methods can be used, regardless of its class hierarchy. This is more flexible than Java's interface-based approach but less safe — errors are caught at runtime rather than compile time.\n\nAbstract base classes (ABCs) provide a middle ground. An ABC defines a set of methods that subclasses must implement but cannot be instantiated directly. Attempting to create an instance of an ABC without implementing all abstract methods raises a TypeError immediately, catching design errors early.",
+        "key_concepts": [
+          "Polymorphism: different types respond to the same method call with type-specific behavior",
+          "Duck typing: Python checks capabilities at runtime, not class membership at definition time",
+          "The abc module provides AbstractBaseClass and the @abstractmethod decorator",
+          "Abstract methods must be overridden in concrete subclasses or instantiation raises TypeError",
+          "Abstract classes can have concrete methods that subclasses inherit without overriding",
+          "The Open-Closed Principle: open for extension (new subclasses), closed for modification (existing code unchanged)",
+          "Operator overloading: __add__, __eq__, __lt__, __len__ let custom classes work with operators",
+          "The __contains__ method enables the 'in' operator for custom classes",
+          "Protocol classes (Python 3.8+) provide structural typing without inheritance",
+          "Design by contract: abstract classes define the contract that subclasses must fulfill"
+        ],
+        "demonstration": "Define an abstract PaymentMethod class with abstract methods charge(amount) and refund(amount). Implement CreditCard, DebitCard, and PayPal subclasses with different behavior. Write a process_payment() function that works with any PaymentMethod, demonstrating polymorphism. Show that instantiating PaymentMethod directly raises TypeError.",
+        "setup_requirements": [
+          "Python environment configured",
+          "Understanding of inheritance from the previous session",
+          "abc module available in standard library"
+        ],
+        "review": [
+          {
+            "key": "What is duck typing?",
+            "value": "If an object has the methods you need, you can use it regardless of its class. Python does not check types at definition time — it tries to call the method at runtime and raises AttributeError if it does not exist."
+          },
+          {
+            "key": "What is an abstract base class?",
+            "value": "An ABC defines abstract methods that subclasses must implement. You cannot create an instance of an ABC directly. ABCs serve as contracts: they guarantee that any concrete subclass provides specific methods."
+          },
+          {
+            "key": "What is operator overloading?",
+            "value": "Defining special methods like __add__, __eq__, __lt__ lets your classes work with Python operators (+, ==, <). This makes custom types feel like built-in types."
+          },
+          {
+            "key": "What is the Open-Closed Principle?",
+            "value": "Software entities should be open for extension (you can add new types) but closed for modification (existing code does not need to change). Polymorphism enables this by letting new classes plug into existing code through shared interfaces."
+          },
+          {
+            "key": "When should you use an ABC vs duck typing?",
+            "value": "Use an ABC when you want to enforce that subclasses implement specific methods and catch missing implementations early (at instantiation time). Use duck typing when flexibility is more important than safety."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 4,
+      "topic": "Exception Handling Patterns",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Design custom exception hierarchies for domain-specific error handling",
+        "Apply the EAFP and LBYL patterns appropriately in different contexts",
+        "Use context managers (with statement) for resource management",
+        "Implement the context manager protocol with __enter__ and __exit__"
+      ],
+      "readings": [
+        "Python Documentation: Errors and Exceptions",
+        "Effective Python, Item 65 - Take Advantage of Each Block in try/except/else/finally",
+        "Python Documentation: contextlib - Context Manager Utilities"
+      ],
+      "lecture_notes": {
+        "introduction": "In CS101 you learned the mechanics of try/except. Now we study exception handling as a design discipline. Well-designed exception handling is not about catching every possible error — it is about making your code's failure modes explicit, predictable, and recoverable.\n\nCustom exception hierarchies are a powerful design tool. Instead of raising generic ValueError or RuntimeError, you define exceptions specific to your domain: InsufficientFundsError, InvalidAccountError, TransactionLimitExceeded. These make error handling code self-documenting — a reader immediately understands what went wrong without parsing an error message string.\n\nContext managers formalize the pattern of acquiring a resource, using it, and releasing it regardless of whether an exception occurred. The with statement that you learned for file handling is actually a general-purpose construct that works with any object implementing __enter__ and __exit__. Database connections, network sockets, locks, and temporary files all benefit from the context manager pattern.\n\nThis session also covers exception chaining with 'raise X from Y', which preserves the original error trail when translating between exception types. When your database module catches a low-level error and raises a DataAccessError, chaining preserves both the high-level meaning and the low-level details.",
+        "key_concepts": [
+          "Custom exception classes inherit from Exception and can carry domain-specific attributes",
+          "Exception hierarchies: define a base exception for your module, then specific subclasses",
+          "EAFP (try/except) vs LBYL (if/check): EAFP is Pythonic when the success path is expected",
+          "Exception chaining: raise NewError('message') from original_error preserves the error trail",
+          "Context managers implement __enter__ (acquire resource) and __exit__ (release resource)",
+          "The contextlib.contextmanager decorator creates context managers from generator functions",
+          "Exception groups (Python 3.11+): except* handles multiple exceptions from concurrent operations",
+          "The warnings module for non-fatal issues that should not raise exceptions",
+          "Logging exceptions: use logger.exception() in except blocks to capture the traceback",
+          "Re-raising: bare raise in an except block re-raises the caught exception with its original traceback"
+        ],
+        "demonstration": "Design a banking module with a custom exception hierarchy: BankingError as the base, with InsufficientFundsError, AccountNotFoundError, and TransactionLimitError as subclasses. Implement a BankAccount class with a context manager for transactions that automatically rolls back on error. Show exception chaining when underlying errors are translated to banking errors.",
+        "setup_requirements": [
+          "Python environment configured",
+          "Understanding of basic try/except from CS101",
+          "Familiarity with classes and inheritance"
+        ],
+        "review": [
+          {
+            "key": "Why create custom exception classes?",
+            "value": "Custom exceptions make error handling self-documenting. Catching InsufficientFundsError is clearer than catching ValueError and checking the message string. Custom exceptions can also carry domain-specific data."
+          },
+          {
+            "key": "What is exception chaining?",
+            "value": "'raise NewError() from original' attaches the original exception as the __cause__ of the new one. This preserves the full error trail for debugging while presenting a high-level error to callers."
+          },
+          {
+            "key": "How do context managers work?",
+            "value": "__enter__ is called when entering the with block and its return value is bound to the as variable. __exit__ is called when leaving the block, even if an exception occurred, enabling guaranteed cleanup."
+          },
+          {
+            "key": "When is LBYL better than EAFP?",
+            "value": "LBYL (Look Before You Leap) is better when the check is cheap and failure is expected frequently, or when the operation has side effects that are hard to undo. EAFP is better when success is the common case."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 5,
+      "topic": "Data Structures: Stacks and Queues",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Understand the stack abstract data type and its LIFO behavior",
+        "Understand the queue abstract data type and its FIFO behavior",
+        "Implement stacks and queues using Python lists and collections.deque",
+        "Apply stacks and queues to solve practical problems"
+      ],
+      "readings": [
+        "Problem Solving with Algorithms and Data Structures (Miller/Ranum), Ch. 4 - Linear Structures",
+        "Python Documentation: collections.deque",
+        "Grokking Algorithms, Ch. 6 - Breadth-First Search (queue introduction)"
+      ],
+      "lecture_notes": {
+        "introduction": "A data structure is a way of organizing data that enables specific operations to be performed efficiently. Stacks and queues are the two simplest but most important abstract data types (ADTs). An ADT defines what operations are available, not how they are implemented — the same stack behavior can be built on top of a list, a linked list, or an array.\n\nA stack follows Last-In, First-Out (LIFO) order: the last element added is the first removed. Think of a stack of plates — you add and remove from the top. Stacks appear everywhere in computing: the function call stack, undo systems in text editors, browser back buttons, expression parsing in compilers, and depth-first search algorithms.\n\nA queue follows First-In, First-Out (FIFO) order: the first element added is the first removed. Think of a line at a store — first come, first served. Queues model waiting processes: print job queues, network request buffers, breadth-first search, and event handling in GUIs.\n\nThe key insight is that restricting operations — a stack only allows push and pop at one end, a queue only allows enqueue at one end and dequeue at the other — makes reasoning about behavior easier and enables efficient implementation. This principle of constraining interfaces to clarify behavior is fundamental to software design.",
+        "key_concepts": [
+          "Abstract Data Type (ADT): defines operations and behavior, not implementation",
+          "Stack ADT: push(item), pop() -> item, peek() -> item, is_empty() -> bool — LIFO order",
+          "Queue ADT: enqueue(item), dequeue() -> item, front() -> item, is_empty() -> bool — FIFO order",
+          "Python list as stack: append() for push, pop() for pop — efficient O(1) operations at the end",
+          "Python list as queue: append() for enqueue, pop(0) for dequeue — O(n) dequeue due to shifting",
+          "collections.deque: O(1) operations at both ends, making it ideal for queues",
+          "Stack application: balanced parentheses checker, expression evaluation, undo/redo",
+          "Queue application: breadth-first search, print spooler simulation, task scheduling",
+          "Priority queue: elements are dequeued by priority rather than arrival order (preview for CS201)",
+          "The importance of choosing the right data structure: lists are not always the answer"
+        ],
+        "demonstration": "Implement a Stack class with push, pop, peek, and is_empty methods using a list internally. Then implement a balanced parentheses checker for expressions like '((a + b) * [c - d]) / {e}' that handles three types of brackets. Implement a Queue class using deque and simulate a print job scheduler with arrival times and page counts.",
+        "setup_requirements": [
+          "Python environment configured",
+          "collections module available",
+          "Understanding of classes and encapsulation"
+        ],
+        "review": [
+          {
+            "key": "Why is using a list as a queue inefficient?",
+            "value": "list.pop(0) is O(n) because all remaining elements must be shifted left to fill the gap. collections.deque.popleft() is O(1) because deque uses a doubly-linked list internally."
+          },
+          {
+            "key": "What real-world system uses a stack?",
+            "value": "The function call stack: when function A calls function B, A's state is pushed onto the stack. When B returns, A's state is popped and execution resumes. This is also how recursion works."
+          },
+          {
+            "key": "What is the difference between an ADT and a data structure?",
+            "value": "An ADT defines the operations and their behavior (what). A data structure is a specific implementation (how). The Stack ADT can be implemented with a list, a linked list, or an array — the behavior is the same."
+          },
+          {
+            "key": "Why restrict operations instead of allowing everything?",
+            "value": "Restricting operations makes behavior predictable and reasoning easier. A stack guarantees LIFO order; if you could access any element, you would have just a list with no guaranteed ordering behavior."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Linked Lists",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Understand the linked list data structure and how it differs from arrays/lists",
+        "Implement a singly linked list with insert, delete, search, and traversal operations",
+        "Analyze the time complexity of linked list operations vs Python list operations",
+        "Implement a doubly linked list and understand its advantages"
+      ],
+      "readings": [
+        "Problem Solving with Algorithms and Data Structures (Miller/Ranum), Ch. 4 - Linked Lists",
+        "Grokking Algorithms, Ch. 2 - Linked Lists vs Arrays",
+        "Python Documentation: collections.deque (implemented as a doubly linked list)"
+      ],
+      "lecture_notes": {
+        "introduction": "Python's built-in list is actually a dynamic array: elements are stored in contiguous memory, and accessing element i takes O(1) time. But inserting or deleting in the middle takes O(n) time because all subsequent elements must be shifted. For applications that frequently insert and delete but rarely access by index, linked lists offer a better trade-off.\n\nA linked list stores each element in a separate node that contains the data and a reference (pointer) to the next node. Nodes are not stored contiguously in memory — each one can be anywhere. This means inserting or deleting a node at a known position takes O(1) time (just adjust the pointers), but finding a node by index takes O(n) time (you must traverse from the head).\n\nLinked lists are the first truly pointer-based data structure you will study. Understanding how they work builds the mental model needed for trees, graphs, and other node-based structures in CS201. The implementation exercises train you to think about references, None checks, and edge cases (empty list, single element, head/tail operations) that arise in all pointer-based code.\n\nA doubly linked list adds a previous pointer to each node, enabling traversal in both directions and O(1) deletion when you have a reference to the node. Python's collections.deque is implemented as a doubly linked list, which is why it offers O(1) operations at both ends.",
+        "key_concepts": [
+          "A node contains data and a reference to the next node; the last node's next is None",
+          "The head pointer references the first node; an empty list has head = None",
+          "Traversal: follow next pointers from head until reaching None — O(n)",
+          "Insertion at head: create a new node, point it to the current head, update head — O(1)",
+          "Insertion at tail: traverse to the last node, set its next to the new node — O(n) without tail pointer",
+          "Deletion: find the node before the target, adjust its next pointer to skip the target — O(n) for search + O(1) for removal",
+          "Singly vs doubly linked lists: doubly linked adds a prev pointer for bidirectional traversal",
+          "Sentinel nodes: a dummy head node simplifies edge cases by eliminating special treatment of the head",
+          "Array vs linked list trade-offs: O(1) access vs O(1) insertion/deletion at known positions",
+          "Memory overhead: each node stores a data reference and one or two pointer references"
+        ],
+        "demonstration": "Implement a SinglyLinkedList class with append, prepend, insert_after, delete, search, and __str__ methods. Walk through each operation with diagrams showing pointer changes. Then extend to a DoublyLinkedList and show how deletion becomes O(1) when you have a reference to the node.",
+        "setup_requirements": [
+          "Python environment configured",
+          "Understanding of classes and references",
+          "Whiteboard or drawing tool for pointer diagrams"
+        ],
+        "review": [
+          {
+            "key": "What is the main advantage of a linked list over an array?",
+            "value": "Insertion and deletion at a known position are O(1) because only pointers change — no elements need to be shifted. This matters in applications with frequent insertions and deletions."
+          },
+          {
+            "key": "What is the main disadvantage of a linked list?",
+            "value": "No random access: reaching element i requires traversing i nodes from the head, taking O(n) time. Arrays provide O(1) access by index because elements are stored contiguously."
+          },
+          {
+            "key": "Why is a tail pointer useful?",
+            "value": "Without a tail pointer, appending to a singly linked list requires traversing the entire list to find the last node — O(n). A tail pointer makes append O(1)."
+          },
+          {
+            "key": "What advantage does a doubly linked list provide?",
+            "value": "Bidirectional traversal and O(1) deletion when you have a reference to the node (you can access the previous node directly). Singly linked lists require O(n) traversal to find the predecessor."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Sorting Algorithms",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Implement selection sort, insertion sort, and bubble sort from scratch",
+        "Analyze the time complexity of each sorting algorithm",
+        "Understand sorting stability and when it matters",
+        "Compare sorting algorithms empirically with benchmarking"
+      ],
+      "readings": [
+        "Grokking Algorithms, Ch. 2 - Selection Sort",
+        "Problem Solving with Algorithms and Data Structures, Ch. 6 - Sorting",
+        "Python Documentation: Sorting HOW TO"
+      ],
+      "lecture_notes": {
+        "introduction": "Sorting is one of the most fundamental operations in computer science. A sorted dataset enables binary search (O(log n) instead of O(n)), makes duplicates adjacent for easy removal, and organizes output for human consumption. Nearly every non-trivial program sorts data at some point.\n\nThis week we study three simple sorting algorithms: selection sort, insertion sort, and bubble sort. All three are O(n^2) in the worst case, making them impractical for large datasets. But they are essential for understanding sorting concepts: comparisons, swaps, stability, in-place vs extra-space, and the analysis techniques that explain why O(n^2) is slow and O(n log n) is the best we can do with comparisons.\n\nSelection sort finds the minimum element and swaps it to the front, then repeats for the remaining elements. It always makes exactly n(n-1)/2 comparisons regardless of input order. Insertion sort builds the sorted portion one element at a time by inserting each new element into its correct position. It is faster on nearly-sorted data — O(n) in the best case. Bubble sort repeatedly compares adjacent elements and swaps them if out of order, 'bubbling' large elements toward the end.\n\nThe key takeaway is not memorizing these algorithms but understanding how to analyze them. How many comparisons does each make? How many swaps? Does the order of the input affect performance? Is the sort stable (does it preserve the relative order of equal elements)? These questions prepare you for the O(n log n) algorithms (merge sort, quicksort) covered later in the course.",
+        "key_concepts": [
+          "Selection sort: find minimum, swap to front, repeat — O(n^2) always, O(1) extra space",
+          "Insertion sort: insert each element into its correct position in the sorted prefix — O(n^2) worst, O(n) best",
+          "Bubble sort: repeatedly swap adjacent out-of-order pairs — O(n^2) worst, O(n) best with early termination",
+          "Stability: a sort is stable if equal elements retain their original relative order",
+          "Insertion sort is stable; selection sort is not stable (swaps can change relative order of equals)",
+          "In-place sorting uses O(1) extra memory; out-of-place sorting requires O(n) extra memory",
+          "Comparison count analysis: selection sort always makes n(n-1)/2 comparisons; insertion sort depends on input",
+          "Adaptive algorithms: insertion sort adapts to partially sorted input; selection sort does not",
+          "Lower bound for comparison sorting: O(n log n) is the best possible worst-case for any comparison sort",
+          "Python's built-in sorted() uses Timsort, a hybrid of merge sort and insertion sort"
+        ],
+        "demonstration": "Implement all three algorithms with comparison and swap counters. Run each on the same random, sorted, and reverse-sorted arrays of sizes 100, 1000, and 10000. Display the counts in a table to see how input order affects each algorithm differently.",
+        "setup_requirements": [
+          "Python environment configured",
+          "time module and random module for benchmarking",
+          "Understanding of Big-O notation from CS101"
+        ],
+        "review": [
+          {
+            "key": "Why is insertion sort faster than selection sort on nearly-sorted data?",
+            "value": "Insertion sort finds the correct position by scanning backward from each element. If the data is nearly sorted, each element is close to its correct position, so the inner loop terminates early. Selection sort always scans the entire unsorted portion."
+          },
+          {
+            "key": "What does it mean for a sort to be stable?",
+            "value": "A stable sort preserves the relative order of elements with equal keys. If two students have the same grade, a stable sort keeps them in their original order. This matters when sorting by multiple criteria sequentially."
+          },
+          {
+            "key": "Why can't comparison sorting be faster than O(n log n)?",
+            "value": "Each comparison gives one bit of information (less or greater). With n! possible orderings of n elements, you need at least log2(n!) comparisons to distinguish them all, and log2(n!) is O(n log n)."
+          },
+          {
+            "key": "When would you use these O(n^2) sorts in practice?",
+            "value": "For very small arrays (under ~50 elements) where the overhead of O(n log n) algorithms is not worth it. Timsort actually switches to insertion sort for small subarrays for this reason."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Searching Algorithms and Divide-and-Conquer",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Implement linear search and binary search with thorough analysis",
+        "Apply the divide-and-conquer strategy to algorithm design",
+        "Understand merge sort as a divide-and-conquer sorting algorithm",
+        "Analyze algorithms using recurrence relations"
+      ],
+      "readings": [
+        "Grokking Algorithms, Ch. 1 - Binary Search",
+        "Grokking Algorithms, Ch. 4 - Quicksort (divide and conquer section)",
+        "Problem Solving with Algorithms and Data Structures, Ch. 6 - Merge Sort"
+      ],
+      "lecture_notes": {
+        "introduction": "Divide and conquer is one of the most powerful algorithm design strategies. The idea is simple: break a problem into smaller subproblems of the same type, solve each recursively, and combine the results. Binary search divides the search space in half on each step. Merge sort divides the array in half, sorts each half, and merges the results.\n\nBinary search is deceptively simple to describe but notoriously tricky to implement correctly. Off-by-one errors in the bounds, infinite loops when the target is not present, and incorrect handling of duplicates are common bugs. This session provides a rigorous implementation with invariants that guarantee correctness.\n\nMerge sort is the first O(n log n) sorting algorithm we study in detail. Its key insight is that merging two sorted arrays takes only O(n) time — you compare the fronts of both arrays and take the smaller element. By recursively splitting the array until each piece has one element (trivially sorted), then merging back up, you achieve O(n log n) total time.\n\nThe analysis uses recurrence relations: T(n) = 2T(n/2) + O(n), which means 'the time to sort n elements is twice the time to sort n/2 elements plus O(n) for the merge.' The Master Theorem tells us this solves to O(n log n). Understanding this analysis framework is essential for CS201.",
+        "key_concepts": [
+          "Divide and conquer: divide into subproblems, conquer recursively, combine results",
+          "Binary search requires sorted input; eliminates half the candidates each step — O(log n)",
+          "Binary search implementation: maintain lo and hi pointers, compute mid, compare and narrow",
+          "Off-by-one errors: use lo <= hi (not lo < hi) and mid = lo + (hi - lo) // 2 to avoid overflow",
+          "Merge sort: split array in half, recursively sort each half, merge sorted halves — O(n log n)",
+          "The merge step: compare fronts of two sorted arrays, take the smaller — O(n) total",
+          "Merge sort is stable but requires O(n) extra space for the merge buffer",
+          "Recurrence relation: T(n) = 2T(n/2) + O(n) solves to O(n log n) by the Master Theorem",
+          "Merge sort guarantees O(n log n) regardless of input order (unlike quicksort)",
+          "Practical considerations: merge sort's cache performance is worse than quicksort's due to extra array copies"
+        ],
+        "demonstration": "Implement binary search with detailed invariant comments. Then implement merge sort step by step: first the merge function alone, tested on two sorted arrays; then the recursive merge_sort that splits, recurses, and merges. Trace the execution on a small array to visualize the split-merge tree.",
+        "setup_requirements": [
+          "Python environment configured",
+          "Understanding of recursion from CS101",
+          "Familiarity with sorting from the previous session"
+        ],
+        "review": [
+          {
+            "key": "Why does merge sort guarantee O(n log n)?",
+            "value": "The array is split log(n) times (each split halves the size). At each level, the total merge work across all subarrays is O(n). So total work is O(n) per level times O(log n) levels = O(n log n)."
+          },
+          {
+            "key": "What is the merge step?",
+            "value": "Given two sorted arrays, create a result array by repeatedly comparing the front elements and taking the smaller one. When one array is exhausted, append the remainder of the other. Total: O(n) time."
+          },
+          {
+            "key": "What is a recurrence relation?",
+            "value": "An equation that defines a function in terms of itself on smaller inputs. T(n) = 2T(n/2) + O(n) means solving a size-n problem requires solving two size-n/2 problems plus O(n) combining work."
+          },
+          {
+            "key": "When is binary search incorrect?",
+            "value": "When the input is not sorted. Binary search assumes elements to the left of mid are smaller and to the right are larger. On unsorted data, this assumption fails and the algorithm misses elements."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "Advanced Recursion",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Design recursive solutions for complex problems using multiple recursive calls",
+        "Implement memoization to optimize recursive functions with overlapping subproblems",
+        "Understand tail recursion and Python's recursion limits",
+        "Apply recursion to tree-like and nested data processing"
+      ],
+      "readings": [
+        "Think Python, Ch. 5 and Ch. 6 - Recursion sections",
+        "Grokking Algorithms, Ch. 3 - Recursion and Ch. 9 - Dynamic Programming introduction",
+        "Problem Solving with Algorithms and Data Structures, Ch. 5 - Recursion"
+      ],
+      "lecture_notes": {
+        "introduction": "In CS101 you learned the basics of recursion: base cases, recursive cases, and the call stack. Now we tackle more complex recursive problems that require multiple recursive calls per invocation and strategies for handling their performance implications.\n\nThe Fibonacci function is the classic example of a recursive function that is elegant but catastrophically slow: fib(n) makes approximately 2^n function calls because it recomputes the same subproblems over and over. fib(5) computes fib(3) twice and fib(2) three times. For fib(40), this redundancy means billions of calls.\n\nMemoization solves this by caching results: the first time fib(k) is computed, the result is stored in a dictionary. Subsequent calls with the same argument return the cached result in O(1) instead of recomputing. This transforms the exponential O(2^n) algorithm into a linear O(n) one. Memoization is the gateway to dynamic programming, a major topic in CS201.\n\nWe also study recursion on nested structures — processing deeply nested JSON, traversing directory trees, and evaluating arithmetic expression trees. These problems are natural fits for recursion because the data itself is recursive: a directory contains files and subdirectories, each of which may contain more files and subdirectories.",
+        "key_concepts": [
+          "Multiple recursive calls: some problems (Fibonacci, tree traversal) make two or more recursive calls per invocation",
+          "Overlapping subproblems: when the same subproblem is solved multiple times, performance degrades exponentially",
+          "Memoization: cache results of expensive function calls and return the cached result for repeated inputs",
+          "Python's functools.lru_cache decorator automates memoization with configurable cache size",
+          "Fibonacci without memoization: O(2^n) — with memoization: O(n), a dramatic improvement",
+          "Tail recursion: when the recursive call is the last operation, enabling potential optimization (not in Python)",
+          "Python's recursion limit (default 1000) and sys.setrecursionlimit() for deeper recursion",
+          "Recursive data processing: flattening nested lists, summing nested dictionaries, directory traversal",
+          "Towers of Hanoi: classic problem requiring 2^n - 1 moves, naturally expressed recursively",
+          "When to convert recursion to iteration: when the depth exceeds Python's limit or when performance is critical"
+        ],
+        "demonstration": "Implement Fibonacci three ways: naive recursion (show it timing out at n=35), memoized recursion (instant for n=1000), and iterative (show it matches memoized speed). Then implement a recursive JSON flattener that converts nested dictionaries into flat key paths: {'a': {'b': 1}} becomes {'a.b': 1}.",
+        "setup_requirements": [
+          "Python environment configured",
+          "functools module for lru_cache",
+          "time module for benchmarking",
+          "Sample nested JSON data"
+        ],
+        "review": [
+          {
+            "key": "What causes exponential blowup in naive recursive Fibonacci?",
+            "value": "Each call branches into two subcalls, and many subproblems overlap. fib(n) is computed O(2^n) times total because fib(n-1) and fib(n-2) share subproblems that are recomputed independently."
+          },
+          {
+            "key": "How does memoization fix the problem?",
+            "value": "Memoization stores the result of each fib(k) the first time it is computed. Subsequent calls return the cached result in O(1). Each value is computed exactly once, giving O(n) total time."
+          },
+          {
+            "key": "What is @lru_cache?",
+            "value": "A decorator from functools that automatically memoizes a function. It caches the most recent maxsize results (default 128). @lru_cache(maxsize=None) provides unlimited caching."
+          },
+          {
+            "key": "Why does Python not optimize tail recursion?",
+            "value": "Python's creator (Guido van Rossum) intentionally chose not to optimize tail calls, preferring clear stack traces for debugging. Deep recursion in Python should be converted to iteration or use sys.setrecursionlimit()."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "File Systems and Serialization",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Navigate and manipulate the file system using os and pathlib modules",
+        "Serialize Python objects to JSON and CSV formats",
+        "Understand the trade-offs between serialization formats",
+        "Implement data persistence for application state"
+      ],
+      "readings": [
+        "Python Documentation: pathlib - Object-oriented filesystem paths",
+        "Python Documentation: json - JSON encoder and decoder",
+        "Effective Python, Item 78 - Use Plain Attributes Instead of Setter and Getter Methods (serialization context)"
+      ],
+      "lecture_notes": {
+        "introduction": "Real applications need to save their state between runs and exchange data with other systems. Serialization is the process of converting in-memory Python objects into a format that can be stored in a file or sent over a network. Deserialization reverses the process, reconstructing objects from their stored representation.\n\nJSON (JavaScript Object Notation) is the dominant format for data exchange. It supports strings, numbers, booleans, null, arrays, and objects (key-value maps). Its human-readable text format makes it easy to debug and widely supported across languages. However, it cannot directly represent Python-specific types like sets, tuples, datetime objects, or custom classes without custom encoding.\n\nCSV remains the standard for tabular data and integrates well with spreadsheets and databases. Python's csv module handles the edge cases of the format (commas in quoted fields, newlines in values, different delimiters) that naive split(',') approaches miss.\n\nThe pathlib module provides an object-oriented interface to the file system that is more readable and less error-prone than os.path string manipulation. Path objects support / operator for joining, .exists() for checking, and .read_text()/.write_text() for simple file operations. For production applications, pathlib is the preferred approach to file path handling.",
+        "key_concepts": [
+          "pathlib.Path: object-oriented file paths with / operator for joining and method-based operations",
+          "Path.glob() and Path.rglob() for finding files matching patterns recursively",
+          "JSON serialization: json.dump(obj, file) / json.load(file) for file I/O; dumps/loads for strings",
+          "Custom JSON encoding: subclass json.JSONEncoder to handle datetime, sets, and custom classes",
+          "CSV reading: csv.reader for lists, csv.DictReader for dictionaries keyed by header names",
+          "CSV writing: csv.writer for lists, csv.DictWriter for dictionaries with writeheader()",
+          "Format trade-offs: JSON is portable and readable but limited in types; CSV is tabular and widespread",
+          "Data persistence pattern: load on startup, modify in memory, save on exit or periodically",
+          "The shelve module: dictionary-like persistent storage backed by a database file",
+          "Error handling for serialization: handle missing files, corrupt data, and schema changes gracefully"
+        ],
+        "demonstration": "Build an application data manager that stores a list of contacts as class instances. Implement save/load in two formats: JSON (with custom encoder for the Contact class) and CSV (flat tabular representation). Show how pathlib simplifies file path handling compared to os.path.join(). Demonstrate recovering from a corrupted save file.",
+        "setup_requirements": [
+          "Python environment configured",
+          "json, csv, pathlib modules (all standard library)",
+          "Sample data files in JSON and CSV formats"
+        ],
+        "review": [
+          {
+            "key": "Why is JSON preferred for data exchange?",
+            "value": "JSON is human-readable, supported by virtually every programming language, and safe to parse (no code execution risk). It is the standard for web APIs, configuration files, and inter-system communication."
+          },
+          {
+            "key": "Why use pathlib over os.path?",
+            "value": "pathlib provides an object-oriented interface: Path('dir') / 'file.txt' is cleaner than os.path.join('dir', 'file.txt'). Methods like .exists(), .read_text(), .glob() replace scattered os and os.path functions."
+          },
+          {
+            "key": "How do you serialize custom objects to JSON?",
+            "value": "Implement a custom JSONEncoder that converts your objects to dictionaries, or add a to_dict() method to your classes. For deserialization, implement a from_dict() class method that reconstructs objects from dictionaries."
+          },
+          {
+            "key": "When is CSV better than JSON?",
+            "value": "CSV is better for tabular data that will be opened in spreadsheets, imported into databases, or processed by tools that expect row/column format. JSON is better for hierarchical or nested data."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "GUI Programming with Tkinter",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Create graphical user interfaces using Tkinter widgets",
+        "Understand event-driven programming and callback functions",
+        "Layout widgets using pack, grid, and frame-based organization",
+        "Connect GUI elements to application logic through event handlers"
+      ],
+      "readings": [
+        "Python Documentation: tkinter - Python interface to Tcl/Tk",
+        "TkDocs Tutorial: Introduction to Tk",
+        "Automate the Boring Stuff, Ch. 20 - GUI Automation (background context)"
+      ],
+      "lecture_notes": {
+        "introduction": "Every program we have written so far uses a command-line interface: text input and text output. While command-line tools are powerful and preferred by many developers, most end users expect graphical interfaces with buttons, menus, text fields, and windows. GUI programming is a different paradigm from what you are used to.\n\nCommand-line programs are sequential: your code runs from top to bottom, occasionally asking for input. GUI programs are event-driven: after creating the interface, your code enters an event loop that waits for user actions (clicks, keystrokes, window resizes) and calls your callback functions in response. This inversion of control is the fundamental shift in GUI programming.\n\nTkinter is Python's built-in GUI toolkit. It is not the prettiest or most powerful GUI framework, but it requires no installation, works on all platforms, and teaches the core concepts that transfer to any GUI toolkit: widgets, layouts, events, and callbacks. The patterns you learn here apply directly to more modern frameworks like PyQt, Kivy, or web-based interfaces.\n\nThis session covers the essential widgets (Label, Button, Entry, Text, Frame, Listbox), layout management (pack for simple stacking, grid for tabular layouts), and event handling (command callbacks, bind for keyboard/mouse events). By the end, you will be able to build simple but functional desktop applications.",
+        "key_concepts": [
+          "Event-driven programming: the event loop waits for user actions and dispatches to callback functions",
+          "Tkinter widgets: Label (display text), Button (trigger actions), Entry (single-line input), Text (multi-line input)",
+          "Frame widget: a container that groups other widgets for organized layouts",
+          "Listbox and Scrollbar: displaying and navigating lists of items",
+          "Pack geometry manager: stack widgets top/bottom/left/right within their container",
+          "Grid geometry manager: place widgets in rows and columns for tabular layouts",
+          "The command parameter on Button connects a callback function to a click event",
+          "StringVar and IntVar: Tkinter variables that automatically update widgets when changed",
+          "bind() method: connect keyboard and mouse events to callback functions",
+          "Messagebox module: display alert, confirmation, and error dialogs"
+        ],
+        "demonstration": "Build a simple to-do list application with Tkinter: an Entry for new tasks, a Listbox displaying current tasks, Add and Delete buttons, and a status bar showing the count. Use grid layout for organized widget placement and StringVar for the entry field. Add keyboard shortcuts (Enter to add, Delete to remove).",
+        "setup_requirements": [
+          "Python environment with tkinter (included in standard Python distribution)",
+          "Understanding of functions and callbacks",
+          "Familiarity with classes for organizing GUI code"
+        ],
+        "review": [
+          {
+            "key": "What is event-driven programming?",
+            "value": "Instead of your code controlling the flow, the event loop runs continuously waiting for user actions. When an event occurs (click, keypress), the loop calls your registered callback function. Your code reacts to events rather than directing the sequence."
+          },
+          {
+            "key": "What is the difference between pack and grid?",
+            "value": "Pack stacks widgets in one direction (top, bottom, left, right) and is simple but limited. Grid places widgets in a row/column structure and is more flexible for complex layouts. Most real applications use grid."
+          },
+          {
+            "key": "What is a StringVar?",
+            "value": "A Tkinter variable that, when changed, automatically updates any widget connected to it. Setting entry_var.set('new text') immediately changes the Entry widget's display. This is Tkinter's data binding mechanism."
+          },
+          {
+            "key": "Why separate GUI code from application logic?",
+            "value": "Mixing GUI code with business logic makes both harder to test, modify, and reuse. Keep logic in separate classes/modules that know nothing about Tkinter, and connect them through callbacks in the GUI layer."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Introduction to Java: Syntax and Type System",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Write simple Java programs with main methods, variables, and control flow",
+        "Understand static typing and how it differs from Python's dynamic typing",
+        "Compile and run Java programs from the command line",
+        "Translate familiar Python patterns into Java syntax"
+      ],
+      "readings": [
+        "Head First Java, Ch. 1 - Breaking the Surface",
+        "Oracle Java Tutorial: Getting Started",
+        "Oracle Java Tutorial: Language Basics"
+      ],
+      "lecture_notes": {
+        "introduction": "Learning a second programming language is a fundamentally different experience from learning your first. With Python, you learned both programming concepts and Python syntax simultaneously. With Java, you already understand variables, loops, functions, and classes — you just need to learn how Java expresses them differently.\n\nThe biggest difference between Python and Java is the type system. Python is dynamically typed: a variable can hold any type, and type errors are caught at runtime. Java is statically typed: every variable must declare its type, and type errors are caught by the compiler before the program runs. This means more verbose code but earlier error detection.\n\nJava is compiled rather than interpreted. You write source code in .java files, the compiler (javac) translates it to bytecode (.class files), and the Java Virtual Machine (JVM) executes the bytecode. This compile step catches syntax errors and type errors before running, which is both a benefit (fewer runtime surprises) and an overhead (you must compile before testing).\n\nThis week we focus on the mechanical translation: how to write the same programs you know in Python using Java syntax. Variables with explicit types, semicolons at the end of statements, curly braces for blocks instead of indentation, the public static void main(String[] args) entry point, and System.out.println() instead of print().",
+        "key_concepts": [
+          "Java requires explicit type declarations: int x = 5; String name = \"Alice\"; double price = 9.99;",
+          "Every statement ends with a semicolon; blocks are delimited by curly braces { }, not indentation",
+          "The main method signature: public static void main(String[] args) is the program entry point",
+          "Primitive types: int, double, boolean, char — not objects, stored directly on the stack",
+          "Reference types: String, arrays, objects — stored on the heap, accessed by reference",
+          "String comparison: use .equals() not ==; the == operator compares references, not content",
+          "Java arrays have fixed size: int[] nums = new int[10]; use ArrayList for dynamic sizing",
+          "For loops: for (int i = 0; i < n; i++) is the standard counting loop",
+          "System.out.println() for output; Scanner for input: Scanner sc = new Scanner(System.in);",
+          "Compilation: javac MyProgram.java produces MyProgram.class; java MyProgram executes it"
+        ],
+        "demonstration": "Translate three Python programs to Java side by side: (1) a temperature converter with if/elif/else logic, (2) a loop that computes factorial, and (3) a program that reads numbers from the user and finds the maximum. Show the compile-run cycle: javac, then java, then fix errors, repeat.",
+        "setup_requirements": [
+          "Java JDK 17+ installed (java --version and javac --version both work)",
+          "VS Code with Java Extension Pack or IntelliJ IDEA Community Edition",
+          "Terminal access for compiling and running Java programs"
+        ],
+        "review": [
+          {
+            "key": "What is the biggest difference between Python and Java?",
+            "value": "Java is statically typed: every variable declares its type at creation time, and the compiler verifies type correctness before the program runs. Python is dynamically typed: types are checked at runtime."
+          },
+          {
+            "key": "Why does Java use .equals() for string comparison?",
+            "value": "In Java, == compares object references (memory addresses), not content. Two String objects with the same text may be different objects. .equals() compares the actual character content."
+          },
+          {
+            "key": "What are primitive types vs reference types?",
+            "value": "Primitives (int, double, boolean, char) store values directly and use little memory. Reference types (String, arrays, objects) store a reference to an object on the heap. Primitives have no methods; reference types do."
+          },
+          {
+            "key": "What happens during Java compilation?",
+            "value": "javac translates .java source code to .class bytecode. The compiler checks syntax and types, catching errors before runtime. java then executes the bytecode on the JVM."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "Java OOP: Classes, Inheritance, and Interfaces",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Define Java classes with constructors, fields, and methods",
+        "Implement inheritance with extends and method overriding",
+        "Define and implement interfaces to establish contracts",
+        "Understand access modifiers: public, private, protected, package-private"
+      ],
+      "readings": [
+        "Head First Java, Ch. 7-8 - Inheritance and Interfaces",
+        "Oracle Java Tutorial: Classes and Objects",
+        "Oracle Java Tutorial: Interfaces and Inheritance"
+      ],
+      "lecture_notes": {
+        "introduction": "Java was designed from the ground up as an object-oriented language, and it enforces OOP more strictly than Python. Every Java program is a class. There are no standalone functions — only methods that belong to classes. Access control is enforced by the compiler through explicit modifiers (public, private, protected), not just by naming convention.\n\nJava constructors work like Python's __init__ but with explicit parameter types and no self parameter — the current instance is accessed through the implicit this reference. Fields (attributes) must declare their types, and access modifiers determine visibility: private fields are invisible outside the class (true encapsulation enforced by the compiler), while public fields are accessible everywhere.\n\nInheritance in Java uses the extends keyword and supports only single inheritance: a class can have exactly one parent. This avoids the diamond problem that multiple inheritance creates in Python. Method overriding works similarly — the subclass provides a new implementation — but Java adds the @Override annotation that tells the compiler to verify the method actually overrides a parent method.\n\nInterfaces are Java's answer to multiple inheritance and abstract classes. An interface defines a set of method signatures that implementing classes must provide. A class can implement multiple interfaces, enabling polymorphism without the complexity of multiple inheritance. This is a fundamental design pattern in Java that has no direct equivalent in Python (though Python's ABC and Protocol types serve similar purposes).",
+        "key_concepts": [
+          "Java class structure: fields (attributes), constructor (initializer), methods, all with type declarations",
+          "Constructors: same name as the class, no return type, called with new: Student s = new Student(\"Alice\");",
+          "Access modifiers: private (class only), protected (class + subclasses), public (everywhere), package-private (default, no modifier)",
+          "Inheritance with extends: class Dog extends Animal { } — single inheritance only",
+          "Method overriding with @Override annotation: compiler verifies the method exists in the parent",
+          "super keyword: super() calls parent constructor; super.method() calls parent method",
+          "Interfaces with implements: interface Printable { void print(); } — no implementation, just signatures",
+          "A class can implement multiple interfaces: class Report implements Printable, Exportable { }",
+          "Abstract classes: abstract class Shape { abstract double area(); } — can have both abstract and concrete methods",
+          "Java's toString() is equivalent to Python's __str__(); equals() is equivalent to __eq__()"
+        ],
+        "demonstration": "Build a small class hierarchy in Java: an abstract Shape class with abstract area() and perimeter() methods, Circle and Rectangle subclasses, and a Printable interface with a prettyPrint() method. Create an array of Shape references holding different shape types and iterate through them, demonstrating polymorphism.",
+        "setup_requirements": [
+          "Java JDK 17+ configured",
+          "IDE set up for Java development",
+          "Understanding of Python OOP for comparison"
+        ],
+        "review": [
+          {
+            "key": "How does Java inheritance differ from Python?",
+            "value": "Java allows only single inheritance (one parent class via extends) but a class can implement multiple interfaces. Python allows multiple inheritance. Java enforces access control at compile time with private/protected/public."
+          },
+          {
+            "key": "What is the difference between an abstract class and an interface in Java?",
+            "value": "An abstract class can have fields, constructors, and concrete methods alongside abstract methods. An interface (traditionally) only has abstract methods. A class can extend only one abstract class but implement multiple interfaces."
+          },
+          {
+            "key": "What does @Override do?",
+            "value": "It tells the compiler to verify that the annotated method actually overrides a parent method. If the signature does not match (typo in name, wrong parameters), the compiler reports an error instead of silently creating a new method."
+          },
+          {
+            "key": "Why does Java require access modifiers?",
+            "value": "Access modifiers enforce encapsulation at compile time. A private field cannot be accessed outside its class — the compiler prevents it. Python relies on convention (_prefix) but cannot enforce it."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "Java Collections and Generics",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Use Java's Collections Framework: ArrayList, HashMap, HashSet",
+        "Understand generics and type-safe collections",
+        "Compare Java collections with Python's built-in data structures",
+        "Iterate over collections using for-each loops and iterators"
+      ],
+      "readings": [
+        "Head First Java, Ch. 16 - Collections with Generics",
+        "Oracle Java Tutorial: Collections Framework",
+        "Oracle Java Tutorial: Generics"
+      ],
+      "lecture_notes": {
+        "introduction": "Java's Collections Framework provides the same data structures you know from Python — lists, dictionaries, and sets — but with explicit typing through generics. Where Python lets you put anything in a list, Java collections declare the type of their elements: ArrayList<String> holds only strings, HashMap<String, Integer> maps strings to integers.\n\nGenerics are Java's mechanism for type-safe containers. Without generics, a Java collection holds Object references, and you must cast every element you retrieve — risking ClassCastException at runtime. With generics, the compiler ensures only the correct type goes in, and no casting is needed when elements come out.\n\nArrayList<E> is Java's equivalent of Python's list: a dynamic array that grows automatically. HashMap<K, V> is equivalent to Python's dict: a hash table mapping keys to values. HashSet<E> is equivalent to Python's set: an unordered collection of unique elements. The interfaces — List, Map, Set — define the behavior; the classes are specific implementations.\n\nThis comparison between Python and Java collections solidifies your understanding of both languages. You will see that the concepts are identical — dynamic arrays, hash tables, ordered vs unordered collections — even though the syntax is very different. This is the payoff of learning a second language: concepts become separable from syntax.",
+        "key_concepts": [
+          "ArrayList<E>: dynamic array — add(), get(index), remove(), size() — equivalent to Python list",
+          "HashMap<K,V>: hash table — put(key, value), get(key), containsKey(), keySet() — equivalent to Python dict",
+          "HashSet<E>: unique collection — add(), contains(), remove() — equivalent to Python set",
+          "Generics: ArrayList<String> ensures only String objects can be stored; compile-time type safety",
+          "The Collections interfaces: List, Map, Set define behavior; implementations (ArrayList, HashMap) provide it",
+          "For-each loop: for (String name : names) iterates without index management",
+          "Iterator pattern: names.iterator() returns an Iterator with hasNext() and next() methods",
+          "Autoboxing: Java automatically converts between primitives and wrapper types (int to Integer)",
+          "Collections utility methods: Collections.sort(), Collections.max(), Collections.unmodifiableList()",
+          "Python vs Java comparison: dict[key] vs map.get(key), 'in' vs .contains(), len() vs .size()"
+        ],
+        "demonstration": "Translate a Python word frequency counter to Java: read a text file, split into words, count occurrences with HashMap<String, Integer>, sort by frequency using ArrayList and Collections.sort() with a custom Comparator, and print the top 10 words. Compare the Java version line by line with the Python version.",
+        "setup_requirements": [
+          "Java JDK 17+ configured",
+          "Understanding of Python dictionaries, lists, and sets",
+          "Sample text file for word counting"
+        ],
+        "review": [
+          {
+            "key": "What are generics and why do they matter?",
+            "value": "Generics (ArrayList<String>) tell the compiler what type of elements a collection holds. The compiler prevents putting the wrong type in and eliminates the need for casting on retrieval. This catches type errors at compile time instead of runtime."
+          },
+          {
+            "key": "What is autoboxing?",
+            "value": "Java collections cannot hold primitives (int, double), only objects. Autoboxing automatically wraps primitives in their object equivalents (int to Integer) when storing and unwraps when retrieving."
+          },
+          {
+            "key": "How does Java's ArrayList compare to Python's list?",
+            "value": "Both are dynamic arrays with O(1) access by index and O(1) amortized append. Java's ArrayList is type-safe through generics; Python's list can hold mixed types. Java uses .get(i) and .add(x); Python uses [i] and .append(x)."
+          },
+          {
+            "key": "What is the Java for-each loop?",
+            "value": "for (Type item : collection) iterates over all elements without managing an index variable. It works with any Iterable. Equivalent to Python's for item in collection:."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Capstone Project Presentations and Course Review",
+      "duration": "3 hours",
+      "learning_objectives": [
+        "Present a capstone project demonstrating advanced OOP, data structures, and multi-language understanding",
+        "Synthesize all course concepts into a cohesive understanding of software design",
+        "Compare Python and Java approaches to the same problems",
+        "Identify areas for continued study in CS201 and beyond"
+      ],
+      "readings": [
+        "Review all previous readings as needed for capstone project",
+        "Course notes and lecture materials from all sessions",
+        "Effective Python or Head First Java chapters relevant to your capstone topic"
+      ],
+      "lecture_notes": {
+        "introduction": "This final session brings together the full arc of CS102: from OOP fundamentals through inheritance and polymorphism, abstract classes and interfaces, exception handling patterns, data structures (stacks, queues, linked lists), sorting and searching algorithms, recursion, file I/O and serialization, GUI programming, and a transition to Java. Each topic built on the previous ones to develop your ability to design, implement, and reason about software.\n\nThe capstone projects represent your best work this semester. Each project demonstrates not just that you can write code, but that you can design a system: choose appropriate data structures, organize code into classes with clear responsibilities, handle errors gracefully, and persist data between runs. These are the skills that distinguish a programmer from someone who merely writes code.\n\nComparing Python and Java has given you a powerful perspective. You now understand that programming concepts (OOP, data structures, algorithms) are independent of any particular language. Variables, loops, conditionals, functions, classes, inheritance, polymorphism, exceptions, lists, dictionaries, sets, stacks, queues — these exist in every language. The syntax changes; the ideas do not.\n\nLooking ahead, CS201 will dive deep into data structures and algorithms: binary trees, balanced trees, heaps, hash tables, graphs, dynamic programming, and algorithm analysis. The programming skills and OOP design patterns you have built in CS101 and CS102 provide the foundation for that work.",
+        "key_concepts": [
+          "Software design is the art of choosing the right abstractions: classes, interfaces, data structures, algorithms",
+          "OOP principles form a toolkit: encapsulation protects state, inheritance enables code reuse, polymorphism enables extensibility",
+          "Data structures provide trade-offs: arrays for access, linked lists for insertion, hash tables for lookup, stacks/queues for ordering constraints",
+          "Algorithm analysis predicts performance: O(n^2) sorts are fine for small data, O(n log n) is needed for large data",
+          "Error handling is a design decision: custom exceptions, context managers, and fail-fast strategies",
+          "Serialization bridges memory and storage: JSON for portability, CSV for tabular data",
+          "GUI programming introduces event-driven architecture: a fundamental paradigm shift from sequential code",
+          "Multi-language literacy: understanding concepts independent of syntax transfers to every new language",
+          "Testing and debugging are ongoing activities, not afterthoughts",
+          "CS201 preview: trees, graphs, heaps, dynamic programming, and rigorous algorithm analysis await"
+        ],
+        "demonstration": "Student capstone project presentations and demonstrations. The instructor presents a comparative example: the same application (a task manager with priorities) implemented in Python with Tkinter and in Java with Swing, showing how the same OOP design translates between languages.",
+        "setup_requirements": [
+          "Capstone project completed and ready for demonstration",
+          "Presentation materials prepared (slides optional, live demo required)",
+          "Both Python and Java environments configured for comparison demonstrations"
+        ],
+        "review": [
+          {
+            "key": "What is the most important concept from CS102?",
+            "value": "Polymorphism — the ability to write code that works with any type implementing a shared interface. This is the foundation of extensible, maintainable software design."
+          },
+          {
+            "key": "How does CS102 prepare you for CS201?",
+            "value": "CS102 gives you OOP skills for implementing data structures as classes, recursion skills for tree/graph algorithms, and algorithm analysis skills for evaluating performance. CS201 applies all of these intensively."
+          },
+          {
+            "key": "What is the key difference between Python and Java?",
+            "value": "Python prioritizes developer productivity with dynamic typing, minimal syntax, and rapid iteration. Java prioritizes safety and performance with static typing, explicit declarations, and compile-time error checking."
+          },
+          {
+            "key": "What should you practice to strengthen your skills?",
+            "value": "Implement data structures from scratch (linked list, stack, queue, hash table). Solve algorithm problems on LeetCode or HackerRank. Build a complete project with OOP design, error handling, and persistence."
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 3,
+        "topic": "OOP: Inheritance, Polymorphism, and Abstract Classes",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Define a class called Rectangle with width and height attributes. Include an area() method that returns the area and a __str__ method that returns 'Rectangle(width x height)'. Then define a Square subclass that takes only a side parameter and passes it as both width and height to the parent.",
+            "type": "code",
+            "points": 12,
+            "answer": "class Rectangle:\n    def __init__(self, width, height):\n        self.width = width\n        self.height = height\n\n    def area(self):\n        return self.width * self.height\n\n    def __str__(self):\n        return f'Rectangle({self.width} x {self.height})'\n\nclass Square(Rectangle):\n    def __init__(self, side):\n        super().__init__(side, side)",
+            "rubric": [
+              {
+                "key": "Correct Rectangle __init__ with width and height",
+                "value": 3
+              },
+              {
+                "key": "Correct area() and __str__ methods",
+                "value": 3
+              },
+              {
+                "key": "Square inherits from Rectangle with super().__init__(side, side)",
+                "value": 3
+              },
+              {
+                "key": "Proper use of self and super() throughout",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "What is the difference between a try/except/else block and a try/except/finally block? When would you use each?",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "The else block runs only if no exception occurred in the try block, and is used for code that should only execute on success (e.g., processing the data after a successful file read). The finally block runs regardless of whether an exception occurred, and is used for cleanup code that must always execute (closing files, releasing locks, resetting state). You can use both together: try/except/else/finally.",
+            "rubric": [
+              {
+                "key": "Correctly explains else runs only on success",
+                "value": 3
+              },
+              {
+                "key": "Correctly explains finally always runs",
+                "value": 3
+              },
+              {
+                "key": "Provides appropriate use case for each",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain duck typing in Python. How does it differ from Java's interface-based polymorphism?",
+            "type": "short_answer",
+            "points": 5,
+            "answer": "Duck typing means Python checks at runtime whether an object has the required methods, regardless of its class. If it has a quack() method, you can call quack() on it — no interface declaration needed. Java requires objects to explicitly declare that they implement an interface (implements Quackable), and the compiler verifies this at compile time. Duck typing is more flexible but catches errors later; Java's approach catches errors earlier but requires more boilerplate.",
+            "rubric": [
+              {
+                "key": "Correctly explains duck typing as runtime capability checking",
+                "value": 2
+              },
+              {
+                "key": "Correctly contrasts with Java's compile-time interface checking",
+                "value": 2
+              },
+              {
+                "key": "Notes the trade-off between flexibility and safety",
+                "value": 1
+              }
+            ]
+          }
+        ],
+        "total_points": 25
+      },
+      {
+        "quiz": 2,
+        "week": 5,
+        "topic": "Data Structures: Stacks, Queues, and Exception Patterns",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Write a function is_balanced(expression) that uses a stack to check whether all parentheses, brackets, and braces in a string are properly balanced. Return True if balanced, False otherwise. Example: '([{}])' returns True; '([)]' returns False.",
+            "type": "code",
+            "points": 12,
+            "answer": "def is_balanced(expression):\n    stack = []\n    matching = {')': '(', ']': '[', '}': '{'}\n    for char in expression:\n        if char in '([{':\n            stack.append(char)\n        elif char in ')]}':\n            if not stack or stack[-1] != matching[char]:\n                return False\n            stack.pop()\n    return len(stack) == 0",
+            "rubric": [
+              {
+                "key": "Uses a stack (list) for tracking open brackets",
+                "value": 3
+              },
+              {
+                "key": "Handles all three bracket types correctly",
+                "value": 3
+              },
+              {
+                "key": "Checks for matching pairs (not just count)",
+                "value": 3
+              },
+              {
+                "key": "Returns False for both unmatched closers and unclosed openers",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain why using a Python list as a queue (with append and pop(0)) is inefficient. What should you use instead and why?",
+            "type": "short_answer",
+            "points": 6,
+            "answer": "list.pop(0) is O(n) because removing the first element requires shifting all remaining elements one position to the left. For a queue with m operations on a list of average size n, this makes total cost O(m*n). Use collections.deque instead: deque.popleft() is O(1) because deque uses a doubly-linked list structure that allows efficient removal from both ends.",
+            "rubric": [
+              {
+                "key": "Correctly identifies pop(0) as O(n) due to shifting",
+                "value": 2
+              },
+              {
+                "key": "Recommends collections.deque",
+                "value": 2
+              },
+              {
+                "key": "Explains why deque.popleft() is O(1)",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Design a custom exception hierarchy for a file processing library. Define a base FileProcessingError and at least two specific subclasses with appropriate attributes. Show how calling code would catch specific vs general errors.",
+            "type": "code",
+            "points": 8,
+            "answer": "class FileProcessingError(Exception):\n    def __init__(self, filename, message):\n        self.filename = filename\n        super().__init__(f'{filename}: {message}')\n\nclass FileFormatError(FileProcessingError):\n    def __init__(self, filename, line_num, detail):\n        self.line_num = line_num\n        super().__init__(filename, f'format error on line {line_num}: {detail}')\n\nclass FileSizeError(FileProcessingError):\n    def __init__(self, filename, size_mb, max_mb):\n        self.size_mb = size_mb\n        super().__init__(filename, f'file is {size_mb}MB, max is {max_mb}MB')\n\n# Usage:\ntry:\n    process(file)\nexcept FileFormatError as e:\n    print(f'Bad format at line {e.line_num}')\nexcept FileProcessingError as e:\n    print(f'General error: {e}')",
+            "rubric": [
+              {
+                "key": "Base exception inherits from Exception with useful attributes",
+                "value": 2
+              },
+              {
+                "key": "At least two specific subclasses with domain-relevant attributes",
+                "value": 3
+              },
+              {
+                "key": "Demonstrates catching specific before general exceptions",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 26
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "Linked Lists, Sorting, and Searching",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Given a singly linked list implementation with a Node class (data, next), write a method reverse() for the LinkedList class that reverses the list in place by adjusting pointers. Do not create new nodes.",
+            "type": "code",
+            "points": 10,
+            "answer": "def reverse(self):\n    prev = None\n    current = self.head\n    while current is not None:\n        next_node = current.next\n        current.next = prev\n        prev = current\n        current = next_node\n    self.head = prev",
+            "rubric": [
+              {
+                "key": "Uses three-pointer technique (prev, current, next_node)",
+                "value": 4
+              },
+              {
+                "key": "Correctly reverses pointers in the loop",
+                "value": 3
+              },
+              {
+                "key": "Updates self.head to point to the new first node",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between merge sort and insertion sort in terms of time complexity, space complexity, and when each is preferred.",
+            "type": "essay",
+            "points": 8,
+            "answer": "Merge sort: O(n log n) time in all cases, O(n) extra space for the merge buffer. Preferred for large datasets where guaranteed performance matters. Insertion sort: O(n^2) worst case, O(n) best case (nearly sorted input), O(1) extra space (in-place). Preferred for small datasets (under ~50 elements) or nearly-sorted data where its adaptive behavior and low overhead make it faster in practice. Python's Timsort combines both: merge sort for the overall structure, insertion sort for small subarrays.",
+            "rubric": [
+              {
+                "key": "Correct time complexity for both algorithms",
+                "value": 3
+              },
+              {
+                "key": "Correct space complexity for both algorithms",
+                "value": 2
+              },
+              {
+                "key": "Explains when each is preferred with reasoning",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Implement binary search iteratively. Your function should take a sorted list and a target value, returning the index if found or -1 if not found.",
+            "type": "code",
+            "points": 8,
+            "answer": "def binary_search(sorted_list, target):\n    lo = 0\n    hi = len(sorted_list) - 1\n    while lo <= hi:\n        mid = lo + (hi - lo) // 2\n        if sorted_list[mid] == target:\n            return mid\n        elif sorted_list[mid] < target:\n            lo = mid + 1\n        else:\n            hi = mid - 1\n    return -1",
+            "rubric": [
+              {
+                "key": "Correct loop condition (lo <= hi)",
+                "value": 2
+              },
+              {
+                "key": "Correct mid calculation avoiding overflow",
+                "value": 2
+              },
+              {
+                "key": "Correctly narrows search space (lo = mid + 1 or hi = mid - 1)",
+                "value": 2
+              },
+              {
+                "key": "Returns correct values (index on found, -1 on not found)",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 26
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "Advanced Recursion, Serialization, and GUI Concepts",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Write a recursive function flatten(nested_list) that takes a list which may contain other lists (at any depth) and returns a single flat list of all non-list elements. For example, flatten([1, [2, 3], [4, [5, 6]]]) returns [1, 2, 3, 4, 5, 6].",
+            "type": "code",
+            "points": 10,
+            "answer": "def flatten(nested_list):\n    result = []\n    for item in nested_list:\n        if isinstance(item, list):\n            result.extend(flatten(item))\n        else:\n            result.append(item)\n    return result",
+            "rubric": [
+              {
+                "key": "Correct base case (non-list items appended directly)",
+                "value": 3
+              },
+              {
+                "key": "Correct recursive case (lists are flattened recursively)",
+                "value": 3
+              },
+              {
+                "key": "Uses isinstance check for type detection",
+                "value": 2
+              },
+              {
+                "key": "Handles arbitrary nesting depth correctly",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Compare JSON and CSV for data serialization. Give two advantages of each format and explain when you would choose one over the other.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "JSON advantages: (1) Supports nested and hierarchical data structures (objects within objects, arrays within objects). (2) Human-readable and language-agnostic — virtually every programming language can parse JSON. CSV advantages: (1) Native support in spreadsheet applications (Excel, Google Sheets) for easy viewing and editing. (2) More compact than JSON for purely tabular data since it does not repeat field names on every row. Choose JSON for hierarchical, nested, or complex structured data (configuration files, API responses). Choose CSV for flat tabular data that needs to be shared with spreadsheets or databases.",
+            "rubric": [
+              {
+                "key": "Two valid JSON advantages with reasoning",
+                "value": 3
+              },
+              {
+                "key": "Two valid CSV advantages with reasoning",
+                "value": 3
+              },
+              {
+                "key": "Clear guidance on when to choose each format",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain what event-driven programming is and how it differs from the sequential programming you practiced in CS101. What is a callback function in the context of GUI programming?",
+            "type": "short_answer",
+            "points": 6,
+            "answer": "In sequential programming, the programmer controls the flow: code executes top to bottom, and the program asks for input when it needs it. In event-driven programming, the framework controls the flow: after setting up the interface, the program enters an event loop that waits for user actions (clicks, keystrokes) and dispatches them to handler functions. A callback is a function you register to be called when a specific event occurs — for example, passing a function to a Button's command parameter so it runs when the button is clicked.",
+            "rubric": [
+              {
+                "key": "Correctly contrasts sequential vs event-driven flow",
+                "value": 2
+              },
+              {
+                "key": "Explains the event loop concept",
+                "value": 2
+              },
+              {
+                "key": "Correctly defines callback with a concrete example",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 24
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "Java Fundamentals and Cross-Language Concepts",
+        "duration": "30 minutes",
+        "questions": [
+          {
+            "question": "Translate the following Python code to Java:\n\ndef max_value(numbers):\n    if not numbers:\n        return None\n    result = numbers[0]\n    for num in numbers[1:]:\n        if num > result:\n            result = num\n    return result",
+            "type": "code",
+            "points": 10,
+            "answer": "public static Integer maxValue(int[] numbers) {\n    if (numbers.length == 0) {\n        return null;\n    }\n    int result = numbers[0];\n    for (int i = 1; i < numbers.length; i++) {\n        if (numbers[i] > result) {\n            result = numbers[i];\n        }\n    }\n    return result;\n}",
+            "rubric": [
+              {
+                "key": "Correct method signature with types (static, return type, parameter type)",
+                "value": 3
+              },
+              {
+                "key": "Proper empty array check",
+                "value": 2
+              },
+              {
+                "key": "Correct for loop with array indexing",
+                "value": 3
+              },
+              {
+                "key": "Correct Java syntax (semicolons, braces, return)",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the key differences between Python's list and Java's ArrayList<String>. Cover type safety, syntax for common operations, and performance characteristics.",
+            "type": "essay",
+            "points": 8,
+            "answer": "Type safety: Python lists accept any type (mixed types allowed); ArrayList<String> only accepts String objects, enforced at compile time. Syntax: Python uses bracket notation (lst[i], lst.append(x), len(lst)); Java uses method calls (list.get(i), list.add(x), list.size()). Performance: Both are dynamic arrays with O(1) random access and O(1) amortized append. Both have O(n) insertion/deletion in the middle. Java's generics eliminate the need for runtime type checking, giving a slight performance edge. Python's flexibility means no boxing/unboxing overhead for primitives (Python has no primitives).",
+            "rubric": [
+              {
+                "key": "Correctly describes type safety difference",
+                "value": 3
+              },
+              {
+                "key": "Correct syntax comparison for common operations",
+                "value": 3
+              },
+              {
+                "key": "Accurate performance comparison",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "In Java, why must you use .equals() instead of == to compare String content? What does == actually compare for objects in Java?",
+            "type": "short_answer",
+            "points": 6,
+            "answer": "In Java, == compares object references (memory addresses), not content. Two String objects can contain identical text but be different objects at different memory locations, so == would return false. The .equals() method compares the actual character content of the strings. Note: Java sometimes reuses String objects through interning, making == work by coincidence for string literals — but this is unreliable and should never be depended on.",
+            "rubric": [
+              {
+                "key": "Correctly explains == compares references/memory addresses",
+                "value": 2
+              },
+              {
+                "key": "Correctly explains .equals() compares content",
+                "value": 2
+              },
+              {
+                "key": "Mentions the string interning trap or provides a concrete example",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Write a Java class Student with private fields name (String) and gpa (double), a constructor, getter methods, and a toString() method that returns \"Student(name, GPA: X.X)\".",
+            "type": "code",
+            "points": 8,
+            "answer": "public class Student {\n    private String name;\n    private double gpa;\n\n    public Student(String name, double gpa) {\n        this.name = name;\n        this.gpa = gpa;\n    }\n\n    public String getName() {\n        return name;\n    }\n\n    public double getGpa() {\n        return gpa;\n    }\n\n    @Override\n    public String toString() {\n        return String.format(\"Student(%s, GPA: %.1f)\", name, gpa);\n    }\n}",
+            "rubric": [
+              {
+                "key": "Private fields with correct types",
+                "value": 2
+              },
+              {
+                "key": "Constructor with this.field = parameter assignment",
+                "value": 2
+              },
+              {
+                "key": "Public getter methods",
+                "value": 2
+              },
+              {
+                "key": "toString() with @Override and correct format",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 32
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Object-Oriented Library System",
+        "week_assigned": 2,
+        "week_due": 5,
+        "points": 150,
+        "description": "Design and implement a library management system using object-oriented programming principles. The system should model books (with different types: physical, ebook, audiobook), patrons (students and faculty with different borrowing privileges), and loans with due dates. Implement a class hierarchy with proper inheritance, polymorphism through a common interface, and robust exception handling with custom exceptions for domain errors like borrowing an unavailable book or exceeding loan limits. Include a comprehensive pytest test suite that validates all major operations and error conditions.",
+        "objectives": [
+          "Design a class hierarchy modeling real-world entities and their relationships using inheritance and composition",
+          "Apply encapsulation, inheritance, and polymorphism in a practical multi-class system",
+          "Implement custom exception classes for domain-specific error conditions",
+          "Write a comprehensive pytest test suite validating all major functionality and error paths",
+          "Use abstract base classes to define common interfaces for book and patron types"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Python package with library system implementation organized into modules (models/, services/, exceptions/)",
+          "pytest test suite with at least 25 test cases covering all major operations and error conditions",
+          "UML class diagram showing all classes, their relationships, and key methods",
+          "Design document (2-3 pages) explaining architecture decisions, class hierarchy rationale, and trade-offs considered",
+          "Demo script that exercises all major features: add books, register patrons, checkout, return, search, overdue detection"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 55,
+            "criteria": [
+              "Class hierarchy properly models the domain with at least 6 classes (Book types, Patron types, Loan, Library)",
+              "Inheritance is used meaningfully with method overriding for different book/patron behaviors",
+              "Custom exceptions (BookNotAvailableError, LoanLimitExceededError, etc.) provide clear error handling",
+              "Checkout/return operations correctly manage availability state, due dates, and patron records"
+            ]
+          },
+          "visual_quality": {
+            "points": 40,
+            "criteria": [
+              "Encapsulation prevents invalid state transitions (cannot return a book you did not borrow)",
+              "Polymorphism enables flexible handling of different book and patron types",
+              "Properties or methods enforce invariants (loan limits, valid dates, non-negative quantities)",
+              "Code is organized into logical modules with clear separation of concerns"
+            ]
+          },
+          "performance_optimization": {
+            "points": 30,
+            "criteria": [
+              "At least 25 test cases covering normal operations, edge cases, and error conditions",
+              "Tests verify exception types and messages, not just that exceptions are raised",
+              "Tests are well-organized with descriptive names following test_action_condition_expected pattern",
+              "All tests pass with no warnings"
+            ]
+          },
+          "documentation": {
+            "points": 25,
+            "criteria": [
+              "UML diagram accurately reflects the implementation and is readable",
+              "Design document explains key architecture decisions with alternatives considered",
+              "Code has docstrings for all classes and public methods",
+              "Demo script shows a complete workflow from empty library to active loans"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Well-designed class hierarchy demonstrating mastery of OOP principles",
+                "Complete library operations with robust custom exception handling",
+                "Comprehensive test suite with 25+ tests validating all major functionality",
+                "Professional documentation including UML diagram and design rationale"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Data Structures Implementation and Analysis",
+        "week_assigned": 5,
+        "week_due": 8,
+        "points": 150,
+        "description": "Implement three fundamental data structures from scratch — a linked list, a stack, and a queue — each as a proper Python class with complete functionality. Then implement two sorting algorithms (insertion sort and merge sort) and two searching algorithms (linear and binary search). Benchmark all implementations on varying input sizes and write an analysis report comparing their theoretical and empirical performance. This project bridges the gap between using Python's built-in data structures and understanding how they work internally.",
+        "objectives": [
+          "Implement linked list, stack, and queue data structures with full ADT operations",
+          "Implement sorting and searching algorithms with correct edge case handling",
+          "Benchmark implementations empirically with varying input sizes and input patterns",
+          "Analyze time complexity theoretically and compare with empirical measurements",
+          "Write clean, well-documented implementations suitable for a data structures textbook"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Python modules: linked_list.py, stack.py, queue.py, sorting.py, searching.py with complete implementations",
+          "pytest test suite with at least 30 test cases across all data structures and algorithms",
+          "Benchmarking script that produces timing data for varying input sizes (100, 1000, 10000, 100000)",
+          "Analysis report (3-4 pages) with Big-O analysis, benchmark results (tables or charts), and comparison discussion",
+          "README with instructions for running tests and benchmarks"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 60,
+            "criteria": [
+              "Linked list supports append, prepend, insert, delete, search, reverse, and __len__/__str__",
+              "Stack and queue implement full ADT with proper encapsulation (no direct internal access)",
+              "Sorting algorithms produce correct results on empty, single-element, already-sorted, and reverse-sorted inputs",
+              "Binary search handles all edge cases: empty list, single element, element not present, duplicate elements"
+            ]
+          },
+          "visual_quality": {
+            "points": 35,
+            "criteria": [
+              "Each data structure is a clean class with docstrings and consistent method naming",
+              "Implementation code is separated from benchmarking and testing code",
+              "Common patterns (Node class, comparison logic) are factored into reusable components",
+              "Code follows PEP 8 style consistently"
+            ]
+          },
+          "performance_optimization": {
+            "points": 30,
+            "criteria": [
+              "Big-O analysis is correct for all operations of each data structure",
+              "Benchmarks use appropriate methodology (multiple runs, averaged, random/sorted/reverse inputs)",
+              "Empirical results align with theoretical predictions",
+              "Report discusses any discrepancies between theory and practice with plausible explanations"
+            ]
+          },
+          "documentation": {
+            "points": 25,
+            "criteria": [
+              "Analysis report is well-structured with clear tables or charts",
+              "Big-O derivations show reasoning, not just final answers",
+              "Test suite is comprehensive with clear test names indicating what is tested",
+              "README enables a reader to run all tests and benchmarks"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Correct implementations of all data structures with full ADT operations",
+                "Correct sorting and searching algorithms handling all edge cases",
+                "Rigorous benchmarking with empirical results supporting theoretical analysis",
+                "Comprehensive test suite and clear analysis report"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "GUI Application with Persistent Storage",
+        "week_assigned": 10,
+        "week_due": 13,
+        "points": 175,
+        "description": "Build a complete desktop application using Tkinter that manages persistent data through JSON serialization. Choose from: a personal finance tracker (income, expenses, categories, budgets, reports), a recipe manager (recipes, ingredients, search, meal planning), or a student grade tracker (courses, assignments, weights, GPA calculation). The application must have a multi-screen GUI with navigation, data persistence between sessions, input validation with error dialogs, and summary statistics or reports. Apply all OOP, error handling, and design principles from the course.",
+        "objectives": [
+          "Design and implement a multi-screen Tkinter application with professional layout and navigation",
+          "Apply MVC (Model-View-Controller) or similar separation between GUI, logic, and data layers",
+          "Implement JSON-based data persistence with proper error handling for file operations",
+          "Create an intuitive user experience with input validation, error dialogs, and informative feedback",
+          "Produce a polished application that could be used by a non-technical person"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Complete Python application organized as a package: models/, views/, controllers/ or similar",
+          "At least 4 distinct screens/views with navigation between them",
+          "JSON data file created on first run, loaded on subsequent runs, saved automatically on changes",
+          "User guide (1-2 pages) with screenshots explaining how to use each feature",
+          "Design document (2 pages) explaining architecture, class responsibilities, and data model"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 70,
+            "criteria": [
+              "Application has at least 4 functional screens with complete CRUD operations for the domain",
+              "Data persists between application sessions via JSON serialization/deserialization",
+              "Input validation catches all common errors with user-friendly messagebox dialogs",
+              "Summary statistics or reports aggregate data meaningfully (totals, averages, trends)"
+            ]
+          },
+          "visual_quality": {
+            "points": 40,
+            "criteria": [
+              "GUI layout is organized and professional with consistent spacing, alignment, and widget sizing",
+              "Navigation between screens is intuitive with clear labels and logical flow",
+              "Application uses appropriate widgets for each purpose (Listbox for lists, Entry for input, etc.)",
+              "Color scheme and font choices enhance readability"
+            ]
+          },
+          "performance_optimization": {
+            "points": 30,
+            "criteria": [
+              "Application logic is separated from GUI code (changes to logic do not require GUI changes)",
+              "Data model classes are independent of Tkinter and could be reused in a web or CLI interface",
+              "Error handling covers file I/O errors, data corruption, and all user input paths",
+              "Application never crashes regardless of user actions"
+            ]
+          },
+          "documentation": {
+            "points": 35,
+            "criteria": [
+              "User guide with screenshots enables a non-technical person to use the application",
+              "Design document explains architecture decisions and class responsibilities",
+              "Code has docstrings for all classes and public methods",
+              "README explains how to install dependencies and run the application"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 175,
+              "criteria": [
+                "Complete multi-screen GUI application with professional layout and full CRUD operations",
+                "Robust data persistence with JSON serialization surviving between sessions",
+                "Clean separation between GUI, logic, and data layers following MVC principles",
+                "Polished user experience with validation, error handling, and helpful feedback"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 4,
+        "title": "Cross-Language Capstone: Python and Java",
+        "week_assigned": 13,
+        "week_due": 15,
+        "points": 200,
+        "description": "Implement a non-trivial program in both Python and Java, then write a comparative analysis. Choose from: a text-based game (Python terminal + Java console), a data processor (CSV analysis in both languages), or a collection manager (library/inventory/contacts with OOP in both). The implementations should be functionally equivalent and demonstrate OOP principles, error handling, and appropriate data structures in each language. The comparative report analyzes the design differences, trade-offs, and your experience as a developer working in both languages.",
+        "objectives": [
+          "Implement the same application in two programming languages, demonstrating fluency in both",
+          "Apply OOP design principles (encapsulation, inheritance, polymorphism) in both Python and Java",
+          "Compare type systems, error handling approaches, and collection frameworks across languages",
+          "Write a thoughtful comparative analysis based on first-hand implementation experience",
+          "Demonstrate the ability to learn and apply a new programming language (Java) independently"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Complete Python implementation with OOP, error handling, and appropriate data structures",
+          "Complete Java implementation with equivalent functionality using Java OOP and collections",
+          "Comparative analysis report (3-4 pages) covering language differences, design trade-offs, and developer experience",
+          "Test demonstrations for both implementations showing equivalent behavior",
+          "5-minute presentation comparing the two implementations with code examples"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 80,
+            "criteria": [
+              "Python implementation uses OOP with inheritance, custom exceptions, and appropriate data structures",
+              "Java implementation uses classes with access modifiers, interfaces or abstract classes, and Collections Framework",
+              "Both implementations produce equivalent output for the same inputs",
+              "Error handling is appropriate for each language (try/except in Python, try/catch in Java)"
+            ]
+          },
+          "visual_quality": {
+            "points": 50,
+            "criteria": [
+              "Python code follows PEP 8 style with docstrings and type hints",
+              "Java code follows standard conventions with Javadoc comments and proper access modifiers",
+              "Both implementations have clear class structures with single responsibility",
+              "Code organization reflects each language's conventions (packages in Java, modules in Python)"
+            ]
+          },
+          "performance_optimization": {
+            "points": 30,
+            "criteria": [
+              "Comparative analysis identifies genuine language differences with specific code examples",
+              "Discussion covers type systems, error handling, collection usage, and developer productivity",
+              "Analysis goes beyond surface syntax to discuss design implications",
+              "Personal experience section provides honest assessment of learning a second language"
+            ]
+          },
+          "documentation": {
+            "points": 40,
+            "criteria": [
+              "Analysis report is well-structured with clear sections and code comparisons",
+              "Both implementations have README files explaining how to build and run",
+              "Test demonstrations show equivalent behavior with clear setup instructions",
+              "Presentation clearly communicates key comparisons with live code examples"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 200,
+              "criteria": [
+                "Functionally equivalent implementations in both Python and Java demonstrating OOP mastery",
+                "Idiomatic code in both languages following each language's conventions and best practices",
+                "Thoughtful comparative analysis based on first-hand implementation experience",
+                "Clear presentation comparing design decisions across languages with code examples"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 20,
+      "description": "Five quizzes testing OOP principles, data structure concepts, algorithm analysis, and cross-language understanding"
+    },
+    "lab_assignments": {
+      "percentage": 15,
+      "description": "Weekly hands-on programming exercises reinforcing OOP patterns, data structures, and Java fundamentals"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "Four major projects of increasing complexity spanning OOP design, data structures, GUI development, and cross-language implementation"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Written and coding exam in Week 8 covering OOP principles, exception handling, data structures, and sorting/searching algorithms"
+    },
+    "final_project": {
+      "percentage": 20,
+      "description": "Cross-language capstone project with comparative analysis demonstrating mastery of both Python and Java"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is expected for all lectures and mandatory for lab sessions. More than 3 unexcused absences may result in a reduced participation grade.",
+    "late_submissions": "Late assignments lose 10% per day. No submissions accepted more than 5 days late without prior arrangement.",
+    "collaboration": "Discussion of concepts is encouraged, but all code must be written independently. Pair programming is allowed on labs only when explicitly assigned.",
+    "academic_integrity": "All submitted code must be your own work. Use of AI code generators must be disclosed. Submitting code written by another person or AI without attribution constitutes plagiarism.",
+    "technology_requirements": "Students need Python 3.12+, Java JDK 17+, VS Code (with Python and Java extensions), and pytest installed. Git familiarity is expected. Lab computers are available but personal machines are recommended."
+  }
+}

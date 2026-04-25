@@ -1,0 +1,1475 @@
+{
+  "course_info": {
+    "course_id": "GD401",
+    "title": "3D Game Development",
+    "credit_hours": 4,
+    "duration": "15 weeks",
+    "meeting_schedule": "Monday, Wednesday, Friday - 4 hours per week",
+    "prerequisites": [
+      "GD301 - Game Programming",
+      "GD202 - Game Art and Animation"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "topic": "3D Engine Architecture",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Analyze the layered architecture of modern 3D game engines",
+        "Compare the technical foundations of Unity and Unreal Engine",
+        "Identify the major subsystems that comprise a real-time 3D engine",
+        "Evaluate engine selection criteria for different project requirements"
+      ],
+      "readings": [
+        "Game Engine Architecture (Gregory) Ch. 1-3",
+        "Real-Time Rendering (Akenine-Moller) Ch. 1",
+        "Unity Technical Architecture Overview Documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Welcome to 3D Game Development. This course builds on your 2D game programming and art foundations to tackle the engineering challenges unique to three-dimensional interactive experiences. Modern 3D game engines are among the most complex software systems ever built, containing millions of lines of code organized into interdependent subsystems that must cooperate at real-time frame rates. Understanding engine architecture is essential because every decision you make as a 3D game developer -- from how you structure your scene graph to how you batch your draw calls -- is constrained by the engine's design. Today we examine the layered architecture that Unity, Unreal, and Godot share in common, and the critical differences that affect your daily workflow. We will trace the path from a C# MonoBehaviour script call to pixels on screen, understanding each subsystem that touches the data along the way. By the end of this session, you should be able to draw a block diagram of a 3D engine and explain the responsibility of each layer.",
+        "key_concepts": [
+          "Engine architecture layers: platform abstraction, core systems, resource management, rendering, physics, audio, gameplay",
+          "Game loop structure: fixed timestep for physics, variable timestep for rendering, decoupled update and draw",
+          "Scene graph organization: hierarchical transform trees, spatial partitioning for efficient culling",
+          "Entity-Component-System (ECS) vs traditional object-oriented game object models",
+          "Asset pipeline: import, conversion, compression, and runtime loading of 3D assets",
+          "Memory management in real-time systems: pooling, arena allocation, avoiding GC pressure",
+          "Unity vs Unreal comparison: C# scripting vs C++/Blueprint, prefab vs actor model, URP/HDRP vs Unreal renderer",
+          "Build pipeline: how source assets become runtime-optimized platform-specific binaries",
+          "Profiling hooks: where engines expose performance measurement points for each subsystem",
+          "Engine extensibility: plugin systems, custom render passes, and native code integration"
+        ],
+        "demonstration": "Creating a new Unity 3D project with URP, examining the project structure and assembly definitions, then stepping through a single frame in the Unity Profiler to identify each engine subsystem's contribution to frame time. We will trace a simple cube from its mesh asset through the transform hierarchy, culling pass, render queue sorting, and final draw call.",
+        "setup_requirements": [
+          "Unity 2023.2 LTS with Universal Render Pipeline template",
+          "Visual Studio 2022 or VS Code with C# extensions",
+          "Git repository initialized with Unity .gitignore",
+          "Unity Profiler window configured for detailed CPU and GPU analysis"
+        ],
+        "review": [
+          {
+            "key": "Game Loop",
+            "value": "The core execution cycle: process input, update game state at fixed intervals, render the current state. Physics runs at a fixed timestep (e.g., 50Hz) for determinism while rendering runs as fast as possible or at the display refresh rate."
+          },
+          {
+            "key": "Entity-Component-System",
+            "value": "A data-oriented architecture where entities are IDs, components are pure data structs, and systems operate on component arrays. Provides cache-friendly memory layout and better performance than traditional inheritance-heavy object models."
+          },
+          {
+            "key": "Scene Graph",
+            "value": "A hierarchical tree of transforms where each node's world position is computed by concatenating its local transform with its parent's world transform. Moving a parent moves all children."
+          },
+          {
+            "key": "Asset Pipeline",
+            "value": "The process of converting source assets (FBX, PNG, WAV) into engine-optimized runtime formats with platform-specific compression, atlas packing, and metadata generation."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 2,
+      "topic": "3D Coordinate Systems and Transforms",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Master 3D vector and matrix mathematics for game development",
+        "Implement affine transformations using 4x4 homogeneous matrices",
+        "Apply quaternion rotations to avoid gimbal lock in 3D rotation",
+        "Build hierarchical transform chains for articulated objects"
+      ],
+      "readings": [
+        "3D Math Primer for Graphics and Game Development Ch. 3-6",
+        "Game Engine Architecture (Gregory) Ch. 4 - Mathematics",
+        "Unity Transform API Documentation"
+      ],
+      "lecture_notes": {
+        "introduction": "Every vertex, every physics body, every audio source in a 3D game exists at a position defined by coordinates in three-dimensional space. The mathematics of 3D transforms -- translation, rotation, and scale -- form the absolute foundation of 3D game development. Without fluency in vector math and matrix operations, you cannot write a shader, implement a camera, or debug a physics glitch. Today we cover the mathematical tools you will use every day for the rest of this course and your career. We begin with coordinate system conventions (left-handed vs right-handed, Y-up vs Z-up) that differ between engines and cause endless confusion during asset import. We then build the 4x4 transformation matrix from first principles, showing how translation, rotation, and scale combine into a single matrix multiply. Finally, we tackle quaternions: the four-component rotation representation that avoids gimbal lock and enables smooth interpolation between orientations. This session is math-heavy by design; the concepts here underpin everything that follows.",
+        "key_concepts": [
+          "Coordinate system conventions: Unity uses left-handed Y-up, Unreal uses left-handed Z-up, Blender uses right-handed Z-up",
+          "Vector operations: dot product for angle/projection, cross product for perpendicular vectors and surface normals",
+          "Homogeneous coordinates: extending 3D vectors to 4D (x,y,z,w) to unify translation with rotation and scale in a single matrix",
+          "4x4 transformation matrix construction: composing translation, rotation, and scale matrices",
+          "Matrix multiplication order: in Unity, world = parent_world * local, applied right-to-left (Scale * Rotate * Translate)",
+          "Euler angles and gimbal lock: why representing rotation as three sequential axis rotations loses a degree of freedom",
+          "Quaternion representation: q = (x,y,z,w) encoding axis-angle rotation without gimbal lock",
+          "Spherical linear interpolation (slerp): smooth rotation blending between two orientations along the shortest arc",
+          "Transform hierarchies: parent-child chains where child local transforms concatenate with parent world transforms",
+          "Inverse transforms: converting from world space back to local space for physics queries and local-space calculations"
+        ],
+        "demonstration": "Building a robotic arm with three joints in Unity. Each joint is a child of the previous, demonstrating hierarchical transforms. We rotate individual joints using Euler angles first (showing gimbal lock when pitch reaches 90 degrees) then switch to quaternion rotation via Quaternion.AngleAxis to fix it. We add a slerp-based animation that smoothly interpolates each joint between two poses.",
+        "setup_requirements": [
+          "Unity project from Week 1",
+          "3D primitive objects for building the arm",
+          "Unity Gizmos enabled for visualizing transform axes",
+          "Scientific calculator or Wolfram Alpha for matrix verification"
+        ],
+        "review": [
+          {
+            "key": "Homogeneous Coordinates",
+            "value": "A 3D point (x,y,z) is represented as (x,y,z,1) and a direction vector as (x,y,z,0). The w component determines whether translation affects the vector, unifying all affine transforms into matrix multiplication."
+          },
+          {
+            "key": "Gimbal Lock",
+            "value": "When the middle axis of an Euler rotation reaches +/-90 degrees, the first and third axes become parallel, losing one degree of rotational freedom. The object can no longer rotate freely in all directions."
+          },
+          {
+            "key": "Quaternion Slerp",
+            "value": "Spherical Linear Interpolation traces the shortest great-circle arc between two quaternion orientations on the 4D unit hypersphere, producing constant angular velocity rotation without the wobble of Euler interpolation."
+          },
+          {
+            "key": "Transform Chain",
+            "value": "For a hierarchy Root > Parent > Child, the child's world matrix = Root_world * Parent_local * Child_local. Moving Root moves everything; moving Child moves only Child."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 3,
+      "topic": "Rendering Pipeline Deep Dive",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Trace the complete graphics rendering pipeline from application to display",
+        "Distinguish between vertex processing, rasterization, and fragment processing stages",
+        "Compare forward rendering and deferred rendering architectures",
+        "Identify pipeline bottlenecks using frame debugging tools"
+      ],
+      "readings": [
+        "Real-Time Rendering (Akenine-Moller) Ch. 2-3",
+        "Unity URP Rendering Pipeline Documentation",
+        "GPU Gems Ch. 1 - Effective Shadow Volume Rendering"
+      ],
+      "lecture_notes": {
+        "introduction": "The rendering pipeline is the sequence of operations that transforms 3D scene data into the 2D image displayed on screen. Understanding this pipeline is not optional for a 3D game developer -- it determines what visual effects are possible, what performance costs they incur, and how to diagnose visual artifacts. The modern GPU pipeline is a collaboration between fixed-function hardware stages and programmable shader stages. Your vertex shader runs on every vertex of every visible mesh; your fragment shader runs on every pixel covered by every triangle. At 1080p with complex geometry, that is millions of shader invocations per frame, all within a 16.67ms budget at 60fps. Today we walk through every stage of the pipeline, from the application submitting draw calls through the GPU's vertex processing, primitive assembly, rasterization, fragment shading, and per-fragment operations. We compare forward rendering (one pass per light per object) with deferred rendering (geometry pass then lighting pass) and examine when each approach is appropriate. By the end, you will be able to use Unity's Frame Debugger to trace any pixel on screen back to the draw call and shader that produced it.",
+        "key_concepts": [
+          "Application stage: scene traversal, culling (frustum, occlusion), draw call submission, render state management",
+          "Vertex shader stage: model-view-projection transform, per-vertex lighting, skinning for animated meshes",
+          "Primitive assembly and clipping: assembling triangles from vertices and clipping against the view frustum",
+          "Rasterization: converting triangles to fragments (potential pixels) with interpolated attributes",
+          "Fragment shader stage: texture sampling, per-pixel lighting calculations, normal mapping, shadow sampling",
+          "Per-fragment operations: depth test, stencil test, alpha blending, write to framebuffer",
+          "Forward rendering: simple, handles transparency well, but O(objects * lights) cost",
+          "Deferred rendering: geometry pass writes G-buffer (albedo, normals, depth), lighting pass reads G-buffer for O(pixels * lights) cost",
+          "Render queues and sorting: opaque objects front-to-back for early-Z rejection, transparent objects back-to-front for correct blending",
+          "Frame Debugger: stepping through draw calls to see exactly what each one contributes to the final image"
+        ],
+        "demonstration": "Using Unity's Frame Debugger to step through every draw call in a scene containing opaque objects, transparent objects, shadows, and post-processing. We identify the G-buffer passes in URP's deferred path, examine the intermediate render targets, and measure the GPU time contribution of each rendering phase.",
+        "setup_requirements": [
+          "Unity URP project with a populated 3D scene",
+          "Frame Debugger and GPU Profiler windows open",
+          "Scene with both opaque and transparent objects",
+          "Multiple light sources to demonstrate forward vs deferred cost scaling"
+        ],
+        "review": [
+          {
+            "key": "Forward vs Deferred Rendering",
+            "value": "Forward: each object is rendered once per light affecting it, cost = O(objects * lights). Deferred: objects render once to a G-buffer, then lights are applied as screen-space passes, cost = O(pixels * lights). Deferred is better for many lights but struggles with transparency and uses more memory."
+          },
+          {
+            "key": "Early-Z Rejection",
+            "value": "When opaque objects are rendered front-to-back, the GPU can skip fragment shading for pixels that are behind already-rendered geometry by checking the depth buffer before running the fragment shader."
+          },
+          {
+            "key": "G-Buffer",
+            "value": "A set of screen-sized textures storing per-pixel material properties (albedo, world normals, roughness, metallic, depth) written during the geometry pass and read during the lighting pass of deferred rendering."
+          },
+          {
+            "key": "Draw Call",
+            "value": "A command from the CPU to the GPU to render a mesh with a specific material and transform. Each draw call has CPU overhead for state setup, so minimizing draw calls through batching and instancing is critical for performance."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 4,
+      "topic": "Materials and Shaders for 3D",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Implement physically-based rendering materials using the metallic-roughness workflow",
+        "Write custom vertex and fragment shaders in HLSL for Unity's URP",
+        "Create visual effects using Unity Shader Graph for rapid prototyping",
+        "Optimize shader complexity for target hardware performance budgets"
+      ],
+      "readings": [
+        "Real-Time Rendering (Akenine-Moller) Ch. 5-7",
+        "Unity Shader Graph Documentation",
+        "Physically Based Rendering: From Theory to Implementation Ch. 1-2"
+      ],
+      "lecture_notes": {
+        "introduction": "Materials define how surfaces interact with light, and shaders are the GPU programs that compute those interactions. Physically-based rendering has become the industry standard because it produces consistent, realistic results under any lighting condition by modeling real-world physics of light-surface interaction. A PBR material is defined by a handful of maps -- albedo, metallic, roughness, normal, ambient occlusion -- that separate surface properties so artists can work intuitively while the shader handles the physics. Today we study the PBR model from the underlying Cook-Torrance BRDF theory through its practical implementation in Unity's URP. We then write custom shaders in both HLSL code and Shader Graph to understand how the visual pipeline executes our material descriptions. You will learn to read shader assembly output to understand what the GPU actually executes, because a beautiful shader that takes 5ms per frame is not a beautiful shader -- it is a performance bug. The balance between visual fidelity and frame budget discipline is the central tension of real-time 3D graphics, and mastering it is what separates professional developers from hobbyists.",
+        "key_concepts": [
+          "PBR metallic-roughness workflow: albedo (base color), metallic (0=dielectric, 1=metal), roughness (0=mirror, 1=diffuse)",
+          "Cook-Torrance specular BRDF: microfacet distribution (GGX), Fresnel effect (Schlick approximation), geometry shadowing",
+          "Normal mapping: encoding surface detail as per-pixel normal perturbations in tangent space",
+          "Ambient occlusion: baked or SSAO-computed darkening in crevices where ambient light is occluded",
+          "HLSL shader structure: vertex input structs, vertex shader, fragment shader, uniform buffers",
+          "Shader Graph: node-based visual shader authoring for rapid prototyping without writing code",
+          "Texture sampling: bilinear vs trilinear filtering, mipmapping, anisotropic filtering for oblique surfaces",
+          "Shader variants and keywords: compile-time branching for feature toggles without runtime branching cost",
+          "GPU instruction count: reading shader compilation output to estimate ALU cost and identify bottlenecks",
+          "Material instancing: sharing shader code while varying per-object parameters through material property blocks"
+        ],
+        "demonstration": "Building a complete PBR material from scratch: importing albedo, normal, metallic, roughness, and AO textures for a weathered metal surface. First implementing it in Shader Graph to see the node connections, then rewriting the same material as raw HLSL to understand the code behind the nodes. Comparing the compiled instruction count of both approaches.",
+        "setup_requirements": [
+          "Unity URP project with Shader Graph package",
+          "PBR texture set (albedo, normal, metallic, roughness, AO) downloaded from a texture library",
+          "Text editor with HLSL syntax highlighting",
+          "Unity Rendering Debugger for material property inspection"
+        ],
+        "review": [
+          {
+            "key": "Metallic-Roughness Workflow",
+            "value": "Albedo stores base color without lighting. Metallic is binary in reality (0 or 1) but blended for transitions. Roughness controls specular highlight spread. Together they define how a surface reflects light following energy conservation laws."
+          },
+          {
+            "key": "Normal Mapping",
+            "value": "A texture where RGB values encode per-pixel surface normal directions in tangent space. The fragment shader uses these normals instead of the interpolated vertex normal to create the illusion of surface detail without additional geometry."
+          },
+          {
+            "key": "Shader Variants",
+            "value": "Compile-time shader permutations generated by preprocessor keywords. Each combination of enabled keywords produces a separate compiled shader. Avoids runtime branching but increases build size and compile time."
+          },
+          {
+            "key": "Material Property Blocks",
+            "value": "Unity's mechanism for setting per-object shader parameters without creating unique material instances. Preserves GPU instancing and batching while allowing objects to have different colors, textures, or parameter values."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 5,
+      "topic": "3D Physics: Rigidbodies and Colliders",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Configure rigidbody dynamics for realistic 3D object behavior",
+        "Implement collider shapes and understand their performance characteristics",
+        "Design physics materials to control friction, bounciness, and physical interactions",
+        "Resolve common physics issues: tunneling, jitter, and constraint instability"
+      ],
+      "readings": [
+        "Game Physics Engine Development (Millington) Ch. 1-5",
+        "Unity Physics Documentation - Rigidbody and Colliders",
+        "Real-Time Collision Detection (Ericson) Ch. 1-2"
+      ],
+      "lecture_notes": {
+        "introduction": "Physics simulation gives 3D games a sense of physical reality that pure animation cannot achieve. When a player throws an object, they expect it to arc through the air, bounce off surfaces, and come to rest in a physically plausible way. Game physics engines like Unity's PhysX or Unreal's Chaos solve Newton's equations of motion at discrete timesteps, applying forces, detecting collisions, and computing responses for potentially hundreds of interacting rigid bodies per frame. The challenge is not just making physics work -- it is making physics work within your frame budget. A naive physics setup can consume more frame time than your entire rendering pipeline. Today we cover rigidbody configuration (mass, drag, constraints), collider shape selection (the tradeoff between accuracy and performance), physics materials (friction and restitution coefficients), and the common pitfalls that cause tunneling, jitter, and instability. We will also examine the fixed timestep update model and why physics must run at a constant rate independent of rendering frame rate to produce deterministic, stable results.",
+        "key_concepts": [
+          "Rigidbody properties: mass, drag, angular drag, center of mass, inertia tensor, gravity toggle",
+          "Collider types: sphere (cheapest), capsule, box, mesh (most expensive), compound colliders for complex shapes",
+          "Collision detection modes: discrete (default), continuous (prevents tunneling for fast objects), continuous speculative",
+          "Physics materials: static friction, dynamic friction, bounciness, friction and bounce combine modes",
+          "Fixed timestep: physics runs at a constant rate (default 50Hz) independent of rendering frame rate for stability",
+          "Collision callbacks: OnCollisionEnter/Stay/Exit vs OnTriggerEnter/Stay/Exit and their use cases",
+          "Layer-based collision filtering: collision matrix to control which layers interact physically",
+          "Rigidbody interpolation: smoothing visual position between physics steps to prevent visible jitter at low physics rates",
+          "Constraint solving: how PhysX resolves overlapping colliders and maintains joint constraints through iterative solvers",
+          "Physics debugging: visualizing colliders, contact points, and raycasts using Physics.DebugDraw and Gizmos"
+        ],
+        "demonstration": "Building a physics playground with objects of varying mass, shape, and material properties. Demonstrating tunneling with a fast-moving small sphere passing through a thin wall (discrete detection) then fixing it with continuous detection. Setting up a chain of hinged rigidbodies to show constraint solving. Profiling the physics step to identify collision detection as the bottleneck and reducing cost by simplifying collider shapes.",
+        "setup_requirements": [
+          "Unity project with various 3D primitive objects",
+          "Physics materials with different friction and restitution values",
+          "Unity Physics Debugger enabled",
+          "Profiler window configured to show Physics.Simulate breakdown"
+        ],
+        "review": [
+          {
+            "key": "Tunneling",
+            "value": "When a fast-moving object passes completely through a thin collider between physics steps because its displacement per step exceeds the collider thickness. Fixed by using continuous collision detection, which performs swept-volume checks."
+          },
+          {
+            "key": "Collision Matrix",
+            "value": "A layer-by-layer grid in Project Settings > Physics that defines which layer pairs can collide. Disabling unnecessary pairs reduces the broad-phase collision workload significantly."
+          },
+          {
+            "key": "Rigidbody Interpolation",
+            "value": "Smoothly blending the rigidbody's visual position between the last two physics positions during rendering. Prevents visible stuttering when the rendering frame rate is higher than the physics update rate."
+          },
+          {
+            "key": "Fixed Timestep",
+            "value": "Physics updates at a constant interval (0.02s = 50Hz by default) regardless of rendering frame rate. If rendering is slower, multiple physics steps run per frame; if faster, physics results are interpolated. This ensures deterministic simulation."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Character Controllers",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Implement kinematic and physics-based character controllers for 3D movement",
+        "Design responsive character movement that feels good to the player",
+        "Handle ground detection, slope handling, and step climbing for traversal",
+        "Integrate character animation state machines with controller input"
+      ],
+      "readings": [
+        "Game Programming Patterns (Nystrom) Ch. 7 - State Pattern",
+        "Unity CharacterController Documentation",
+        "Game Feel (Swink) Ch. 5-7 - Real-Time Control"
+      ],
+      "lecture_notes": {
+        "introduction": "A character controller is the bridge between player input and avatar movement. It is the single most important system in any 3D game with a player-controlled character because it is what the player interacts with every single frame. A character controller that feels sluggish, imprecise, or unreliable will ruin an otherwise excellent game. There are two fundamental approaches: kinematic controllers that move the character directly via code (like Unity's CharacterController component) and physics-based controllers that apply forces to a rigidbody. Kinematic controllers offer precise, predictable movement but require manual collision resolution, ground detection, and slope handling. Physics-based controllers get collision response for free but can feel floaty or unpredictable without extensive tuning. Today we implement both approaches, compare their feel and behavior, and build a hybrid system that uses kinematic movement for ground locomotion with physics-based response for knockbacks and environmental interactions. We also wire up an Animator Controller state machine that transitions between idle, walk, run, jump, and fall animations based on the controller's movement state, ensuring the visual presentation matches the mechanical behavior.",
+        "key_concepts": [
+          "Kinematic vs physics-based controllers: direct position control vs force application, and their behavioral differences",
+          "Ground detection: spherecast or capsulecast downward to detect walkable surfaces and surface normal",
+          "Slope handling: projecting movement along slope normals for smooth traversal, rejecting slopes above a maximum angle",
+          "Step climbing: detecting small vertical obstacles and smoothly elevating the character over them",
+          "Jump mechanics: coyote time (grace period after leaving edge), jump buffering (input queued before landing)",
+          "Movement feel tuning: acceleration curves, deceleration, air control ratio, turn speed",
+          "Animation state machine: transitions driven by movement speed, grounded state, and input direction",
+          "Root motion vs script-driven movement: when to let animations drive position vs when to drive position from code",
+          "Character collision response: how to handle being pushed by moving platforms, physics objects, and other characters",
+          "Input handling: raw vs processed input, dead zones, camera-relative movement direction calculation"
+        ],
+        "demonstration": "Building a third-person character controller from scratch: implementing capsule-based ground detection with slope angle checking, acceleration-based movement with different ground and air control, coyote time jump with buffered input, and connecting it to an Animator Controller with blend trees for locomotion speed. Testing on a level with slopes, steps, moving platforms, and ledges.",
+        "setup_requirements": [
+          "Unity project with a humanoid character model and animation set",
+          "Test level with flat ground, slopes, steps, and moving platforms",
+          "Animator Controller with idle, walk, run, jump, and fall states",
+          "Input System package configured for gamepad and keyboard"
+        ],
+        "review": [
+          {
+            "key": "Coyote Time",
+            "value": "A grace period (typically 100-200ms) after the player walks off a ledge during which a jump input is still accepted. Compensates for the fact that players often press jump slightly after leaving the edge, preventing frustrating missed jumps."
+          },
+          {
+            "key": "Jump Buffering",
+            "value": "Queuing a jump input pressed shortly before landing (typically 100-150ms) so the jump executes on the next grounded frame. Prevents the player from needing frame-perfect timing to chain jumps, improving responsiveness."
+          },
+          {
+            "key": "Root Motion",
+            "value": "Extracting the character's displacement from the animation clip itself rather than calculating it in code. Produces animation-accurate movement but requires animations authored with specific distances and speeds in mind."
+          },
+          {
+            "key": "Camera-Relative Movement",
+            "value": "Transforming player stick input from screen-space to world-space using the camera's forward and right vectors projected onto the ground plane. Ensures pushing 'up' on the stick always moves the character away from the camera."
+          },
+          {
+            "key": "Blend Tree",
+            "value": "An Animator state that blends between multiple animation clips based on continuous parameters (speed, direction). A 2D blend tree maps stick X/Y to directional locomotion animations for smooth omnidirectional movement."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Camera Systems",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Implement third-person orbit, follow, and lock-on camera systems",
+        "Build a first-person camera with proper head bobbing and weapon sway",
+        "Handle camera collision with environment geometry to prevent clipping",
+        "Design smooth camera transitions between gameplay states"
+      ],
+      "readings": [
+        "Game Engine Architecture (Gregory) Ch. 10 - Camera Systems",
+        "Unity Cinemachine Documentation",
+        "GDC Vault: Camera Design in The Last of Us Part II"
+      ],
+      "lecture_notes": {
+        "introduction": "The camera is the player's window into the 3D world, and poor camera behavior is one of the most common complaints about 3D games. A good camera system anticipates the player's needs, frames the action clearly, avoids clipping through geometry, and transitions smoothly between contexts without disorienting the player. Camera design is deceptively difficult because it must balance competing requirements: the player wants full camera control, but the designer needs to ensure the camera shows important gameplay elements. The camera must follow the character smoothly but also respond instantly to player input. It must avoid walls and ceilings but not snap or teleport in jarring ways. Today we implement the three most common 3D camera types: a third-person orbit camera with collision avoidance, a first-person camera with head bob and weapon sway, and a lock-on camera for targeting systems. We use Unity's Cinemachine system as our foundation but also build manual implementations to understand the math. We cover the spherecast-based collision detection that prevents the camera from clipping inside geometry, the damped spring model for smooth following, and the state-driven camera blending that handles transitions between gameplay states like exploration, combat, and cutscenes.",
+        "key_concepts": [
+          "Third-person orbit camera: spherical coordinates (distance, pitch, yaw) around a follow target with mouse/stick control",
+          "Camera collision avoidance: spherecast from target to desired camera position, pulling the camera forward to the nearest hit point",
+          "Damped following: spring-damper model for smooth camera position and rotation tracking with adjustable stiffness and damping",
+          "First-person camera: direct rotation from mouse input, head bobbing via sine wave oscillation, weapon sway with inertia",
+          "Lock-on camera: maintaining framing of both the player and the target using midpoint calculation and dynamic distance",
+          "Cinemachine virtual cameras: defining camera behaviors as components and blending between them with priority and transitions",
+          "Dead zones and soft zones: areas where the target can move without the camera responding, reducing unnecessary motion",
+          "Camera shake: Perlin noise-driven position and rotation offsets for impact feedback, with decay over time",
+          "Cinematic cameras: dolly tracks, orbital paths, and blend curves for cutscene camera motion",
+          "Field of view manipulation: dynamic FOV changes for speed effects (narrowing during sprint) and zoom"
+        ],
+        "demonstration": "Implementing a complete third-person camera system: orbit control with right-stick input, collision spherecast that smoothly retracts the camera away from walls, damped spring following for smooth motion, and a lock-on mode that reframes to show both player and target. Then configuring Cinemachine to blend between a FreeLook virtual camera for exploration and a TargetGroup virtual camera for combat.",
+        "setup_requirements": [
+          "Unity project with character controller from Week 6",
+          "Cinemachine package installed",
+          "Test level with enclosed spaces, doorways, and varied geometry for collision testing",
+          "Multiple enemy targets for lock-on camera testing"
+        ],
+        "review": [
+          {
+            "key": "Spherecast Collision",
+            "value": "A sphere swept from the camera target to the desired camera position. If it hits geometry, the camera is placed at the hit point minus sphere radius, preventing clipping into walls. The sphere radius should match the near clip plane to avoid visible clipping."
+          },
+          {
+            "key": "Spring-Damper Following",
+            "value": "Models the camera as a mass on a spring attached to the target. The spring constant controls response speed, and the damping ratio controls overshoot. Critically damped (ratio = 1) provides the fastest response without oscillation."
+          },
+          {
+            "key": "Cinemachine Virtual Cameras",
+            "value": "Non-rendering cameras that define desired position, rotation, and lens settings. The Cinemachine Brain on the main camera selects the highest-priority active virtual camera and blends to it using configurable easing curves."
+          },
+          {
+            "key": "Head Bob",
+            "value": "Sinusoidal vertical oscillation of the first-person camera synchronized to footstep timing. Amplitude should be small (0.02-0.05 units) and frequency should match the walk/run animation cycle to feel natural."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Terrain and World Building",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Create and sculpt terrain using heightmap-based systems",
+        "Paint terrain textures with splatmap blending and procedural detail layers",
+        "Place vegetation, rocks, and props using density-based scattering systems",
+        "Optimize large open-world terrain rendering with chunked LOD and streaming"
+      ],
+      "readings": [
+        "Game Engine Architecture (Gregory) Ch. 11 - Terrain Systems",
+        "Unity Terrain Documentation",
+        "GPU Pro 5 Ch. 1 - Terrain Rendering"
+      ],
+      "lecture_notes": {
+        "introduction": "Open environments are the defining visual achievement of modern 3D games, but they present engineering challenges that enclosed levels do not. A terrain system must render a landscape that spans kilometers while maintaining detail at the player's feet, texture millions of square meters of surface without repeating patterns, scatter thousands of trees and rocks without killing the frame rate, and stream data in and out of memory as the player moves through the world. Unity's Terrain system and Unreal's Landscape system solve these problems with heightmap-based geometry, splatmap-based multi-texture blending, and instanced rendering for vegetation. Today we build a complete terrain from scratch: sculpting the heightmap, painting multiple texture layers with height-based and slope-based blending rules, scattering vegetation with density brushes, and adding procedural detail grass that appears near the camera and fades at distance. We then address the performance challenges of large terrains: chunked LOD that reduces geometry in the distance, texture streaming that loads detail only for nearby chunks, and impostor billboards that replace distant trees with camera-facing quads.",
+        "key_concepts": [
+          "Heightmap terrain: a 2D grid of height values defining surface elevation, with configurable resolution and world size",
+          "Terrain sculpting tools: raise/lower, smooth, flatten, stamp, and erosion brushes",
+          "Splatmap texturing: a control texture where RGBA channels store blend weights for up to 4 terrain textures per layer",
+          "Height-based and slope-based texture rules: automatically blending snow at elevation, rock on steep slopes, grass on flat ground",
+          "Terrain detail system: GPU-instanced grass and small rocks rendered in patches near the camera with distance fade",
+          "Tree placement: density brushes, random rotation and scale variation, wind animation via vertex shader",
+          "Chunked LOD: dividing terrain into tiles that render at reduced mesh resolution based on distance from camera",
+          "Terrain streaming: loading and unloading terrain chunks and their associated textures and vegetation data as the player moves",
+          "Impostor billboards: pre-rendered images of 3D trees from multiple angles, displayed on camera-facing quads at distance",
+          "Terrain collision: generating a collision mesh from the heightmap for physics queries and character controller ground detection"
+        ],
+        "demonstration": "Creating a 2km x 2km terrain in Unity: sculpting mountains, valleys, and a river bed with the height tools; painting rock, grass, dirt, and snow textures with splatmaps using slope and height rules; scattering 5000 trees with density brushes and LOD billboards; adding detail grass patches; then profiling the result and enabling terrain LOD to improve distant rendering performance.",
+        "setup_requirements": [
+          "Unity project with Terrain Tools package installed",
+          "Terrain texture assets: rock, grass, dirt, snow with normal maps",
+          "Tree and vegetation prefabs with LOD groups configured",
+          "Terrain heightmap brushes and stamp textures"
+        ],
+        "review": [
+          {
+            "key": "Heightmap Resolution",
+            "value": "The number of height samples per terrain axis. A 1025x1025 heightmap on a 2km terrain gives approximately 2m between vertices. Higher resolution adds detail but increases memory, collision cost, and sculpting data size."
+          },
+          {
+            "key": "Splatmap",
+            "value": "A texture where each pixel's RGBA values define the blend weights of four terrain textures at that world position. Multiple splatmaps support more than four layers, but each additional layer adds a texture sample in the shader."
+          },
+          {
+            "key": "Terrain LOD",
+            "value": "Distant terrain chunks render with fewer triangles by skipping heightmap vertices. The LOD transition distance and error threshold control the quality-performance tradeoff. Properly configured, this can reduce terrain triangle count by 90% with minimal visual impact."
+          },
+          {
+            "key": "Impostor Billboard",
+            "value": "A pre-rendered 2D image of a 3D tree from multiple camera angles, stored in an atlas. At distance, a single camera-facing quad replaces the full 3D tree model, reducing per-tree cost from thousands of triangles to two."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "Lighting: Baked, Realtime, and Global Illumination",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Configure realtime, baked, and mixed lighting modes for different performance requirements",
+        "Implement global illumination using lightmaps and light probes",
+        "Design lighting that establishes mood while meeting performance targets",
+        "Debug common lighting artifacts: light leaking, seams, and probe placement issues"
+      ],
+      "readings": [
+        "Real-Time Rendering (Akenine-Moller) Ch. 9-11",
+        "Unity Lighting Documentation - Global Illumination",
+        "GPU Gems 2 Ch. 14 - Dynamic Ambient Occlusion"
+      ],
+      "lecture_notes": {
+        "introduction": "Lighting transforms a collection of 3D models into a believable environment. The same scene can feel warm and inviting or cold and threatening based solely on how it is lit. In real life, light bounces between surfaces multiple times before reaching your eyes -- a phenomenon called global illumination. Direct-only lighting (where surfaces are either lit by a light source or in complete shadow) looks flat and artificial. Computing global illumination in real time is extremely expensive, so the industry has developed a spectrum of techniques: fully baked lightmaps that precompute all lighting into textures (free at runtime but static), realtime lights that compute direct lighting per frame (dynamic but expensive and no bounced light), and mixed approaches that combine baked indirect light with realtime direct light. Light probes sample the baked illumination field at points in space so that dynamic objects can receive approximate GI as they move through the scene. Today we implement each approach, examine the visual quality and performance cost of each, and develop a lighting strategy that achieves the target aesthetic within the frame budget. We also address the practical headaches of lightmap baking: UV2 generation, lightmap resolution, light leaking through thin walls, and seam artifacts at UV chart boundaries.",
+        "key_concepts": [
+          "Direct vs indirect lighting: photons from source to surface (direct) vs photons bouncing between surfaces (indirect/GI)",
+          "Baked lightmaps: precomputed lighting stored as textures applied to static geometry, free at runtime but cannot change",
+          "Light probes: spherical harmonics samples of the lighting environment placed in 3D space for dynamic object illumination",
+          "Reflection probes: cube maps capturing the environment for specular reflections on dynamic objects",
+          "Mixed lighting modes: realtime direct + baked indirect, supporting moving lights with precomputed bounce",
+          "Shadow mapping: rendering the scene from the light's perspective to create a depth texture used for shadow testing",
+          "Cascaded shadow maps: multiple shadow maps at increasing distances from the camera for consistent shadow resolution",
+          "Screen-space ambient occlusion (SSAO): per-pixel darkening in screen space based on surrounding depth values",
+          "Lightmap UV generation: creating a non-overlapping UV2 channel with proper padding between charts for baking",
+          "Light leaking and seam debugging: identifying and fixing artifacts caused by insufficient lightmap resolution or thin geometry"
+        ],
+        "demonstration": "Lighting the same interior scene three ways: fully realtime (all dynamic, no GI), fully baked (beautiful GI but nothing moves), and mixed mode (baked GI + realtime direct). Comparing visual quality and frame time for each. Setting up light probes in a grid and showing how a dynamic character picks up colored bounce light as it walks through the space. Identifying and fixing a light leak through a thin wall by adjusting lightmap resolution and adding bias.",
+        "setup_requirements": [
+          "Unity URP project with an interior environment scene",
+          "Lightmapping settings configured with Progressive GPU lightmapper",
+          "Light probe group covering the interior space",
+          "Dynamic character prefab for testing probe-based lighting on moving objects"
+        ],
+        "review": [
+          {
+            "key": "Lightmap",
+            "value": "A texture containing precomputed lighting (direct + indirect) baked onto static geometry. Applied using a unique UV2 coordinate set. Provides beautiful GI at zero runtime cost but requires rebaking when geometry or lights change."
+          },
+          {
+            "key": "Light Probes",
+            "value": "Points in 3D space that store the surrounding light environment as spherical harmonics coefficients. Dynamic objects sample the nearest probes to receive approximate global illumination that varies as they move."
+          },
+          {
+            "key": "Cascaded Shadow Maps",
+            "value": "Multiple shadow map textures covering near, mid, and far distance ranges from the camera. Near cascades have higher resolution for sharp close shadows; far cascades cover more area at lower resolution. Typically 2-4 cascades."
+          },
+          {
+            "key": "SSAO",
+            "value": "A screen-space post-processing effect that darkens pixels where surrounding depth values indicate nearby occluding geometry. Approximates contact shadows and ambient occlusion at moderate GPU cost without precomputation."
+          },
+          {
+            "key": "Light Leak",
+            "value": "An artifact where light appears on the wrong side of a wall or floor because the lightmap texel spans the geometry boundary. Fixed by increasing lightmap resolution for thin geometry or adding wall thickness."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "Post-Processing and Visual Effects",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Implement post-processing volumes with bloom, color grading, tone mapping, and depth of field",
+        "Create particle systems for environmental and gameplay effects",
+        "Design VFX pipelines that combine particles, shaders, and post-processing",
+        "Profile and optimize visual effects to maintain frame rate targets"
+      ],
+      "readings": [
+        "Real-Time Rendering (Akenine-Moller) Ch. 12-13",
+        "Unity VFX Graph Documentation",
+        "GPU Gems Ch. 8-12 - Lighting and Effects"
+      ],
+      "lecture_notes": {
+        "introduction": "Post-processing and visual effects are what give a 3D game its visual identity and cinematic quality. Post-processing modifies the rendered image after all geometry has been drawn, applying screen-space effects that are impossible or impractical to compute per-object. Bloom makes bright areas glow. Tone mapping compresses the high dynamic range of the rendered image into the displayable range while preserving contrast. Color grading shifts the entire color palette to match a mood or art style. Depth of field blurs objects outside a focal range to direct attention. These effects, combined with particle systems for fire, smoke, sparks, and magic, and custom shader effects for dissolves, distortion, and outlines, create the visual polish that players expect from professional games. The danger is that each effect has a GPU cost, and stacking too many effects can blow your frame budget. Today we build a complete post-processing stack, create particle effects for a gameplay scenario, and measure the cost of each effect individually so you can make informed decisions about which effects to include and at what quality settings for different hardware tiers.",
+        "key_concepts": [
+          "Post-processing volume system: global and local volumes, priority and blending between volume settings",
+          "Bloom: extracting bright pixels above a threshold, blurring them, and adding them back to create light glow",
+          "Tone mapping: converting HDR render values to LDR display range using ACES, Filmic, or Neutral curves",
+          "Color grading: adjusting shadows/midtones/highlights, color temperature, saturation, and custom LUT application",
+          "Depth of field: gaussian or bokeh blur based on distance from focal plane, with adjustable aperture and focal length",
+          "Particle systems: emission rate, velocity, lifetime, size/color over life, collision, sub-emitters for secondary effects",
+          "VFX Graph: GPU-computed particle systems for millions of particles with custom behaviors via visual programming",
+          "Screen-space reflections (SSR): ray marching in screen space using the depth buffer to approximate reflections",
+          "Motion blur: per-object or camera-based motion blur using velocity buffers to simulate shutter exposure",
+          "Effect LOD: reducing particle count, disabling post-processing effects, or lowering resolution at distance or on lower hardware"
+        ],
+        "demonstration": "Building a campfire scene with the complete VFX pipeline: a VFX Graph particle system for fire with heat distortion shader, smoke particles with world-space noise, ember particles with collision bouncing, a point light with flicker script, then a post-processing volume with bloom, ACES tone mapping, warm color grading, and vignette. Profiling each layer's GPU contribution.",
+        "setup_requirements": [
+          "Unity URP project with Post Processing package",
+          "VFX Graph package installed",
+          "Particle textures: flame atlas, smoke atlas, spark texture",
+          "Sample scene with environmental context for the campfire"
+        ],
+        "review": [
+          {
+            "key": "Bloom",
+            "value": "Extracts pixels above a brightness threshold, applies multi-pass Gaussian blur at decreasing resolutions, then composites the blurred result back. The threshold and intensity control how much bright areas glow. Heavy bloom is a common beginner mistake."
+          },
+          {
+            "key": "Tone Mapping",
+            "value": "Maps the wide range of HDR lighting values (0 to infinity) to the displayable range (0 to 1) while preserving relative contrast. ACES is the industry standard for cinematic look; Neutral preserves more color accuracy."
+          },
+          {
+            "key": "VFX Graph",
+            "value": "Unity's GPU-accelerated particle system using compute shaders. Supports millions of particles with custom behavior nodes. Runs entirely on the GPU, unlike the legacy CPU-based Particle System."
+          },
+          {
+            "key": "Color Grading LUT",
+            "value": "A 3D lookup table that remaps every input color to an output color. Artists create LUTs in Photoshop or DaVinci Resolve and apply them as a single texture lookup per pixel, enabling complex color transforms at minimal GPU cost."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "LOD, Occlusion, and Optimization",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Implement Level of Detail systems for meshes, textures, and shaders",
+        "Configure occlusion culling to eliminate rendering of hidden objects",
+        "Apply draw call batching, instancing, and atlas techniques to reduce CPU overhead",
+        "Establish and enforce a performance budget across all engine subsystems"
+      ],
+      "readings": [
+        "Game Engine Architecture (Gregory) Ch. 10 - Rendering Optimization",
+        "Unity Performance Optimization Documentation",
+        "Real-Time Rendering (Akenine-Moller) Ch. 19 - Acceleration Algorithms"
+      ],
+      "lecture_notes": {
+        "introduction": "Performance optimization is not something you do at the end of a project -- it is a discipline you practice from day one. The difference between a game that runs at a stable 60fps and one that stutters at 30fps is usually not a single bottleneck but dozens of small inefficiencies that compound. Today we cover the three pillars of 3D rendering optimization: Level of Detail (reducing work on distant or small objects), occlusion culling (skipping objects the player cannot see), and batching/instancing (reducing the per-object CPU overhead of draw calls). LOD is the recognition that a tree 500 meters away does not need 10,000 triangles; a 50-triangle version or even a billboard is visually identical at that distance. Occlusion culling is the recognition that a room behind a closed door does not need to be rendered at all. Batching combines multiple small objects into a single draw call to amortize the CPU overhead across them. Together, these techniques routinely reduce rendering workload by 80-90% in complex scenes. We will also establish a formal performance budget: allocating the 16.67ms frame time across rendering, physics, gameplay logic, audio, and headroom, and using the profiler to enforce those budgets during development.",
+        "key_concepts": [
+          "LOD Group component: defining mesh, material, and shader variants at multiple distance thresholds with crossfade transitions",
+          "Automatic LOD generation: tools like Unity's LOD Mesh Simplification or Simplygon for generating reduced-polygon meshes",
+          "Frustum culling: automatically skipping objects outside the camera's view frustum (handled by the engine)",
+          "Occlusion culling: precomputing or runtime-computing which objects are hidden behind other objects and skipping their rendering",
+          "Static batching: combining meshes of non-moving objects sharing the same material into a single vertex buffer at build time",
+          "Dynamic batching: combining small meshes at runtime (limited vertex count, same material, no scaling)",
+          "GPU instancing: rendering many copies of the same mesh with a single draw call using per-instance data in a buffer",
+          "Texture atlasing: packing multiple small textures into a single large texture to enable batching of objects with different textures",
+          "Performance budget: allocating frame time to subsystems (rendering 10ms, physics 2ms, gameplay 2ms, headroom 2.67ms for 60fps)",
+          "Profiler-driven optimization: measuring before optimizing, targeting the actual bottleneck, and verifying improvement after each change"
+        ],
+        "demonstration": "Taking a forest scene with 2000 individually rendered trees (800 draw calls, 18ms frame time) and optimizing it to under 8ms: adding LOD groups with 3 levels plus billboard, enabling GPU instancing for tree batches, baking occlusion culling to skip trees behind the terrain ridge, and atlas-packing ground cover textures to reduce material count. Measuring each optimization's impact independently.",
+        "setup_requirements": [
+          "Unity project with a complex scene (forest or city) exceeding frame budget",
+          "Unity Profiler and Frame Debugger",
+          "LOD meshes for key assets at 3-4 detail levels",
+          "Occlusion culling bake settings configured"
+        ],
+        "review": [
+          {
+            "key": "LOD Crossfade",
+            "value": "A dithering or alpha-blending transition between LOD levels over a short distance range to prevent visible 'popping' when an object suddenly switches to a lower-detail mesh."
+          },
+          {
+            "key": "Occlusion Culling",
+            "value": "The engine precomputes (bakes) visibility data for the scene, then at runtime quickly determines which objects are hidden behind other geometry from the current camera position. Hidden objects skip all rendering work."
+          },
+          {
+            "key": "GPU Instancing",
+            "value": "Rendering many instances of the same mesh in a single draw call by sending a buffer of per-instance transforms (and optionally color/parameters). Dramatically reduces CPU draw call overhead for repeated objects like trees, rocks, or bullets."
+          },
+          {
+            "key": "Performance Budget",
+            "value": "A document allocating milliseconds to each subsystem per frame. At 60fps, 16.67ms total: typically 8-10ms rendering, 2ms physics, 2ms gameplay/AI, 1ms audio, 1-2ms headroom for spikes. Each subsystem must stay within budget."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Networking for 3D Games",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Implement client-server networking architecture for multiplayer 3D games",
+        "Apply state synchronization techniques for networked game objects",
+        "Handle latency compensation with client-side prediction and server reconciliation",
+        "Design authority models that prevent cheating while maintaining responsive gameplay"
+      ],
+      "readings": [
+        "Multiplayer Game Programming (Glazer & Madhav) Ch. 1-6",
+        "Unity Netcode for GameObjects Documentation",
+        "GDC Vault: Overwatch Networking Architecture"
+      ],
+      "lecture_notes": {
+        "introduction": "Networking transforms a single-player 3D game into a shared experience, but it also transforms the engineering from hard to extremely hard. The fundamental challenge of networked games is that information travels at the speed of light, which is fast but not instantaneous. A player in New York and a player in Tokyo have approximately 150ms of round-trip latency between them. In 150ms, a character moving at 5 m/s covers 0.75 meters -- enough to be clearly visible as a discrepancy between what each player sees. Networked 3D game development is the art of hiding this latency while maintaining a consistent game state that all players agree on. We use client-server architecture where the server is the authoritative source of truth. Clients predict their own movement locally for instant responsiveness, then reconcile with the server's corrections. Other players' positions are interpolated between known server states to appear smooth. The server runs lag compensation to rewind time when evaluating whether a shot that looked like a hit on the shooter's screen actually hit on the server's version of events. Today we implement each of these techniques using Unity's Netcode for GameObjects.",
+        "key_concepts": [
+          "Client-server architecture: the server owns the authoritative game state, clients send inputs and receive state updates",
+          "NetworkObject and NetworkBehaviour: Unity Netcode components for synchronizing game objects across the network",
+          "State synchronization: NetworkVariables for replicated state, NetworkTransform for position/rotation sync",
+          "Client-side prediction: the client simulates its own movement immediately without waiting for server confirmation",
+          "Server reconciliation: when the server's state disagrees with the client's prediction, the client corrects by rewinding and replaying inputs",
+          "Entity interpolation: displaying other players' positions by interpolating between the two most recent server states, introducing one update interval of visual delay",
+          "Lag compensation: the server rewinds other entities to where they were at the time the shooting client saw them, then evaluates the hit",
+          "Network tick rate: the frequency of server simulation updates (typically 20-60Hz), separate from the rendering frame rate",
+          "Bandwidth optimization: delta compression, relevancy filtering, and priority-based update frequency for distant or unimportant objects",
+          "Authority models: server-authoritative (anti-cheat) vs client-authoritative (responsive) with hybrid approaches for different systems"
+        ],
+        "demonstration": "Setting up a two-player networked scene using Unity Netcode: spawning player objects with NetworkObject, synchronizing position with NetworkTransform, implementing client-side prediction for local movement, and showing the visual difference between raw server state (teleporting) and interpolated state (smooth). Using the Network Simulator to add 200ms latency and observing prediction/reconciliation behavior.",
+        "setup_requirements": [
+          "Unity project with Netcode for GameObjects package installed",
+          "Two editor instances using ParrelSync or build + editor",
+          "Unity Network Simulator for testing with artificial latency",
+          "Character controller adapted for network prediction"
+        ],
+        "review": [
+          {
+            "key": "Client-Side Prediction",
+            "value": "The client applies its own input immediately to simulate movement without waiting for server confirmation. This hides the full round-trip latency for the local player's own actions. If the server disagrees, the client must correct."
+          },
+          {
+            "key": "Server Reconciliation",
+            "value": "When the server's authoritative state for the local player differs from the client's predicted state, the client rewinds to the server state, then replays all inputs that occurred after that server tick to arrive at a corrected present state."
+          },
+          {
+            "key": "Entity Interpolation",
+            "value": "Displaying remote players by smoothly interpolating between the two most recent server states rather than snapping to the latest position. Introduces one update interval of visual delay but produces smooth motion."
+          },
+          {
+            "key": "Lag Compensation",
+            "value": "The server rewinds the game state to the time when the shooting client pressed fire (accounting for network latency) and checks whether the target was hit at that rewound position. This makes hits feel fair from the shooter's perspective."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "Procedural 3D Generation",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Generate 3D terrain and meshes procedurally using noise functions",
+        "Implement procedural placement systems for populating game worlds",
+        "Design modular level generation systems using rule-based and grammar-based approaches",
+        "Evaluate the tradeoffs between procedural and hand-authored content"
+      ],
+      "readings": [
+        "Procedural Generation in Game Design (Short & Adams) Ch. 3-6",
+        "Texturing and Modeling: A Procedural Approach Ch. 2-4",
+        "GDC Vault: Wave Function Collapse for Procedural Generation"
+      ],
+      "lecture_notes": {
+        "introduction": "Procedural generation creates game content algorithmically rather than by hand, enabling vastly larger and more varied game worlds than manual authoring allows. Minecraft, No Man's Sky, and roguelikes like Hades demonstrate the power of procedural systems to create replayable experiences. In 3D game development, procedural generation applies to terrain (noise-based heightmaps), vegetation (density and placement rules), dungeon layouts (graph-based room connections), building interiors (grammar-based room assembly), and even mesh geometry (L-systems for trees, Catmull-Clark subdivision for surfaces). The key insight is that procedural generation is not random generation -- it is rule-based generation with controlled randomness. Good procedural systems have knobs that designers can tune to produce results that feel intentional rather than chaotic. The challenge is ensuring that procedurally generated content meets quality standards: no impossible layouts, no floating objects, no impassable terrain. Today we implement several procedural techniques, starting with Perlin noise terrain, moving to Poisson disk sampling for natural-looking object placement, and concluding with a Wave Function Collapse system for modular level assembly.",
+        "key_concepts": [
+          "Perlin and Simplex noise: gradient noise functions that produce smooth, natural-looking value fields in 1D, 2D, or 3D",
+          "Fractal Brownian Motion (fBM): layering multiple noise octaves at different frequencies and amplitudes for detailed terrain",
+          "Procedural heightmap terrain: generating terrain height from noise with domain warping for more organic shapes",
+          "Poisson disk sampling: distributing points with a minimum distance guarantee for natural-looking object placement",
+          "Wave Function Collapse (WFC): constraint-solving algorithm that assembles modular tiles/voxels following adjacency rules",
+          "L-systems: formal grammars that produce branching structures for procedural trees, coral, and similar organic geometry",
+          "Marching cubes: extracting a mesh surface from a 3D scalar field for cave generation and voxel terrain",
+          "Seed-based determinism: using a single seed value to reproduce the same procedural output for multiplayer consistency and bug reproduction",
+          "Biome blending: transitioning between different procedural generation rules based on regional parameters (temperature, moisture)",
+          "Procedural decoration: rule-based placement of props, foliage, and details based on terrain slope, height, and proximity constraints"
+        ],
+        "demonstration": "Generating a procedural island: Perlin noise heightmap with fBM for detail, erosion simulation for realistic valleys, Poisson disk sampling for tree placement respecting slope and elevation constraints, and WFC for placing modular building pieces on flat terrain areas. The entire island regenerates from a single seed value.",
+        "setup_requirements": [
+          "Unity project with compute shader support for noise generation",
+          "Modular building tile set with defined adjacency rules for WFC",
+          "Tree and vegetation prefabs with LOD groups",
+          "Custom editor tool for seed input and regeneration"
+        ],
+        "review": [
+          {
+            "key": "Perlin Noise",
+            "value": "A gradient-based noise function that produces smooth, continuous pseudo-random values. Unlike pure random noise, adjacent samples are correlated, producing natural-looking terrain, clouds, and textures."
+          },
+          {
+            "key": "Fractal Brownian Motion",
+            "value": "Summing multiple octaves of noise at doubling frequency and halving amplitude: fBM(x) = noise(x) + 0.5*noise(2x) + 0.25*noise(4x) + ... Produces detail at multiple scales like real terrain."
+          },
+          {
+            "key": "Wave Function Collapse",
+            "value": "An algorithm that fills a grid with tiles by propagating constraints: each cell starts with all possible tiles, and placing a tile eliminates incompatible neighbors, cascading until the grid is fully resolved or a contradiction is found."
+          },
+          {
+            "key": "Poisson Disk Sampling",
+            "value": "A point distribution algorithm that ensures no two points are closer than a minimum distance, producing a natural blue-noise pattern. Bridson's algorithm generates points in O(n) time for real-time use."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "Build, Deployment, and Platform Considerations",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Configure build pipelines for multiple target platforms",
+        "Implement addressable asset systems for content management and patching",
+        "Optimize build size and loading times for distribution requirements",
+        "Handle platform-specific input, rendering, and certification requirements"
+      ],
+      "readings": [
+        "Unity Build Pipeline Documentation",
+        "Unity Addressables System Documentation",
+        "Platform-Specific Optimization Guides for PC, Console, and Mobile"
+      ],
+      "lecture_notes": {
+        "introduction": "A game that runs in the Unity Editor is not a game that can be distributed to players. The build and deployment pipeline transforms your project into platform-specific executables that must meet each platform's requirements for file size, loading time, input handling, certification compliance, and distribution format. Building for PC means supporting a vast range of hardware configurations with scalable quality settings. Building for console means meeting strict certification requirements from Sony, Microsoft, or Nintendo. Building for mobile means fitting within app store size limits and loading quickly on flash storage. Today we cover the complete build pipeline from development to distribution: build configuration, asset management with Addressables for on-demand content loading, platform-specific considerations and abstraction, build size optimization (including asset stripping, compression, and code stripping), loading screen implementation, and the submission process for each major platform. We also discuss continuous delivery: automating builds with Unity Cloud Build or custom CI/CD pipelines so that every commit produces a tested, deployable build.",
+        "key_concepts": [
+          "Build settings: target platform, architecture, compression method, scripting backend (Mono vs IL2CPP), managed code stripping",
+          "Addressable Assets: decoupling asset references from build inclusion, enabling on-demand download and hot content updates",
+          "Asset bundles vs Addressables: legacy bundle system vs modern addressable system with dependency management and caching",
+          "Build size optimization: texture compression per platform, audio compression, mesh compression, unused asset stripping",
+          "IL2CPP ahead-of-time compilation: converting C# to C++ for better performance and code protection on release builds",
+          "Platform abstraction layer: wrapping platform-specific APIs (achievements, input, cloud saves) behind common interfaces",
+          "Loading and streaming: asynchronous scene loading, loading screens with progress, streaming large worlds without hitches",
+          "Quality settings tiers: defining Low/Medium/High/Ultra presets that scale resolution, shadow quality, LOD distances, and effects",
+          "Continuous delivery: automating builds with CI/CD, running tests on every commit, deploying to internal testing channels",
+          "Platform certification: Xbox XR, PlayStation TRC, Nintendo Lotcheck requirements and common failure points"
+        ],
+        "demonstration": "Building the course project for three platforms: Windows (IL2CPP, addressable content split into base + DLC groups), Android (ASTC textures, reduced quality tier, APK size under 150MB with expansion files), and WebGL (compressed assets, streaming loading). Comparing build times, output sizes, and loading speeds across platforms.",
+        "setup_requirements": [
+          "Unity project with Addressables package configured",
+          "Android SDK and NDK for mobile builds",
+          "WebGL build support module installed",
+          "CI/CD tool (GitHub Actions or Unity Cloud Build) configured"
+        ],
+        "review": [
+          {
+            "key": "Addressable Assets",
+            "value": "A Unity system where assets are referenced by address strings rather than direct references. Assets are packed into groups that can be local or remote. At runtime, loading an addressable asset automatically handles downloading, caching, and dependency resolution."
+          },
+          {
+            "key": "IL2CPP",
+            "value": "Unity's ahead-of-time compilation backend that converts C# IL code to C++, which is then compiled to native machine code. Provides 2-3x performance improvement over Mono and prevents easy decompilation of game logic."
+          },
+          {
+            "key": "Managed Code Stripping",
+            "value": "An IL2CPP build optimization that removes unused C# code from the build. Can significantly reduce executable size but may strip code used via reflection. Requires link.xml configuration to preserve dynamically-accessed types."
+          },
+          {
+            "key": "Quality Settings Tiers",
+            "value": "Predefined configuration sets that scale rendering quality to hardware capability. Each tier adjusts resolution scale, shadow resolution, LOD bias, anti-aliasing level, and post-processing quality to maintain target frame rate across hardware."
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Final Project Presentations",
+      "duration": "80 minutes",
+      "learning_objectives": [
+        "Present a complete 3D game demonstrating mastery of course concepts",
+        "Articulate technical decisions and their impact on the final product",
+        "Give and receive constructive feedback on peer projects",
+        "Reflect on the development process and identify lessons learned"
+      ],
+      "readings": [
+        "Game Postmortem Writing Guide",
+        "Peer Review Best Practices for Technical Presentations"
+      ],
+      "lecture_notes": {
+        "introduction": "Today marks the culmination of fifteen weeks of intensive 3D game development study and practice. Each student will present their final project: a complete, playable 3D game that demonstrates mastery of the technical skills covered throughout the course. Presentations are not just about showing the game -- they are about demonstrating your ability to communicate technical decisions to an audience of peers and evaluators. This is a skill you will use throughout your career, whether pitching to publishers, presenting at GDC, or defending technical decisions to your team lead. Your presentation should cover the game concept and design goals, the technical architecture and key implementation decisions, the most challenging problems you faced and how you solved them, performance analysis showing your game meets frame budget on target hardware, and a live demonstration of the final build. You will also submit a written post-mortem document that reflects on what went well, what went poorly, and what you would do differently with the benefit of hindsight. Post-mortems are one of the most valuable learning tools in game development because they force honest reflection on the gap between intention and execution.",
+        "key_concepts": [
+          "Technical presentation structure: problem statement, approach, implementation, results, reflection",
+          "Live demonstration preparation: backup plans for crashes, pre-recorded fallback video, tested presentation hardware",
+          "Post-mortem analysis: structured reflection on what went right, what went wrong, and lessons learned",
+          "Performance evidence: profiler screenshots showing frame time breakdown, memory usage, and optimization impact",
+          "Peer evaluation criteria: technical depth, visual quality, gameplay feel, presentation clarity, innovation",
+          "Portfolio presentation: framing your project for professional portfolios and job applications",
+          "Code review highlights: identifying the cleanest and most complex code sections for discussion",
+          "Iteration documentation: showing how the project evolved through prototyping, testing, and refinement stages",
+          "Technical debt assessment: honest evaluation of shortcuts taken and their long-term implications",
+          "Future development roadmap: identifying features that would improve the project with more time"
+        ],
+        "demonstration": "Each student presents for 8-10 minutes followed by 3-5 minutes of Q&A. The instructor demonstrates the evaluation rubric with a sample project walkthrough, highlighting what constitutes excellent technical presentation, thorough post-mortem analysis, and professional portfolio quality.",
+        "setup_requirements": [
+          "Presentation computer with projector connection tested",
+          "Final game build on a USB drive as backup",
+          "Pre-recorded gameplay video as demonstration fallback",
+          "Written post-mortem document submitted before presentation"
+        ],
+        "review": [
+          {
+            "key": "Post-Mortem",
+            "value": "A structured document analyzing the completed project: what went right (successful techniques and decisions), what went wrong (problems encountered and their causes), and lessons learned (actionable takeaways for future projects)."
+          },
+          {
+            "key": "Technical Presentation",
+            "value": "A presentation that explains not just what you built but why you made the technical decisions you did, what alternatives you considered, and what evidence supports that your approach was effective."
+          },
+          {
+            "key": "Performance Evidence",
+            "value": "Profiler data demonstrating that the game meets its frame budget on target hardware. Must include frame time breakdown by subsystem, memory usage, and before/after comparisons for key optimizations."
+          },
+          {
+            "key": "Portfolio Quality",
+            "value": "The project is presentable to potential employers: clean code repository, technical documentation, gameplay trailer, and screenshots that demonstrate both technical skill and design sensibility."
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 3,
+        "topic": "Engine Architecture, Coordinate Systems, and Rendering Pipeline",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "A 3D game object has a parent at world position (5, 0, 3) with a rotation of 90 degrees around the Y-axis. The child has a local position of (2, 0, 0). Calculate the child's world position and explain each step of the transformation.",
+            "type": "calculation",
+            "points": 8,
+            "answer": "The parent's 90-degree Y rotation means its local X-axis points along the world Z-axis. The child's local position (2,0,0) means 2 units along the parent's local X-axis, which is now world Z. So the child's world position is parent position + rotated offset = (5, 0, 3) + (0, 0, 2) = (5, 0, 5). Step 1: Convert parent rotation to a rotation matrix. A 90-degree Y rotation maps local X to world Z, local Z to world -X. Step 2: Multiply the child's local position by the parent's rotation matrix: (2,0,0) becomes (0,0,2). Step 3: Add the parent's world translation: (5,0,3) + (0,0,2) = (5,0,5).",
+            "rubric": [
+              {
+                "key": "Correct final world position (5, 0, 5)",
+                "value": 3
+              },
+              {
+                "key": "Shows rotation applied to local offset before translation",
+                "value": 3
+              },
+              {
+                "key": "Demonstrates understanding of parent-child transform chain",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain why deferred rendering handles many lights more efficiently than forward rendering, but struggles with transparent objects. Include the performance complexity of each approach.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Forward rendering processes each light for each object during the geometry pass, giving O(objects x lights) complexity. With 100 objects and 50 lights, that is 5000 lighting passes. Deferred rendering separates geometry and lighting: the geometry pass renders all objects once into a G-buffer (O(objects)), then the lighting pass applies each light as a screen-space operation (O(pixels x lights)). Since pixel count is fixed regardless of scene complexity, deferred scales much better with many lights. However, transparent objects cannot be deferred because the G-buffer only stores the frontmost surface's material properties. Transparent objects must be rendered in a separate forward pass after the deferred lighting, sorted back-to-front, which negates the deferred advantage for them.",
+            "rubric": [
+              {
+                "key": "Correctly states forward = O(objects x lights) and deferred = O(objects) + O(pixels x lights)",
+                "value": 3
+              },
+              {
+                "key": "Explains G-buffer stores only frontmost surface, preventing transparency",
+                "value": 3
+              },
+              {
+                "key": "Notes transparent objects require separate forward pass",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Describe three stages of the graphics rendering pipeline in order, explaining what input each stage receives and what output it produces.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "1. Vertex Shader: receives individual vertices with position, normal, UV, and other attributes in object space. Outputs transformed vertex positions in clip space after applying the MVP matrix, along with interpolatable attributes like world normals and UVs. 2. Rasterization: receives assembled triangles in clip space. Outputs fragments (potential pixels) with interpolated vertex attributes for each pixel covered by a triangle. Also performs clipping against the view frustum and backface culling. 3. Fragment Shader: receives individual fragments with interpolated attributes. Outputs a final color value for each pixel after performing texture sampling, lighting calculations, and other per-pixel operations.",
+            "rubric": [
+              {
+                "key": "Three stages correctly named and ordered",
+                "value": 2
+              },
+              {
+                "key": "Input and output described accurately for each stage",
+                "value": 3
+              },
+              {
+                "key": "Technical accuracy of the descriptions",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 2,
+        "week": 5,
+        "topic": "Materials, Shaders, and 3D Physics",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "In the PBR metallic-roughness workflow, explain what happens visually when you set metallic=1 and roughness=0 vs metallic=0 and roughness=1, and describe the underlying physical model that produces each appearance.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Metallic=1, Roughness=0: The surface appears as a perfectly smooth mirror-like metal (like polished chrome). Physically, metals reflect nearly all incoming light as specular reflection with no diffuse component. The albedo map tints the reflected light (giving gold its warm color). The Cook-Torrance BRDF concentrates the specular lobe into a tight peak because the GGX distribution with roughness=0 approaches a delta function, and the Fresnel term is high across all angles for conductors. Metallic=0, Roughness=1: The surface appears as a completely matte dielectric (like raw plaster or chalk). Physically, dielectrics absorb and re-emit light through subsurface scattering, which the PBR model approximates as a Lambertian diffuse term. The specular component still exists (Fresnel at grazing angles) but roughness=1 spreads it so widely it becomes invisible. The albedo map represents the subsurface color directly.",
+            "rubric": [
+              {
+                "key": "Correctly describes visual appearance of both settings",
+                "value": 3
+              },
+              {
+                "key": "Explains metal vs dielectric physical reflection models",
+                "value": 3
+              },
+              {
+                "key": "References roughness effect on specular lobe and Fresnel behavior",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A game has fast-moving projectiles (speed 50 m/s) that are 0.1m in diameter passing through thin walls (0.2m thick). The physics timestep is 0.02s (50Hz). Explain why the projectiles pass through the walls and describe two different solutions with their tradeoffs.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "At 50 m/s with a 0.02s timestep, the projectile moves 1.0m per physics step. Since the projectile (0.1m) and wall (0.2m) together span only 0.3m, the projectile can teleport from one side of the wall to the other between steps without ever overlapping the collider -- this is tunneling. Solution 1: Enable continuous collision detection (CCD) on the projectile rigidbody. CCD performs a swept-shape test between the start and end positions of each step, detecting any wall crossed during the interval. Tradeoff: CCD is more expensive per rigidbody (2-4x physics cost for that object), so only enable it on objects that actually need it. Solution 2: Use raycasting instead of physics colliders for projectile hit detection. Cast a ray from the projectile's previous position to its current position each frame. Tradeoff: bypasses the physics engine's collision response (no bounce, no physical interaction with other rigidbodies), requiring manual implementation of any desired physical behavior.",
+            "rubric": [
+              {
+                "key": "Correctly calculates displacement per step and explains tunneling mechanism",
+                "value": 3
+              },
+              {
+                "key": "First solution is technically valid with clear tradeoff",
+                "value": 3
+              },
+              {
+                "key": "Second solution is technically valid with clear tradeoff",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Write the key HLSL code for a vertex shader function that transforms a vertex position from object space to clip space using the model-view-projection matrix, and pass the world-space normal to the fragment shader.",
+            "type": "code",
+            "points": 7,
+            "answer": "struct Varyings { float4 positionCS : SV_POSITION; float3 normalWS : TEXCOORD0; }; Varyings vert(float3 positionOS : POSITION, float3 normalOS : NORMAL) { Varyings o; o.positionCS = TransformObjectToHClip(positionOS); o.normalWS = TransformObjectToWorldNormal(normalOS); return o; }",
+            "rubric": [
+              {
+                "key": "Correct object-to-clip-space position transform",
+                "value": 3
+              },
+              {
+                "key": "Correct object-to-world-space normal transform",
+                "value": 2
+              },
+              {
+                "key": "Proper HLSL struct and semantic usage",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "Character Controllers, Cameras, and Terrain",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Explain coyote time and jump buffering in character controllers. For each, describe what problem it solves, how it is implemented, and what a reasonable duration value would be.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Coyote time: After a player walks off a ledge, there is a grace period (typically 100-200ms) during which a jump input is still accepted even though the character is no longer grounded. Implementation: when isGrounded becomes false without a jump, start a timer. If the player presses jump before the timer expires, execute the jump as if they were still on the ground. Problem solved: players perceive themselves as still on the edge when they are already 2-3 frames past it; without coyote time, they feel the game 'ate' their input. Jump buffering: When a player presses jump shortly before landing (typically 100-150ms before ground contact), the input is queued and executed on the first grounded frame. Implementation: when jump is pressed while airborne, start a buffer timer. On each grounded check, if the buffer timer has not expired, execute the jump. Problem solved: players cannot humanly time their jump press to the exact frame they touch the ground; without buffering, rapidly chaining jumps requires inhuman precision.",
+            "rubric": [
+              {
+                "key": "Correct definition and implementation of coyote time",
+                "value": 3
+              },
+              {
+                "key": "Correct definition and implementation of jump buffering",
+                "value": 3
+              },
+              {
+                "key": "Reasonable duration values and problem descriptions",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Describe how a third-person camera prevents clipping through walls using spherecast collision detection. Include the specific steps of the algorithm and explain why a spherecast is used instead of a raycast.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Algorithm: 1. Calculate the desired camera position based on orbit angles and distance from the follow target. 2. Cast a sphere (radius matching or slightly larger than the camera's near clip plane) from the follow target position toward the desired camera position. 3. If the spherecast hits geometry, place the camera at the hit point minus the sphere radius along the cast direction (so the sphere surface touches the wall rather than penetrating it). 4. If no hit, place the camera at the desired position. 5. Optionally, use a spring to smooth the camera recovery when it is no longer colliding, preventing instant snap-back. A spherecast is used instead of a raycast because the camera has a near clip plane that is a flat surface, not a point. A raycast (infinitely thin line) could find a clear line of sight while the camera's near clip plane still intersects geometry on either side, causing visible clipping of walls and objects at the screen edges.",
+            "rubric": [
+              {
+                "key": "Correct algorithm steps for spherecast collision",
+                "value": 3
+              },
+              {
+                "key": "Explains placement at hit point minus sphere radius",
+                "value": 2
+              },
+              {
+                "key": "Explains why spherecast prevents near-plane clipping that raycast misses",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain how splatmap texturing works for terrain rendering, including how more than four texture layers are supported.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "A splatmap is a texture where each pixel's RGBA channels store the blend weights for four terrain texture layers at that world position. For any terrain point, the shader reads the splatmap, uses the R value as the weight for texture 0, G for texture 1, B for texture 2, and A for texture 3, then blends the four sampled terrain textures according to these weights. The weights should sum to 1.0 for energy conservation. To support more than four layers, additional splatmaps are added. A second splatmap's RGBA channels control layers 4-7, a third controls 8-11, and so on. The terrain shader samples all active splatmaps and their corresponding texture layers, blending the results. Each additional splatmap adds texture sampling cost to the fragment shader, so practical terrains typically use 8-12 layers maximum.",
+            "rubric": [
+              {
+                "key": "Correctly describes RGBA channel mapping to four texture layers",
+                "value": 3
+              },
+              {
+                "key": "Explains weighted blending based on splatmap values",
+                "value": 2
+              },
+              {
+                "key": "Describes additional splatmaps for more than four layers with cost note",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "Lighting, Post-Processing, and Optimization",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Compare baked lightmaps and light probes for providing global illumination to objects in a scene. Explain when you would use each and describe a scenario where you need both working together.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Baked lightmaps store precomputed direct and indirect lighting as textures applied to static geometry via UV2 coordinates. They provide pixel-accurate GI including color bleeding, soft shadows, and ambient occlusion at zero runtime cost. Limitation: they only work on static (non-moving) geometry and must be rebaked when lights or geometry change. Light probes store the lighting environment as spherical harmonics coefficients at sample points in 3D space. Dynamic (moving) objects interpolate between nearby probes to receive approximate GI that varies as they move. Limitation: resolution is limited by probe density, and they cannot provide the pixel-accurate detail of lightmaps. Scenario requiring both: an interior scene with static walls, floors, and furniture lit by baked lightmaps (beautiful GI with light bouncing between colored walls), and a player character walking through the space using light probes to pick up the baked ambient light colors. Without probes, the dynamic character would only receive realtime direct light and look flat compared to the richly lit environment.",
+            "rubric": [
+              {
+                "key": "Correctly describes lightmaps for static geometry with GI quality advantage",
+                "value": 3
+              },
+              {
+                "key": "Correctly describes probes for dynamic objects with SH approximation",
+                "value": 3
+              },
+              {
+                "key": "Provides a clear scenario requiring both systems together",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A scene has 600 draw calls and takes 14ms to render at 1080p. Using the Unity Profiler, you determine it is GPU-bound. Describe a prioritized optimization plan with at least three techniques, estimating the impact of each.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Priority 1: Enable GPU instancing for repeated meshes (trees, rocks, props). If 400 of the 600 draw calls are instances of 20 unique meshes, instancing could reduce those 400 draw calls to 20. Estimated impact: 2-4ms saved from reduced GPU state changes and vertex processing overhead. Priority 2: Enable occlusion culling. Bake occlusion data so objects hidden behind buildings or terrain are not rendered. In a typical outdoor scene, 30-50% of objects may be occluded. Estimated impact: 2-3ms saved from skipping hidden geometry entirely. Priority 3: Add LOD groups to the highest-poly assets. Replace distant objects with simplified meshes (50-75% fewer triangles) or billboard impostors. Estimated impact: 1-2ms saved from reduced vertex processing and potentially fewer material switches. Combined: 5-9ms reduction, bringing frame time from 14ms to approximately 5-9ms, well within the 16.67ms budget. If still over budget, consider reducing shadow map resolution or post-processing quality.",
+            "rubric": [
+              {
+                "key": "Three distinct optimization techniques correctly described",
+                "value": 3
+              },
+              {
+                "key": "Reasonable impact estimates for each technique",
+                "value": 3
+              },
+              {
+                "key": "Prioritized from highest to lowest impact",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the difference between static batching and GPU instancing. For each, describe the requirements, benefits, and limitations.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Static batching: Combines the meshes of non-moving GameObjects that share the same material into a single large vertex buffer at build time. Requirements: objects must be marked as static and share the same material. Benefits: reduces draw calls to one per unique material for all batched objects. Limitations: increases memory usage (each object's mesh data is duplicated into the combined buffer), objects cannot move or change at runtime, and very large combined meshes may reduce culling efficiency. GPU instancing: Renders many copies of the same mesh in a single draw call by sending an array of per-instance transforms (and optionally properties) to the GPU. Requirements: all instances must use the same mesh and a shader with instancing support. Benefits: minimal memory overhead since mesh data is shared, objects can be dynamic (moving), and per-instance properties (color, scale) are supported. Limitations: all instances must use the exact same mesh (no mesh variation), shader must explicitly support instancing, and some platforms limit the instance count per draw call.",
+            "rubric": [
+              {
+                "key": "Correctly describes static batching requirements and memory tradeoff",
+                "value": 3
+              },
+              {
+                "key": "Correctly describes GPU instancing requirements and shared mesh constraint",
+                "value": 2
+              },
+              {
+                "key": "Identifies key limitations of each approach",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "Networking, Procedural Generation, and Deployment",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "In a networked 3D game, explain client-side prediction and server reconciliation. Describe what happens when the server corrects a client's predicted position and how the correction is applied without visible teleporting.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Client-side prediction: The local client applies its own input to its character immediately, simulating movement without waiting for server confirmation. This hides the round-trip latency (e.g., 100ms), making movement feel responsive. The client stores a buffer of recent inputs with timestamps. Server reconciliation: The server simulates all clients authoritatively. When the server sends a state update for the local player, the client compares the server's position to where the client predicted it would be at that server tick. If they differ (due to missed collision or server-side correction), the client must correct. Correction without teleporting: The client rewinds its state to the server's authoritative state at the server tick, then replays all client inputs that occurred after that tick using the same simulation logic. This produces a corrected present-state position that accounts for the server's correction while preserving the client's recent inputs. The replayed result is usually very close to the current predicted position, so the correction is invisible or manifests as a tiny smooth adjustment rather than a teleport.",
+            "rubric": [
+              {
+                "key": "Correctly explains client-side prediction with input buffering",
+                "value": 3
+              },
+              {
+                "key": "Describes server reconciliation with rewind and replay mechanism",
+                "value": 3
+              },
+              {
+                "key": "Explains why correction is not visible as teleporting",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Describe how Wave Function Collapse works for procedural level generation. Include the initialization state, the constraint propagation process, and how contradictions are handled.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Initialization: A grid of cells is created, each containing the full set of possible tiles (maximum entropy). Adjacency rules define which tiles can be placed next to each other on each side (derived from example layouts or manually authored). Step 1 - Observation: Select the cell with the lowest entropy (fewest remaining possible tiles), breaking ties randomly. Collapse it to a single tile chosen from its possibilities (weighted by frequency). Step 2 - Propagation: Remove any tile options from neighboring cells that violate adjacency constraints with the newly placed tile. This removal may cascade: if a neighbor loses options, its neighbors must be rechecked. Continue until no more removals are possible. Step 3 - Repeat: Return to step 1 until all cells are collapsed. Contradiction handling: If propagation reduces any cell to zero possible tiles, a contradiction has occurred (no valid tile can go there). Options: (1) backtrack to the last observation and try a different tile, (2) restart generation with a different seed, or (3) place a special 'error' tile and continue (acceptable for some applications).",
+            "rubric": [
+              {
+                "key": "Correctly describes initialization with full possibility sets and adjacency rules",
+                "value": 3
+              },
+              {
+                "key": "Explains observation (lowest entropy selection) and propagation cascade",
+                "value": 3
+              },
+              {
+                "key": "Describes contradiction detection and at least one resolution strategy",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain what Addressable Assets are in Unity and describe two specific benefits they provide over direct asset references for a game targeting multiple platforms.",
+            "type": "short_answer",
+            "points": 7,
+            "answer": "Addressable Assets are Unity's system for referencing assets by string address rather than direct object reference. Assets are organized into groups that define how they are packed and where they are loaded from (local or remote). Benefit 1: Content size management. Addressables let you split content into a base install and downloadable groups. A mobile game can ship a 100MB base app that meets store size limits, then download additional levels, characters, or textures on demand. Direct references force all referenced assets into the build regardless of whether they are needed immediately. Benefit 2: Post-launch content updates. Remote addressable groups can be updated on a CDN without submitting a new app build. This enables hotfixing art bugs, adding seasonal content, or A/B testing different assets by changing which remote bundle the game downloads. Direct references require a full app update through the store review process for any content change.",
+            "rubric": [
+              {
+                "key": "Correctly defines Addressable Assets with address-based reference system",
+                "value": 3
+              },
+              {
+                "key": "First benefit is specific and clearly explained",
+                "value": 2
+              },
+              {
+                "key": "Second benefit is specific and clearly explained",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 23
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "3D Scene Construction and Interactive Environment",
+        "week_assigned": 3,
+        "week_due": 6,
+        "points": 150,
+        "description": "Create a fully interactive 3D environment with a playable character, multiple materials and lighting, physics-based interactions, and a functional camera system. The environment must contain at least 20 unique objects with appropriate colliders, a character controller with ground detection and jumping, a third-person camera with collision avoidance, and mixed lighting with at least 3 baked light sources and 2 realtime lights. Must maintain 60fps on target hardware.",
+        "objectives": [
+          "Demonstrate proficiency with 3D scene composition and object placement",
+          "Implement a responsive character controller with physics-based interactions",
+          "Configure PBR materials with proper texture maps for all visible surfaces",
+          "Design a lighting setup that establishes mood while maintaining performance"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Unity project files with complete scene and all scripts",
+          "Windows build executable demonstrating all functionality",
+          "Performance profiling report with frame time breakdown (2 pages)",
+          "Technical documentation describing architecture decisions (3-4 pages)",
+          "Screen recording walkthrough (3-5 minutes)"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 55,
+            "criteria": [
+              "Character controller handles ground detection, slopes, steps, and jumping correctly",
+              "Camera system provides smooth orbit control with wall collision avoidance",
+              "Physics interactions are stable with no tunneling, jitter, or exploding objects",
+              "Code is well-structured with clear separation of concerns and meaningful comments"
+            ]
+          },
+          "visual_quality": {
+            "points": 40,
+            "criteria": [
+              "PBR materials are applied correctly with albedo, normal, metallic, roughness, and AO maps",
+              "Lighting creates atmosphere with proper baked GI and realtime shadows",
+              "Visual theme is coherent and professionally presented",
+              "No visible artifacts: light leaks, Z-fighting, UV seams, or texture stretching"
+            ]
+          },
+          "performance_optimization": {
+            "points": 30,
+            "criteria": [
+              "Maintains 60fps on mid-range hardware (documented with profiler data)",
+              "Draw calls are minimized through batching and instancing",
+              "Texture memory is managed with appropriate compression and resolution",
+              "Physics performance is reasonable with appropriate collider complexity"
+            ]
+          },
+          "documentation": {
+            "points": 25,
+            "criteria": [
+              "Technical decisions are explained with rationale and alternatives considered",
+              "Performance profiling data is presented with analysis of each subsystem",
+              "Challenges encountered and solutions applied are documented",
+              "Writing is clear, professional, and properly formatted"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "A polished, playable 3D environment with responsive controls",
+                "Visually cohesive lighting and materials that create atmosphere",
+                "Solid performance backed by profiling evidence",
+                "Thorough documentation demonstrating technical understanding"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Advanced Rendering and Visual Effects Showcase",
+        "week_assigned": 7,
+        "week_due": 10,
+        "points": 150,
+        "description": "Build a visually impressive 3D scene that demonstrates mastery of advanced rendering techniques. The scene must include at least one custom HLSL shader (not Shader Graph), a terrain with splatmap texturing and vegetation, a complete post-processing stack, and at least one VFX Graph particle effect. The scene should tell a visual story through lighting and atmosphere.",
+        "objectives": [
+          "Write a custom HLSL shader that implements a visual effect beyond standard PBR",
+          "Build and texture a terrain with procedural and painted detail layers",
+          "Design a post-processing stack that enhances the visual narrative",
+          "Create particle effects that integrate naturally with the environment"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Unity project with all custom shaders, terrain, and VFX assets",
+          "Windows build showcasing the complete visual experience",
+          "Shader code with extensive comments explaining each section",
+          "Technical art document describing visual pipeline and artistic intent (3-4 pages)",
+          "Before/after comparison images showing each technique's contribution"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 55,
+            "criteria": [
+              "Custom HLSL shader compiles, runs correctly, and implements a non-trivial visual effect",
+              "Terrain splatmap texturing blends naturally with appropriate detail and normal maps",
+              "VFX Graph particle system demonstrates understanding of GPU particle simulation",
+              "Post-processing volume is configured with appropriate effect settings for the scene"
+            ]
+          },
+          "visual_quality": {
+            "points": 45,
+            "criteria": [
+              "The scene has a clear visual identity and atmospheric mood",
+              "Custom shader effect enhances rather than distracts from the scene",
+              "Lighting, post-processing, and effects work together cohesively",
+              "Terrain texturing appears natural without visible tiling or hard blending edges"
+            ]
+          },
+          "performance_optimization": {
+            "points": 25,
+            "criteria": [
+              "Scene maintains 60fps with all effects enabled",
+              "Shader instruction count is reasonable for the target platform",
+              "Particle count is managed with LOD and distance-based emission",
+              "Terrain LOD is configured for efficient distant rendering"
+            ]
+          },
+          "documentation": {
+            "points": 25,
+            "criteria": [
+              "Shader code is thoroughly commented with mathematical explanations where applicable",
+              "Technical art document explains the visual pipeline from concept to implementation",
+              "Before/after comparisons clearly demonstrate each technique's impact",
+              "Writing is professional and suitable for a technical art portfolio"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "A visually stunning scene demonstrating advanced rendering mastery",
+                "Custom shader code that shows understanding beyond node-based tools",
+                "Cohesive visual design where all techniques serve the artistic vision",
+                "Portfolio-quality documentation and presentation"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Networked 3D Multiplayer Prototype",
+        "week_assigned": 11,
+        "week_due": 13,
+        "points": 100,
+        "description": "Build a two-player networked 3D game prototype demonstrating client-server architecture, state synchronization, and latency compensation. The prototype must support two players connecting over a network, synchronize player positions with interpolation for remote players, implement client-side prediction for local player movement, and handle player connection and disconnection gracefully.",
+        "objectives": [
+          "Implement client-server networking using Unity Netcode for GameObjects",
+          "Synchronize game state with proper authority and ownership models",
+          "Apply client-side prediction and entity interpolation for smooth networked movement",
+          "Handle network edge cases: connection loss, late join, and high latency"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Unity project with networking code and two-player support",
+          "Two builds or editor + build testing setup for multiplayer testing",
+          "Network architecture document explaining authority model and sync strategy (2-3 pages)",
+          "Video demonstrating gameplay with simulated 200ms latency"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 40,
+            "criteria": [
+              "Players can connect, play, and disconnect without crashes",
+              "Server-authoritative state prevents basic cheating",
+              "Client-side prediction provides responsive local movement",
+              "Remote player interpolation is smooth with no teleporting"
+            ]
+          },
+          "visual_quality": {
+            "points": 15,
+            "criteria": [
+              "Players are visually distinguishable",
+              "Network state is reflected visually (connection status, player names)",
+              "No visual artifacts from network synchronization",
+              "UI communicates connection state clearly"
+            ]
+          },
+          "performance_optimization": {
+            "points": 25,
+            "criteria": [
+              "Bandwidth usage is reasonable with delta compression",
+              "Gameplay remains playable at 200ms simulated latency",
+              "No frame rate impact from network processing",
+              "Graceful degradation under poor network conditions"
+            ]
+          },
+          "documentation": {
+            "points": 20,
+            "criteria": [
+              "Network architecture is clearly documented with diagrams",
+              "Authority and ownership model is explained with rationale",
+              "Latency compensation approach is described with before/after evidence",
+              "Known limitations are documented honestly"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Functional networked multiplayer with smooth synchronization",
+                "Responsive gameplay despite network latency",
+                "Robust handling of connection edge cases",
+                "Clear documentation of networking architecture"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 20,
+      "description": "Five quizzes assessing theoretical knowledge of 3D engine architecture, rendering, physics, optimization, and networking"
+    },
+    "lab_assignments": {
+      "percentage": 15,
+      "description": "Weekly hands-on lab exercises in shader programming, physics setup, camera implementation, terrain building, and performance profiling"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "Three major projects: interactive 3D environment, advanced rendering showcase, and networked multiplayer prototype"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Comprehensive assessment of 3D mathematics, rendering pipeline, materials, physics, and character controller concepts from weeks 1-7"
+    },
+    "final_project": {
+      "percentage": 20,
+      "description": "Complete 3D game integrating all course concepts: rendering, physics, character control, camera, lighting, optimization, and deployment"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is mandatory for all lab sessions and project presentations. More than 2 unexcused absences may result in a reduced final grade. Missing a presentation without prior arrangement results in a zero for that component.",
+    "late_submissions": "Late assignments are penalized 10% per day. No submissions accepted more than 5 days late without prior arrangement. All builds must compile and run without errors on the target platform.",
+    "collaboration": "Individual assignments must be completed independently. Students may discuss concepts and debugging strategies but all code, assets, and documentation must be original work. Third-party assets must be properly attributed.",
+    "academic_integrity": "All code must be original or properly attributed. Use of AI code generation tools must be disclosed and the student must be able to explain every line of generated code. Submitting unmodified Asset Store or tutorial projects as original work will result in course failure.",
+    "technology_requirements": "Students must have access to a computer with a dedicated GPU capable of running Unity 2023.2 LTS. Minimum: 8GB RAM, GTX 1060 or equivalent. Lab computers are available but personal machines are recommended for out-of-class work."
+  }
+}

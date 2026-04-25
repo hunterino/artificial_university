@@ -1,0 +1,1465 @@
+{
+  "course_info": {
+    "course_id": "GD202",
+    "title": "3D Modeling and Animation",
+    "credit_hours": 4,
+    "duration": "15 weeks",
+    "meeting_schedule": "Tuesday, Thursday - 4 hours per week",
+    "prerequisites": [
+      "GD103 - Digital Art Fundamentals",
+      "ART201 - Digital Design Principles"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "topic": "Blender Interface and 3D Navigation",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Navigate the Blender 4 viewport with confidence using keyboard shortcuts and mouse controls",
+        "Understand 3D coordinate systems and the relationship between world, object, and local space",
+        "Configure the Blender workspace for efficient modeling workflows",
+        "Use fundamental selection, transformation, and navigation controls fluently"
+      ],
+      "readings": [
+        "Blender Fundamentals (Blender Studio official tutorials, Sections 1-4)",
+        "The Art of 3D Computer Animation and Effects by Isaac Kerlow, Ch. 1-2",
+        "Blender 4.0 Release Notes: Interface Changes"
+      ],
+      "lecture_notes": {
+        "introduction": "Welcome to 3D Modeling and Animation, a hands-on course that takes you from the fundamentals of polygon modeling through texturing, rigging, and animation to a portfolio-ready final project. Over the next fifteen weeks, you will learn to create game-ready 3D assets in Blender that meet the technical constraints of real-time rendering while achieving the artistic quality expected in professional studios. Blender has evolved from a niche open-source tool to an industry-standard application used by studios from Ubisoft to Netflix. Its non-destructive modeling workflow, integrated sculpting tools, PBR material system, and robust animation pipeline make it a complete 3D content creation suite. This course focuses on the game asset pipeline specifically: low-poly modeling with clean topology, efficient UV layouts, PBR texturing for real-time rendering, rigging for real-time animation, and export to game engine formats. Every model you create must work in a game engine, not just look good in a render.",
+        "key_concepts": [
+          "3D coordinate systems: X (red), Y (green), Z (blue) in Blender's right-handed coordinate system with Z-up convention",
+          "Viewport navigation: orbit (MMB), pan (Shift+MMB), zoom (scroll), numpad views (1=front, 3=right, 7=top, 5=toggle perspective/ortho)",
+          "Object mode vs Edit mode: scene-level manipulation (position, rotation, scale) versus mesh-level manipulation (vertices, edges, faces)",
+          "Workspace layouts: Modeling, Sculpting, UV Editing, Shading, Animation -- switching between optimized panel arrangements",
+          "Selection modes: vertex, edge, face selection in Edit mode, box select (B), circle select (C), lasso select (Ctrl+RMB)",
+          "Transform operations: grab (G), rotate (R), scale (S) with axis constraints (G+X, G+Shift+Z), precise values by typing numbers",
+          "Pivot points: individual origins, 3D cursor, median point, active element -- each changes how transforms are applied to selections",
+          "Blender's undo system: Ctrl+Z for undo with configurable history depth, Edit > Preferences > System for memory allocation",
+          "Viewport shading modes: wireframe, solid, material preview, rendered -- and their uses during different workflow stages",
+          "Add-on ecosystem: essential add-ons for game development (TexTools, UV Toolkit, Rigify for quick rigging)"
+        ],
+        "demonstration": "Guided tour of the Blender 4 interface: customizing the workspace layout for modeling, creating a simple prop (wooden crate) starting from a cube, entering Edit Mode, practicing grab/rotate/scale with axis constraints, using extrude (E) and inset (I) to add detail, and rendering a quick preview in Material Preview mode with HDRI lighting",
+        "setup_requirements": [
+          "Blender 4.0+ installed (free from blender.org)",
+          "Three-button mouse strongly recommended (or emulation configured)",
+          "Reference image collection for modeling exercises (provided)",
+          "16GB RAM minimum, dedicated GPU recommended (NVIDIA or AMD with 4GB+ VRAM)"
+        ],
+        "review": [
+          {
+            "key": "Edit Mode vs Object Mode",
+            "value": "Object Mode manipulates entire objects (position, rotation, scale in world space); Edit Mode manipulates individual vertices, edges, and faces within a single mesh"
+          },
+          {
+            "key": "Coordinate System",
+            "value": "Blender uses a right-handed coordinate system with Z-up: X is left-right (red), Y is front-back (green), Z is up-down (blue)"
+          },
+          {
+            "key": "Viewport Shading",
+            "value": "Four display modes from fastest to most accurate: Wireframe (topology only), Solid (basic shading), Material Preview (PBR with HDRI), Rendered (full render engine)"
+          },
+          {
+            "key": "Pivot Point",
+            "value": "The center of rotation and scaling operations; changing between Individual Origins, Median Point, and 3D Cursor enables different transform behaviors for multi-object editing"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 2,
+      "topic": "Box Modeling Techniques",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Apply box modeling workflow to create both hard-surface and organic forms",
+        "Use extrude, inset, loop cut, and bevel tools proficiently for shape refinement",
+        "Understand subdivision surface workflow and its requirements for clean base geometry",
+        "Model a complete hard-surface prop meeting game-ready polygon budget constraints"
+      ],
+      "readings": [
+        "Blender Documentation: Mesh Modeling Tools",
+        "Pushing Points: A Guide to Topology by William Vaughan, Ch. 1-3",
+        "Game Art Complete by Andrew Gahan, Ch. 4 (Hard Surface Modeling)"
+      ],
+      "lecture_notes": {
+        "introduction": "Box modeling is the foundational technique of 3D modeling: start with a primitive shape (usually a cube) and progressively refine it through extrusion, cutting, and reshaping until it matches your reference. The name comes from the starting point, not the result -- box modeling produces everything from mechanical props to organic characters. The workflow is inherently iterative: rough out the major forms first, then add detail in successive passes. This matches how sculptors work in clay and how concept artists work in sketch. The discipline is knowing when to add detail and when to stop. Every polygon you add costs performance in a game engine, so the skill is not in adding detail but in suggesting detail with minimal geometry. A well-modeled game asset looks complex but is built from surprisingly few polygons placed with precision. Today we master the core modeling tools and build a complete hard-surface prop from start to finish.",
+        "key_concepts": [
+          "Box modeling philosophy: start simple (primitive), rough form (major proportions), refine (add edge loops, adjust vertices), detail (bevel, inset for small features)",
+          "Extrude (E): extending faces outward to build new geometry, with normal, region, and individual extrude modes",
+          "Inset (I): creating a new face within an existing face, essential for adding detail and preparing for extrusion on specific areas",
+          "Loop Cut (Ctrl+R): adding edge loops that follow the mesh topology, controlling density and supporting subdivision",
+          "Bevel (Ctrl+B): chamfering edges to add controlled roundness, with segment count and profile shape for hard-surface detail",
+          "Subdivision Surface modifier: smoothing geometry by subdividing each face into four, requiring clean quad topology for predictable results",
+          "Mirror modifier: modeling only half of symmetric objects with real-time mirroring, saving time and ensuring perfect symmetry",
+          "Boolean operations: union, difference, intersection for mechanical parts, with cleanup requirements for resulting topology",
+          "Proportional editing (O): soft-selection falloff for organic shape adjustment, with different falloff curves (smooth, sphere, sharp)",
+          "Reference images: setting up front and side reference images as background in the viewport for accurate modeling"
+        ],
+        "demonstration": "Box modeling a sci-fi crate prop: starting from a cube, adding loop cuts for panel lines, insetting faces for recessed details, beveling edges for industrial roundness, using the Mirror modifier for symmetry, adding mechanical details (hinges, latches) with extrude and boolean operations, and comparing the result at subdivision levels 0, 1, and 2 to understand how clean geometry subdivides predictably",
+        "setup_requirements": [
+          "Blender with reference images loaded as background (provided: sci-fi crate concept art)",
+          "Modeling workspace configured with properties panel visible",
+          "Grid snapping enabled for precise dimension control"
+        ],
+        "review": [
+          {
+            "key": "Box Modeling Workflow",
+            "value": "An iterative modeling technique starting from a primitive shape, progressively refined through extrusion, loop cuts, and vertex adjustment to match a target form"
+          },
+          {
+            "key": "Subdivision Surface",
+            "value": "A modifier that smooths geometry by subdividing each face into four smaller faces, requiring clean quad topology to produce predictable, artifact-free results"
+          },
+          {
+            "key": "Bevel",
+            "value": "A chamfer operation that replaces sharp edges with angled faces, controlled by width and segment count, essential for hard-surface modeling where real objects never have infinitely sharp edges"
+          },
+          {
+            "key": "Mirror Modifier",
+            "value": "A non-destructive modifier that mirrors geometry across a chosen axis in real time, enabling symmetric modeling while only editing one half"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 3,
+      "topic": "Polygon Topology and Edge Flow",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Evaluate mesh topology quality and identify common topology problems",
+        "Design edge flow that supports animation deformation at joints and facial features",
+        "Resolve topology problems: n-gons, triangular poles, non-manifold geometry, flipped normals",
+        "Apply topology rules to create meshes that subdivide cleanly and deform predictably"
+      ],
+      "readings": [
+        "Topology Guides (topologyguides.com): Face Loops, Edge Flow, and Common Topology Patterns",
+        "Blender Documentation: Mesh Analysis Tools",
+        "Stop Staring: Facial Modeling and Animation Done Right by Jason Osipa, Ch. 2 (Facial Topology)"
+      ],
+      "lecture_notes": {
+        "introduction": "Topology is the invisible architecture of a 3D model. Two models can look identical in a still render but behave completely differently when animated -- one deforms smoothly at every joint while the other collapses into twisted geometry. The difference is topology: how vertices, edges, and faces are connected. Good topology follows rules that ensure predictable behavior under subdivision, deformation, and rendering. Quads subdivide cleanly; triangles create pinching artifacts; n-gons triangulate unpredictably and must be avoided in deformation areas. Edge loops must flow in the direction of movement: around the eyes for blinking, around the mouth for speech, around joints for bending. Today we learn to see topology as the structural engineering of 3D models -- the part that is invisible to the viewer but determines whether the model works in production. These principles apply regardless of the software you use and will serve you throughout your career in 3D.",
+        "key_concepts": [
+          "Quad-dominant topology: four-sided faces subdivide predictably into four quads, deform smoothly, and render consistently across all angles",
+          "Edge loops: continuous chains of edges forming rings around the mesh, defining form and enabling clean deformation along their axis",
+          "Face loops: continuous strips of faces that follow the surface flow, important for UV unwrapping and texture painting",
+          "Poles: vertices where more or fewer than 4 edges meet; 3-poles (triangular) and 5-poles (pentagonal) redirect edge flow and must be placed strategically",
+          "N-gon problems: faces with 5+ sides must be internally triangulated by the renderer, causing unpredictable shading and deformation artifacts during animation",
+          "Edge flow for deformation: loops must follow the direction of movement -- concentric around eyes, parallel around elbows and knees, radial around shoulders",
+          "Non-manifold geometry: edges shared by more than 2 faces, faces with zero area, disconnected vertices -- all cause rendering and export errors",
+          "Normal direction: face normals must point outward consistently; flipped normals appear inside-out in game engines that use backface culling",
+          "Mesh analysis overlay: enabling Blender's mesh analysis display to visualize distortion, sharp angles, and non-manifold elements",
+          "Retopology workflow: creating clean low-poly topology over a sculpted high-poly reference using the Shrinkwrap modifier or RetopoFlow add-on"
+        ],
+        "demonstration": "Analyzing and fixing topology on a character head model: identifying n-gons around the ear that will deform badly, replacing them with quad rings; tracing edge loops around the eyes and mouth to verify they form complete rings; placing strategic 5-poles to redirect edge flow from the cheek into the nose bridge; checking for non-manifold edges with Select > All by Trait > Non-Manifold; and demonstrating the before/after difference by posing the face with shape keys",
+        "setup_requirements": [
+          "Blender with provided character head model (two versions: good topology and bad topology for comparison)",
+          "Mesh Analysis overlay enabled (Viewport Overlays > Mesh Analysis)",
+          "Topology reference sheets (provided: face topology, body topology, hand topology)"
+        ],
+        "review": [
+          {
+            "key": "Edge Loops",
+            "value": "Continuous chains of edges forming rings around a mesh, critical for defining form, supporting subdivision, and ensuring clean deformation -- must follow the direction of intended movement"
+          },
+          {
+            "key": "Quad Topology",
+            "value": "Mesh construction using predominantly four-sided faces that subdivide predictably, deform smoothly, and avoid the pinching and shading artifacts produced by triangles and n-gons"
+          },
+          {
+            "key": "Poles",
+            "value": "Vertices where the number of connecting edges differs from 4; 3-poles and 5-poles redirect edge flow and must be placed in non-deforming areas to avoid animation artifacts"
+          },
+          {
+            "key": "Non-Manifold Geometry",
+            "value": "Mesh errors including edges shared by 3+ faces, zero-area faces, and disconnected vertices that cause rendering errors, export failures, and physics calculation problems in game engines"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 4,
+      "topic": "UV Unwrapping Strategies",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Understand UV space and the mathematical relationship between 3D surfaces and 2D texture coordinates",
+        "Mark seams strategically to minimize visible texture discontinuities",
+        "Unwrap meshes with minimal distortion using multiple unwrap methods",
+        "Pack UV islands efficiently to maximize texture resolution utilization"
+      ],
+      "readings": [
+        "Blender Documentation: UV Mapping",
+        "Texturing & Modeling: A Procedural Approach by Ebert et al., Ch. 2",
+        "Game Art Tricks: UV Optimization for Real-Time Assets (80.lv article)"
+      ],
+      "lecture_notes": {
+        "introduction": "UV unwrapping is the process of flattening a 3D surface into 2D so that textures can be painted onto it accurately. Think of it as peeling the skin off an orange and pressing it flat -- where you cut determines how the flat pieces relate to the original surface. In game development, UV quality directly impacts texture resolution: poorly packed UVs waste texture space, inconsistent texel density creates visible quality differences across the model, and badly placed seams create visible discontinuities that break visual immersion. UV unwrapping is often cited by artists as the least glamorous part of the 3D pipeline, but it is one of the most impactful. A beautifully sculpted model with bad UVs will look worse in-game than a simpler model with excellent UVs. Today we master the strategies and tools for creating production-quality UV layouts that maximize texture quality while hiding seam placement from the viewer.",
+        "key_concepts": [
+          "UV coordinates: U (horizontal) and V (vertical) axes mapping 2D texture space (0-1 range) to 3D surface points, independent of mesh resolution",
+          "Seam placement strategy: place seams along natural material boundaries (clothing edges, belt lines), in hidden areas (inner arms, behind ears, under shoes), and along hard geometric edges",
+          "Unwrap methods: Smart UV Project (quick automatic), Unwrap with manual seams (most control), Project from View (flat surfaces), Cube/Cylinder/Sphere projection (matching primitives)",
+          "UV distortion checking: applying a checker texture to verify even texel density; stretched checkers indicate low-density areas needing more UV space",
+          "UV island packing: arranging unwrapped islands within the 0-1 UV space to minimize wasted area, maintaining consistent texel density across all islands",
+          "Island margins: leaving pixel-gap margins between UV islands to prevent texture bleeding at mipmap levels, typically 2-4 pixels at the target resolution",
+          "Texel density: the number of texture pixels per unit of 3D surface area; consistent density ensures uniform visual detail across the entire model",
+          "Overlapping UVs: intentionally stacking symmetric UV islands to share texture space (mirrored left/right arms sharing one UV area)",
+          "UDIM tiles: multi-tile UV layouts that span beyond the 0-1 range for high-resolution texturing of large assets, commonly used for film but increasingly for games",
+          "UV editing tools: pin vertices to lock solved positions, Live Unwrap for interactive feedback, Relax for reducing distortion, Pack Islands for automatic layout"
+        ],
+        "demonstration": "UV unwrapping a game character: marking seams along clothing boundaries (shirt sleeve edge, waistband, boot top), along hidden areas (inner arm seam, hairline, shoe sole), unwrapping with Live Unwrap enabled for interactive feedback, checking distortion with a 512x512 checker texture, adjusting island sizes for consistent texel density (face gets proportionally more UV space than boots), packing islands with 4-pixel margin for 2048x2048 target resolution, and pinning critical vertices to stabilize the layout during adjustments",
+        "setup_requirements": [
+          "Blender with UV Editing workspace layout",
+          "Checker texture for distortion testing (provided: 512x512 and 1024x1024)",
+          "Completed character model from previous sessions with clean quad topology"
+        ],
+        "review": [
+          {
+            "key": "UV Unwrapping",
+            "value": "The process of projecting a 3D mesh surface onto a 2D plane, creating a flat layout (UV map) that defines how 2D textures wrap around the 3D geometry"
+          },
+          {
+            "key": "Texel Density",
+            "value": "The number of texture pixels (texels) per unit of 3D surface area; consistent texel density ensures uniform detail level across the entire model, verified with checker textures"
+          },
+          {
+            "key": "UV Island Margins",
+            "value": "Pixel-width gaps between UV islands that prevent texture color bleeding at lower mipmap levels, typically 2-4 pixels for 2048x2048 textures"
+          },
+          {
+            "key": "Seam Placement",
+            "value": "Strategic positioning of UV cuts along natural material boundaries, hidden areas, and hard geometric edges to minimize visible texture discontinuities"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 5,
+      "topic": "PBR Texturing with Substance Painter",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Create PBR texture sets using the metallic/roughness workflow in Substance Painter",
+        "Understand each PBR texture channel and the physical properties it encodes",
+        "Bake high-poly detail onto low-poly game meshes using normal maps and AO",
+        "Export texture sets optimized for game engine import"
+      ],
+      "readings": [
+        "The PBR Guide by Allegorithmic/Adobe, Parts 1 and 2",
+        "Substance Painter Getting Started Guide (Adobe documentation)",
+        "Blender Documentation: Shader Editor and Principled BSDF"
+      ],
+      "lecture_notes": {
+        "introduction": "Texturing transforms gray geometry into believable surfaces -- a metal pipe that gleams under light, a wooden crate with worn edges, a stone wall with moss in its cracks. Physically-based rendering (PBR) provides a consistent, predictable framework where material properties match real-world physics, ensuring that textures look correct under any lighting condition. Before PBR, artists had to manually paint highlights and shadows into textures, which looked correct only under the specific lighting they were painted for. PBR separates material definition (what is this surface made of?) from lighting calculation (how does light interact with it?), allowing a single texture set to work in sunny outdoor scenes, dark dungeons, and neon-lit cities without modification. Today we learn the full PBR texturing pipeline: baking high-poly detail onto low-poly meshes, painting materials in Substance Painter, and exporting optimized texture sets for game engines.",
+        "key_concepts": [
+          "PBR texture channels: Base Color (surface color without lighting), Metallic (0 = non-metal, 1 = metal), Roughness (0 = mirror, 1 = matte), Normal (surface detail as tangent-space vectors), AO (contact shadows), Emissive (self-illumination)",
+          "Metallic vs specular workflow: metallic is simpler with a binary metal/non-metal map; specular provides more control but is more complex and less intuitive",
+          "Normal map baking: transferring sculpted detail from a high-poly model to a low-poly game mesh by encoding surface angles as RGB colors in tangent space",
+          "AO baking: pre-computing ambient occlusion (contact darkness in crevices) as a texture for subtle shading detail without runtime cost",
+          "Smart Materials in Substance Painter: procedural material presets that adapt to mesh curvature, position, and ambient occlusion for realistic weathering",
+          "Hand-painting in Substance Painter: using brush tools to add unique details, damage, and storytelling elements that procedural materials cannot provide",
+          "Texture resolution budgeting: 4096x4096 for hero assets, 2048x2048 for standard props, 1024x1024 for background objects, 512x512 for distant or small items",
+          "Channel packing: combining grayscale textures into a single RGB image (R=Metallic, G=Roughness, B=AO) to reduce texture count and memory usage",
+          "Texture atlasing: combining multiple objects' textures onto a single sheet to reduce draw calls in game engines",
+          "Export presets: configuring Substance Painter export for specific engines (Godot, Unity, Unreal) with correct channel naming and format"
+        ],
+        "demonstration": "Full texturing pipeline for a game prop: importing the low-poly crate model and high-poly sculpt into Substance Painter, baking normal map, AO, curvature, and position maps, applying a Smart Material for base wood and metal surfaces, hand-painting wear on edges using curvature-based generators, adding rust and dirt with procedural fill layers masked by position and AO, painting unique markings and labels by hand, and exporting the complete texture set (Base Color, ORM channel-packed, Normal, Emissive) for Godot import",
+        "setup_requirements": [
+          "Substance Painter (educational license or trial version)",
+          "UV-unwrapped low-poly model and matching high-poly sculpt from previous sessions",
+          "Reference images for material study (provided: wood, metal, fabric, stone)",
+          "Alternative: Blender Texture Paint mode for students without Substance Painter access"
+        ],
+        "review": [
+          {
+            "key": "PBR (Physically-Based Rendering)",
+            "value": "A shading model approximating real-world light interaction using measurable material properties (metalness, roughness), ensuring consistent appearance across all lighting environments"
+          },
+          {
+            "key": "Normal Map Baking",
+            "value": "Capturing surface detail from a high-polygon sculpt and encoding it as tangent-space normal vectors in an RGB texture applied to a low-polygon game mesh, faking geometric detail without additional vertices"
+          },
+          {
+            "key": "Channel Packing",
+            "value": "Combining multiple grayscale texture maps into the RGB channels of a single image file to reduce the number of texture samples needed per pixel in the shader"
+          },
+          {
+            "key": "Smart Materials",
+            "value": "Procedural material presets in Substance Painter that automatically adapt to mesh properties (curvature, AO, position) to generate realistic surface detail with minimal manual painting"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 6,
+      "session_number": 6,
+      "topic": "Rigging Fundamentals",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Build an armature skeleton for a bipedal character with proper bone hierarchy",
+        "Configure bone naming conventions and symmetry for mirror operations",
+        "Understand forward kinematics and the parent-child bone chain relationship",
+        "Set up basic bone constraints for controlled deformation"
+      ],
+      "readings": [
+        "Blender Documentation: Armatures and Rigging",
+        "The Art of Rigging by Kitagawa and Windsor, Ch. 3-5",
+        "Rigify Documentation: Understanding the Metarig System"
+      ],
+      "lecture_notes": {
+        "introduction": "Rigging is the process of building the internal skeleton that makes a 3D model move. A rig is to a 3D model what a marionette's strings and control bars are to a puppet: the hidden mechanism that translates the animator's intent into mesh deformation. A good rig makes animation intuitive -- the animator poses the character naturally and the mesh follows smoothly. A bad rig makes every frame a fight against the mesh, producing twisted geometry, collapsed joints, and frustrated animators. Today we build a character rig from scratch, learning the principles that apply regardless of whether you later use auto-rigging tools like Rigify or Mixamo. Understanding manual rigging gives you the knowledge to fix auto-rig problems, customize rigs for specific needs, and build rigs for non-humanoid characters that auto-riggers cannot handle. The rig you build today will drive the animations in your final project.",
+        "key_concepts": [
+          "Armature fundamentals: bones defined by head (root) and tail (tip) positions, arranged in parent-child hierarchies that propagate transformations",
+          "Bone hierarchy for bipeds: root bone at hips, spine chain upward (spine, spine.001, spine.002, neck, head), arm chains from upper spine, leg chains from hips",
+          "Bone naming conventions: consistent L/R suffix (arm.L, arm.R) enables Blender's symmetrize operations and mirror posing across the X axis",
+          "Rest pose vs pose mode: rest pose is the neutral T-pose or A-pose where the rig is built; pose mode applies rotations on top of rest pose for animation",
+          "Connected vs free bones: connected bones share parent tail and child head position; free bones have independent head positions for offset chains",
+          "Bone display types: octahedral (default), stick (clean viewport), B-Bone (spline visualization), wire (minimal) -- choosing appropriate display for different rig parts",
+          "Forward Kinematics (FK): rotating each bone individually from root to tip, giving direct control over every joint angle in the chain",
+          "Bone roll: the rotation of a bone around its own axis, critical for correct deformation direction -- must be set consistently across all bones",
+          "Custom bone shapes: assigning mesh objects as visual representation of bones for animator-friendly control shapes",
+          "Armature creation workflow: start from a single bone, extrude the full chain, subdivide where needed, name everything before adding constraints"
+        ],
+        "demonstration": "Building a humanoid armature from scratch: creating the spine chain from root bone at hips through chest, neck, and head; extruding arm chains with upper_arm, forearm, hand bones; extruding leg chains with thigh, shin, foot, toe bones; naming all bones with .L/.R convention; symmetrizing to create the right side; setting correct bone rolls for all chains; and testing FK posing to verify the hierarchy produces natural movement",
+        "setup_requirements": [
+          "Blender with completed and UV-mapped character model from previous sessions",
+          "Armature reference diagram (provided: bone placement for humanoid proportions)",
+          "Symmetry tools enabled in Edit Mode preferences"
+        ],
+        "review": [
+          {
+            "key": "Armature",
+            "value": "Blender's skeleton system composed of bones in a parent-child hierarchy; transforming a parent bone propagates movement to all children, forming kinematic chains"
+          },
+          {
+            "key": "Bone Hierarchy",
+            "value": "The parent-child relationships between bones that determine how transformations propagate: rotating the upper arm rotates the forearm and hand automatically"
+          },
+          {
+            "key": "Forward Kinematics (FK)",
+            "value": "Animating by rotating each bone individually starting from the root, with child bones inheriting parent rotations, giving direct control over every joint angle"
+          },
+          {
+            "key": "Bone Roll",
+            "value": "The rotation of a bone around its own Y-axis (head-to-tail direction), determining the local X and Z axes used for bone constraints and deformation direction"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 7,
+      "session_number": 7,
+      "topic": "Weight Painting and Deformation Quality",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Apply automatic weights and understand their limitations for game characters",
+        "Manually paint vertex weights to fix deformation problems at joints",
+        "Diagnose and resolve common deformation issues: candy wrapper, volume loss, mesh collapse",
+        "Use weight paint visualization and editing tools for precise control"
+      ],
+      "readings": [
+        "Blender Documentation: Weight Painting",
+        "Character Animation Fundamentals by Steve Roberts, Ch. 6 (Skinning)",
+        "Weight Painting Tips for Game Characters (Polycount wiki)"
+      ],
+      "lecture_notes": {
+        "introduction": "Weight painting is the process of defining how much influence each bone has over each vertex in the mesh. It is the bridge between the skeleton (rig) and the surface (mesh), and its quality determines whether a character deforms beautifully or grotesquely when animated. Automatic weights provide a reasonable starting point by calculating influence based on proximity to bones, but they invariably produce problems at complex joints: shoulders that collapse inward, elbows that lose volume, waists that twist like taffy. Manual weight painting is the craft of fixing these problems and achieving deformation quality that matches professional game assets. Today we learn the weight painting workflow: applying automatic weights as a starting point, identifying deformation problems by posing the rig, and using Blender's weight paint tools to fix each problem area. This is a skill that requires practice and a good eye for anatomy -- understanding where bones, muscles, and skin interact in the real body helps you paint weights that produce natural-looking deformation.",
+        "key_concepts": [
+          "Automatic weights: Blender's bone heat weighting algorithm that assigns initial vertex weights based on proximity to bones, providing a starting point for refinement",
+          "Vertex groups: named sets of vertices with influence values (0.0-1.0) corresponding to each bone, defining how much each bone moves each vertex",
+          "Weight normalization: ensuring that all bone influences on a single vertex sum to 1.0, preventing vertices from being over-influenced or under-influenced",
+          "Weight paint mode: a visualization mode that displays vertex weights as a color gradient (blue=0, green=0.5, red=1.0) for intuitive painting",
+          "Brush types: Add (increase weight), Subtract (decrease weight), Mix (blend toward target), Blur (smooth weight boundaries), Gradient (linear weight transitions)",
+          "Symmetry painting: mirroring weight changes across the X-axis using the symmetry option, maintaining matching deformation on left and right sides",
+          "Common deformation problems: candy wrapper twist (forearm rotation distorts mesh), volume loss at bent joints (elbow pinches), shoulder collapse (arm clips into body)",
+          "Corrective techniques: adding intermediate bone influences at problem joints, using smooth gradients rather than hard weight boundaries, extra bones for muscle simulation",
+          "Testing deformation: posing the rig at extreme positions (arm raised, knee bent 120 degrees, spine twisted) to stress-test weight painting before animation",
+          "Lock and assign: locking vertex groups to prevent accidental modification, using assign/remove to set precise weight values on selected vertices"
+        ],
+        "demonstration": "Weight painting a game character: applying automatic weights with armature parent, entering Pose Mode to bend the arm at 90 degrees, identifying the elbow deformation problem (pinching on the inside, stretching on the outside), entering Weight Paint mode to smooth the transition between upper_arm and forearm weights, fixing the shoulder collapse by painting a gradient that includes the chest bone at the shoulder crease, resolving the candy wrapper twist on the forearm by adding a forearm twist bone with 50% forearm rotation, and testing the full range of motion at all major joints",
+        "setup_requirements": [
+          "Blender with rigged character model from session 6",
+          "Weight paint workspace layout with Pose Mode and Weight Paint split view",
+          "Deformation test pose set (provided: 8 extreme poses for stress testing)"
+        ],
+        "review": [
+          {
+            "key": "Weight Painting",
+            "value": "The process of assigning how much each bone influences each vertex during deformation, painted as a gradient from 0 (no influence, blue) to 1 (full influence, red) across the mesh surface"
+          },
+          {
+            "key": "Automatic Weights",
+            "value": "Blender's bone heat algorithm that calculates initial vertex weights based on proximity to bones, providing a starting point that requires manual refinement at complex joints"
+          },
+          {
+            "key": "Candy Wrapper Twist",
+            "value": "A deformation artifact where rotating a bone along its axis causes the mesh to collapse like a twisted candy wrapper, solved by adding a twist bone with partial rotation inheritance"
+          },
+          {
+            "key": "Weight Normalization",
+            "value": "Ensuring that all bone influences on each vertex sum to exactly 1.0, preventing vertices from being double-transformed or left stationary during animation"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 8,
+      "session_number": 8,
+      "topic": "Skeletal Animation and Keyframing",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Animate a bipedal walk cycle using keyframe animation with proper timing and spacing",
+        "Apply the 12 principles of animation to 3D character movement",
+        "Use the Graph Editor to refine animation curves for natural-looking motion",
+        "Organize animations as reusable Actions for game engine export"
+      ],
+      "readings": [
+        "The Animator's Survival Kit by Richard Williams, Ch. 7-9 (Walks)",
+        "Blender Documentation: Keyframe Animation and Actions",
+        "Animator's Survival Kit Animated App (interactive walk cycle reference)"
+      ],
+      "lecture_notes": {
+        "introduction": "The walk cycle is the animator's Hello World -- deceptively simple in concept, deeply complex in execution. A convincing bipedal walk requires understanding of weight transfer, balance, timing, counter-rotation, and the mechanical reality of how humans maintain forward momentum while alternating between single-leg and double-leg support phases. Every walk cycle has four key positions: contact (feet widest apart), down (weight received on front foot, lowest body position), passing (rear leg passes the support leg), and up (push-off from support foot, highest body position). Between these keys, the animator places breakdowns that define the character of the walk: a confident stride, a tired shuffle, a cautious creep. Today we build a complete walk cycle from blocking (posing the four key positions) through refinement (adding breakdowns, secondary motion, and graph editor polish), using the same workflow used in professional game studios. This cycle will be one of the core animations in your final portfolio.",
+        "key_concepts": [
+          "Walk cycle phases: contact (heel strike, feet widest), down (weight received, body lowest), passing (legs cross, single support), up (push-off, body highest)",
+          "Blocking workflow: posing only the four key positions first, reviewing timing before adding detail -- prevents wasted work on bad timing",
+          "Breakdown poses: intermediate poses between keys that define the character of movement (arcs, easing, overlap)",
+          "Weight and balance: the center of gravity shifts laterally over the support foot during each step, and forward with overall momentum",
+          "Counter-rotation: shoulders rotate opposite to hips to maintain balance, with arms swinging opposite to their respective legs",
+          "Secondary motion: overlap and follow-through on arms, head bob, clothing movement that trails the primary body motion",
+          "Graph Editor: F-curve display showing the value of animated properties over time, enabling precise control of easing and interpolation",
+          "Interpolation types: Bezier (smooth default), Linear (constant speed), Constant (instant change) -- and when each is appropriate",
+          "Actions: named animation clips that store keyframe data, enabling multiple animations on a single rig without conflict",
+          "NLA (Non-Linear Animation): Blender's system for layering, blending, and sequencing Actions on a timeline"
+        ],
+        "demonstration": "Animating a 24-frame walk cycle: blocking the 4 key positions (contact left, down left, passing left, up left) with the right side automatically offset by 12 frames for a complete cycle, adding hip sway and vertical bounce, adding shoulder counter-rotation and arm swing with overlap, refining the foot roll from heel contact through toe push-off, polishing timing curves in the Graph Editor to add natural easing at direction changes, checking the cycle loop by setting frame range and enabling looping, and naming the animation as an Action for export",
+        "setup_requirements": [
+          "Blender with rigged and weight-painted character from previous sessions",
+          "Animation workspace layout with Timeline, Dope Sheet, and Graph Editor visible",
+          "Walk cycle reference video (provided: front, side, and three-quarter views at 24fps)",
+          "Auto-keying enabled for efficient posing workflow"
+        ],
+        "review": [
+          {
+            "key": "Walk Cycle Key Poses",
+            "value": "Contact (heel strike, feet widest), Down (weight received, body lowest), Passing (single support, legs cross), Up (push-off, body highest) -- four positions that define the mechanics of bipedal walking"
+          },
+          {
+            "key": "Graph Editor / F-Curves",
+            "value": "Blender's visual curve editor showing animated property values over time, enabling precise control of easing, interpolation, and timing beyond what is possible with keyframe placement alone"
+          },
+          {
+            "key": "Actions",
+            "value": "Named animation clips that encapsulate all keyframe data for a specific animation, allowing multiple animations (walk, run, idle) to coexist on a single rig"
+          },
+          {
+            "key": "Counter-Rotation",
+            "value": "The principle that shoulders rotate opposite to hips during walking, with arms swinging opposite to their respective legs, maintaining balance and creating natural rhythmic movement"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 9,
+      "session_number": 9,
+      "topic": "Walk/Run Cycles and Locomotion",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Create a run cycle that demonstrates increased speed through timing and pose changes",
+        "Build a smooth idle animation that keeps characters alive when stationary",
+        "Understand the relationship between animation speed and playback rate in game engines",
+        "Create transition animations between locomotion states"
+      ],
+      "readings": [
+        "The Animator's Survival Kit by Richard Williams, Ch. 10-12 (Runs and Timing Variations)",
+        "Game Animation Techniques by Steve Swink, Ch. 3",
+        "Blender Documentation: NLA Editor"
+      ],
+      "lecture_notes": {
+        "introduction": "A walk cycle teaches the fundamentals, but a game character needs a full locomotion set: idle, walk, run, and transitions between them. Each cycle communicates different energy and intent to the player. A run cycle is not simply a sped-up walk -- it has a fundamentally different mechanical structure. In a walk, one foot is always on the ground (single or double support phase). In a run, there is an airborne phase where both feet are off the ground. This changes the center of gravity behavior, the arm swing amplitude, the body lean, and the vertical bounce frequency. Today we expand from a single walk cycle to a complete locomotion suite, learning how each animation relates to the others and how game engines blend between them based on character speed. We also build the idle animation -- the most subtle and important animation in the set, because it plays whenever the player is not providing input, which is often the majority of gameplay time.",
+        "key_concepts": [
+          "Run cycle vs walk cycle: run includes an airborne phase (both feet off ground), deeper forward lean, wider arm swing, shorter ground contact time",
+          "Idle animation design: subtle breathing motion, weight shifting, occasional blinks or fidgets that keep the character alive without being distracting",
+          "Seamless looping: ensuring the first and last frames of a cycle are identical for smooth repetition, checking graph editor curves for continuous tangents at loop points",
+          "Cycle length conventions: walk typically 24-30 frames, run 12-18 frames, idle 60-120 frames -- faster actions have fewer frames per cycle",
+          "Root motion: animating the character's position within the cycle vs keeping the root stationary and moving the game object -- each approach has trade-offs",
+          "Transition animations: short clips (8-16 frames) that bridge between states (walk-to-run, run-to-stop, idle-to-walk) for smooth state machine transitions",
+          "NLA blending: layering multiple Actions on the NLA timeline with blend modes and influence values for combined animations",
+          "Speed scaling: how game engines adjust animation playback rate based on character movement speed, and designing animations that work across a speed range",
+          "Foot sliding detection: verifying that foot contact position matches the expected ground plane throughout the cycle to prevent the appearance of skating",
+          "Animation libraries and reuse: organizing animations as linkable Actions that can be applied to different characters sharing the same rig structure"
+        ],
+        "demonstration": "Building a run cycle and idle animation: creating a 16-frame run cycle with airborne phase, deeper forward lean, and wider arm swing than the walk; building a 90-frame idle animation with subtle breathing chest expansion, occasional weight shift, and a head look variation; testing both cycles in looped playback; creating a 10-frame walk-to-run transition animation; and layering walk and run on the NLA timeline to demonstrate blending",
+        "setup_requirements": [
+          "Blender with walk cycle animation from session 8",
+          "Run cycle reference video (provided: front and side views)",
+          "NLA Editor visible in workspace layout",
+          "Frame rate set to 24fps for animation consistency"
+        ],
+        "review": [
+          {
+            "key": "Run Cycle Airborne Phase",
+            "value": "The defining mechanical difference between walk and run: during a run, both feet leave the ground simultaneously, creating a flight phase that requires greater energy and forward lean"
+          },
+          {
+            "key": "Idle Animation",
+            "value": "A looping animation of 60-120 frames showing subtle life signs (breathing, weight shifting, blinking) that plays when the character has no input, preventing a frozen appearance"
+          },
+          {
+            "key": "Root Motion",
+            "value": "Animating forward movement within the animation data itself, allowing the game engine to extract displacement from the animation rather than moving the character at a code-defined speed"
+          },
+          {
+            "key": "Transition Animation",
+            "value": "Short animation clips (8-16 frames) that bridge between locomotion states, providing smooth visual continuity when the character changes from walking to running or stops"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 10,
+      "session_number": 10,
+      "topic": "Facial Animation and Blend Shapes",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Create facial blend shapes (shape keys) for expression and speech animation",
+        "Understand FACS-based facial animation and its application to game characters",
+        "Animate lip sync and emotional expressions using shape key drivers",
+        "Combine skeletal and shape key animation for full character performance"
+      ],
+      "readings": [
+        "Stop Staring: Facial Modeling and Animation Done Right by Jason Osipa, Ch. 5-7",
+        "Blender Documentation: Shape Keys",
+        "FACS (Facial Action Coding System) Reference Guide: Core Action Units"
+      ],
+      "lecture_notes": {
+        "introduction": "Facial animation is the most challenging and rewarding area of character animation. The human face has over 40 muscles that work in combination to produce expressions, and the human brain is extraordinarily sensitive to facial movement -- we can detect a fake smile in milliseconds because the orbicularis oculi muscle around the eyes does not engage the way it does in a genuine smile. In game animation, facial performance is achieved primarily through blend shapes (called shape keys in Blender): morph targets that deform the face mesh from a neutral pose to specific expression poses. The Facial Action Coding System (FACS) provides a scientific framework for decomposing facial expressions into individual muscle actions (Action Units), which map naturally to blend shapes. Today we build a FACS-based facial rig using shape keys, create a library of expressions, and animate a simple dialogue sequence with lip sync and emotional performance.",
+        "key_concepts": [
+          "Shape keys (blend shapes/morph targets): stored mesh deformations that can be blended from 0-1, with multiple shape keys combined additively for complex expressions",
+          "FACS Action Units: AU1 (inner brow raise), AU2 (outer brow raise), AU4 (brow lower), AU6 (cheek raise), AU12 (lip corner pull/smile), AU15 (lip corner depress/frown)",
+          "Basis shape key: the neutral face pose from which all other shape keys are defined as deformations",
+          "Corrective shape keys: blend shapes that fix artifacts from combining two other shapes, driven automatically when both source shapes are active",
+          "Visemes: mouth shapes for speech sounds -- common game viseme set: A/I, E, O, U, F/V, M/B/P, L, TH, rest",
+          "Shape key drivers: linking shape key values to bone rotations or other properties for automated facial control",
+          "Emotional expressions: combining Action Units for anger (AU4+AU5+AU23), sadness (AU1+AU4+AU15), surprise (AU1+AU2+AU5+AU26), disgust (AU9+AU10)",
+          "Asymmetric expressions: real faces are never perfectly symmetric; adding L/R variants of shape keys for natural-looking asymmetric expressions",
+          "Performance capture vs hand animation: when motion capture data is appropriate and when hand animation gives better artistic control",
+          "Blend shape optimization: limiting the number of active shape keys per frame, LOD-based facial animation reduction for distant characters"
+        ],
+        "demonstration": "Building a facial rig: creating shape keys for core FACS Action Units (brow raise, brow lower, smile, frown, eye blink, jaw open), creating viseme shape keys for the vowel sounds (A, E, O, U) and key consonants (M, F, L), setting up bone-driven shape keys using custom properties on a control bone, combining shape keys to build an angry expression and a surprised expression, and animating a short 3-second dialogue sequence with lip sync timed to provided audio reference",
+        "setup_requirements": [
+          "Blender with character model that has proper facial topology (edge loops around eyes and mouth)",
+          "FACS reference sheet with Action Unit descriptions (provided)",
+          "Audio reference clip for lip sync exercise (provided: 3-second dialogue)",
+          "Shape Key panel visible in Properties editor"
+        ],
+        "review": [
+          {
+            "key": "Shape Keys / Blend Shapes",
+            "value": "Stored mesh deformations that morph the base mesh toward a target pose, blendable from 0 to 1, with multiple shapes combinable additively for complex facial expressions"
+          },
+          {
+            "key": "FACS Action Units",
+            "value": "Standardized facial muscle actions from the Facial Action Coding System that decompose expressions into independent components, mapping directly to individual blend shapes"
+          },
+          {
+            "key": "Visemes",
+            "value": "Visual mouth shapes corresponding to speech sounds, typically 10-15 key shapes that cover the phoneme space for lip-sync animation in games"
+          },
+          {
+            "key": "Shape Key Drivers",
+            "value": "Automated connections that control shape key values based on bone transformations or custom properties, enabling facial control through intuitive rig controls rather than manual slider adjustment"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 11,
+      "session_number": 11,
+      "topic": "Low-Poly Optimization and Game-Ready Meshes",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Optimize high-poly models to game-ready polygon budgets without losing visual quality",
+        "Use Blender's Decimate modifier and manual retopology techniques effectively",
+        "Understand polygon budget allocation for different asset types and target platforms",
+        "Validate mesh quality for game engine compatibility"
+      ],
+      "readings": [
+        "Real-Time Rendering by Akenine-Moller et al., Ch. 16 (Polygon Techniques)",
+        "Blender Documentation: Decimate Modifier and Retopology Tools",
+        "Polycount Wiki: Game Art Best Practices (Low Poly Workflows)"
+      ],
+      "lecture_notes": {
+        "introduction": "Game-ready assets must balance visual quality with performance constraints. A film-quality character might use 5 million polygons; a current-gen game character typically uses 20,000-80,000 triangles; a mobile game character might use 2,000-5,000. The art of optimization is removing polygons that contribute nothing visible while preserving every polygon that defines the silhouette and surface detail. This is not just about running a decimation algorithm -- automated tools cannot distinguish between a polygon that defines a character's jawline (critical) and one that adds curvature to the back of the head (expendable at medium distance). Today we learn both automated and manual optimization techniques, polygon budget planning for different platforms and asset types, and the validation process that ensures your optimized mesh imports correctly into game engines without artifacts.",
+        "key_concepts": [
+          "Triangle budgets by platform: mobile (1K-5K tris), VR (5K-15K tris), current-gen console/PC (15K-80K tris per character), environmental props (50-5000 tris depending on screen coverage)",
+          "Decimate modifier: Collapse (reduce overall density), Un-Subdivide (reverse subdivision), Planar (remove flat detail) -- each for different optimization scenarios",
+          "Manual retopology: building new clean topology over a sculpted or scanned mesh using Shrinkwrap modifier, F2 addon, or RetopoFlow",
+          "Silhouette preservation: maintaining polygons that define the object's outline from common viewing angles while removing interior detail",
+          "Normal map compensation: baking high-poly detail as normal maps so the low-poly mesh retains visual complexity without geometric cost",
+          "LOD (Level of Detail) meshes: creating multiple resolution versions that swap based on camera distance for optimal performance",
+          "Mesh validation checklist: no non-manifold geometry, consistent normals, no degenerate triangles, no overlapping vertices, watertight if needed for physics",
+          "Hard edges vs smooth shading: using auto-smooth angle and sharp edges to control shading without adding geometry",
+          "Vertex count vs triangle count: understanding that vertices are split at UV seams, hard edges, and vertex color boundaries, so the actual vertex count in the GPU is higher than the mesh vertex count",
+          "Draw call optimization: combining separate mesh objects that share materials into single meshes to reduce draw call overhead"
+        ],
+        "demonstration": "Optimizing a character model from 50K tris to 8K tris: analyzing the original mesh to identify areas of excessive density, using the Decimate modifier with vertex groups to protect the face and hands while aggressively reducing the body and clothing, manually fixing topology problems introduced by decimation, baking the original detail as a normal map, comparing the high-poly and low-poly models side-by-side in Material Preview to verify visual equivalence, and running the mesh validation checklist",
+        "setup_requirements": [
+          "Blender with high-poly character or prop model from previous sessions",
+          "Triangle counter display enabled in viewport overlay",
+          "Normal map baking setup from session 5 material"
+        ],
+        "review": [
+          {
+            "key": "Triangle Budget",
+            "value": "The maximum polygon count allocated to an asset based on its screen importance, viewing distance, and target platform performance constraints"
+          },
+          {
+            "key": "LOD (Level of Detail)",
+            "value": "Multiple resolution versions of the same mesh that automatically swap based on camera distance, using high-poly close up and low-poly at distance to maintain performance"
+          },
+          {
+            "key": "Retopology",
+            "value": "Creating new clean quad-dominant topology over an existing high-poly sculpt or scan, producing an optimized game-ready mesh while preserving the original form"
+          },
+          {
+            "key": "Silhouette Preservation",
+            "value": "Prioritizing polygons that define an object's outline from typical viewing angles during optimization, since silhouette reads more strongly than surface detail at distance"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 12,
+      "session_number": 12,
+      "topic": "Export Pipelines: FBX and glTF",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Export complete character models with textures and animations to game-ready formats",
+        "Understand the differences between FBX and glTF formats and when to use each",
+        "Configure export settings for specific game engines (Godot, Unity, Unreal)",
+        "Troubleshoot common export and import problems"
+      ],
+      "readings": [
+        "glTF 2.0 Specification Overview (Khronos Group)",
+        "Blender Documentation: FBX Export and glTF Export",
+        "Godot Documentation: Importing 3D Assets"
+      ],
+      "lecture_notes": {
+        "introduction": "The export pipeline is where 3D art meets game engineering. A model that looks perfect in Blender can arrive in a game engine with missing textures, broken animations, inverted normals, or mangled bone hierarchies if the export is not configured correctly. The two dominant exchange formats are FBX (Autodesk's proprietary format, the legacy industry standard) and glTF 2.0 (the Khronos Group's open standard, increasingly adopted as the JPEG of 3D). Understanding both formats, their capabilities and limitations, and the correct export settings for your target engine is essential for professional 3D work. Today we take a complete character with textures and animations through both export pipelines, importing into Godot and Unity to verify that everything transfers correctly. We will also build a troubleshooting checklist for the most common export problems and their solutions.",
+        "key_concepts": [
+          "glTF 2.0 (.glb/.gltf): open standard, PBR material support, embedded or external textures, compact binary (.glb) or JSON-readable (.gltf), excellent Blender and Godot support",
+          "FBX (.fbx): Autodesk proprietary format, wider legacy support, complex armature hierarchies, the standard for Unity and Unreal Engine workflows",
+          "Coordinate system differences: Blender Z-up right-handed vs Unity Y-up left-handed vs Unreal Z-up left-handed -- exporters handle conversion automatically when configured correctly",
+          "Scale issues: Blender uses meters by default, some engines expect centimeters -- export scale factor and unit settings prevent tiny or enormous models",
+          "Texture embedding: glTF .glb embeds all textures into a single file; FBX can embed but often references external texture files that must be co-located",
+          "Animation export: separating multiple Actions into individual animation clips, setting frame ranges per action, enabling NLA strip export for complex setups",
+          "Bone orientation issues: FBX bone export may flip axes on import; the 'Primary Bone Axis' and 'Secondary Bone Axis' settings control this behavior",
+          "Material conversion: Blender's Principled BSDF maps directly to PBR materials in glTF; FBX materials may need remapping in the target engine",
+          "Batch export workflows: scripting export of multiple assets with consistent settings using Blender's Python API for production pipelines",
+          "Validation in target engine: importing the exported file, checking material assignment, playing animations, verifying scale, and testing in a simple scene"
+        ],
+        "demonstration": "Exporting a complete character to both formats: configuring glTF export with embedded textures, applying transforms, and selecting animation Actions for export; importing into Godot 4 and verifying materials auto-apply, animations play correctly, and scale matches the game world; configuring FBX export with correct bone axis settings; importing into Unity and remapping materials to URP; comparing the results and documenting any differences; troubleshooting a deliberately broken export (wrong scale, missing textures, flipped normals) to practice diagnosis",
+        "setup_requirements": [
+          "Blender with fully textured, rigged, and animated character from previous sessions",
+          "Godot 4 project for import testing",
+          "Unity 2022+ project for FBX import testing (optional, Godot is primary)",
+          "Export settings reference sheet (provided: per-engine recommendations)"
+        ],
+        "review": [
+          {
+            "key": "glTF 2.0",
+            "value": "An open standard 3D format by Khronos Group supporting PBR materials, skeletal animation, and texture embedding in a compact binary (.glb) or readable JSON (.gltf) format"
+          },
+          {
+            "key": "FBX",
+            "value": "Autodesk's proprietary 3D interchange format with broad engine support, handling complex armatures and animation but requiring careful axis and scale configuration"
+          },
+          {
+            "key": "Coordinate System Conversion",
+            "value": "The automatic transformation between different engine coordinate conventions (Blender Z-up to Unity Y-up) handled by export settings, which must be configured correctly to prevent rotated or flipped models"
+          },
+          {
+            "key": "Scale Factor",
+            "value": "The unit conversion multiplier applied during export to match the target engine's expected unit system, preventing models from appearing microscopic or enormous on import"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 13,
+      "session_number": 13,
+      "topic": "Environment Modeling and Scene Composition",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Model modular environment pieces that tile and connect seamlessly",
+        "Build a complete game environment from modular asset kits",
+        "Apply material variation and weathering to environment surfaces",
+        "Optimize environment scenes for real-time rendering performance"
+      ],
+      "readings": [
+        "The Art of Modular Level Design by Christopher Totten, Ch. 3",
+        "World of Level Design: Modular Environment Workflow",
+        "Blender Documentation: Geometry Nodes for Scattering"
+      ],
+      "lecture_notes": {
+        "introduction": "Environment modeling for games follows fundamentally different rules than character modeling. Characters are unique, high-detail assets viewed up close. Environments are vast spaces built from repeated modular pieces viewed at varying distances, where the challenge is creating visual variety and atmosphere from a limited set of reusable assets. Modular environment design is an engineering discipline as much as an artistic one: pieces must snap to a consistent grid, connect without visible seams, tile without obvious repetition, and support the level designer's ability to build diverse spaces from a standard kit. Today we learn the modular workflow used in professional studios, from defining grid standards and connection rules to building a complete environment scene from kit pieces. We also explore material techniques for adding visual variety to repeated geometry: vertex color variation, decal layers, and procedural weathering that makes identical meshes look distinct.",
+        "key_concepts": [
+          "Modular grid standards: defining a base unit (1m, 2m, 4m) that all environment pieces align to, ensuring seamless connections",
+          "Kit piece categories: floors, walls, corners, pillars, trim pieces, props, hero pieces -- each with defined connection points",
+          "Tiling geometry: ensuring wall and floor pieces connect seamlessly at module boundaries with matching edge profiles",
+          "Material variation on identical meshes: vertex colors for per-instance tinting, decal meshes for unique damage and stains, parameter randomization",
+          "Trim sheets: narrow texture atlases containing repeated architectural details (moldings, rivets, pipes) UV-mapped along strips of geometry",
+          "Vertex color for variation: painting color multipliers on vertices so identical meshes can appear weathered, dirty, or tinted differently",
+          "Instance rendering: using identical mesh data with different transforms for memory-efficient environment population",
+          "Scene composition: arranging assets with attention to focal points, sight lines, lighting, and player flow through the space",
+          "Geometry Nodes for scattering: using Blender's node-based system to procedurally place grass, rocks, and debris across terrain surfaces",
+          "Performance budgets for environments: balancing draw calls (unique meshes), vertex count, texture memory, and lighting complexity within target frame rate"
+        ],
+        "demonstration": "Building a modular dungeon corridor: defining a 2m grid standard, modeling floor, wall, wall-corner, pillar, and archway kit pieces that snap to the grid, UV-mapping onto a shared trim sheet for efficient texture use, adding vertex color variation so identical wall pieces appear slightly different, assembling a complete L-shaped corridor with lighting, and measuring performance metrics (draw calls, triangle count, texture memory) in Blender's viewport statistics",
+        "setup_requirements": [
+          "Blender with a clean project for environment work",
+          "Grid snapping configured to match the chosen module size (2m)",
+          "Trim sheet texture (provided: stone dungeon architectural details)",
+          "Environment concept art reference (provided)"
+        ],
+        "review": [
+          {
+            "key": "Modular Kit",
+            "value": "A set of interlocking 3D pieces designed on a consistent grid system that snap together to build diverse environments from a limited number of reusable assets"
+          },
+          {
+            "key": "Trim Sheet",
+            "value": "A narrow texture atlas containing repeated architectural details mapped along strips of geometry, enabling high detail on environment surfaces with minimal unique texture data"
+          },
+          {
+            "key": "Vertex Color Variation",
+            "value": "Per-vertex color data painted onto mesh instances that multiplies with the base texture, allowing identical meshes to appear uniquely weathered, tinted, or aged"
+          },
+          {
+            "key": "Instance Rendering",
+            "value": "Rendering multiple copies of the same mesh using different transformation matrices, sharing mesh and material data in GPU memory for efficient environment population"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 14,
+      "session_number": 14,
+      "topic": "Prop Creation and Asset Polish",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Model, texture, and present props that tell stories within game environments",
+        "Apply the full asset pipeline from concept to engine-ready export on a new prop",
+        "Achieve portfolio-quality rendering and presentation of 3D work",
+        "Conduct peer critique of 3D assets using professional evaluation criteria"
+      ],
+      "readings": [
+        "Creating Game Props in Blender by Abby Crawford (artstation.com/learning)",
+        "The Art of Game Worlds by Dave Morris, Ch. 5 (Props and Storytelling)",
+        "ArtStation Tips: How to Present Your 3D Work"
+      ],
+      "lecture_notes": {
+        "introduction": "Props are the vocabulary of environmental storytelling. A dented helmet tells a different story than a polished one. A desk covered in coffee-stained papers says something about its occupant that no dialogue could match. In games, props serve multiple functions: they dress environments for visual richness, communicate narrative without text, provide interactive elements for gameplay, and demonstrate the technical range of the art team. Today we bring together every skill from the course -- modeling, topology, UV mapping, texturing, and presentation -- to create a portfolio-quality prop from concept to final presentation. This is also the session where we practice the peer critique process used in professional studios, evaluating work against objective technical criteria (topology quality, texel density, material accuracy) and subjective artistic criteria (silhouette appeal, surface storytelling, environmental fit). Learning to give and receive constructive critique is as important as the technical skills themselves.",
+        "key_concepts": [
+          "Prop storytelling: surface damage, wear patterns, and customization that communicate history, ownership, and world context",
+          "Full pipeline execution: concept sketch, blockout, detailed model, UV unwrap, bake, texture, export, engine validation in a single workflow",
+          "Presentation rendering: HDRI lighting in Blender, turntable camera animation, clay/wireframe overlay renders for portfolio display",
+          "Material storytelling: PBR values that communicate age (increased roughness), use (wear on grip areas), damage (metallic showing through paint)",
+          "Viewport composition: camera angle, lighting, background, and framing that present the prop at its most appealing for portfolio screenshots",
+          "Wireframe overlay renders: displaying polygon topology as a semi-transparent wireframe over the textured model to demonstrate technical skill",
+          "Professional critique vocabulary: silhouette, read (clarity at distance), value range, material separation, scale reference, edge density distribution",
+          "Portfolio presentation standards: 3-5 renders per prop (beauty shot, wireframe, UV layout, flat texture, in-context scene placement)",
+          "Turntable animation: 5-10 second 360-degree camera orbit showing all sides of the asset, rendered at 1080p or higher",
+          "Engine screenshot: the final validation of showing the asset in its target game engine under gameplay lighting conditions"
+        ],
+        "demonstration": "Complete prop pipeline in a single session: speed-modeling a fantasy weapon from concept sketch (45 minutes), UV unwrapping with seams along weapon edges and grip boundary, texturing in Substance Painter with metal blade, leather grip, and gemstone materials, exporting to Godot with glTF, setting up a turntable camera rig in Blender for portfolio render, and capturing beauty, wireframe, UV layout, and flat texture screenshots for portfolio presentation",
+        "setup_requirements": [
+          "Blender with full tool access",
+          "Substance Painter or Blender Texture Paint mode",
+          "Concept reference (provided: fantasy weapon concept sheet)",
+          "Turntable camera rig template (provided: Blender file with animated camera)"
+        ],
+        "review": [
+          {
+            "key": "Prop Storytelling",
+            "value": "Using surface detail (wear, damage, customization, staining) to communicate the history, ownership, and world context of a game prop without relying on text or dialogue"
+          },
+          {
+            "key": "Turntable Render",
+            "value": "A 360-degree camera orbit animation showing all sides of a 3D asset, standard for portfolio presentation, typically 5-10 seconds with even HDRI lighting"
+          },
+          {
+            "key": "Portfolio Presentation Standards",
+            "value": "Industry expectations for showing 3D work: beauty render, wireframe overlay, UV layout screenshot, flat texture display, and in-context scene placement"
+          },
+          {
+            "key": "Professional Critique",
+            "value": "Structured evaluation of 3D work using objective criteria (topology quality, texel density) and subjective criteria (silhouette appeal, material storytelling, environmental fit)"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 15,
+      "session_number": 15,
+      "topic": "Portfolio Assembly and Final Presentation",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Curate course work into a cohesive professional portfolio with consistent presentation quality",
+        "Create turntable renders, wireframe overlays, and beauty shots for all major assets",
+        "Present work to peers with clear articulation of design decisions and technical process",
+        "Evaluate portfolio readiness for job applications and further academic work"
+      ],
+      "readings": [
+        "Art Director's Advice on Portfolio Presentation (GDC 2019 talk notes)",
+        "Blender Documentation: Rendering and Compositing",
+        "ArtStation Best Practices for Game Artist Portfolios"
+      ],
+      "lecture_notes": {
+        "introduction": "Your portfolio is the single most important factor in getting hired as a 3D artist. Studios evaluate candidates primarily through their portfolio, not their resume. A strong portfolio demonstrates technical range (modeling, texturing, rigging, animation), consistent quality, professional presentation, and the ability to work within production constraints. Today we assemble your best course work into a portfolio-ready collection, ensure consistent presentation quality across all pieces, and practice presenting your work verbally -- a skill needed for studio interviews. The portfolio review also serves as a final course assessment: each piece demonstrates mastery of specific skills, and the collection as a whole demonstrates your growth from week 1 to week 15. Quality over quantity is the cardinal rule: three excellent pieces beat ten mediocre ones. Every asset in your portfolio should represent your best capability, and any piece that falls below your current standard should be reworked or removed.",
+        "key_concepts": [
+          "Portfolio curation: selecting your 4-6 strongest pieces that demonstrate range (character, prop, environment, animation) and consistent quality",
+          "Consistent presentation: matching lighting, rendering settings, image dimensions, and background style across all portfolio pieces for professional cohesion",
+          "Render settings for portfolio: Cycles or EEVEE at 1920x1080 minimum, HDRI lighting, compositing passes for DOF and color grading",
+          "Process documentation: including wireframe, UV layout, and flat texture screenshots to demonstrate technical skill behind the final beauty render",
+          "Video reel: compiling turntable renders and animation clips into a 1-2 minute showreel with professional pacing and music",
+          "ArtStation and portfolio website: publishing work on industry-standard platforms with proper tagging, descriptions, and process breakdowns",
+          "Verbal presentation skills: explaining design decisions, technical challenges, and creative reasoning clearly in 3-5 minutes per piece",
+          "Accepting and applying critique: responding to feedback professionally, identifying actionable improvements, and planning portfolio iteration",
+          "Resume integration: connecting portfolio pieces to specific skills listed on the resume (PBR texturing, character rigging, modular environment design)",
+          "Continuous improvement plan: identifying weak areas and planning practice projects to address them after the course ends"
+        ],
+        "demonstration": "Live portfolio assembly: selecting the 5 best pieces from a student's course work, rendering consistent beauty shots with a standardized HDRI setup, assembling wireframe overlays and UV layout screenshots, compiling turntable animations into a 90-second video reel, uploading to ArtStation with descriptive text, and presenting the portfolio to the class with a timed 5-minute verbal walkthrough",
+        "setup_requirements": [
+          "Blender with all course project files accessible",
+          "HDRI lighting setup (provided: 3 studio HDRIs for consistent rendering)",
+          "Video editing software for reel compilation (DaVinci Resolve free edition recommended)",
+          "ArtStation account for publishing"
+        ],
+        "review": [
+          {
+            "key": "Portfolio Curation",
+            "value": "Selecting your strongest 4-6 pieces that demonstrate range and consistent quality; quality over quantity is the cardinal rule of portfolio building"
+          },
+          {
+            "key": "Process Documentation",
+            "value": "Including technical breakdowns (wireframe, UV layout, texture flats) alongside beauty renders to demonstrate the skill behind the final presentation"
+          },
+          {
+            "key": "Showreel",
+            "value": "A 1-2 minute video compiling turntable renders and animation clips, demonstrating the full range of work with professional pacing and presentation"
+          },
+          {
+            "key": "Verbal Presentation",
+            "value": "The ability to explain design decisions, technical process, and creative reasoning clearly in a time-limited format, essential for studio interviews and portfolio reviews"
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 3,
+        "topic": "Modeling Fundamentals, Topology, and UV Mapping",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Explain why quad-dominant topology is preferred over triangles and n-gons for character models that will be animated. Describe what happens to an n-gon at a character's elbow joint when the arm bends 90 degrees.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Quads are preferred because they subdivide predictably (each quad splits into 4 quads), deform smoothly along edge loops, and produce clean results with Subdivision Surface modifiers. Triangles create pinching artifacts at subdivision and have unpredictable deformation direction. N-gons are worse because they must be internally triangulated by the renderer, and this triangulation can change frame-to-frame during animation. At an elbow bent 90 degrees, an n-gon would collapse unpredictably: the internal triangulation might flip, causing visible popping artifacts, surface shading errors, and potential self-intersection. Proper topology uses parallel edge loops running perpendicular to the bend axis so each quad deforms in a controlled accordion-like fashion.",
+            "rubric": [
+              {
+                "key": "Explains quad advantages for subdivision and deformation",
+                "value": 3
+              },
+              {
+                "key": "Describes n-gon triangulation problem during animation",
+                "value": 3
+              },
+              {
+                "key": "Explains correct edge loop orientation at joints",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "When UV unwrapping a game character, where should seams be placed and why? List three specific guidelines for seam placement on a humanoid model.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "UV seams should be placed in locations that minimize visual disruption. Three guidelines: (1) Place seams along natural boundaries where materials or clothing change, such as the shirt sleeve edge or waistband, because the eye expects a visual break there. (2) Place seams in areas hidden from the primary camera angle: inner arm, behind ears, shoe sole, inside clothing folds. (3) Place seams along hard geometric edges where there is already a visible crease, such as under the chin or at the armpit, so the seam's texture discontinuity blends with the existing edge. Seams should never cross the center of a large visible smooth surface like the face or chest.",
+            "rubric": [
+              {
+                "key": "States seams minimize visual disruption as primary goal",
+                "value": 2
+              },
+              {
+                "key": "Lists three valid, specific placement guidelines with examples",
+                "value": 4
+              },
+              {
+                "key": "Mentions where seams should NOT go",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "What is texel density and why is it important for game assets? Describe how you would verify and correct inconsistent texel density on a UV-unwrapped model.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Texel density is the number of texture pixels per unit of 3D surface area. It is important because inconsistent texel density causes visible quality differences across the model: areas with low texel density appear blurry while adjacent areas with high density appear sharp, breaking visual cohesion. To verify: apply a checker pattern texture and inspect in Material Preview -- squares that appear uniformly sized across the model indicate consistent density; stretched or compressed squares indicate problem areas. To correct: in the UV Editor, scale UV islands so that the checker appears uniform -- typically the face and hands get proportionally more UV space (higher priority detail) while the back and inner surfaces get less. The overall target density depends on texture resolution and model size.",
+            "rubric": [
+              {
+                "key": "Correct definition of texel density with visual quality rationale",
+                "value": 3
+              },
+              {
+                "key": "Describes checker pattern verification method",
+                "value": 3
+              },
+              {
+                "key": "Explains correction by UV island scaling with priority areas mentioned",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 24
+      },
+      {
+        "quiz": 2,
+        "week": 5,
+        "topic": "PBR Texturing and Rigging Fundamentals",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "List the standard PBR texture channels in a metallic/roughness workflow and describe what each encodes. A rusty iron fence has both bare metal and rust patches -- describe the approximate Metallic and Roughness values for each surface type and explain why.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "PBR channels: Base Color (surface color/albedo without lighting), Metallic (0=non-metal/dielectric, 1=metal), Roughness (0=mirror-smooth, 1=completely rough), Normal (surface detail as tangent-space vectors in RGB), AO (pre-baked contact shadows), Emissive (self-illumination). For the iron fence: bare metal areas have Metallic ~1.0 (iron is a metal) and Roughness ~0.3-0.5 (polished but not mirror-smooth). Rust areas have Metallic ~0.0 (rust is iron oxide, a non-metallic compound) and Roughness ~0.8-1.0 (very rough matte surface). Base Color also changes: silvery-gray for bare metal, orange-brown for rust. The key insight is that rust is chemically a different material from iron, so its PBR values are fundamentally different despite being on the same object.",
+            "rubric": [
+              {
+                "key": "Lists at least 5 PBR channels with correct descriptions",
+                "value": 3
+              },
+              {
+                "key": "Correct Metallic values with explanation (metal ~1.0, rust ~0.0 because oxide is non-metal)",
+                "value": 3
+              },
+              {
+                "key": "Correct Roughness values with reasoning (metal smooth, rust rough)",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Compare Forward Kinematics (FK) and Inverse Kinematics (IK) for character animation. For a walk cycle, which approach is better for the legs and why? Name one animation task where FK is clearly superior to IK.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "FK rotates each bone individually from root to tip, with child bones inheriting parent rotations. IK positions the end effector (hand, foot) and the solver calculates all parent bone rotations automatically. For walk cycle legs, IK is superior because feet must plant at precise ground positions -- the animator places the foot where it contacts the ground, and hip/knee angles are calculated automatically. This prevents foot sliding, the most common walk cycle error. FK is superior for arms during expressive gestures like a sweeping wave or swinging arms while walking, because FK gives direct arc control at each joint. IK arm movement tends to look linear and mechanical because the solver finds the shortest path rather than natural arcs.",
+            "rubric": [
+              {
+                "key": "Correctly defines both IK and FK with clear distinction",
+                "value": 3
+              },
+              {
+                "key": "Explains why IK is better for legs (foot planting, preventing sliding)",
+                "value": 3
+              },
+              {
+                "key": "Names a valid FK-superior scenario with arc control reasoning",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the 'candy wrapper twist' deformation artifact. What causes it, and describe two different solutions for fixing it in a character rig.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "The candy wrapper twist occurs when a bone rotates along its own axis (twist/roll) and the mesh collapses around the bone like a twisted candy wrapper. This is most visible in the forearm during wrist rotation and in the upper arm during shoulder roll. It happens because single-bone influence creates a hard transition between influenced and non-influenced vertices during axial rotation. Solution 1: Add a twist bone (forearm_twist.L) that inherits only a percentage (typically 50%) of the forearm's axial rotation, distributing the twist over a longer section of mesh and softening the deformation. Solution 2: Add a corrective shape key (blend shape) driven by the bone's rotation angle that reshapes the mesh to maintain volume at extreme twist angles, countering the collapse programmatically.",
+            "rubric": [
+              {
+                "key": "Correctly identifies the artifact and its visual appearance",
+                "value": 2
+              },
+              {
+                "key": "Explains the cause (single-bone axial rotation, hard weight transition)",
+                "value": 3
+              },
+              {
+                "key": "Describes two valid solutions with specific implementation details",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 24
+      },
+      {
+        "quiz": 3,
+        "week": 8,
+        "topic": "Animation Principles and Walk Cycles",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Name the four key positions in a walk cycle and describe the body mechanics at each position. Explain the role of counter-rotation between hips and shoulders during a walk.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Four positions: (1) Contact -- the moment of heel strike when feet are widest apart, arms at maximum swing, body at mid-height. (2) Down -- weight transfers to the front foot, body drops to its lowest point, front knee bends to absorb impact, opposite arm begins to swing back. (3) Passing -- the rear leg passes the support leg, body is on single-leg support, hips tilt toward the swing leg side, body at mid-height. (4) Up -- push-off from the support foot toe, body at its highest point, back leg fully extended. Counter-rotation: when the right leg steps forward the right hip rotates forward, and to maintain balance the right shoulder rotates backward (left arm swings forward). This opposing rotation keeps the center of gravity stable and is the signature of natural walking -- its absence makes walks look robotic.",
+            "rubric": [
+              {
+                "key": "All four positions named with correct body mechanics",
+                "value": 4
+              },
+              {
+                "key": "Explains counter-rotation between hips and shoulders",
+                "value": 2
+              },
+              {
+                "key": "Explains why counter-rotation is necessary (balance, natural appearance)",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "What is the difference between a walk cycle and a run cycle in terms of body mechanics? Specifically address the airborne phase and how it changes the timing and pose requirements.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "The fundamental mechanical difference is that in a walk, at least one foot is always on the ground, while in a run, there is an airborne phase where both feet are off the ground simultaneously. This changes several things: timing is faster (run cycles are typically 12-18 frames vs 24-30 for walks), the forward lean is greater to maintain momentum through the flight phase, arm swing amplitude increases for balance, the contact position shows the foot striking further forward, the down position absorbs more impact force (deeper knee bend), and the push-off is more explosive. The airborne phase also means the center of gravity follows a more pronounced arc (higher vertical bounce) and the body spends less time in ground contact relative to the cycle length.",
+            "rubric": [
+              {
+                "key": "Correctly identifies the airborne phase as the key difference",
+                "value": 3
+              },
+              {
+                "key": "Describes at least 3 specific changes (lean, arm swing, timing, bounce)",
+                "value": 3
+              },
+              {
+                "key": "Mentions timing difference with approximate frame counts",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Explain the purpose of the Graph Editor in Blender animation. Why would an animator need to edit interpolation curves rather than just placing keyframes? Describe the difference between Bezier and Linear interpolation and when each is appropriate.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "The Graph Editor displays animated property values as curves over time (F-curves), enabling precise control of timing, spacing, and easing that is impossible with keyframe placement alone. Keyframes define the value at specific frames, but the interpolation between them determines how the value changes -- which is equally important for animation quality. Bezier interpolation creates smooth acceleration and deceleration using tangent handles, producing natural-looking motion where objects ease into and out of key positions (a bouncing ball slows at the top of its arc). Linear interpolation creates constant speed between keyframes, producing mechanical motion appropriate for machines, conveyor belts, or clock hands. Using linear where Bezier is needed makes organic motion look robotic; using Bezier where linear is needed makes mechanical motion look organic and wrong.",
+            "rubric": [
+              {
+                "key": "Explains Graph Editor purpose for controlling motion between keyframes",
+                "value": 3
+              },
+              {
+                "key": "Correctly describes Bezier (smooth easing) and Linear (constant speed)",
+                "value": 3
+              },
+              {
+                "key": "Gives appropriate use cases for each interpolation type",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 24
+      },
+      {
+        "quiz": 4,
+        "week": 11,
+        "topic": "Facial Animation, Optimization, and Export",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Explain the FACS (Facial Action Coding System) approach to facial animation. What are Action Units, and why is decomposing expressions into individual muscle actions better than creating whole-expression blend shapes like 'happy' or 'angry'?",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "FACS decomposes facial expressions into individual muscle actions called Action Units (AUs). Examples: AU1 (inner brow raise), AU4 (brow lower), AU6 (cheek raise), AU12 (lip corner pull). Creating individual AU blend shapes instead of whole expressions is superior because expressions are combinations of AUs -- anger is AU4+AU5+AU23, surprise is AU1+AU2+AU5+AU26. With individual AUs, the animator can create any expression by combining shapes, including subtle transitions and mixed emotions (a sad smile uses both smile AU12 and brow lower AU4). With whole-expression blend shapes, you can only blend between predefined expressions, and combining 'happy' and 'angry' produces averaged mush rather than a meaningful expression. FACS also maps directly to performance capture data, making the transition from recorded data to animation straightforward.",
+            "rubric": [
+              {
+                "key": "Correctly defines Action Units with specific examples",
+                "value": 3
+              },
+              {
+                "key": "Explains combinatorial advantage over whole-expression shapes",
+                "value": 3
+              },
+              {
+                "key": "Mentions mixed emotions or subtle transitions as a benefit",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "A character model is 50,000 triangles and needs to be optimized to 8,000 for a mobile game. Describe a systematic approach to this optimization, including which areas to prioritize for reduction and how to compensate for lost geometric detail.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Systematic approach: (1) Analyze the mesh to identify polygon density distribution -- often the body, clothing folds, and interior surfaces have excessive detail invisible at game camera distance. (2) Use vertex groups to protect critical areas: face (highest priority, most visible), hands (medium priority), silhouette-defining edges. (3) Apply the Decimate modifier with Un-Subdivide or Collapse mode, targeting protected and unprotected regions separately. (4) Manually fix topology problems introduced by decimation: reconnect edge loops at joints, restore quad topology in animation-critical areas. (5) Compensate for lost detail by baking a normal map from the 50K version onto the 8K version, capturing all surface detail as texture data. (6) Bake AO and curvature maps for additional surface information. (7) Validate: check deformation at all joints, verify silhouette from common angles, test in-engine at target camera distance to confirm no visible quality loss.",
+            "rubric": [
+              {
+                "key": "Systematic approach with priority areas identified (face, hands, silhouette)",
+                "value": 3
+              },
+              {
+                "key": "Uses both automated (Decimate) and manual topology cleanup",
+                "value": 3
+              },
+              {
+                "key": "Compensates with normal map baking and validates in-engine",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "question": "Compare glTF 2.0 and FBX export formats for game assets. When would you choose each? Describe one common export problem and how to diagnose and fix it.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "glTF 2.0 is an open standard by Khronos Group, excellent for Godot and web (three.js), with native PBR material support and compact binary .glb format that embeds textures. FBX is Autodesk's proprietary format, the standard for Unity and Unreal, with broader legacy support and better handling of complex armature hierarchies. Choose glTF for Godot, web targets, and when you want an open format with guaranteed material compatibility. Choose FBX for Unity/Unreal workflows and when the pipeline requires Autodesk tool compatibility. Common problem: model imports at wrong scale (appears tiny or enormous). Diagnosis: check if a 1m cube in Blender appears as 1 unit in the engine. Fix: in Blender export settings, verify 'Apply Transform' is checked, and set the scale factor to match the engine's unit system (FBX export to Unity needs scale 1.0 with 'Apply Scalings: FBX All').",
+            "rubric": [
+              {
+                "key": "Correctly describes both formats with appropriate use cases",
+                "value": 3
+              },
+              {
+                "key": "Identifies a valid common export problem",
+                "value": 2
+              },
+              {
+                "key": "Provides diagnosis method and specific fix with export settings",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 24
+      },
+      {
+        "quiz": 5,
+        "week": 14,
+        "topic": "Environment Art, Props, and Portfolio Presentation",
+        "duration": "25 minutes",
+        "questions": [
+          {
+            "question": "Explain the modular kit approach to environment art. What is a grid standard, and why must all kit pieces align to it? Describe how you would add visual variety to a corridor built from identical wall modules.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "Modular kit design creates a limited set of interlocking 3D pieces on a consistent grid that snap together to build diverse environments. A grid standard defines the base unit dimensions (e.g., 2m x 2m x 3m) that all pieces align to, ensuring modules connect seamlessly without gaps or overlaps. Without a grid standard, level designers spend hours manually adjusting piece positions, and seams appear at every connection. For visual variety on identical wall modules: (1) Vertex color painting to tint individual instances with slight color variation (warmer/cooler, lighter/darker). (2) Decal meshes overlaid on walls for unique damage, graffiti, water stains, or moss. (3) Prop placement in front of walls (torches, banners, shelves) that break up the repetition. (4) Rotating and flipping modules to change the pattern orientation. (5) Material parameter randomization per instance for slight roughness and color shifts.",
+            "rubric": [
+              {
+                "key": "Explains modular kit concept and grid standard purpose",
+                "value": 3
+              },
+              {
+                "key": "Explains why grid alignment is necessary (seamless connections, designer efficiency)",
+                "value": 2
+              },
+              {
+                "key": "Describes at least 3 techniques for visual variety on repeated modules",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "What are the essential components of a professional 3D art portfolio for a game artist position? List the renders/screenshots that should accompany each asset, and explain why wireframe and UV layout images are included alongside beauty renders.",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "A professional game art portfolio should include 4-6 strongest pieces showing range (character, prop, environment, animation reel). Each asset should have: (1) Beauty render with proper lighting and composition showing the final textured model. (2) Wireframe overlay render showing polygon topology on the textured surface. (3) UV layout screenshot showing island arrangement and space utilization. (4) Flat texture sheets showing Base Color, Normal, and Roughness maps. (5) In-context screenshot showing the asset in a game engine scene. Wireframe and UV images are included because art directors evaluate technical skill, not just artistic result. Clean topology demonstrates the artist can create assets that animate and perform well. Efficient UV layouts show the artist understands texture memory budgets. These technical images separate professional game artists from hobbyists who can produce good renders but cannot create production-ready assets.",
+            "rubric": [
+              {
+                "key": "Lists portfolio components with range requirement (4-6 pieces, diverse types)",
+                "value": 3
+              },
+              {
+                "key": "Names at least 4 render types per asset",
+                "value": 2
+              },
+              {
+                "key": "Explains why technical images matter for hiring (production readiness, technical skill evaluation)",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Describe trim sheets and explain how they differ from standard UV-mapped textures. Why are trim sheets particularly efficient for environment art, and what types of environmental details are they best suited for?",
+            "type": "short_answer",
+            "points": 8,
+            "answer": "A trim sheet is a narrow texture atlas containing repeated architectural details (moldings, rivets, panel lines, pipes, ornamental trim) arranged in horizontal or vertical strips. Unlike standard UV mapping where each face maps to a unique area of the texture, trim sheet UVs map geometry strips to the appropriate detail band on the trim texture, reusing the same texture data across many different meshes. Trim sheets are efficient for environments because: multiple different wall, floor, and ceiling meshes can share a single trim texture, drastically reducing unique texture count and memory usage. They are best suited for repeating linear details: stone moldings on walls, metal rivets along structural beams, decorative borders on floors, pipes running along ceilings, panel line details on sci-fi surfaces. They are NOT suited for large unique surface areas (a character face) or features that need to appear at many different scales.",
+            "rubric": [
+              {
+                "key": "Correctly defines trim sheets with the strip/band UV mapping concept",
+                "value": 3
+              },
+              {
+                "key": "Explains efficiency advantage (shared texture, reduced memory, multiple meshes)",
+                "value": 3
+              },
+              {
+                "key": "Names appropriate detail types and limitations",
+                "value": 2
+              }
+            ]
+          }
+        ],
+        "total_points": 24
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Game-Ready Character Model",
+        "week_assigned": 3,
+        "week_due": 7,
+        "points": 150,
+        "description": "Create a complete game-ready character model in Blender: modeled with clean quad topology optimized for animation, UV unwrapped with efficient island packing and consistent texel density, textured with a full PBR material set, and rigged with a functional skeleton with weight-painted deformation. The character must import cleanly into Godot or Unity.",
+        "objectives": [
+          "Demonstrate clean polygon modeling with proper edge flow for animation deformation",
+          "UV unwrap with strategically hidden seams and consistent texel density verified by checker pattern",
+          "Create a complete PBR texture set (Base Color, Metallic, Roughness, Normal, AO) with physically accurate values",
+          "Rig with a functional armature and weight paint clean deformation at all major joints"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Blender source file (.blend) with complete character model, rig, and materials",
+          "Exported glTF file (.glb) ready for game engine import",
+          "Texture files at 2048x2048 resolution (PNG format: Base Color, Normal, ORM channel-packed)",
+          "Turntable render video (15 seconds, 360-degree rotation) with proper lighting",
+          "Wireframe overlay renders from front, side, and three-quarter views",
+          "UV layout screenshot showing island arrangement and texel density"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 45,
+            "criteria": [
+              "Clean quad-dominant topology with no n-gons in deformation areas",
+              "Edge loops follow anatomical form and support animation at all major joints",
+              "Polygon count appropriate for target platform (3000-8000 triangles)",
+              "No mesh errors: no non-manifold edges, no zero-area faces, consistent normals"
+            ]
+          },
+          "visual_quality": {
+            "points": 40,
+            "criteria": [
+              "UV seams placed in hidden or natural boundary locations",
+              "Texel density consistent across model verified by checker pattern",
+              "PBR textures physically accurate with correct metallic/roughness values per material type",
+              "Normal map baking clean with no projection artifacts"
+            ]
+          },
+          "performance_optimization": {
+            "points": 35,
+            "criteria": [
+              "Armature has proper bone hierarchy with consistent naming conventions",
+              "IK chains functional for legs with proper pole targets",
+              "Weight painting produces clean deformation at all major joints through full range of motion",
+              "Character achieves basic poses (T-pose, walking contact, sitting) without mesh breakage"
+            ]
+          },
+          "documentation": {
+            "points": 30,
+            "criteria": [
+              "Turntable render well-lit and professionally presented",
+              "Wireframe renders clearly show topology decisions",
+              "glTF export imports correctly into Godot without errors",
+              "File organized with clear naming for all objects, materials, and textures"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Professional-quality game character with clean, animation-ready topology",
+                "Complete PBR texturing with physically accurate material values",
+                "Functional rig with clean deformation verified at extreme poses",
+                "Portfolio-quality presentation renders and clean engine-compatible export"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 2,
+        "title": "Animated Character Showcase",
+        "week_assigned": 8,
+        "week_due": 11,
+        "points": 150,
+        "description": "Using the rigged character from Assignment 1, create a complete set of game-ready animations: a walk cycle, a run cycle, an idle animation, and one action animation of your choice (attack, jump, interact, emote). All animations must loop seamlessly where appropriate and export correctly as separate Actions in glTF format.",
+        "objectives": [
+          "Animate a convincing bipedal walk cycle with proper weight transfer, timing, and counter-rotation",
+          "Create a run cycle that demonstrates correct airborne phase mechanics",
+          "Build a subtle idle animation that keeps the character alive when stationary",
+          "Demonstrate the 12 principles of animation applied to 3D character performance",
+          "Export all animations as separate game-engine-compatible Actions"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Blender file with all animations as separate named Actions",
+          "Exported glTF file (.glb) with embedded animations",
+          "Render videos of each animation from front and three-quarter views",
+          "Animation breakdown document showing key poses, timing charts, and reference material"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 45,
+            "criteria": [
+              "Walk cycle has correct phases: contact, down, passing, up with proper timing",
+              "Run cycle includes airborne phase with appropriate forward lean and arm swing",
+              "Both locomotion cycles loop seamlessly with no popping or foot sliding",
+              "All animations export correctly to glTF with proper frame ranges"
+            ]
+          },
+          "visual_quality": {
+            "points": 40,
+            "criteria": [
+              "Believable weight distribution and center of gravity shift in both cycles",
+              "Hip rotation and shoulder counter-rotation present and correctly timed",
+              "Idle animation feels alive with subtle breathing and weight shifting without distraction",
+              "Action animation demonstrates clear anticipation, action, and recovery phases"
+            ]
+          },
+          "performance_optimization": {
+            "points": 35,
+            "criteria": [
+              "No mesh deformation artifacts visible during any animation",
+              "Graph Editor curves are clean with appropriate interpolation at all keyframes",
+              "At least 3 animation principles demonstrated across the full set (overlap, arcs, squash/stretch, etc.)",
+              "Animation breakdown document shows analytical understanding of locomotion mechanics"
+            ]
+          },
+          "documentation": {
+            "points": 30,
+            "criteria": [
+              "Key pose diagrams included for walk and run cycles",
+              "Timing charts show frame numbers for all key poses",
+              "Reference material cited and analyzed",
+              "Render videos clearly show the quality of animation from multiple angles"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 150,
+              "criteria": [
+                "Walk and run cycles demonstrate strong understanding of locomotion mechanics",
+                "All animations apply classical animation principles to 3D character performance",
+                "Technical execution is clean with no deformation artifacts or export issues",
+                "Thorough documentation demonstrates analytical understanding of the animation process"
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "assignment": 3,
+        "title": "Environment Kit and Portfolio Compilation",
+        "week_assigned": 12,
+        "week_due": 15,
+        "points": 170,
+        "description": "Create a modular environment kit (minimum 8 unique pieces) with shared materials and a trim sheet, assemble a complete scene from the kit, and compile your best course work into a portfolio-ready package with consistent presentation quality including turntable renders, wireframe overlays, and a video showreel.",
+        "objectives": [
+          "Design and model a modular environment kit with consistent grid standards",
+          "Apply trim sheet texturing and vertex color variation for visual diversity",
+          "Assemble a complete scene demonstrating the kit's versatility",
+          "Compile a professional portfolio package with consistent presentation across all pieces"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "Blender file with modular kit pieces and assembled scene",
+          "Trim sheet texture (2048x2048) with documentation of strip contents",
+          "Scene render from 3 camera angles with proper lighting",
+          "Portfolio package: beauty renders, wireframe overlays, and UV layouts for all major course pieces",
+          "Video showreel (60-90 seconds) compiling turntable renders and animation clips",
+          "Portfolio website or ArtStation page with all work published"
+        ],
+        "grading_rubric": {
+          "technical_implementation": {
+            "points": 50,
+            "criteria": [
+              "At least 8 modular kit pieces that connect seamlessly on a defined grid",
+              "Trim sheet used effectively with clean UV mapping along detail strips",
+              "Vertex color variation creates visual diversity on repeated modules",
+              "Scene assembly demonstrates kit versatility with at least 2 distinct area compositions"
+            ]
+          },
+          "visual_quality": {
+            "points": 40,
+            "criteria": [
+              "Environment has cohesive art direction with consistent style and material quality",
+              "Lighting enhances scene composition with focal points and mood",
+              "Scene renders are portfolio-quality with proper camera composition",
+              "All portfolio pieces have consistent presentation (matching lighting, dimensions, background)"
+            ]
+          },
+          "performance_optimization": {
+            "points": 35,
+            "criteria": [
+              "Kit pieces use efficient polygon budgets appropriate for environment art",
+              "Shared materials and instances used for performance optimization",
+              "Video showreel has professional pacing and demonstrates full range of skills",
+              "Portfolio represents quality over quantity with curated selection"
+            ]
+          },
+          "documentation": {
+            "points": 45,
+            "criteria": [
+              "Grid standard and connection rules documented with diagrams",
+              "Trim sheet contents documented with strip identification",
+              "Each portfolio piece includes wireframe and UV layout alongside beauty renders",
+              "ArtStation or portfolio page is professionally organized with descriptions"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 170,
+              "criteria": [
+                "Versatile modular kit demonstrating professional environment art workflow",
+                "Assembled scene showcases kit with cohesive art direction and lighting",
+                "Portfolio compilation shows growth and consistent quality across all skill areas",
+                "Presentation quality meets professional standards for job applications"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 20,
+      "description": "Five quizzes (weeks 3, 5, 8, 11, 14) assessing 3D modeling concepts, terminology, and technical knowledge"
+    },
+    "lab_assignments": {
+      "percentage": 15,
+      "description": "Weekly hands-on Blender exercises building specific modeling, texturing, and animation skills"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "Three major projects: Game-Ready Character (150pts), Animated Showcase (150pts), Environment Kit and Portfolio (170pts)"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Midterm practical exam: timed modeling and texturing task from reference images"
+    },
+    "final_project": {
+      "percentage": 20,
+      "description": "Final portfolio presentation with curated work, video showreel, and verbal presentation to peers"
+    }
+  },
+  "course_policies": {
+    "attendance": "Attendance is mandatory for all lab sessions and critique days. More than 2 unexcused lab absences may result in a full letter grade reduction. Critique participation is graded.",
+    "late_submissions": "Late work is penalized 10% per day for up to 5 days. Blender files that do not open or contain missing textures receive an automatic 30% penalty. Always use File > External Data > Pack Resources before submission.",
+    "collaboration": "All models and animations must be your own work. Reference images and tutorials may be used for learning but copying topology or animation keyframes from another source is plagiarism. Cite all references in your submission.",
+    "academic_integrity": "Submitting assets from online marketplaces, asset stores, or AI-generated 3D content as your own work is a violation. All submitted work must be created by you in Blender during this course. AI tools may be used for reference image generation only, with disclosure.",
+    "technology_requirements": "Students must have a computer with Blender 4.0+, a three-button mouse, and a dedicated GPU (NVIDIA or AMD with at least 4GB VRAM recommended). Lab computers with Blender, Substance Painter, and drawing tablets are available during lab hours."
+  }
+}

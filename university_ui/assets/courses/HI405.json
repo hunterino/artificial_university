@@ -1,0 +1,463 @@
+{
+  "course_info": {
+    "course_id": "HI405",
+    "title": "Health Information Exchange",
+    "credit_hours": 3,
+    "duration": "15 weeks",
+    "meeting_schedule": "Monday, Wednesday - 3 hours per week",
+    "prerequisites": [
+      "HI301 - Health Information Systems",
+      "HI304 - Health Information Security"
+    ]
+  },
+  "class_schedule": [
+    {
+      "week_number": 1,
+      "session_number": 1,
+      "topic": "Health Information Exchange Foundations",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Define HIE models and their role in the healthcare ecosystem",
+        "Trace the evolution of HIE from regional networks to TEFCA",
+        "Understand the value proposition of health data exchange"
+      ],
+      "readings": [
+        "Health Information Exchange: Navigating and Managing a Networked World Ch. 1-2",
+        "ONC TEFCA Overview"
+      ],
+      "lecture_notes": {
+        "introduction": "Health Information Exchange enables patient data to follow patients across organizational boundaries. Without HIE, each provider sees only a fragment of the patient's health story.",
+        "key_concepts": [
+          "HIE value: care coordination, reduced duplicative testing, emergency access, public health reporting",
+          "HIE models: centralized, federated, hybrid, consumer-mediated",
+          "Exchange types: directed (push), query-based (pull), consumer-mediated (patient-driven)",
+          "Evolution: regional HIEs, state-designated entities, Commonwell, Carequality, TEFCA",
+          "Business models: subscription, transaction-based, government-funded"
+        ],
+        "demonstration": "Walkthrough of a query-based HIE exchange: ED physician queries the HIE for a patient's medication list and recent discharge summary from another hospital",
+        "setup_requirements": [
+          "HIE workflow diagrams",
+          "TEFCA documentation"
+        ],
+        "review": [
+          {
+            "key": "TEFCA",
+            "value": "Trusted Exchange Framework and Common Agreement: ONC's national approach to connecting disparate health information networks for universal interoperability"
+          },
+          {
+            "key": "Query-Based Exchange",
+            "value": "Provider queries the HIE network to find and retrieve records for a specific patient from other participating organizations"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 1,
+      "session_number": 2,
+      "topic": "Interoperability Standards for HIE",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Describe the standards stack enabling health information exchange",
+        "Implement FHIR-based data exchange between systems",
+        "Understand the role of implementation guides in standardizing exchange"
+      ],
+      "readings": [
+        "Health Information Exchange Ch. 5",
+        "HL7 US Core Implementation Guide"
+      ],
+      "lecture_notes": {
+        "introduction": "Interoperability requires agreed-upon standards at every layer: transport, content, vocabulary, and workflow. Understanding this standards stack is essential for building exchange capabilities.",
+        "key_concepts": [
+          "Transport standards: Direct Messaging (SMTP-based), FHIR RESTful API, IHE profiles",
+          "Content standards: C-CDA (Consolidated Clinical Document Architecture), FHIR resources",
+          "Vocabulary standards: SNOMED CT, LOINC, RxNorm, ICD-10 for semantic interoperability",
+          "Implementation guides: US Core, Da Vinci, CARIN for specific use cases",
+          "Testing and certification: ONC criteria, IHE Connectathons"
+        ],
+        "demonstration": "Retrieve a patient's Continuity of Care Document (C-CDA) via Direct Messaging, then retrieve the same data via FHIR API, comparing the two approaches",
+        "setup_requirements": [
+          "FHIR test server",
+          "C-CDA sample documents",
+          "HTTP client tool"
+        ],
+        "review": [
+          {
+            "key": "C-CDA",
+            "value": "Consolidated Clinical Document Architecture: XML-based standard for clinical document exchange, used in Transitions of Care and patient summaries"
+          },
+          {
+            "key": "Semantic Interoperability",
+            "value": "The ability of systems to not just exchange data but interpret its meaning consistently, enabled by shared vocabulary standards"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 2,
+      "session_number": 3,
+      "topic": "TEFCA and National Interoperability",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Analyze the TEFCA architecture and governance structure",
+        "Understand Qualified Health Information Network (QHIN) requirements",
+        "Evaluate TEFCA's potential to achieve universal health data exchange"
+      ],
+      "readings": [
+        "Health Information Exchange Ch. 8",
+        "ONC TEFCA Common Agreement"
+      ],
+      "lecture_notes": {
+        "introduction": "TEFCA represents the most ambitious attempt to create a national health data exchange network. Understanding its architecture and governance is essential for the future of interoperability.",
+        "key_concepts": [
+          "TEFCA architecture: RCE (Recognized Coordinating Entity), QHINs, participants, sub-participants",
+          "Standard Operating Procedures (SOPs): individual access, treatment, payment, public health, government",
+          "QHIN technical requirements: connectivity, security, identity proofing, audit",
+          "Carequality and Commonwell as foundational exchange networks joining TEFCA",
+          "Challenges: patient matching without national ID, consent management, data quality"
+        ],
+        "demonstration": "Map a cross-network data exchange scenario: patient visits Hospital A (Epic/Carequality QHIN) then ED at Hospital B (Cerner/Commonwell QHIN) - trace the data flow through TEFCA",
+        "setup_requirements": [
+          "TEFCA architecture diagrams",
+          "QHIN technical requirements document"
+        ],
+        "review": [
+          {
+            "key": "QHIN",
+            "value": "Qualified Health Information Network: organizations that meet TEFCA's technical, security, and governance requirements to serve as network-to-network exchange points"
+          },
+          {
+            "key": "Patient Matching",
+            "value": "The challenge of linking records for the same patient across organizations without a national patient identifier, using probabilistic matching algorithms"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 3,
+      "session_number": 5,
+      "topic": "Consent Management and Privacy in HIE",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Design consent management frameworks for health data exchange",
+        "Understand opt-in vs. opt-out consent models and their state variations",
+        "Implement granular consent using FHIR Consent resources"
+      ],
+      "readings": [
+        "Health Information Exchange Ch. 10",
+        "ONC Interoperability Standards Advisory: Consent"
+      ],
+      "lecture_notes": {
+        "introduction": "Patient trust in health data exchange depends on robust consent management. The patchwork of state consent laws creates complex compliance challenges for HIE networks operating across state lines.",
+        "key_concepts": [
+          "Consent models: opt-in (patient must affirmatively consent), opt-out (patient must actively refuse), no-consent (treatment exception)",
+          "State consent law variation: some states require opt-in, others allow opt-out, creating a patchwork",
+          "Granular consent: patient controls which data, to which providers, for which purposes",
+          "FHIR Consent resource: computable representation of patient consent directives",
+          "Sensitive data segmentation: 42 CFR Part 2, mental health, HIV per state law"
+        ],
+        "demonstration": "Implement a FHIR Consent resource allowing a patient to share all records except substance use disorder treatment with their PCP but share everything with their addiction specialist",
+        "setup_requirements": [
+          "FHIR test server with Consent resource support",
+          "State consent law comparison chart"
+        ],
+        "review": [
+          {
+            "key": "Opt-In vs Opt-Out",
+            "value": "Opt-in: data not shared unless patient consents (stronger privacy, lower participation). Opt-out: data shared unless patient refuses (higher participation, privacy concerns)"
+          },
+          {
+            "key": "Data Segmentation",
+            "value": "Technical ability to tag and selectively share or withhold specific categories of sensitive health data based on consent and regulatory requirements"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 4,
+      "session_number": 7,
+      "topic": "Patient Identity Management and Record Matching",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Evaluate patient matching algorithms and their accuracy",
+        "Understand the challenge of operating without a national patient identifier",
+        "Design strategies for improving match rates across organizations"
+      ],
+      "readings": [
+        "Health Information Exchange Ch. 11",
+        "ONC Patient Matching Algorithm Challenge Results"
+      ],
+      "lecture_notes": {
+        "introduction": "Patient matching is the Achilles' heel of health information exchange. If you cannot reliably identify the same patient across systems, you cannot safely exchange their data.",
+        "key_concepts": [
+          "The national patient identifier problem: Congressional prohibition, ongoing debate",
+          "Deterministic matching: exact match on multiple fields (name, DOB, SSN fragment)",
+          "Probabilistic matching: weighted scoring of multiple attributes (Fellegi-Sunter model)",
+          "Referential matching: using external reference databases to improve match accuracy",
+          "Match rate metrics: true positive, false positive, false negative rates and their clinical impact"
+        ],
+        "demonstration": "Run patient matching scenarios using a test dataset with common challenges: name changes, typos, transposed digits, common names, and evaluate match accuracy",
+        "setup_requirements": [
+          "Patient matching test dataset with known duplicates",
+          "Matching algorithm demonstration tool"
+        ],
+        "review": [
+          {
+            "key": "False Positive Match",
+            "value": "Incorrectly linking two different patients' records - potentially dangerous as clinician sees wrong patient's data informing treatment decisions"
+          },
+          {
+            "key": "Probabilistic Matching",
+            "value": "Algorithm assigning weights to matching and non-matching data elements, calculating a composite score to determine if two records represent the same patient"
+          }
+        ]
+      }
+    },
+    {
+      "week_number": 5,
+      "session_number": 9,
+      "topic": "Payer-Provider Data Exchange and Prior Authorization",
+      "duration": "50 minutes",
+      "learning_objectives": [
+        "Describe the CMS Interoperability and Prior Authorization Final Rule",
+        "Understand FHIR-based payer-provider data exchange",
+        "Evaluate the Da Vinci Implementation Guides for payer use cases"
+      ],
+      "readings": [
+        "Health Information Exchange Ch. 14",
+        "CMS Interoperability and Prior Authorization Final Rule (CMS-0057) Summary"
+      ],
+      "lecture_notes": {
+        "introduction": "Interoperability is expanding beyond provider-to-provider exchange to include payer-provider data sharing. CMS rules now require payers to expose FHIR APIs for member data access and streamline prior authorization.",
+        "key_concepts": [
+          "CMS-0057 rule: Patient Access API, Provider Access API, Payer-to-Payer API requirements",
+          "Prior Authorization API: FHIR-based electronic prior auth reducing provider burden",
+          "Da Vinci project: HL7 implementation guides for payer use cases (Coverage Requirements, Prior Auth, Alerts)",
+          "Attachment exchange: FHIR-based clinical data exchange for claims adjudication",
+          "Impact on provider workflow: reducing fax-based prior authorization from days to minutes"
+        ],
+        "demonstration": "Walk through a FHIR-based prior authorization workflow using Da Vinci CRD (Coverage Requirements Discovery) and DTR (Documentation Templates and Rules)",
+        "setup_requirements": [
+          "Da Vinci reference implementation",
+          "FHIR test server with payer resources"
+        ],
+        "review": [
+          {
+            "key": "CMS-0057",
+            "value": "CMS rule requiring Medicare Advantage, Medicaid, and CHIP plans to implement FHIR APIs for patient data access, provider data sharing, and electronic prior authorization"
+          },
+          {
+            "key": "Da Vinci CRD",
+            "value": "Coverage Requirements Discovery: FHIR-based CDS Hook that queries the payer at the point of ordering to determine coverage and prior auth requirements in real time"
+          }
+        ]
+      }
+    }
+  ],
+  "assessments": {
+    "quizzes": [
+      {
+        "quiz": 1,
+        "week": 2,
+        "topic": "HIE Models and TEFCA",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "Compare the three main HIE exchange types (directed, query-based, and consumer-mediated) and provide a clinical scenario where each is most appropriate.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Directed exchange (push): secure point-to-point transmission of clinical documents between known parties. Best for: a PCP sending a referral summary to a specialist for a scheduled appointment - both parties are known and the content is predetermined. Query-based exchange (pull): provider queries the HIE network to find and retrieve available records for a patient. Best for: an ED physician treating an unconscious patient from another state who needs medication history and allergies - the provider doesn't know who has the records and needs to search broadly. Consumer-mediated exchange: patient controls the flow of their health data between providers. Best for: a patient consolidating records from multiple specialists into a personal health record app, then sharing selected information with a new provider when relocating.",
+            "rubric": [
+              {
+                "key": "All three exchange types correctly described",
+                "value": 3
+              },
+              {
+                "key": "Appropriate clinical scenario for each",
+                "value": 4
+              },
+              {
+                "key": "Clear rationale for why each scenario fits the exchange type",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "Explain the TEFCA architecture, including the roles of the RCE, QHINs, Participants, and Sub-Participants. Why is this layered approach necessary?",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "TEFCA architecture layers: RCE (Recognized Coordinating Entity - currently the Sequoia Project): manages the Common Agreement, certifies QHINs, resolves disputes, and evolves the framework. QHINs (Qualified Health Information Networks - e.g., Carequality, Commonwell, eHealth Exchange): large networks that connect directly to each other, meeting stringent technical and security requirements. They serve as the backbone. Participants: organizations that connect through a QHIN (e.g., a hospital system connecting via a QHIN to exchange data nationally). Sub-Participants: smaller organizations that connect through a Participant (e.g., a small clinic connecting through its hospital system's network). The layered approach is necessary because: it is impractical for every provider to connect to every other provider directly. QHINs provide scalable network-of-networks architecture. Each layer has appropriate requirements scaled to its role. It builds on existing infrastructure rather than replacing it.",
+            "rubric": [
+              {
+                "key": "All four roles correctly described",
+                "value": 4
+              },
+              {
+                "key": "Clear explanation of layered architecture",
+                "value": 3
+              },
+              {
+                "key": "Valid rationale for the layered approach",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      },
+      {
+        "quiz": 2,
+        "week": 4,
+        "topic": "Consent Management and Patient Matching",
+        "duration": "20 minutes",
+        "questions": [
+          {
+            "question": "Explain why patient matching is considered the greatest challenge in health information exchange. Describe the clinical risks of both false positive and false negative matches.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Patient matching is the greatest HIE challenge because the U.S. lacks a national patient identifier, forcing reliance on demographic data (name, DOB, address, SSN fragment) that varies in quality across systems. Common challenges include name changes (marriage), data entry errors, common names, and homeless patients without stable addresses. False positive risk (matching two different patients): A clinician sees another patient's allergies, medications, or diagnoses. This could lead to wrong treatment decisions - for example, withholding a needed medication due to a false allergy, or administering a contraindicated drug based on incorrect medication history. False negative risk (failing to match the same patient): The clinician does not see the patient's existing records, missing critical information. This leads to duplicative testing, missed drug interactions, repeated imaging with unnecessary radiation exposure, and care decisions without complete clinical context.",
+            "rubric": [
+              {
+                "key": "Clear explanation of why matching is difficult",
+                "value": 3
+              },
+              {
+                "key": "Clinical risks of false positives with examples",
+                "value": 4
+              },
+              {
+                "key": "Clinical risks of false negatives with examples",
+                "value": 3
+              }
+            ]
+          },
+          {
+            "question": "A patient in a state with an opt-in consent law wants to participate in HIE but exclude her substance use disorder treatment records. Describe the technical and policy mechanisms needed to honor this granular consent.",
+            "type": "short_answer",
+            "points": 10,
+            "answer": "Policy mechanisms: (1) The HIE must support granular consent that allows sharing most records while excluding specific categories. (2) The consent form must clearly communicate what will and will not be shared. (3) The consent must comply with both state opt-in requirements and 42 CFR Part 2 protections for SUD records. Technical mechanisms: (1) Data segmentation: SUD-related records must be tagged with sensitivity codes (e.g., DS4P - Data Segmentation for Privacy) in the source EHR. (2) FHIR Consent resource: a computable consent directive specifying permitted and restricted data categories, linked to the patient's record in the HIE. (3) Access control enforcement: the HIE query engine must evaluate the consent directive at query time, filtering SUD-tagged records from responses to non-authorized requestors. (4) Audit logging: all consent decisions and data filtering events must be logged for compliance verification.",
+            "rubric": [
+              {
+                "key": "Policy mechanisms including 42 CFR Part 2 compliance",
+                "value": 3
+              },
+              {
+                "key": "Technical mechanisms for data segmentation and filtering",
+                "value": 4
+              },
+              {
+                "key": "Audit and enforcement requirements addressed",
+                "value": 3
+              }
+            ]
+          }
+        ],
+        "total_points": 20
+      }
+    ],
+    "major_assignments": [
+      {
+        "assignment": 1,
+        "title": "Health Information Exchange Strategy and Implementation Plan",
+        "week_assigned": 2,
+        "week_due": 5,
+        "points": 100,
+        "description": "Develop a comprehensive HIE strategy for a multi-hospital health system joining TEFCA, including technical architecture, consent management, patient matching strategy, and phased implementation plan.",
+        "objectives": [
+          "Design an HIE architecture aligned with TEFCA requirements",
+          "Address patient matching and consent management challenges",
+          "Develop a phased implementation roadmap",
+          "Evaluate costs, benefits, and risks of HIE participation"
+        ],
+        "requirements": {},
+        "deliverables": [
+          "HIE strategy document (12-15 pages)",
+          "Technical architecture diagrams",
+          "Consent management framework",
+          "Patient matching improvement plan",
+          "Phased implementation roadmap with budget estimates",
+          "Presentation to class (15 minutes)"
+        ],
+        "grading_rubric": {
+          "strategy_design": {
+            "points": 30,
+            "criteria": [
+              "TEFCA alignment demonstrated",
+              "Appropriate QHIN selection with rationale",
+              "Use cases prioritized with clinical justification",
+              "Business case with quantified benefits"
+            ]
+          },
+          "technical_architecture": {
+            "points": 25,
+            "criteria": [
+              "Standards-compliant design (FHIR, C-CDA)",
+              "Integration with existing EHR infrastructure",
+              "Security and privacy controls",
+              "Scalability considerations"
+            ]
+          },
+          "consent_and_matching": {
+            "points": 25,
+            "criteria": [
+              "Granular consent management framework",
+              "Patient matching strategy with accuracy targets",
+              "State law compliance addressed",
+              "Technical implementation approach"
+            ]
+          },
+          "implementation_plan": {
+            "points": 20,
+            "criteria": [
+              "Realistic phased approach",
+              "Resource requirements identified",
+              "Risk mitigation strategies",
+              "Success metrics defined"
+            ]
+          }
+        },
+        "rubric": [
+          {
+            "attributes": {
+              "points": 100,
+              "criteria": [
+                "Comprehensive TEFCA-aligned HIE strategy",
+                "Robust technical architecture with standards compliance",
+                "Thoughtful consent management and patient matching approach",
+                "Realistic implementation plan with clear success metrics"
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "grading_breakdown": {
+    "weekly_quizzes": {
+      "percentage": 20,
+      "description": "Assessment of HIE concepts, standards, and interoperability knowledge"
+    },
+    "lab_assignments": {
+      "percentage": 20,
+      "description": "Hands-on labs with FHIR APIs, C-CDA documents, and consent management"
+    },
+    "major_assignments": {
+      "percentage": 30,
+      "description": "HIE strategy and implementation plan project"
+    },
+    "midterm_examination": {
+      "percentage": 15,
+      "description": "Comprehensive assessment of HIE models, standards, and TEFCA"
+    },
+    "final_examination": {
+      "percentage": 15,
+      "description": "Cumulative exam including consent, matching, and payer interoperability"
+    }
+  },
+  "course_policies": {
+    "attendance": "Regular attendance expected. Lab sessions are mandatory. More than 2 unexcused lab absences result in grade reduction.",
+    "late_submissions": "Late assignments lose 10% per day up to 5 days.",
+    "collaboration": "Labs may be done in pairs. Strategy project and written work must be individual.",
+    "academic_integrity": "All work must be original with proper citations. Standards specifications may be referenced but analysis must be the student's own.",
+    "technology_requirements": "Laptop with FHIR client tools (Postman), internet access, C-CDA viewer software."
+  }
+}
